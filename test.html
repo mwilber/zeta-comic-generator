@@ -1,0 +1,113 @@
+<html>
+	<head>
+		<style type="text/css">
+			#strip {
+				width: 100%;
+				display: flex;
+			}
+
+			#strip .panel {
+				position: relative;
+				flex: 1;
+				margin: 5px;
+				border: solid 2px black;
+				/* padding-bottom: calc(33.3% - 14px); */
+				background: black;
+				aspect-ratio: 1;
+			}
+
+			#strip .panel img {
+				position: absolute;
+				width: 100%;
+			}
+
+			#strip .panel .dialog {
+				position: absolute;
+				/* width: calc(100%); */
+				background: #feff70;
+				color: black;
+				font-family: 'Courier New', Courier, monospace;
+				font-size: 12px;
+				font-weight: bold;
+				padding: 5px;
+				border: solid 2px black;
+				margin: 5px;
+			}
+		</style>
+	</head>
+	<body>
+		<h2>Query</h2>
+		<input type="text"/>
+		<button>Generate</button>
+		<h2>Script</h2>
+		<ul id="script"></ul>
+		<h2>Composite</h2>
+		<div id="strip">
+			<div id="panel1" class="panel"></div>
+			<div id="panel2" class="panel"></div>
+			<div id="panel3" class="panel"></div>
+		</div>
+	</body>
+	<script>
+		async function fetchGPTResponse(prompt) {
+			const apiKey = 'YOUR_API_KEY';
+			const apiUrl = 'https://proxygpt.greenzeta.com/comic.php?query=' + prompt;
+
+			const requestOptions = {
+				method: 'POST',
+				headers: {
+				'Content-Type': 'application/json',
+				'Authorization': `Bearer ${apiKey}`
+				},
+				body: JSON.stringify({
+				prompt: prompt,
+				max_tokens: 100,
+				n: 1,
+				stop: null,
+				temperature: 1
+				})
+			};
+
+			try {
+				const response = await fetch(apiUrl);
+				const data = await response.json();
+				console.log("data", data);
+				return data;
+			} catch (error) {
+				console.error('Error fetching GPT response:', error);
+				return 'Error: Unable to connect to GPT API';
+			}
+		}
+
+		fetchGPTResponse("The main character explains the distance between the earth and the sun.").then((response) => {
+			console.log("response", response);
+			if(response.panels && response.panels.length){
+				response.panels.forEach((panel, idx) => {
+					document.getElementById("script").innerHTML += `
+					<li>
+						Panel ${idx + 1}
+						<ul>
+						<li>Character: ${panel.character}</li>
+						<li>Dialog: ${panel.dialog}</li>
+						<li>Background: <a href="/image.php?query=${panel.background}" target="blank">${panel.background}</a></li>
+						</ul>
+					</li>
+					`;
+					fetch('https://proxygpt.greenzeta.com/image.php?query='+panel.background)
+						.then(response => response.json())
+						  .then(data => {
+							console.log("image data", data);
+							console.log("attempting panel", idx)
+							document.getElementById('panel' + (idx + 1)).innerHTML += `
+								<img class="background" src="${data.data[0].url}"/>
+								<img class="character" src="./character_assets/${panel.character}.png"/>
+								<div class="dialog">${panel.dialog}</div>
+							`;
+						});
+				});
+
+			}
+		});
+
+	</script>
+</html>
