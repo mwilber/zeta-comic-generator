@@ -71,6 +71,7 @@
 			<h2>Script</h2>
 			<ul id="script"></ul>
 			<h2>Composite</h2>
+			<button id="save">Save</button>
 			<div id="strip">
 				<div id="panel1" class="panel"></div>
 				<div id="panel2" class="panel"></div>
@@ -121,6 +122,24 @@
 			}
 		}
 
+		function SaveStrip(){
+			if(!saveObj) return;
+
+			const formData = new FormData();
+			formData.append('script', JSON.stringify(saveObj.script));
+			formData.append('bkg1', saveObj.backgrounds[0]);
+			formData.append('bkg2', saveObj.backgrounds[1]);
+			formData.append('bkg3', saveObj.backgrounds[2]);
+
+			fetch('./save.php', {
+				method: 'POST',
+				body: formData
+			})
+				.then(response => response.json())
+				.then(data => console.log('Success:', data))
+				.catch(error => console.error('Error:', error));
+		}
+
 		function GenerateStrip(query) {
 			ClearElements();
 			SetStatus('generating');
@@ -130,6 +149,9 @@
 					return;
 				}
 				console.log("response", script);
+
+				window["saveObj"] = {script, backgrounds: []};
+
 				if(script.panels && script.panels.length){
 					script.panels.forEach((panel, idx) => {
 						document.getElementById("script").innerHTML += `
@@ -148,6 +170,9 @@
 						fetchBackground(panel.background).then((image) => {
 							console.log("image data", image);
 							console.log("attempting panel", idx)
+
+							saveObj.backgrounds[idx] = image.data[0].url;
+
 							document.getElementById('panel' + (idx + 1)).innerHTML = `
 								<img class="background" src="${image.data[0].url}"/>
 								<img class="character" src="./character_assets/${panel.character}.png"/>
@@ -167,6 +192,13 @@
 			if(!query) return;
 
 			GenerateStrip(query.value);
+		});
+
+		document.getElementById('save').addEventListener("click", () => {
+			const query = document.getElementById('query');
+			if(!query) return;
+
+			SaveStrip();
 		});
 
 
