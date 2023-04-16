@@ -1,0 +1,162 @@
+<html>
+	<head>
+		<style type="text/css">
+
+			#query {
+				width: 50%;
+			}
+
+			.generating #script:before,
+			.error #script:before {
+				content: 'Generating...';
+				font-size: 24px;
+				font-weight: bold;
+				color: #999;
+			}
+
+			.error #script:before {
+				content: 'Error communicating with API. Try again.';
+				color: #f99;
+			}
+
+			.init #strip .panel {
+				background: #ccc;
+			}
+
+			.generating #strip .panel {
+				background: #fff;
+			}
+
+			#strip {
+				width: 100%;
+				display: flex;
+			}
+
+			#strip .panel {
+				position: relative;
+				flex: 1;
+				margin: 5px;
+				border: solid 2px black;
+				/* padding-bottom: calc(33.3% - 14px); */
+				color: #999;
+				background: black;
+				aspect-ratio: 1;
+				transition: background-color 500ms;
+			}
+
+			#strip .panel img {
+				position: absolute;
+				width: 100%;
+			}
+
+			#strip .panel .dialog {
+				position: absolute;
+				/* width: calc(100%); */
+				background: #feff70;
+				color: black;
+				font-family: 'Courier New', Courier, monospace;
+				font-size: 12px;
+				font-weight: bold;
+				padding: 5px;
+				border: solid 2px black;
+				margin: 5px;
+			}
+		</style>
+	</head>
+	<body class="init">
+		<h2>Query</h2>
+		<div id="query"></div>
+		<div id="output">
+			<h2>Script</h2>
+			<ul id="script"></ul>
+			<h2>Composite</h2>
+			<button id="save">Save</button>
+			<div id="strip">
+				<div id="panel1" class="panel"></div>
+				<div id="panel2" class="panel"></div>
+				<div id="panel3" class="panel"></div>
+			</div>
+		</div>
+	</body>
+	<script>
+
+		function getQueryStringValue(parameter) {
+			var currentPageURL = window.location.search.substring(1);
+			var queryString = currentPageURL.split('&');
+			var getParameter;
+			var i;
+			for (i = 0; i < queryString.length; i++) {
+				getParameter = queryString[i].split('=');
+				if (getParameter[0] === parameter) {
+					return getParameter[1] === undefined ? true : decodeURIComponent(getParameter[1]);
+				}
+			}
+		};
+
+		function ClearElements() {
+			[
+				'script',
+				'panel1',
+				'panel2',
+				'panel3'
+			].forEach((id) => document.getElementById(id).innerHTML = '');
+		}
+
+		function SetStatus(status) {
+			document.body.className = status;
+
+			['query'].forEach((id) => {
+				document.getElementById(id)[status === 'generating' ? 'setAttribute' : 'removeAttribute']('disabled', '');
+			});
+
+			if(status === 'generating'){
+				
+			}
+		}
+
+		ClearElements();
+		SetStatus('generating');
+		const comicId = getQueryStringValue('id');
+		if(comicId) {
+		fetch('./detail.php?id='+comicId)
+			.then((response) => response.json())
+			.then((data) => {
+				if(!data || !data.script){
+					SetStatus('error');
+					return;
+				}
+				const script = data.script;
+				console.log("response", script);
+
+				if(script.panels && script.panels.length){
+					script.panels.forEach((panel, idx) => {
+						document.getElementById("script").innerHTML += `
+						<li>
+							Panel ${idx + 1}
+							<ul>
+							<li>Character: ${panel.character}</li>
+							<li>Dialog: ${panel.dialog}</li>
+							<li>Background: <a href="/image.php?query=${panel.background}" target="blank">${panel.background}</a></li>
+							</ul>
+						</li>
+						`;
+
+						document.getElementById('panel' + (idx + 1)).innerHTML = `Rendering...`;
+
+						document.getElementById('panel' + (idx + 1)).innerHTML = `
+							<img class="background" src="./backgrounds/${data.backgrounds[idx]}"/>
+							<img class="character" src="./character_assets/${panel.character}.png"/>
+							`;
+						document.getElementById('panel' + (idx + 1)).innerHTML += `
+							<div class="dialog">${panel.dialog}</div>
+							`;
+
+					});
+					SetStatus('');
+				}
+			});
+		} else {
+			SetStatus('error');
+		}
+	</script>
+</html>
