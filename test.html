@@ -1,6 +1,32 @@
 <html>
 	<head>
 		<style type="text/css">
+
+			#query {
+				width: 50%;
+			}
+
+			.generating #script:before,
+			.error #script:before {
+				content: 'Generating...';
+				font-size: 24px;
+				font-weight: bold;
+				color: #999;
+			}
+
+			.error #script:before {
+				content: 'Error communicating with API. Try again.';
+				color: #f99;
+			}
+
+			.init #strip .panel {
+				background: #ccc;
+			}
+
+			.generating #strip .panel {
+				background: #fff;
+			}
+
 			#strip {
 				width: 100%;
 				display: flex;
@@ -12,8 +38,10 @@
 				margin: 5px;
 				border: solid 2px black;
 				/* padding-bottom: calc(33.3% - 14px); */
+				color: #999;
 				background: black;
 				aspect-ratio: 1;
+				transition: background-color 500ms;
 			}
 
 			#strip .panel img {
@@ -35,39 +63,53 @@
 			}
 		</style>
 	</head>
-	<body>
+	<body class="init">
 		<h2>Query</h2>
-		<input type="text"/>
-		<button>Generate</button>
-		<h2>Script</h2>
-		<ul id="script"></ul>
-		<h2>Composite</h2>
-		<div id="strip">
-			<div id="panel1" class="panel"></div>
-			<div id="panel2" class="panel"></div>
-			<div id="panel3" class="panel"></div>
+		<input id="query" type="text" value="The main character explains the distance between the earth and the sun."/>
+		<button id="generate">Generate</button>
+		<div id="output">
+			<h2>Script</h2>
+			<ul id="script"></ul>
+			<h2>Composite</h2>
+			<div id="strip">
+				<div id="panel1" class="panel"></div>
+				<div id="panel2" class="panel"></div>
+				<div id="panel3" class="panel"></div>
+			</div>
 		</div>
 	</body>
 	<script>
-		async function fetchGPTResponse(prompt) {
-			const apiKey = 'YOUR_API_KEY';
-			const apiUrl = 'https://proxygpt.greenzeta.com/comic.php?query=' + prompt;
 
-			const requestOptions = {
-				method: 'POST',
-				headers: {
-				'Content-Type': 'application/json',
-				'Authorization': `Bearer ${apiKey}`
-				},
-				body: JSON.stringify({
-				prompt: prompt,
-				max_tokens: 100,
-				n: 1,
-				stop: null,
-				temperature: 1
-				})
-			};
+		function ClearElements() {
+			[
+				'script',
+				'panel1',
+				'panel2',
+				'panel3'
+			].forEach((id) => document.getElementById(id).innerHTML = '');
+		}
 
+		function SetStatus(status) {
+			document.body.className = status;
+
+			['generate', 'query'].forEach((id) => {
+				document.getElementById(id)[status === 'generating' ? 'setAttribute' : 'removeAttribute']('disabled', '');
+			});
+
+			if(status === 'generating'){
+				
+			}
+		}
+
+		async function fetchComic(prompt) {
+			return await queryApi('./comic.php?query=' + prompt);
+		}
+
+		async function fetchBackground(prompt) {
+			return await queryApi('./image.php?query=' + prompt);
+		}
+
+		async function queryApi(apiUrl) {
 			try {
 				const response = await fetch(apiUrl);
 				const data = await response.json();
@@ -79,35 +121,54 @@
 			}
 		}
 
-		fetchGPTResponse("The main character explains the distance between the earth and the sun.").then((response) => {
-			console.log("response", response);
-			if(response.panels && response.panels.length){
-				response.panels.forEach((panel, idx) => {
-					document.getElementById("script").innerHTML += `
-					<li>
-						Panel ${idx + 1}
-						<ul>
-						<li>Character: ${panel.character}</li>
-						<li>Dialog: ${panel.dialog}</li>
-						<li>Background: <a href="/image.php?query=${panel.background}" target="blank">${panel.background}</a></li>
-						</ul>
-					</li>
-					`;
-					fetch('https://proxygpt.greenzeta.com/image.php?query='+panel.background)
-						.then(response => response.json())
-						  .then(data => {
-							console.log("image data", data);
-							console.log("attempting panel", idx)
-							document.getElementById('panel' + (idx + 1)).innerHTML += `
-								<img class="background" src="${data.data[0].url}"/>
-								<img class="character" src="./character_assets/${panel.character}.png"/>
-								<div class="dialog">${panel.dialog}</div>
-							`;
-						});
-				});
+		function GenerateStrip(query) {
+			ClearElements();
+			SetStatus('generating');
+			fetchComic(query).then((script) => {
+				if(!script){
+					SetStatus('error');
+					return;
+				}
+				console.log("response", script);
+				if(script.panels && script.panels.length){
+					script.panels.forEach((panel, idx) => {
+						document.getElementById("script").innerHTML += `
+						<li>
+							Panel ${idx + 1}
+							<ul>
+							<li>Character: ${panel.character}</li>
+							<li>Dialog: ${panel.dialog}</li>
+							<li>Background: <a href="/image.php?query=${panel.background}" target="blank">${panel.background}</a></li>
+							</ul>
+						</li>
+						`;
 
-			}
+						document.getElementById('panel' + (idx + 1)).innerHTML = `Rendering...`;
+	
+						fetchBackground(panel.background).then((image) => {
+							console.log("image data", image);
+							console.log("attempting panel", idx)
+							document.getElementById('panel' + (idx + 1)).innerHTML = `
+								<img class="background" src="${image.data[0].url}"/>
+								<img class="character" src="./character_assets/${panel.character}.png"/>
+								`;
+							document.getElementById('panel' + (idx + 1)).innerHTML += `
+								<div class="dialog">${panel.dialog}</div>
+								`;
+						});
+					});
+					SetStatus('');
+				}
+			});
+		}
+
+		document.getElementById('generate').addEventListener("click", () => {
+			const query = document.getElementById('query');
+			if(!query) return;
+
+			GenerateStrip(query.value);
 		});
+
 
 	</script>
 </html>
