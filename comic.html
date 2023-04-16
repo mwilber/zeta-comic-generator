@@ -3,7 +3,10 @@
 		<style type="text/css">
 
 			#query {
-				width: 50%;
+				width: auto;
+				background: #242442;
+				color: rgba(255,255,255,0.8);
+				padding: 1em;
 			}
 
 			.generating #script:before,
@@ -70,7 +73,6 @@
 			<h2>Script</h2>
 			<ul id="script"></ul>
 			<h2>Composite</h2>
-			<button id="save">Save</button>
 			<div id="strip">
 				<div id="panel1" class="panel"></div>
 				<div id="panel2" class="panel"></div>
@@ -127,6 +129,8 @@
 				}
 				const script = data.script;
 				console.log("response", script);
+
+				document.getElementById("query").innerHTML = `${data.prompt}`;
 
 				if(script.panels && script.panels.length){
 					script.panels.forEach((panel, idx) => {

@@ -61,6 +61,10 @@
 				border: solid 2px black;
 				margin: 5px;
 			}
+
+			#save, #permalink {
+				display:none;
+			}
 		</style>
 	</head>
 	<body class="init">
@@ -72,6 +76,7 @@
 			<ul id="script"></ul>
 			<h2>Composite</h2>
 			<button id="save">Save</button>
+			<div id="permalink"></div>
 			<div id="strip">
 				<div id="panel1" class="panel"></div>
 				<div id="panel2" class="panel"></div>
@@ -86,8 +91,14 @@
 				'script',
 				'panel1',
 				'panel2',
-				'panel3'
+				'panel3',
+				'permalink'
 			].forEach((id) => document.getElementById(id).innerHTML = '');
+
+			[
+				'save',
+				'permalink'
+			].forEach((id) => document.getElementById(id).style.display = null);
 		}
 
 		function SetStatus(status) {
@@ -125,7 +136,11 @@
 		function SaveStrip(){
 			if(!saveObj) return;
 
+			document.getElementById('save').style.display = null;
+			document.getElementById('permalink').style.display = null;
+
 			const formData = new FormData();
+			formData.append('prompt', saveObj.prompt);
 			formData.append('script', JSON.stringify(saveObj.script));
 			formData.append('bkg1', saveObj.backgrounds[0]);
 			formData.append('bkg2', saveObj.backgrounds[1]);
@@ -136,7 +151,20 @@
 				body: formData
 			})
 				.then(response => response.json())
-				.then(data => console.log('Success:', data))
+				.then(data => {
+					if(!data || !data.response || !data.response.comicId) {
+						document.getElementById('save').style.display = 'initial';
+						document.getElementById('permalink').style.display = 'initial';
+						document.getElementById('permalink').innerHTML = `
+							There was a problem saving.
+						`;
+					}
+					document.getElementById('permalink').style.display = 'initial';
+					document.getElementById('permalink').innerHTML = `
+						<a href="./comic.html?id=${data.response.comicId}">Permalink</a>
+					`;
+					console.log('Success:', data);
+				})
 				.catch(error => console.error('Error:', error));
 		}
 
@@ -150,7 +178,7 @@
 				}
 				console.log("response", script);
 
-				window["saveObj"] = {script, backgrounds: []};
+				window["saveObj"] = {prompt: query, script, backgrounds: []};
 
 				if(script.panels && script.panels.length){
 					script.panels.forEach((panel, idx) => {
@@ -180,6 +208,8 @@
 							document.getElementById('panel' + (idx + 1)).innerHTML += `
 								<div class="dialog">${panel.dialog}</div>
 								`;
+
+							document.getElementById('save').style.display = 'initial';
 						});
 					});
 					SetStatus('');

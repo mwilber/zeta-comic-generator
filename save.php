@@ -58,7 +58,7 @@
 		$jsonData = $_POST["script"];
 	
 		// prepare query statement
-		$stmt = $db->prepare("INSERT INTO `comics` (`json`) VALUES (".$db->quote($jsonData).");");
+		$stmt = $db->prepare("INSERT INTO `comics` (`prompt`,`json`) VALUES (".$db->quote($_POST["prompt"]).",".$db->quote($jsonData).");");
 		// execute query
 		$stmt->execute();
 		$output->response->comicId = $db->lastInsertId();
