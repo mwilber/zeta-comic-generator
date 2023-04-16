@@ -67,6 +67,7 @@
 		</style>
 	</head>
 	<body class="init">
+		<a href="test.html">Generate a Comic</a>
 		<h2>Query</h2>
 		<div id="query"></div>
 		<div id="output">
@@ -151,9 +152,10 @@
 							<img class="background" src="./backgrounds/${data.backgrounds[idx]}"/>
 							<img class="character" src="./character_assets/${panel.character}.png"/>
 							`;
-						document.getElementById('panel' + (idx + 1)).innerHTML += `
-							<div class="dialog">${panel.dialog}</div>
-							`;
+						if(panel.dialog)
+							document.getElementById('panel' + (idx + 1)).innerHTML += `
+								<div class="dialog">${panel.dialog}</div>
+								`;
 
 					});
 					SetStatus('');

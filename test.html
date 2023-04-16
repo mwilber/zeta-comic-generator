@@ -205,9 +205,10 @@
 								<img class="background" src="${image.data[0].url}"/>
 								<img class="character" src="./character_assets/${panel.character}.png"/>
 								`;
-							document.getElementById('panel' + (idx + 1)).innerHTML += `
-								<div class="dialog">${panel.dialog}</div>
-								`;
+							if(panel.dialog)
+								document.getElementById('panel' + (idx + 1)).innerHTML += `
+									<div class="dialog">${panel.dialog}</div>
+									`;
 
 							document.getElementById('save').style.display = 'initial';
 						});
