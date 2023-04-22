@@ -19,24 +19,25 @@ if(!isset($query)) $query = urldecode($_GET["query"]);
 
 $url = "https://api.openai.com/v1/completions";
 
-$prompt = "
-Using the following json object as a template, generate a json array of objects that describes the panels in a cartoon. 
-The premise of the cartoon is a classroom where a teacher is the main character. 
-The teacher is explains the distance between the earth and the sun. 
-The `sceneDescription` property describes only the setting, it does not mention the main character. 
-The `mainCharacterAsset` property contains one of two options: standing, seated at computer. 
-The main character is always in the foreground, does not interact with the background and is the only character that speaks. 
-Keep the dialog short. Limit to three panels.
-{panels: [{ \"sceneDescription\": INSERT, \"mainCharacterDialog\": INSERT, \"mainCharacterAsset\": INSERT }]}";
+// $prompt = "
+// Using the following json object as a template, generate a json array of objects that describes the panels in a cartoon. 
+// The premise of the cartoon is a classroom where a teacher is the main character. 
+// The teacher is explains the distance between the earth and the sun. 
+// The `sceneDescription` property describes only the setting, it does not mention the main character. 
+// The `mainCharacterAsset` property contains one of two options: standing, seated at computer. 
+// The main character is always in the foreground, does not interact with the background and is the only character that speaks. 
+// Limit all property values to 200 characters. Limit to three panels.
+// {panels: [{ \"sceneDescription\": INSERT, \"mainCharacterDialog\": INSERT, \"mainCharacterAsset\": INSERT }]}";
 
-$prompt = "Write a json object that represents a description of a three panel comic strip about the following: ";
+$prompt = "Write a json object that represents a description of a three panel comic strip with a main character doing the following: ";
 $prompt .= $query;
 $prompt .= " The object root has only one property, `panels` which is an array of objects. 
 Each object in the panels array has three properties: `character`, `background` & `dialog`. 
 The content of each of these properties must adhere to the following rules: 
 - `character` describes the main character. It can contain only the values 'standing' or 'sitting'. 
-- `background` is a description of the panel background image. It cannot make any reference to the main character. 
+- `background` makes no reference to the character, it is a description of the panel background image. 
 - `dialog` is dialog spoken by the main character. This can be an empty string if the character is not speaking.
+- Limit each property value to 200 characters.
 ";
 
 $prompt = preg_replace('~[\r\n]+~', '\\n', $prompt);
@@ -78,6 +79,10 @@ $data = json_decode($json);
 // $data = json_decode('{"id":"cmpl-74I8EiAF3Ioa2x7rVLHiU4YH5ogay","object":"text_completion","created":1681257366,"model":"text-davinci-003","choices":[{"text":"\n{ \n \"panels\": [\n { \n \"background\": \"A sunny day in the park.\",\n \"dialog\": \"Mom, can I play on the monkey bars?\"\n },\n { \n \"background\": \"The child on the monkey bars.\", \n \"dialog\": \"Whee!\"\n },\n { \n \"background\": \"The child has fallen off the monkey bars.\",\n \"dialog\": \"Ouch!\"\n }\n ]\n}","index":0,"logprobs":null,"finish_reason":"stop"}],"usage":{"prompt_tokens":58,"completion_tokens":115,"total_tokens":173}}');
 
 //echo str_replace("`", "", trim($data->choices[0]->text));
+if(!isset($data->choices[0]->text)) {
+	echo $json;
+	die;
+}
 $script = json_decode(trim($data->choices[0]->text));
 echo json_encode($script);
 
