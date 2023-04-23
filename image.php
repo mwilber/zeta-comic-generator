@@ -12,19 +12,19 @@ if(!isset($query)) $query = urldecode($_GET["query"]);
 if(!isset($query)) $query = "A grassy knoll";
 
 if(false){
-switch($query){
-	case "A faraway view of Earth and the Sun with a starry night sky":
-		echo '{"data":[{"url":"./testimg/img-5qktQ0jDtAYNJ1L7ULTHhiqC.png"}]}';
-		break;
-	case "A mathematical equation written on an old parchment with quill pen":
-		echo '{"data":[{"url":"./testimg/img-iA5oi5pnlELNq7D3ZHxbSeLg.png"}]}';
-		break;
-	case "A view of Earth with the stars and planets around it":
-		echo '{"data":[{"url":"./testimg/img-yT9OR0KXefyxAfTnanZRI9VX.png"}]}';
-		break;
-}
+	switch($query){
+		case "A faraway view of Earth and the Sun with a starry night sky":
+			echo '{"data":[{"url":"https://proxygpt.greenzeta.com/zeta-comic-generator/testimg/img-5qktQ0jDtAYNJ1L7ULTHhiqC.png"}]}';
+			break;
+		case "A mathematical equation written on an old parchment with quill pen":
+			echo '{"data":[{"url":"https://proxygpt.greenzeta.com/zeta-comic-generator/testimg/img-iA5oi5pnlELNq7D3ZHxbSeLg.png"}]}';
+			break;
+		case "A view of Earth with the stars and planets around it":
+			echo '{"data":[{"url":"https://proxygpt.greenzeta.com/zeta-comic-generator/testimg/img-yT9OR0KXefyxAfTnanZRI9VX.png"}]}';
+			break;
+	}
 
-die;
+	die;
 }
 
 //print_r($query);

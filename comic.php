@@ -6,9 +6,9 @@ header("Access-Control-Allow-Headers: *");
 header('Content-Type: application/json; charset=utf-8');
 
 if(false){
-echo '{"panels":[{"character":"standing","background":"A faraway view of Earth and the Sun with a starry night sky","dialog":"The Sun is 150 million kilometers away from Earth"},{"character":"sitting","background":"A mathematical equation written on an old parchment with quill pen","dialog":"That\'s equal to 8 light minutes"},{"character":"standing","background":"A view of Earth with the stars and planets around it","dialog":"So if we wanted to travel there, we would need a spaceship that could move faster than light!"}]}';
+	echo '{"title":"Test Strip", "panels":[{"character":"standing","background":"A faraway view of Earth and the Sun with a starry night sky","dialog":"The Sun is 150 million kilometers away from Earth"},{"character":"sitting","background":"A mathematical equation written on an old parchment with quill pen","dialog":"That\'s equal to 8 light minutes"},{"character":"standing","background":"A view of Earth with the stars and planets around it","dialog":"So if we wanted to travel there, we would need a spaceship that could move faster than light!"}]}';
 
-die;
+	die;
 }
 
 $query = $_POST["query"];
@@ -31,7 +31,7 @@ $url = "https://api.openai.com/v1/completions";
 
 $prompt = "Write a json object that represents a description of a three panel comic strip with a main character doing the following: ";
 $prompt .= $query;
-$prompt .= " The object root has only one property, `panels` which is an array of objects. 
+$prompt .= " The object root has two properties, `title` which is the title of the comic and `panels` which is an array of objects. 
 Each object in the panels array has three properties: `character`, `background` & `dialog`. 
 The content of each of these properties must adhere to the following rules: 
 - `character` describes the main character. It can contain only the values 'standing' or 'sitting'. 

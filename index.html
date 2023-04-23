@@ -98,6 +98,8 @@
 			<button id="generate">Generate</button>
 		</div>
 		<div id="output">
+			<h2>Title</h2>
+			<h3 id="title"></h3>
 			<h2>Script</h2>
 			<ul id="script"></ul>
 			<h2>Composite</h2>
@@ -114,6 +116,7 @@
 
 		function ClearElements() {
 			[
+				'title',
 				'script',
 				'panel1',
 				'panel2',
@@ -167,10 +170,15 @@
 
 			const formData = new FormData();
 			formData.append('prompt', saveObj.prompt);
+			formData.append('title', saveObj.title);
 			formData.append('script', JSON.stringify(saveObj.script));
 			formData.append('bkg1', saveObj.backgrounds[0]);
 			formData.append('bkg2', saveObj.backgrounds[1]);
 			formData.append('bkg3', saveObj.backgrounds[2]);
+			formData.append('fg1', saveObj.foregrounds[0]);
+			formData.append('fg2', saveObj.foregrounds[1]);
+			formData.append('fg3', saveObj.foregrounds[2]);
+			//formData.append('thumbnail', saveObj.thumbnail);
 
 			fetch('./save.php', {
 				method: 'POST',
@@ -194,20 +202,20 @@
 				.catch(error => console.error('Error:', error));
 		}
 
-		function GenerateStrip(query) {
+		async function GenerateStrip(query) {
 			ClearElements();
 			SetStatus('generating');
-			fetchComic(query).then((script) => {
+			fetchComic(query).then(async (script) => {
 				if(!script){
 					SetStatus('error');
 					return;
 				}
 				console.log("response", script);
 
-				window["saveObj"] = {prompt: query, script, backgrounds: []};
+				window["saveObj"] = {prompt: query, script, backgrounds: [], foregrounds: []};
 
 				if(script.panels && script.panels.length){
-					script.panels.forEach((panel, idx) => {
+					for(const [idx,panel] of script.panels.entries()){
 						document.getElementById("script").innerHTML += `
 						<li>
 							Panel ${idx + 1}
@@ -221,24 +229,39 @@
 
 						document.getElementById('panel' + (idx + 1)).innerHTML = `Rendering...`;
 	
-						fetchBackground(panel.background).then((image) => {
-							console.log("image data", image);
-							console.log("attempting panel", idx)
+						let image = await fetchBackground(panel.background);
 
-							saveObj.backgrounds[idx] = image.data[0].url;
+						console.log("image data", image);
+						console.log("attempting panel", idx)
 
-							document.getElementById('panel' + (idx + 1)).innerHTML = `
-								<img class="background" src="${image.data[0].url}"/>
-								<img class="character" src="./character_assets/${panel.character}.png"/>
+						saveObj.backgrounds[idx] = image.data[0].url;
+						saveObj.foregrounds[idx] = panel.character + '.png';
+
+						document.getElementById('panel' + (idx + 1)).innerHTML = `
+							<img class="background" src="${image.data[0].url}"/>
+							<img class="character" src="./character_assets/${panel.character}.png"/>
+							`;
+						if(panel.dialog)
+							document.getElementById('panel' + (idx + 1)).innerHTML += `
+								<div class="dialog">${panel.dialog}</div>
 								`;
-							if(panel.dialog)
-								document.getElementById('panel' + (idx + 1)).innerHTML += `
-									<div class="dialog">${panel.dialog}</div>
-									`;
 
-							document.getElementById('save').style.display = 'initial';
-						});
-					});
+						document.getElementById('save').style.display = 'initial';
+					}
+
+					// html2canvas(
+					// 	document.querySelector("#panel1"),
+					// 	{
+					// 		allowTaint: true,
+					// 		useCORS: false
+					// 	}
+					// ).then(canvas => {
+					// 	saveObj.thumbnail = canvas.toDataURL();
+					// 	document.body.appendChild(canvas)
+					// });
+
+					saveObj.title = script.title;
+					document.getElementById('title').innerText = saveObj.title;
 					SetStatus('');
 				}
 			});
