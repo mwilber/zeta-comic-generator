@@ -150,7 +150,7 @@
 
 						document.getElementById('panel' + (idx + 1)).innerHTML = `
 							<img class="background" src="./backgrounds/${data.backgrounds[idx]}"/>
-							<img class="character" src="./character_assets/${panel.character}.png"/>
+							<img class="character" src="./character_assets/${panel.character.toLowerCase()}.png"/>
 							`;
 						if(panel.dialog)
 							document.getElementById('panel' + (idx + 1)).innerHTML += `

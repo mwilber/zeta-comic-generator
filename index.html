@@ -95,7 +95,7 @@
 		<a href="gallery.html">Gallery</a>
 		<h2>Premise</h2>
 		<div id="input">
-			<input id="query" type="text" placeholder="ex. The main character explains the distance between the earth and the sun."/>
+			<input id="query" type="text" placeholder="ex. An explanation of the distance between the earth and the sun."/>
 			<button id="generate">Generate</button>
 		</div>
 		<div id="output">
@@ -217,10 +217,13 @@
 
 				if(script.panels && script.panels.length){
 					for(const [idx,panel] of script.panels.entries()){
+						panel.background = panel.setting;
 						document.getElementById("script").innerHTML += `
 						<li>
 							Panel ${idx + 1}
 							<ul>
+							<li>Scene: ${panel.scene}</li>
+							<li>Setting: ${panel.setting}</li>
 							<li>Character: ${panel.character}</li>
 							<li>Dialog: ${panel.dialog}</li>
 							<li>Background: <a href="/image.php?query=${panel.background}" target="blank">${panel.background}</a></li>
@@ -228,19 +231,26 @@
 						</li>
 						`;
 
+						// Bypass images. For testing prompts
+						// continue;
+
 						document.getElementById('panel' + (idx + 1)).innerHTML = `Rendering...`;
 	
 						let image = await fetchBackground(panel.background);
+						if(!image){
+							SetStatus('error');
+							return;
+						}
 
 						console.log("image data", image);
 						console.log("attempting panel", idx)
 
 						saveObj.backgrounds[idx] = image.data[0].url;
-						saveObj.foregrounds[idx] = panel.character + '.png';
+						saveObj.foregrounds[idx] = panel.character.toLowerCase() + '.png';
 
 						document.getElementById('panel' + (idx + 1)).innerHTML = `
 							<img class="background" src="${image.data[0].url}"/>
-							<img class="character" src="./character_assets/${panel.character}.png"/>
+							<img class="character" src="./character_assets/${panel.character.toLowerCase()}.png"/>
 							`;
 						if(panel.dialog)
 							document.getElementById('panel' + (idx + 1)).innerHTML += `
