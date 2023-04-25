@@ -18,13 +18,13 @@
 	$output->gallery = array();
 
 	try {
-		$stmt = $db->prepare("SELECT * FROM `comics` WHERE title <> \"\"");
+		$stmt = $db->prepare("SELECT * FROM `comics` WHERE permalink <> \"\" AND title <> \"\"");
 		$stmt->execute();
 		$rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 		foreach ($rows as $row) {
 			$strip = new stdClass;
-			$strip->id = $row["id"];
+			$strip->id = $row["permalink"];
 			$strip->title = $row["title"];
 
 			array_push($output->gallery, $strip);

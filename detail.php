@@ -18,7 +18,7 @@
 	$db = $database->getConnection();
 
 	try {
-		$stmt = $db->prepare("SELECT * FROM `comics` WHERE id = :id");
+		$stmt = $db->prepare("SELECT * FROM `comics` WHERE permalink = :id");
 		$stmt->bindParam(':id', $_GET["id"], PDO::PARAM_INT);
 		$stmt->execute();
 

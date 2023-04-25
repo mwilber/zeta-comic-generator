@@ -102,6 +102,11 @@
 		// execute query
 		$stmt->execute();
 		$output->response->comicId = $db->lastInsertId();
+		$output->response->permalink = md5($output->response->comicId);
+		// Insert a hash of the id for the permalink
+		$stmt = $db->prepare("UPDATE `comics` SET `permalink`=".$db->quote($output->response->permalink)." WHERE `id`=".$output->response->comicId.";");
+		// execute query
+		$stmt->execute();
 	
 		//echo $comicId;
 
@@ -127,7 +132,7 @@
 
 				if($idx == 1){
 					//Save the images to composite into a thumbnail
-					renderThumbnail($output->response->comicId, "backgrounds/".$filename, "character_assets/".$_POST["fg".($idx + 1)]);
+					renderThumbnail($output->response->permalink, "backgrounds/".$filename, "character_assets/".$_POST["fg".($idx + 1)]);
 				}
 			}
 			// Save the thumbnail image

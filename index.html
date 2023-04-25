@@ -196,7 +196,7 @@
 					}
 					document.getElementById('permalink').style.display = 'initial';
 					document.getElementById('permalink').innerHTML = `
-						<a href="./comic.html?id=${data.response.comicId}">Permalink</a>
+						<a href="./comic.html?id=${data.response.permalink}">Permalink</a>
 					`;
 					console.log('Success:', data);
 				})
@@ -222,11 +222,9 @@
 						<li>
 							Panel ${idx + 1}
 							<ul>
-							<li>Scene: ${panel.scene}</li>
-							<li>Setting: ${panel.setting}</li>
-							<li>Character: ${panel.character}</li>
-							<li>Dialog: ${panel.dialog}</li>
-							<li>Background: <a href="/image.php?query=${panel.background}" target="blank">${panel.background}</a></li>
+								<li>Character: ${panel.character}</li>
+								<li>Dialog: ${panel.dialog}</li>
+								<li>Background: <a href="/image.php?query=${panel.background}" target="blank">${panel.background}</a></li>
 							</ul>
 						</li>
 						`;
