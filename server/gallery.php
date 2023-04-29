@@ -37,22 +37,4 @@
 	echo json_encode($output);
 
 	die;
-	// <html>
-	// 	<h2>Gallery</h2>
-	// 
-	// echo json_encode($output);
-	// 	if (isset($rows)) {
-	// 		echo "<ul>";
-	// 		foreach ($rows as $row) {
-	// 			echo "<li>";
-	// 			echo $row["title"];
-	// 			echo '<img src="./thumbnails/thumb_'.$row["id"].'.png"/>';
-	// 			echo "</li>";
-	// 		}
-	// 		echo "</ul>";
-	// 	} else {
-	// 		echo "No records found.";
-	// 	}
-	//
-	// </html>
 ?>

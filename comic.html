@@ -149,8 +149,8 @@
 						document.getElementById('panel' + (idx + 1)).innerHTML = `Rendering...`;
 
 						document.getElementById('panel' + (idx + 1)).innerHTML = `
-							<img class="background" src="./backgrounds/${data.backgrounds[idx]}"/>
-							<img class="character" src="../assets/character_art/${panel.character.toLowerCase()}.png"/>
+							<img class="background" src="./assets/backgrounds/${data.backgrounds[idx]}"/>
+							<img class="character" src="./assets/character_art/${panel.character.toLowerCase()}.png"/>
 							`;
 						if(panel.dialog)
 							document.getElementById('panel' + (idx + 1)).innerHTML += `

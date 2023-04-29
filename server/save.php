@@ -6,7 +6,7 @@
 	// include database and object files
 	include_once './db.php';
 
-	function downloadImage($url, $savePath = './backgrounds/') {
+	function downloadImage($url, $savePath = '../assets/backgrounds/') {
 		// Create the directory if it doesn't exist
 		if (!file_exists($savePath)) {
 			mkdir($savePath, 0777, true);
@@ -74,7 +74,7 @@
 		imagecopy($newImage, $image2, 0, 0, 0, 0, $width1, $height1);
 
 		// Save the new image to the file system
-		imagepng($newImage, 'thumbnails/thumb_'.$id.'.png');
+		imagepng($newImage, '../assets/thumbnails/thumb_'.$id.'.png');
 
 		// Free up memory
 		imagedestroy($image1);
@@ -132,7 +132,7 @@
 
 				if($idx == 1){
 					//Save the images to composite into a thumbnail
-					renderThumbnail($output->response->permalink, "backgrounds/".$filename, "../assets/character_art/".$_POST["fg".($idx + 1)]);
+					renderThumbnail($output->response->permalink, "../assets/backgrounds/".$filename, "../assets/character_art/".$_POST["fg".($idx + 1)]);
 				}
 			}
 		}
