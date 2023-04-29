@@ -144,11 +144,11 @@
 		}
 
 		async function fetchComic(prompt) {
-			return await queryApi('./comic.php?query=' + prompt);
+			return await queryApi('./server/comic.php?query=' + prompt);
 		}
 
 		async function fetchBackground(prompt) {
-			return await queryApi('./image.php?query=' + prompt);
+			return await queryApi('./server/image.php?query=' + prompt);
 		}
 
 		async function queryApi(apiUrl) {
@@ -181,7 +181,7 @@
 			formData.append('fg3', saveObj.foregrounds[2]);
 			//formData.append('thumbnail', saveObj.thumbnail);
 
-			fetch('./save.php', {
+			fetch('./server/save.php', {
 				method: 'POST',
 				body: formData
 			})
@@ -224,7 +224,7 @@
 							<ul>
 								<li>Character: ${panel.character}</li>
 								<li>Dialog: ${panel.dialog}</li>
-								<li>Background: <a href="/image.php?query=${panel.background}" target="blank">${panel.background}</a></li>
+								<li>Background: <a href="./server/image.php?query=${panel.background}" target="blank">${panel.background}</a></li>
 							</ul>
 						</li>
 						`;
@@ -248,7 +248,7 @@
 
 						document.getElementById('panel' + (idx + 1)).innerHTML = `
 							<img class="background" src="${image.data[0].url}"/>
-							<img class="character" src="./character_assets/${panel.character.toLowerCase()}.png"/>
+							<img class="character" src="../assets/character_art/${panel.character.toLowerCase()}.png"/>
 							`;
 						if(panel.dialog)
 							document.getElementById('panel' + (idx + 1)).innerHTML += `

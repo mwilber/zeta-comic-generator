@@ -48,7 +48,7 @@
 		<div id="gallery"></div>
 	</body>
 	<script>
-		fetch('./gallery.php')
+		fetch('./server/gallery.php')
 			.then((response) => response.json())
 			.then((listing)=>{
 				if(!listing.gallery) return;

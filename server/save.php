@@ -132,18 +132,11 @@
 
 				if($idx == 1){
 					//Save the images to composite into a thumbnail
-					renderThumbnail($output->response->permalink, "backgrounds/".$filename, "character_assets/".$_POST["fg".($idx + 1)]);
+					renderThumbnail($output->response->permalink, "backgrounds/".$filename, "../assets/character_art/".$_POST["fg".($idx + 1)]);
 				}
 			}
-			// Save the thumbnail image
-			// $imageData = base64_decode(str_replace("data:image/png;base64,", "", $_POST["thumbnail"]));
-			// $fileName = "./thumbnails/thumb_".$output->response->comicId.".png";
-			// $file = fopen($fileName, "wb");
-			// fwrite($file, $imageData);
-			// fclose($file);
 		}
 	}
-
 
 	echo json_encode($output);
 

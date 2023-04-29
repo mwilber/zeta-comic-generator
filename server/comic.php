@@ -138,11 +138,3 @@ if($script) {
 die;
 
 ?>
-
-<ul>
-	<?php foreach($script->panels as $panel): ?>
-	<li>
-		Background: <a href="/image.php?query=<?php echo $panel->background ?>" target="blank"><?php echo $panel->background ?></a>
-	</li>
-	<?php endforeach; ?>
-</ul>

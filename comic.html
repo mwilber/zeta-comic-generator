@@ -121,7 +121,7 @@
 		SetStatus('generating');
 		const comicId = getQueryStringValue('id');
 		if(comicId) {
-		fetch('./detail.php?id='+comicId)
+		fetch('./server/detail.php?id='+comicId)
 			.then((response) => response.json())
 			.then((data) => {
 				if(!data || !data.script){
@@ -141,7 +141,7 @@
 							<ul>
 							<li>Character: ${panel.character}</li>
 							<li>Dialog: ${panel.dialog}</li>
-							<li>Background: <a href="/image.php?query=${panel.background}" target="blank">${panel.background}</a></li>
+							<li>Background: <a href="./server/image.php?query=${panel.background}" target="blank">${panel.background}</a></li>
 							</ul>
 						</li>
 						`;
@@ -150,7 +150,7 @@
 
 						document.getElementById('panel' + (idx + 1)).innerHTML = `
 							<img class="background" src="./backgrounds/${data.backgrounds[idx]}"/>
-							<img class="character" src="./character_assets/${panel.character.toLowerCase()}.png"/>
+							<img class="character" src="../assets/character_art/${panel.character.toLowerCase()}.png"/>
 							`;
 						if(panel.dialog)
 							document.getElementById('panel' + (idx + 1)).innerHTML += `
