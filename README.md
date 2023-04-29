@@ -8,7 +8,7 @@ An experiment in combining AI and original art to generate three panel comic str
 
 The end user writes a sentence or two describing a premise for the comic strip. The premise is included in a ChatGPT prompt that instructs it to write a three panel comic strip describing: dialog, image background, and character action. The text description of the three backgrounds is sent to the WallE image generator to produce background images. The character action is selected from a list of pre-drawn character art, featuring Alpha Zeta. Finally, all of these components are merged together to display the comic strip!
 
-![Interface Screenshot](URLHERE "Interface")
+![Interface Screenshot](https://greenzeta.com/wp-content/uploads/2023/04/Screen-Shot-2023-04-28-at-9.00.59-PM.png "Interface")
 
 ## This Project
 
