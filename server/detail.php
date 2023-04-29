@@ -19,7 +19,7 @@
 
 	try {
 		$stmt = $db->prepare("SELECT * FROM `comics` WHERE permalink = :id");
-		$stmt->bindParam(':id', $_GET["id"], PDO::PARAM_INT);
+		$stmt->bindParam(':id', $_GET["id"], PDO::PARAM_STR);
 		$stmt->execute();
 
 		// Fetch the single record as an object
