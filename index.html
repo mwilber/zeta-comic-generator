@@ -153,11 +153,11 @@
 		}
 
 		async function fetchComic(prompt) {
-			return await queryApi('./server/comic.php?query=' + prompt);
+			return await queryApi('https://comicgenerator.greenzeta.com/server/comic.php?query=' + prompt);
 		}
 
 		async function fetchBackground(prompt) {
-			return await queryApi('./server/image.php?query=' + prompt);
+			return await queryApi('https://comicgenerator.greenzeta.com/server/image.php?query=' + prompt);
 		}
 
 		async function queryApi(apiUrl) {
@@ -190,7 +190,7 @@
 			formData.append('fg3', saveObj.foregrounds[2]);
 			//formData.append('thumbnail', saveObj.thumbnail);
 
-			fetch('./server/save.php', {
+			fetch('https://comicgenerator.greenzeta.com/server/save.php', {
 				method: 'POST',
 				body: formData
 			})
@@ -233,7 +233,7 @@
 							<ul>
 								<li>Character: ${panel.character}</li>
 								<li>Dialog: ${panel.dialog}</li>
-								<li>Background: <a href="./server/image.php?query=${panel.background}" target="blank">${panel.background}</a></li>
+								<li>Background: <a href="https://comicgenerator.greenzeta.com/server/image.php?query=${panel.background}" target="blank">${panel.background}</a></li>
 							</ul>
 						</li>
 						`;

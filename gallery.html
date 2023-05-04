@@ -57,7 +57,7 @@
 		<div id="gallery"></div>
 	</body>
 	<script>
-		fetch('./server/gallery.php')
+		fetch('https://comicgenerator.greenzeta.com/server/gallery.php')
 			.then((response) => response.json())
 			.then((listing)=>{
 				if(!listing.gallery) return;

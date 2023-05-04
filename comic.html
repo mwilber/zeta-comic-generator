@@ -130,7 +130,7 @@
 		SetStatus('generating');
 		const comicId = getQueryStringValue('id');
 		if(comicId) {
-		fetch('./server/detail.php?id='+comicId)
+		fetch('https://comicgenerator.greenzeta.com/server/detail.php?id='+comicId)
 			.then((response) => response.json())
 			.then((data) => {
 				if(!data || !data.script){
@@ -150,7 +150,7 @@
 							<ul>
 							<li>Character: ${panel.character}</li>
 							<li>Dialog: ${panel.dialog}</li>
-							<li>Background: <a href="./server/image.php?query=${panel.background}" target="blank">${panel.background}</a></li>
+							<li>Background: <a href="https://comicgenerator.greenzeta.com/server/image.php?query=${panel.background}" target="blank">${panel.background}</a></li>
 							</ul>
 						</li>
 						`;
