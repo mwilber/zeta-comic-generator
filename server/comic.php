@@ -53,7 +53,7 @@ function generatePrompt($premise) {
 		"`title`: The title of the comic strip. Limit to 50 letters.",
 		"`scene`: A description of the panel scene including all characters. Limit to 200 letters.",
 		"`setting`: A unique, detailed, description of what the panel scene would look like without the main character present. Limit to 500 letters.",
-		"`character`: A description of the main character's action. It can be one of the following values: `standing` or `sitting`.",
+		"`character`: A description of the main character's action. It can be one of the following values: `approval`, `explaining`, `sitting`, `standing` or `terrified`.",
 		"`dialog`: Dialog spoken by the main character. This can be an empty string if the character is not speaking. Limit to 150 letters.",
 	);
 
