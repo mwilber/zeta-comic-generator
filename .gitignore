@@ -1,5 +1,5 @@
 key.php
 db.php
 testimg/
-assets/backgrounds/
-assets/thumbnails/
+assets/backgrounds
+assets/thumbnails
