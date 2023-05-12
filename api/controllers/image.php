@@ -1,10 +1,4 @@
 <?php
-require './key.php';
-
-header("Access-Control-Allow-Origin: *");
-header("Access-Control-Allow-Headers: *");
-header('Content-Type: application/json; charset=utf-8');
-
 $query = $_POST["query"];
 
 if(!isset($query)) $query = urldecode($_GET["query"]);
@@ -23,7 +17,6 @@ if(false){
 			echo '{"data":[{"url":"https://proxygpt.greenzeta.com/zeta-comic-generator/testimg/img-yT9OR0KXefyxAfTnanZRI9VX.png"}]}';
 			break;
 	}
-
 	die;
 }
 
@@ -36,29 +29,30 @@ $headers = array(
 	'Authorization: Bearer ' . $OPENAI_KEY,
 	'Content-Type: application/json',
 );
-    curl_setopt($ch, CURLOPT_URL, $url);
-    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-    curl_setopt($ch, CURLOPT_HEADER, 0);
-    $body = '{
-            "prompt": "'.$query.'",
-            "n": 1,
-            "size": "256x256"
-	}';
+curl_setopt($ch, CURLOPT_URL, $url);
+curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+curl_setopt($ch, CURLOPT_HEADER, 0);
+$body = '{
+        "prompt": "'.$query.'",
+        "n": 1,
+        "size": "256x256"
+}';
 
 //print_r($body);
 
-    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST"); 
-    curl_setopt($ch, CURLOPT_POSTFIELDS,$body);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST"); 
+curl_setopt($ch, CURLOPT_POSTFIELDS,$body);
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
-    // Timeout in seconds
-    curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+// Timeout in seconds
+curl_setopt($ch, CURLOPT_TIMEOUT, 30);
 
-    $json = curl_exec($ch);
+$json = curl_exec($ch);
 
 
 //$json = "{\"hello\": \"world\"}";
 $data = json_decode($json);
 //echo $data->data[0]->url; 
-echo json_encode($data);
+$output->error = $data->error;
+$output->data = $data->data;
 ?>

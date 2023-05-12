@@ -27,16 +27,26 @@ function SetStatus(status) {
 }
 
 async function fetchComic(prompt) {
-	return await queryApi('/server/comic.php?query=' + prompt);
+    const formData = new FormData();
+	formData.append('query', prompt);
+
+    const comic = await queryApi('/api/comic', formData);
+    if(comic.script) return comic.script;
 }
 
 async function fetchBackground(prompt) {
-	return await queryApi('/server/image.php?query=' + prompt);
+    const formData = new FormData();
+	formData.append('query', prompt);
+
+	return await queryApi('/api/image', formData);
 }
 
-async function queryApi(apiUrl) {
+async function queryApi(apiUrl, formData) {
 	try {
-		const response = await fetch(apiUrl);
+		const response = await fetch(apiUrl, {
+            method: 'POST',
+            body: formData
+        });
 		const data = await response.json();
 		console.log("data", data);
 		return data;
@@ -64,7 +74,7 @@ function SaveStrip(){
 	formData.append('fg3', saveObj.foregrounds[2]);
 	//formData.append('thumbnail', saveObj.thumbnail);
 
-	fetch('/server/save.php', {
+	fetch('/api/save', {
 		method: 'POST',
 		body: formData
 	})

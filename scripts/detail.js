@@ -22,7 +22,7 @@ function SetStatus(status) {
 ClearElements();
 SetStatus('generating');
 if(comicId) {
-	fetch('/server/detail.php?id='+comicId)
+	fetch('/api/detail/'+comicId)
 		.then((response) => response.json())
 		.then((data) => {
 			if(!data || !data.script){
