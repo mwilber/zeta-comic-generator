@@ -1,9 +1,5 @@
 <?php
 
-if(true){
-	$output->script = json_decode('{"title":"Test Strip", "panels":[{"character":"standing","background":"A faraway view of Earth and the Sun with a starry night sky","dialog":"The Sun is 150 million kilometers away from Earth"},{"character":"sitting","background":"A mathematical equation written on an old parchment with quill pen","dialog":"That\'s equal to 8 light minutes"},{"character":"standing","background":"A view of Earth with the stars and planets around it","dialog":"So if we wanted to travel there, we would need a spaceship that could move faster than light!"}]}');
-}
-
 function add_period($str) {
 	$last_char = substr($str, -1);
 	if ($last_char !== '.' && $last_char !== '!' && $last_char !== '?') {
@@ -120,6 +116,8 @@ if($query) {
         if($script) $output->script = $script;
 
     }
+} else {
+    $output->script = json_decode('{"title":"Test Strip", "panels":[{"character":"standing","background":"A faraway view of Earth and the Sun with a starry night sky","dialog":"The Sun is 150 million kilometers away from Earth"},{"character":"sitting","background":"A mathematical equation written on an old parchment with quill pen","dialog":"That\'s equal to 8 light minutes"},{"character":"standing","background":"A view of Earth with the stars and planets around it","dialog":"So if we wanted to travel there, we would need a spaceship that could move faster than light!"}]}');
 }
 
 ?>
