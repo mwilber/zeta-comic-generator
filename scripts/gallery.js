@@ -1,4 +1,4 @@
-fetch('/server/gallery.php')
+fetch('/api/gallery')
 	.then((response) => response.json())
 	.then((listing)=>{
 		if(!listing.gallery) return;
