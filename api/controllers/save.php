@@ -1,11 +1,4 @@
 <?php
-	ini_set('display_errors', 1);
-	ini_set('display_startup_errors', 1);
-	error_reporting(E_ERROR);
-
-	// include database and object files
-	include_once './db.php';
-
 	function downloadImage($url, $savePath = '../assets/backgrounds/') {
 		// Create the directory if it doesn't exist
 		if (!file_exists($savePath)) {
@@ -82,11 +75,9 @@
 		imagedestroy($newImage);
 	}
 
-	// required headers
-	header("Access-Control-Allow-Origin: *");
-	header("Content-Type: application/json; charset=UTF-8");
 
-	$output = json_decode('{"response": {}, "error": null}');
+	//$output = json_decode('{"response": {}, "error": null}');
+    $output->response = new stdClass;
 
 	$database = new Database();
 	$db = $database->getConnection();
@@ -137,7 +128,5 @@
 			}
 		}
 	}
-
-	echo json_encode($output);
 
 ?>

@@ -1,0 +1,144 @@
+/* Gallery */
+
+#gallery {
+	width: 100%;
+	display: flex;
+	flex-wrap: wrap;
+}
+
+.frame {
+	flex: 1;
+}
+
+.strip {
+	display: block;
+	position: relative;
+	width: 200px;
+	height: 200px;
+	margin: 5px;
+	border: solid 2px black;
+	/* padding-bottom: calc(33.3% - 14px); */
+	color: #999;
+	background: black;
+	aspect-ratio: 1;
+	transition: background-color 500ms;
+}
+
+.strip img {
+	position: absolute;
+	width: 100%;
+}
+
+.strip h2 {
+	position: absolute;
+	bottom: 0;
+	color: white;
+	font-family: sans-serif;
+	font-size: 20px;
+	font-weight: bold;
+	margin: 5px;
+	text-shadow: 0px 0px 1px black, 0px 0px 2px black, 0px 0px 2px black, 0px 0px 5px black;
+}
+
+
+/* Generate */
+
+#input {
+	width:100%;
+	display: flex;
+	font-size: 18px;
+}
+
+#query, #generate {
+	font-size: inherit;
+	padding: 0.5em 1em;
+	border: solid 1px #333e4d;
+	border-radius: 5px;
+}
+
+#query {
+	flex: 1;
+	background: #e5f0ff;
+	box-shadow: inset 1px 1px 2px rgba(0,0,0,0.5);
+}
+
+#generate {
+	flex: 0;
+	margin: 0 1em;
+	text-transform: uppercase;
+	background: #e3e9f1;
+	/* color: white; */
+	box-shadow: inset -1px -1px 2px rgba(0,0,0,0.5);
+}
+
+.generating #script:before,
+.error #script:before {
+	content: 'Generating...';
+	font-size: 24px;
+	font-weight: bold;
+	color: #999;
+}
+
+.error #script:before {
+	content: 'Error communicating with API. Try again.';
+	color: #f99;
+}
+
+.init #strip .panel {
+	background: #ccc;
+}
+
+.generating #strip .panel {
+	background: #fff;
+}
+
+#save, #permalink {
+	display:none;
+}
+
+
+/* Detail */
+
+#query {
+	width: auto;
+	background: #242442;
+	color: rgba(255,255,255,0.8);
+	padding: 1em;
+}
+
+/* Comic Strip */
+
+#strip {
+	width: 100%;
+	display: flex;
+}
+
+#strip .panel {
+	position: relative;
+	flex: 1;
+	margin: 5px;
+	border: solid 2px black;
+	/* padding-bottom: calc(33.3% - 14px); */
+	color: #999;
+	background: black;
+	aspect-ratio: 1;
+	transition: background-color 500ms;
+}
+
+#strip .panel img {
+	position: absolute;
+	width: 100%;
+}
+
+#strip .panel .dialog {
+	position: absolute;
+	/* width: calc(100%); */
+	background: #feff70;
+	color: black;
+	font-family: 'Courier New', Courier, monospace;
+	font-size: 12px;
+	font-weight: bold;
+	padding: 5px;
+	border: solid 2px black;
+	margin: 5px;
+}
