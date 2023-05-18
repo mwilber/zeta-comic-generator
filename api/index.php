@@ -31,9 +31,14 @@
     // Global requires
     require __DIR__ . '/includes/db.php';
     require __DIR__ . '/includes/key.php';
+	require __DIR__ . '/includes/gpt.php';
 
 	switch ($controller) {
 
+		case 'gpt_script':
+		case 'gpt_background':
+		case 'gpt_dialog':
+		case 'gpt_action':
         case 'comic':
         case 'detail':
 		case 'gallery':
