@@ -40,7 +40,7 @@ if(comicId) {
 					<li>
 						Panel ${idx + 1}
 						<ul>
-						<li>Character: ${panel.character}</li>
+						<li>Action: ${panel.action}</li>
 						<li>Dialog: ${panel.dialog}</li>
 						<li>Background: ${panel.background}</li>
 						</ul>
@@ -51,7 +51,7 @@ if(comicId) {
 
 					document.getElementById('panel' + (idx + 1)).innerHTML = `
 						<img class="background" src="/assets/backgrounds/${data.backgrounds[idx]}"/>
-						<img class="character" src="/assets/character_art/${panel.character.toLowerCase()}.png"/>
+						<img class="character" src="/assets/character_art/${panel.action.toLowerCase()}.png"/>
 						`;
 					if(panel.dialog)
 						document.getElementById('panel' + (idx + 1)).innerHTML += `
