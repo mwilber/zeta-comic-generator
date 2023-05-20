@@ -38,11 +38,13 @@ function UpdateProgress(amount) {
 	el.innerHTML = window.progress + "%";
 }
 
-async function fetchSceneComponent(scene, endpoint, property) {
+async function fetchSceneComponent(scene, endpoint, property, premise, part) {
 	let result = "";
 	let retry = 2;
 	let sceneData = new FormData();
 	sceneData.append('query', scene);
+	if(premise) sceneData.append('premise', premise);
+	if(part) sceneData.append('part', part);
 
 	// Sometimes GPT returns a null, retry up to 2 times to get a usable result.
 	while(retry > 0) {
@@ -59,6 +61,7 @@ async function fetchSceneComponent(scene, endpoint, property) {
 
 async function fetchComic(prompt) {
 	
+	const partNames = ['first', 'second', 'third'];
     const formData = new FormData();
 	formData.append('query', prompt);
 
@@ -69,13 +72,13 @@ async function fetchComic(prompt) {
 	UpdateProgress(13);
 
 	for(let [idx, panel] of comic.script.panels.entries()) {
-		panel.background = await fetchSceneComponent(panel.scene, 'gpt_background', 'background');
+		panel.background = await fetchSceneComponent(prompt + ' - ' + panel.scene, 'gpt_background', 'background');
 		UpdateProgress(3);
 		panel.background_url = await renderBackground(idx, panel.background, prompt);
 		UpdateProgress(20);
 		panel.action = await fetchSceneComponent(panel.scene, 'gpt_action', 'action');
 		UpdateProgress(3);
-		panel.dialog = await fetchSceneComponent(prompt + " - " + panel.scene, 'gpt_dialog', 'dialog');
+		panel.altdialog = await fetchSceneComponent(panel.scene, 'gpt_dialog', 'dialog', prompt, partNames[idx]);
 		UpdateProgress(3);
 	}
 

@@ -7,16 +7,17 @@
 	}
 
 	$instructions = array(
-		"Write a json object containing the description of a three panel comic strip, including dialog spoken by the main character.",
-		"In the comic strip, a single character engages in the following premise:",
+		"Write a json object containing the description of a three panel comic strip.",
+		"In the comic strip, a single character engages in the following premise in a humourous way: ",
 		add_period($query),
+		"Include a detailed scene description and words spoken by the main character.",
 		//"The description is written as a json object, describing the content that makes up the comic strip.", 
 		"The json object has the following properties: `title` and `panels`.",
-		"`panels` is an array of objects with the following properties: `scene` and `dialog`",
 		"The following is a description of each property value:",
 		"`title`: The title of the comic strip. Limit to 50 letters.",
-		"`scene`: A description of the panel scene including all characters. Limit to 200 letters.",
-		"`dialog`: Dialog spoken by the main character. This can be an empty string if the character is not speaking. Keep the dialog as short as possible and limit to 100 letters.",
+		"`panels` is an array of objects with the following properties: `scene` and `dialog`",
+		"`scene`: A description of the panel scene including all characters.",
+		"`dialog`: Words spoken by the main character. This can be an empty string if the character is not speaking.",
 	);
 
 	$prompt = generatePrompt($instructions);
