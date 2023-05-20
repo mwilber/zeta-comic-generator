@@ -3,7 +3,7 @@
 		$query = $_POST["query"];
 	} else {
 		// FOR TESTING
-		$query = "An empty room filled with party favors.";
+		$query = "The main character takes a bite out of the taco and recoils in disgust.";
 	}
 
 	$actions = [
@@ -36,6 +36,11 @@
 		$output->data = $response->data;
 		$output->debug = $response->debug;
 	}
+
+	if (!in_array($response->json->action, $actions)) {
+		$response->json->action = "standing";
+	}
+
 	$output->json = $response->json;
 
 ?>
