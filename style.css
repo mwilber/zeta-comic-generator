@@ -135,7 +135,8 @@
 #strip .panel .dialog {
 	position: absolute;
 	/* width: calc(100%); */
-	background: #feff70;
+	/* background: #feff70; */
+	background: white;
 	color: black;
 	font-family: 'Courier New', Courier, monospace;
 	font-size: 12px;
@@ -143,4 +144,69 @@
 	padding: 5px;
 	border: solid 2px black;
 	margin: 5px;
+}
+
+.bubble {
+	position: relative;
+	width: auto;
+	/* text-align: center;
+	line-height: 1.4em; */
+	margin: 40px auto;
+	background-color: #fff;
+	border: 2px solid #333;
+	border-radius: 15px;
+	font-family: sans-serif;
+	padding: 20px;
+	font-size: large;
+}
+
+.thought {
+	width: 300px;
+	border-radius: 200px;
+	padding: 30px;	
+}
+
+.bubble:before,
+.bubble:after {
+	content: ' ';
+	position: absolute;
+	width: 0;
+	height: 0;
+}
+
+.speech:before {
+	left: 75px;
+    bottom: -24px;
+    border: 11px solid;
+	border-color: #000 #000 transparent transparent;
+}
+
+.speech:after {
+	left: 75px;
+    bottom: -20px;
+    border: 10px solid;
+	border-color: #fff #fff transparent transparent;
+}
+
+.thought:before,
+.thought:after {
+	left: 10px;
+	bottom: -30px;
+	width: 40px;
+	height: 40px;
+	background-color: #fff;
+	border: 8px solid #333;
+	-webkit-border-radius: 28px;
+	-moz-border-radius: 28px;
+	border-radius: 28px;
+}
+
+.thought:after {
+	width: 20px;
+	height: 20px;
+	left: 5px;
+	bottom: -40px;
+	-webkit-border-radius: 18px;
+	-moz-border-radius: 18px;
+	border-radius: 18px;
 }

@@ -56,7 +56,7 @@ if(comicId) {
 						`;
 					if(panel.dialog)
 						document.getElementById('panel' + (idx + 1)).innerHTML += `
-							<div class="dialog">${panel.dialog}</div>
+							<div class="dialog bubble speech">${panel.dialog}</div>
 							`;
 
 				});
