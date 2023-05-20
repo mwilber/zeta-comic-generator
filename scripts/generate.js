@@ -66,15 +66,17 @@ async function fetchComic(prompt) {
 
     const script = await queryApi('/api/gpt_script', formData);
 	if(script.json && script.json.panels && script.json.panels.length) comic.script = script.json;
-	UpdateProgress(10);
+	UpdateProgress(13);
 
 	for(let [idx, panel] of comic.script.panels.entries()) {
 		panel.background = await fetchSceneComponent(panel.scene, 'gpt_background', 'background');
-		UpdateProgress(5);
-		panel.action = await fetchSceneComponent(panel.scene, 'gpt_action', 'action');
-		UpdateProgress(5);
-		panel.background_url = await renderBackground(idx, panel.background);
+		UpdateProgress(3);
+		panel.background_url = await renderBackground(idx, panel.background, prompt);
 		UpdateProgress(20);
+		panel.action = await fetchSceneComponent(panel.scene, 'gpt_action', 'action');
+		UpdateProgress(3);
+		panel.dialog = await fetchSceneComponent(prompt + " - " + panel.scene, 'gpt_dialog', 'dialog');
+		UpdateProgress(3);
 	}
 
 	console.log(comic);
@@ -82,13 +84,13 @@ async function fetchComic(prompt) {
     return comic.script;
 }
 
-async function renderBackground(idx, description) {
+async function renderBackground(idx, description, premise) {
 	// Bypass images. For testing prompts
 	// return;
 
 	document.getElementById('panel' + (idx + 1)).innerHTML = `Rendering...`;
 
-	let image = await fetchBackground(description);
+	let image = await fetchBackground(premise + " - " + description);
 	if(!image){
 		SetStatus('error');
 		return;
@@ -186,6 +188,7 @@ async function GenerateStrip(query) {
 				<li>
 					Panel ${idx + 1}
 					<ul>
+						<li>Description: ${panel.scene}</li>
 						<li>Action: ${panel.action}</li>
 						<li>Dialog: ${panel.dialog}</li>
 						<li>Background: ${panel.background}</li>

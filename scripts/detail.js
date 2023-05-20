@@ -40,9 +40,10 @@ if(comicId) {
 					<li>
 						Panel ${idx + 1}
 						<ul>
-						<li>Action: ${panel.action}</li>
-						<li>Dialog: ${panel.dialog}</li>
-						<li>Background: ${panel.background}</li>
+							<li>Description: ${panel.scene}</li>
+							<li>Action: ${panel.action}</li>
+							<li>Dialog: ${panel.dialog}</li>
+							<li>Background: ${panel.background}</li>
 						</ul>
 					</li>
 					`;
