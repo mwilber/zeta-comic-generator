@@ -21,17 +21,92 @@ function SetStatus(status) {
 		document.getElementById(id)[status === 'generating' ? 'setAttribute' : 'removeAttribute']('disabled', '');
 	});
 
+	const el = document.getElementById("status");
+	el.innerHTML = status;
+
 	if(status === 'generating'){
 		
 	}
 }
 
+function UpdateProgress(amount) {
+	if(isNaN(window.progress) || amount === 0) window.progress = amount;
+	else window.progress += amount;
+	console.log("Update:", window.progress);
+	const el = document.getElementById("progress");
+	el.setAttribute("value", window.progress);
+	el.innerHTML = window.progress + "%";
+}
+
+async function fetchSceneComponent(scene, endpoint, property, premise, part) {
+	let result = "";
+	let retry = 2;
+	let sceneData = new FormData();
+	sceneData.append('query', scene);
+	if(premise) sceneData.append('premise', premise);
+	if(part) sceneData.append('part', part);
+
+	// Sometimes GPT returns a null, retry up to 2 times to get a usable result.
+	while(retry > 0) {
+		retry--;
+		let response = await queryApi('/api/' + endpoint, sceneData);
+		if(response.json) {
+			result = response.json[property];
+			break;
+		}
+	}
+
+	return result;
+}
+
 async function fetchComic(prompt) {
+	
+	const partNames = ['first', 'second', 'third'];
     const formData = new FormData();
 	formData.append('query', prompt);
 
-    const comic = await queryApi('/api/comic', formData);
-    if(comic.script) return comic.script;
+	let comic = {};
+
+    const script = await queryApi('/api/gpt_script', formData);
+	if(script.json && script.json.panels && script.json.panels.length) comic.script = script.json;
+	UpdateProgress(13);
+
+	for(let [idx, panel] of comic.script.panels.entries()) {
+		panel.background = await fetchSceneComponent(prompt + ' - ' + panel.scene, 'gpt_background', 'background');
+		UpdateProgress(3);
+		panel.background_url = await renderBackground(idx, panel.background, prompt);
+		UpdateProgress(20);
+		panel.action = await fetchSceneComponent(panel.scene, 'gpt_action', 'action');
+		UpdateProgress(3);
+		panel.altdialog = await fetchSceneComponent(panel.scene, 'gpt_dialog', 'dialog', prompt, partNames[idx]);
+		UpdateProgress(3);
+	}
+
+	console.log(comic);
+
+    return comic.script;
+}
+
+async function renderBackground(idx, description, premise) {
+	// Bypass images. For testing prompts
+	// return;
+
+	document.getElementById('panel' + (idx + 1)).innerHTML = `Rendering...`;
+
+	let image = await fetchBackground(premise + " - " + description);
+	if(!image){
+		SetStatus('error');
+		return;
+	}
+
+	console.log("image data", image);
+	console.log("attempting panel", idx)
+
+	document.getElementById('panel' + (idx + 1)).innerHTML = `
+		<img class="background" src="${image.data[0].url}"/>
+		`;
+
+	return image.data[0].url;
 }
 
 async function fetchBackground(prompt) {
@@ -98,6 +173,7 @@ function SaveStrip(){
 
 async function GenerateStrip(query) {
 	ClearElements();
+	UpdateProgress(0);
 	SetStatus('generating');
 	fetchComic(query).then(async (script) => {
 		if(!script){
@@ -110,42 +186,27 @@ async function GenerateStrip(query) {
 
 		if(script.panels && script.panels.length){
 			for(const [idx,panel] of script.panels.entries()){
-				panel.background = panel.setting;
+				//panel.background = panel.setting;
 				document.getElementById("script").innerHTML += `
 				<li>
 					Panel ${idx + 1}
 					<ul>
-						<li>Character: ${panel.character}</li>
+						<li>Description: ${panel.scene}</li>
+						<li>Action: ${panel.action}</li>
 						<li>Dialog: ${panel.dialog}</li>
-						<li>Background: <a href="/server/image.php?query=${panel.background}" target="blank">${panel.background}</a></li>
+						<li>Background: ${panel.background}</li>
 					</ul>
 				</li>
 				`;
 
-				// Bypass images. For testing prompts
-				// continue;
-
-				document.getElementById('panel' + (idx + 1)).innerHTML = `Rendering...`;
-
-				let image = await fetchBackground(panel.background);
-				if(!image){
-					SetStatus('error');
-					return;
-				}
-
-				console.log("image data", image);
-				console.log("attempting panel", idx)
-
-				saveObj.backgrounds[idx] = image.data[0].url;
-				saveObj.foregrounds[idx] = panel.character.toLowerCase() + '.png';
-
-				document.getElementById('panel' + (idx + 1)).innerHTML = `
-					<img class="background" src="${image.data[0].url}"/>
-					<img class="character" src="../assets/character_art/${panel.character.toLowerCase()}.png"/>
+				saveObj.backgrounds[idx] = panel.background_url;
+				saveObj.foregrounds[idx] = panel.action.toLowerCase() + '.png';
+				document.getElementById('panel' + (idx + 1)).innerHTML += `
+					<img class="character" src="../assets/character_art/${panel.action.toLowerCase()}.png"/>
 					`;
 				if(panel.dialog)
 					document.getElementById('panel' + (idx + 1)).innerHTML += `
-						<div class="dialog">${panel.dialog}</div>
+						<div class="dialog bubble speech">${panel.dialog}</div>
 						`;
 
 				document.getElementById('save').style.display = 'initial';
