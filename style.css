@@ -1,3 +1,10 @@
+@import url('https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap');
+
+body {
+	font-family:Arial, Helvetica, sans-serif;
+	font-size: 14px;
+}
+
 /* Gallery */
 
 #gallery {
@@ -99,11 +106,77 @@
 
 /* Detail */
 
-#query {
+/* #query {
 	width: auto;
 	background: #242442;
 	color: rgba(255,255,255,0.8);
 	padding: 1em;
+} */
+
+#query.premise {
+	padding: 20px 30px;
+	border-radius: 30px;
+}
+
+#query.premise:after {
+	content: ' ';
+    border-right: solid 1px black;
+    width: 3px;
+    display: inline-block;
+    height: 1.25em;
+    vertical-align: text-bottom;
+	animation: blink-animation 1s step-start 0s infinite;;
+}
+
+@keyframes blink-animation {
+	50% {
+		visibility: hidden;
+	}
+}
+
+/* Script */
+#script {
+	background: rgba(203, 170, 56, 0.1);
+    padding: 20px 30px;
+	border: solid 1px rgba(203, 170, 56, 1);
+    border-radius: 30px;
+	list-style: none;
+	font-family: 'Courier New', Courier, monospace;
+}
+
+#script h2, #script h3 {
+	margin: 0 0 10px 0;
+}
+
+#script h2 {
+	font-size: 2em;
+}
+
+#script h3 {
+	font-size: 1.5em;
+}
+
+#script ul {
+	list-style: none;
+}
+
+#script table {
+	font-size: inherit;
+}
+
+#script table tr td {
+	vertical-align: top;
+}
+
+#script table tr td:first-child {
+	text-align: right;
+	font-weight: bold;
+	border-right: solid 3px rgba(0, 0, 0, 0.15);
+	padding-right: 5px;
+}
+
+#script table tr td:last-child {
+	padding-left: 5px;
 }
 
 /* Comic Strip */
@@ -138,10 +211,11 @@
 	/* background: #feff70; */
 	background: white;
 	color: black;
-	font-family: 'Courier New', Courier, monospace;
-	font-size: 12px;
-	font-weight: bold;
-	padding: 5px;
+	font-family: 'Patrick Hand', 'Courier New', Courier, monospace;
+	font-size: 14px;
+	letter-spacing: 0.5;
+    /* font-weight: bold; */
+    padding: 5px 10px;
 	border: solid 2px black;
 	margin: 5px;
 }

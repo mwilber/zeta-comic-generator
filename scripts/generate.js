@@ -189,12 +189,16 @@ async function GenerateStrip(query) {
 				//panel.background = panel.setting;
 				document.getElementById("script").innerHTML += `
 				<li>
-					Panel ${idx + 1}
+					<h3>Panel ${idx + 1}</h3>
 					<ul>
-						<li>Description: ${panel.scene}</li>
-						<li>Action: ${panel.action}</li>
-						<li>Dialog: ${panel.dialog}</li>
-						<li>Background: ${panel.background}</li>
+						<li>
+							<table>
+								<tr><td>Description</td> <td>${panel.scene}</td></tr>
+								<tr><td>Action</td> <td>${panel.action}</td></tr>
+								<tr><td>Dialog</td> <td>${panel.dialog}</td></tr>
+								<tr><td>Background</td> <td>${panel.background}</td></tr>
+							</table>
+						</li>
 					</ul>
 				</li>
 				`;
