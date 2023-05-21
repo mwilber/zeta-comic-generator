@@ -32,12 +32,13 @@
     <link rel="stylesheet" href="/style.css">
   </head>
   <body class="<?php echo $path[1] ?> init">
+	<div class="halftone"></div>
 	<!-- <script src="index.js"></script> -->
 	<?php
 		// Render the header
 		require __DIR__ . '/templates/header.php';
 	?>
-
+	<div class="content">
 	<?php
 		// Render the view
 		switch ($path[1]) {
@@ -55,5 +56,6 @@
 				break;
 		}
 	?>
+	</div>
   </body>
 </html>

@@ -8,7 +8,7 @@ function ClearElements() {
 }
 
 function SetStatus(status) {
-	document.body.className = status;
+	//document.body.className = status;
 
 	['query'].forEach((id) => {
 		document.getElementById(id)[status === 'generating' ? 'setAttribute' : 'removeAttribute']('disabled', '');
@@ -37,6 +37,9 @@ if(comicId) {
 
 			if(script.panels && script.panels.length){
 				script.panels.forEach((panel, idx) => {
+					// Support older scripts that had character property
+					if(!panel.action && panel.character) panel.action = panel.character;
+
 					document.getElementById("script").innerHTML += `
 					<li>
 						<h3>Panel ${idx + 1}</h3>

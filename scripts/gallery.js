@@ -8,7 +8,7 @@ fetch('/api/gallery')
 			<div class="frame">
 				<a class="strip" href="/detail/${strip.id}">
 					<img src="/assets/thumbnails/thumb_${strip.id}.png"/>
-					<h2>${strip.title}</h2>
+					<h3>${strip.title}</h3>
 				</a>
 			</div>
 			`;
