@@ -1,4 +1,5 @@
-api/includes
+api/includes/db.php
+api/includes/key.php
 testimg/
 assets/backgrounds
 assets/thumbnails
