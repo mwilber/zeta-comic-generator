@@ -81,8 +81,8 @@ header nav a {
 	flex: 1;
 	text-align: center;
 	background: transparent;
-	height: 80px;
-	margin-top: 5px;
+	height: 70px;
+	margin-top: 10px;
 }
 
 header nav a:hover {
@@ -98,9 +98,14 @@ header nav a img {
 	transition: all 250ms cubic-bezier(0.680, -0.550, 0.265, 1.550);
 }
 
+header nav a img.burst {
+	opacity: 0.65;
+}
+
 header nav a:hover img.burst {
 	transform: translate(-50%, -50%) rotate(-5deg);
 	height: 105%;
+	opacity: 1;
 }
 
 header nav a:hover img.label {
@@ -316,9 +321,13 @@ header nav a:hover img.label {
 
 #strip {
     display: flex;
-	width: 100%;
-    max-width: 960px;
+	width: calc(100% - 18px);
+    max-width: 942px;
     margin: auto;
+	background: #fff;
+	border: solid 1px #999;
+    padding: 8px;
+    box-shadow: 2px 2px 6px rgba(0,0,0,0.5);
 }
 
 #strip .panel {
@@ -459,6 +468,7 @@ header nav a:hover img.label {
 @media screen and (max-width: 700px) {
 	#strip {
 		flex-direction: column;
+		max-width: 275px;
 	}
 	#strip .panel {
 		margin: 5px auto;
