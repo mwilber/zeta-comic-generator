@@ -1,3 +1,7 @@
+<div id="statusdialog">
+	<div id="status"></div>
+	<progress id="progress" value="0" max="100"></progress>
+</div>
 <h2>Premise</h2>
 <div id="input">
 	<input id="query" type="text" placeholder="ex. An explanation of the distance between the earth and the sun."/>
