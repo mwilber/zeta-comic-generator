@@ -1,25 +1,62 @@
 <?php
-	if(isset($_POST["query"])) {
-		$query = $_POST["query"];
-	} else {
-		// FOR TESTING
-		$query = "The figure stares as the light gets closer and sees it is a flashlight.";
-	}
+if(isset($_POST["mode"])) {
+	$mode = $_POST["mode"];
+} else {
+	$mode = "production";
+}
 
-	if(isset($_POST["premise"])) {
-		$premise = $_POST["premise"];
-	} else {
-		// FOR TESTING
-		$premise = "a walk through the woods at night. a light in the sky. Thinks it's a ufo. The light is actually a flashlight.";
-	}
+if(isset($_POST["query"])) {
+	$query = $_POST["query"];
+} else {
+	// FOR TESTING
+	$query = "The figure stares as the light gets closer and sees it is a flashlight.";
+}
 
-	if(isset($_POST["part"])) {
-		$part = $_POST["part"];
-	} else {
-		// FOR TESTING
-		$part = "third";
-	}
+if(isset($_POST["premise"])) {
+	$premise = $_POST["premise"];
+} else {
+	// FOR TESTING
+	$premise = "a walk through the woods at night. a light in the sky. Thinks it's a ufo. The light is actually a flashlight.";
+}
 
+if(isset($_POST["part"])) {
+	$part = $_POST["part"];
+} else {
+	// FOR TESTING
+	$part = "third";
+}
+
+if($mode == "simulation") {
+	$simJson = "{
+		\"error\": \"\",
+		\"data\": {
+		  \"id\": \"cmpl-7JVIu2leIIm5Z4QAjeykjHLtmL0Wh\",
+		  \"object\": \"text_completion\",
+		  \"created\": 1684882920,
+		  \"model\": \"text-davinci-003\",
+		  \"choices\": [
+			{
+			  \"text\": \"\\n\\n{\\n    \\\"dialog\\\": \\\"Hello! What can I do for you?\\\"\\n}\",
+			  \"index\": 0,
+			  \"logprobs\": null,
+			  \"finish_reason\": \"stop\"
+			}
+		  ],
+		  \"usage\": {
+			\"prompt_tokens\": 99,
+			\"completion_tokens\": 21,
+			\"total_tokens\": 120
+		  }
+		},
+		\"debug\": \"{\\n    \\\"dialog\\\": \\\"Hello! What can I do for you?\\\"\\n}\",
+		\"json\": {
+		  \"dialog\": \"Hello! What can I do for you?\"
+		}
+	}";
+	$simResponse = json_decode($simJson);
+	$output->json = $simResponse->json;
+	sleep(1);
+} else {
 	// $instructions = array(
 	// 	"The following is a passage describing a scene in a story.",
 	// 	add_period($query),
@@ -55,5 +92,5 @@
 		$output->debug = $response->debug;
 	}
 	$output->json = $response->json;
-
+}
 ?>

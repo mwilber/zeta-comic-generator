@@ -1,11 +1,48 @@
 <?php
-	if(isset($_POST["query"])) {
-		$query = $_POST["query"];
-	} else {
-		// FOR TESTING
-		$query = "The main character takes a bite out of the taco and recoils in disgust.";
-	}
+if(isset($_POST["mode"])) {
+	$mode = $_POST["mode"];
+} else {
+	$mode = "production";
+}
 
+if(isset($_POST["query"])) {
+	$query = $_POST["query"];
+} else {
+	// FOR TESTING
+	$query = "The main character takes a bite out of the taco and recoils in disgust.";
+}
+
+if($mode == "simulation") {
+	$simJson = "{
+		\"error\": \"\",
+		\"data\": {
+		  \"id\": \"cmpl-7JVIZWcC7kbMYvYwofgMti6IcdTaH\",
+		  \"object\": \"text_completion\",
+		  \"created\": 1684882899,
+		  \"model\": \"text-davinci-003\",
+		  \"choices\": [
+			{
+			  \"text\": \"\\n\\n{\\n   \\\"action\\\": \\\"excited\\\" \\n}\",
+			  \"index\": 0,
+			  \"logprobs\": null,
+			  \"finish_reason\": \"stop\"
+			}
+		  ],
+		  \"usage\": {
+			\"prompt_tokens\": 124,
+			\"completion_tokens\": 15,
+			\"total_tokens\": 139
+		  }
+		},
+		\"debug\": \"{\\n   \\\"action\\\": \\\"excited\\\" \\n}\",
+		\"json\": {
+		  \"action\": \"standing\"
+		}
+	}";
+	$simResponse = json_decode($simJson);
+	$output->json = $simResponse->json;
+	sleep(1);
+} else {
 	$actions = [
 		"none",
 		"angry",
@@ -42,5 +79,5 @@
 	}
 
 	$output->json = $response->json;
-
+}
 ?>

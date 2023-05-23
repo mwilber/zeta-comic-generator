@@ -42,6 +42,7 @@ async function fetchSceneComponent(scene, endpoint, property, premise, part) {
 	let result = "";
 	let retry = 2;
 	let sceneData = new FormData();
+	sceneData.append('mode', 'simulation');
 	sceneData.append('query', scene);
 	if(premise) sceneData.append('premise', premise);
 	if(part) sceneData.append('part', part);
@@ -63,6 +64,7 @@ async function fetchComic(prompt) {
 	
 	const partNames = ['first', 'second', 'third'];
     const formData = new FormData();
+	formData.append('mode', 'simulation');
 	formData.append('query', prompt);
 
 	let comic = {};
@@ -111,6 +113,7 @@ async function renderBackground(idx, description, premise) {
 
 async function fetchBackground(prompt) {
     const formData = new FormData();
+	formData.append('mode', 'simulation');
 	formData.append('query', prompt);
 
 	return await queryApi('/api/image', formData);
