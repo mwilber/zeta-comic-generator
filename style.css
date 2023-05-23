@@ -15,6 +15,8 @@ body {
 	--mask: linear-gradient(rgb(0 0 0), rgb(0 0 0 / 0.5));
 	--stop1: 0.06rem;
 	--stop2: 0.65rem;
+	--color1: rgb(0, 0, 0);
+	--color2: rgb(0, 0, 0);
 	
 	position: absolute;
 	width: 100%;
@@ -32,7 +34,18 @@ body {
 	inset: 0;
 
 	/* Dotted background */
-	background-image: radial-gradient(circle at center, black var(--stop1), transparent var(--stop2)), radial-gradient(circle at center, black var(--stop1), transparent var(--stop2));
+	background-image: 
+		radial-gradient(
+			circle at center, 
+			var(--color1) var(--stop1), 
+			transparent var(--stop2)
+		), 
+		radial-gradient(
+			circle at center, 
+			var(--color2) 
+			var(--stop1), 
+			transparent var(--stop2)
+		);
 	background-size: var(--bgSize) var(--bgSize);
 	background-position: 0 0, var(--bgPosition) var(--bgPosition);
 	mask-image: var(--mask);
@@ -349,7 +362,8 @@ header nav a:hover img.label {
 }
 
 #strip .panel .dialog {
-	position: absolute;
+	position: relative;
+	width: fit-content;
 	/* width: calc(100%); */
 	/* background: #feff70; */
 	background: white;
@@ -360,7 +374,14 @@ header nav a:hover img.label {
     /* font-weight: bold; */
     padding: 5px 10px;
 	border: solid 2px black;
-	margin: 5px;
+	margin: auto;
+}
+
+#strip .panel .dialog-container {
+	position: absolute;
+    width: calc(100% - 10px);
+    /* height: calc(100% - 10px); */
+    padding: 5px;
 }
 
 .bubble {
@@ -392,14 +413,14 @@ header nav a:hover img.label {
 }
 
 .speech:before {
-	left: 75px;
+	left: 50px;
     bottom: -24px;
     border: 11px solid;
 	border-color: #000 #000 transparent transparent;
 }
 
 .speech:after {
-	left: 75px;
+	left: 50px;
     bottom: -20px;
     border: 10px solid;
 	border-color: #fff #fff transparent transparent;

@@ -10,8 +10,6 @@
 <div id="output">
 	<h2>Title</h2>
 	<h3 id="title"></h3>
-	<h2>Script</h2>
-	<ul id="script"></ul>
 	<h2>Composite</h2>
 	<button id="save">Save</button>
 	<div id="permalink"></div>
@@ -20,6 +18,8 @@
 		<div id="panel2" class="panel"></div>
 		<div id="panel3" class="panel"></div>
 	</div>
+	<h2>Script</h2>
+	<ul id="script"></ul>
 </div>
 
 <script type="text/javascript" src="/scripts/generate.js"></script>
