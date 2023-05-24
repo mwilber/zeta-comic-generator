@@ -1,6 +1,7 @@
+var API_MODE = 'simulation';
+
 function ClearElements() {
 	[
-		'title',
 		'script',
 		'panel1',
 		'panel2',
@@ -15,7 +16,7 @@ function ClearElements() {
 }
 
 function SetStatus(status) {
-	document.body.className = status;
+	document.body.dataset.status = status;
 
 	['generate', 'query'].forEach((id) => {
 		document.getElementById(id)[status === 'generating' ? 'setAttribute' : 'removeAttribute']('disabled', '');
@@ -23,10 +24,6 @@ function SetStatus(status) {
 
 	const el = document.getElementById("status");
 	el.innerHTML = status;
-
-	if(status === 'generating'){
-		
-	}
 }
 
 function UpdateProgress(amount) {
@@ -42,7 +39,7 @@ async function fetchSceneComponent(scene, endpoint, property, premise, part) {
 	let result = "";
 	let retry = 2;
 	let sceneData = new FormData();
-	sceneData.append('mode', 'simulation');
+	sceneData.append('mode', API_MODE);
 	sceneData.append('query', scene);
 	if(premise) sceneData.append('premise', premise);
 	if(part) sceneData.append('part', part);
@@ -64,7 +61,7 @@ async function fetchComic(prompt) {
 	
 	const partNames = ['first', 'second', 'third'];
     const formData = new FormData();
-	formData.append('mode', 'simulation');
+	formData.append('mode', API_MODE);
 	formData.append('query', prompt);
 
 	let comic = {};
@@ -113,7 +110,7 @@ async function renderBackground(idx, description, premise) {
 
 async function fetchBackground(prompt) {
     const formData = new FormData();
-	formData.append('mode', 'simulation');
+	formData.append('mode', API_MODE);
 	formData.append('query', prompt);
 
 	return await queryApi('/api/image', formData);
@@ -187,6 +184,7 @@ async function GenerateStrip(query) {
 
 		window["saveObj"] = {prompt: query, script, backgrounds: [], foregrounds: []};
 
+		document.getElementById("script").innerHTML = `<li><h2>${script.title}</h2></li>`;
 		if(script.panels && script.panels.length){
 			for(const [idx,panel] of script.panels.entries()){
 				//panel.background = panel.setting;
@@ -231,11 +229,12 @@ async function GenerateStrip(query) {
 			// });
 
 			saveObj.title = script.title;
-			document.getElementById('title').innerText = saveObj.title;
-			SetStatus('');
+			SetStatus('complete');
 		}
 	});
 }
+
+SetStatus('ready');
 
 document.getElementById('generate').addEventListener("click", () => {
 	const query = document.getElementById('query');

@@ -8,7 +8,7 @@ function ClearElements() {
 }
 
 function SetStatus(status) {
-	//document.body.className = status;
+	document.body.dataset.status = status;
 
 	['query'].forEach((id) => {
 		document.getElementById(id)[status === 'generating' ? 'setAttribute' : 'removeAttribute']('disabled', '');
@@ -20,7 +20,7 @@ function SetStatus(status) {
 }
 
 ClearElements();
-SetStatus('generating');
+SetStatus('ready');
 if(comicId) {
 	fetch('/api/detail/'+comicId)
 		.then((response) => response.json())

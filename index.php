@@ -31,7 +31,7 @@
     <title>Zeta Comic Generator</title>
     <link rel="stylesheet" href="/style.css">
   </head>
-  <body class="<?php echo $path[1] ?> init">
+  <body class="<?php echo $path[1] ?>">
 	<div class="halftone"></div>
 	<!-- <script src="index.js"></script> -->
 	<?php

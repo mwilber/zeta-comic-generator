@@ -8,8 +8,6 @@
 	<button id="generate">Generate</button>
 </div>
 <div id="output">
-	<h2>Title</h2>
-	<h3 id="title"></h3>
 	<h2>Composite</h2>
 	<button id="save">Save</button>
 	<div id="permalink"></div>
