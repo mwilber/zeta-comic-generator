@@ -130,6 +130,7 @@ header nav a:hover img.label {
 	margin: 0 auto;
 	width: 96%;
 	max-width: 960px;
+	min-height: calc(100% - 132px - 5em);
 	padding-bottom: 5em;
 }
 
@@ -194,6 +195,54 @@ header nav a:hover img.label {
 
 /* Generate */
 
+#statusdialog {
+	position: fixed;
+    top: 40vh;
+    left: 50vw;
+	width: 30vw;
+    padding: 2em 4em;
+    transform: translate(-50%, -50%);
+    background: #3050cc;
+	color: #fff;
+	text-transform: uppercase;
+	text-align: center;
+	font-weight: bold;
+	font-size: 3em;
+    border: solid 3px #000;
+    border-radius: 15px;
+	box-shadow: 10px 15px 40px rgba(0,0,0,0.75);
+    z-index: 500;
+}
+
+#statusdialog #status {
+	margin-bottom: 0.5em;
+}
+
+progress[value] {
+	/* Reset the default appearance */
+	-webkit-appearance: none;
+	 appearance: none;
+  
+	width: 100%;
+	height: 0.5em;
+}
+
+progress[value]::-webkit-progress-bar {
+	background-color: #ff9;
+	background-color: rgba(0,0,0,0.5);
+	border-radius: 1em;
+	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25) inset;
+	border: solid 1px #000;
+}
+
+progress[value]::-webkit-progress-value {
+	background-color: #f00;
+	background-color: #fff;
+	border-radius: 1em;
+	/* box-shadow: -2px 2px 5px rgba(255, 255, 255, 0.75) inset; */
+	/* border: solid 1px #000; */
+}
+
 #input {
 	width:100%;
 	display: flex;
@@ -222,7 +271,20 @@ header nav a:hover img.label {
 	box-shadow: inset -1px -1px 2px rgba(0,0,0,0.5);
 }
 
-.generating #script:before,
+#interface {
+	display: flex;
+	flex-direction: column;
+	/* min-height: calc(100% - 132px - 5em); */
+	/* justify-content: center; */
+	/* transition: all 1s; */
+}
+
+#interface > div {
+	/* flex: 1; */
+	/* transition: all 1s; */
+}
+
+/* .generating #script:before,
 .error #script:before {
 	content: 'Generating...';
 	font-size: 24px;
@@ -241,6 +303,54 @@ header nav a:hover img.label {
 
 .generating #strip .panel {
 	background: #fff;
+} */
+
+.generate .query-wrapper{
+	transform:none;
+	transition: transform 500ms;
+}
+
+.generate[data-status='ready'] .query-wrapper{
+	/* transform:translateY(10vh); */
+}
+
+
+.generate .script-wrapper {
+	display: none;
+}
+
+.generate[data-status='generating'] .strip-wrapper {
+	display: initial;
+}
+
+.generate[data-status='complete'] .strip-wrapper,
+.generate[data-status='complete'] .script-wrapper {
+	display: initial;
+}
+
+.generate[data-status='ready'] #strip .panel {
+	background: #fff;
+}
+
+.generate[data-status='generating'] #strip .panel {
+	background: #e0e0eb;
+}
+
+.generate[data-status='generating'] #strip .panel.rendering {
+	background: hsl(240, 22%, 20%);
+}
+
+.generate[data-status='generating'] #strip .panel.rendering:before {
+	content: 'Rendering...';
+	position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+	color: #fff;
+}
+
+.generate[data-status='generating'] #strip .panel.rendered {
+	background: #000;
 }
 
 #save, #permalink {

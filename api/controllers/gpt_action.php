@@ -41,7 +41,6 @@ if($mode == "simulation") {
 	}";
 	$simResponse = json_decode($simJson);
 	$output->json = $simResponse->json;
-	sleep(1);
 } else {
 	$actions = [
 		"none",

@@ -23,7 +23,7 @@ if($mode == "simulation") {
 	}";
 	$simResponse = json_decode($simJson);
 	$output->data = $simResponse->data;
-	sleep(3);
+	sleep(1);
 } else {
 	// For testing
 	if(false){

@@ -90,7 +90,9 @@ async function renderBackground(idx, description, premise) {
 	// Bypass images. For testing prompts
 	// return;
 
-	document.getElementById('panel' + (idx + 1)).innerHTML = `Rendering...`;
+	let panelEl = document.getElementById('panel' + (idx + 1));
+	panelEl.classList.add('rendering');
+	panelEl.innerHTML = ``;
 
 	let image = await fetchBackground(premise + " - " + description);
 	if(!image){
@@ -99,11 +101,17 @@ async function renderBackground(idx, description, premise) {
 	}
 
 	console.log("image data", image);
-	console.log("attempting panel", idx)
+	console.log("attempting panel", idx);
 
-	document.getElementById('panel' + (idx + 1)).innerHTML = `
-		<img class="background" src="${image.data[0].url}"/>
-		`;
+	panelEl.classList.remove('rendering');
+	panelEl.classList.add('rendered');
+
+	panelEl.innerHTML += `
+	<img class="background" src="${image.data[0].url}"/>
+	`;
+	setTimeout(() => {
+		panelEl.classList.remove('rendered');
+	}, 1000);
 
 	return image.data[0].url;
 }

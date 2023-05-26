@@ -55,7 +55,7 @@ if($mode == "simulation") {
 	}";
 	$simResponse = json_decode($simJson);
 	$output->json = $simResponse->json;
-	sleep(2);
+	sleep(1);
 } else {
 	$instructions = array(
 		"Write a json object containing the description of a three panel comic strip.",
