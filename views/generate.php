@@ -1,6 +1,7 @@
 <div id="statusdialog">
 	<div id="status"></div>
-	<progress id="progress" value="50" max="100"></progress>
+	<div class="lds-grid"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+	<progress id="progress" value="0" max="100"></progress>
 </div>
 <div id="interface">
 	<div class="query-wrapper">
