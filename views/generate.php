@@ -8,17 +8,25 @@
 		<h2>Premise</h2>
 		<div id="input">
 			<input id="query" type="text" placeholder="ex. An explanation of the distance between the earth and the sun."/>
-			<button id="generate">Generate</button>
+			<button id="generate" class="cartoon-button">
+				<img class="burst" src="/assets/images/burst.svg" />
+				<span class="cartoon-font">Start</span>
+            </button>
 		</div>
 	</div>
 	<div class="strip-wrapper">
 		<h2>Composite</h2>
-		<button id="save">Save</button>
-		<div id="permalink"></div>
 		<div id="strip">
 			<div id="panel1" class="panel"></div>
 			<div id="panel2" class="panel"></div>
 			<div id="panel3" class="panel"></div>
+			<div class="strip-controls">
+				<button id="save" class="cartoon-button">
+					<img class="burst" src="/assets/images/burst.svg" />
+					<span class="cartoon-font">Save</span>
+				</button>
+				<div id="permalink" class="cartoon-button"></div>
+			</div>	
 		</div>
 	</div>
 	<div class="script-wrapper">

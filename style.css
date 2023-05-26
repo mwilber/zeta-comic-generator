@@ -1,4 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Patrick+Hand&family=Bangers&family=Luckiest+Guy&display=swap');
+
 
 body {
 	position: relative;
@@ -54,6 +55,61 @@ body {
 	-webkit-mask-image: var(--mask);
 }
 
+.cartoon-button {
+    position: relative;
+    background: transparent;
+    box-shadow: none;
+    border: none;
+    cursor: pointer;
+}
+
+.cartoon-button[disabled] {
+    opacity: 0.5;
+}
+
+.cartoon-button img,
+.cartoon-button span {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	transition: all 250ms var(--bounce-function);
+}
+
+.cartoon-button img {
+    height: 1.75em;
+    opacity: 0.65;
+}
+
+.cartoon-button span {
+    font-size: 1em;
+    transform: translate(-50%, -50%) rotate(-10deg);
+}
+
+.cartoon-button:not([disabled]):hover img {
+	transform: translate(-50%, -50%) rotate(-5deg);
+	height: 105%;
+	opacity: 1;
+}
+
+.cartoon-button:not([disabled]):hover span {
+	transform: translate(-50%, -50%) rotate(5deg) scale(1.25);
+}
+
+.cartoon-font {
+    color: red;
+    font-family: 'Bangers', Arial, Helvetica, sans-serif;
+    /* font-family: 'Luckiest Guy', Arial, Helvetica, sans-serif; */
+    text-shadow:
+                -1px 1px 0 #000,
+                1px 1px 0 #000,
+                1px -1px 0 #000,
+                -1px -1px 0 #000,
+                4px 4px 0 #000;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
 header {
 	position: relative;
 	height: 132px;
@@ -98,34 +154,11 @@ header nav a {
 	background: transparent;
 	height: 70px;
 	margin-top: 10px;
+    font-size: 3em !important;
 }
 
 header nav a:hover {
 	background-size: 85%;
-}
-
-header nav a img {
-	position: absolute;
-	top: 50%;
-	left: 50%;
-	transform: translate(-50%, -50%);
-	height: 100%;
-	transition: all 250ms var(--bounce-function);
-}
-
-header nav a img.burst {
-	opacity: 0.65;
-}
-
-header nav a:hover img.burst {
-	transform: translate(-50%, -50%) rotate(-5deg);
-	height: 105%;
-	opacity: 1;
-}
-
-header nav a:hover img.label {
-	transform: translate(-50%, -50%) rotate(15deg);
-	height: 110%;
 }
 
 .content {
@@ -262,7 +295,7 @@ progress[value]::-webkit-progress-value {
 	font-size: 18px;
 }
 
-#query, #generate {
+#query {
 	font-size: inherit;
 	padding: 0.5em 1em;
 	border: solid 1px #333e4d;
@@ -275,13 +308,13 @@ progress[value]::-webkit-progress-value {
 	box-shadow: inset 1px 1px 2px rgba(0,0,0,0.5);
 }
 
-#generate {
+#generate,
+#save,
+#permalink {
 	flex: 0;
-	margin: 0 1em;
-	text-transform: uppercase;
-	background: #e3e9f1;
-	/* color: white; */
-	box-shadow: inset -1px -1px 2px rgba(0,0,0,0.5);
+	margin: 0 2em;
+    font-size: 1.75em;
+    display: inline-block;
 }
 
 #interface {
@@ -369,8 +402,19 @@ progress[value]::-webkit-progress-value {
 	background: #000;
 }
 
+.strip-controls {
+    flex-grow: 1;
+    flex-shrink: 1;
+    flex-basis: 100%;
+    height: 2.5em;
+    font-size: 18px;
+}
+
 #save, #permalink {
 	display:none;
+    height: 1.5em;
+    float: left;
+
 }
 
 
@@ -460,6 +504,7 @@ progress[value]::-webkit-progress-value {
 
 #strip {
     display: flex;
+    flex-wrap: wrap;
 	width: calc(100% - 18px);
     max-width: 942px;
     margin: auto;

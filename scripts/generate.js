@@ -1,4 +1,5 @@
-var API_MODE = 'simulation';
+//var API_MODE = 'simulation';
+var API_MODE = 'production';
 
 function ClearElements() {
 	[
@@ -172,7 +173,10 @@ function SaveStrip(){
 			}
 			document.getElementById('permalink').style.display = 'initial';
 			document.getElementById('permalink').innerHTML = `
-				<a href="/detail/${data.response.permalink}">Permalink</a>
+                <a href="/detail/${data.response.permalink}">
+					<img class="burst" src="/assets/images/burst.svg" />
+					<span class="cartoon-font">Permalink</span>
+				</a>
 			`;
 			console.log('Success:', data);
 		})
