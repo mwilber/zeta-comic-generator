@@ -1,5 +1,5 @@
-//var API_MODE = 'simulation';
-var API_MODE = 'production';
+var API_MODE = 'simulation';
+// API_MODE = 'production';
 
 function ClearElements() {
 	[

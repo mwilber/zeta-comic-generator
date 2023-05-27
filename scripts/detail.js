@@ -29,6 +29,7 @@ if(comicId) {
 				SetStatus('error');
 				return;
 			}
+			window.stripData = data;
 			const script = data.script;
 			console.log("response", script);
 
@@ -76,3 +77,36 @@ if(comicId) {
 } else {
 	SetStatus('error');
 }
+
+document.getElementById('download').addEventListener("click", () => {
+	const strip = document.getElementById('strip');
+	const output = document.getElementById('output');
+	if(!strip || !output) return;
+
+	strip.style.boxShadow = 'none';
+	html2canvas(strip).then(canvas => {
+		//output.appendChild(canvas);
+		let ctx = canvas.getContext("2d");
+		window.ctxt = ctx;
+		ctx.resetTransform();
+		ctx.fillStyle = 'white';
+		ctx.fillRect(10, 318, 940, 57);
+
+		ctx.fillStyle = 'black';
+		ctx.textAlign = 'right';
+		ctx.font = 'bold 20px sans-serif';
+		ctx.fillText(window.location.host, 945, 340);
+
+		ctx.textAlign = 'left';
+		ctx.fillText(window.stripData.script.title, 15, 340);
+
+		ctx.font = 'normal 14px sans-serif';
+		ctx.fillText('\u201C' + window.stripData.prompt + '\u201D', 15, 360);
+
+		let uri = canvas.toDataURL();
+		var link = document.createElement('a');
+		link.download = window.stripData.script.title.replaceAll(' ', '_') + '.png';
+		link.href = uri;
+		link.click();
+	});
+});

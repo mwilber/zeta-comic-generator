@@ -308,13 +308,18 @@ progress[value]::-webkit-progress-value {
 	box-shadow: inset 1px 1px 2px rgba(0,0,0,0.5);
 }
 
+.strip-controls button,
 #generate,
-#save,
 #permalink {
 	flex: 0;
 	margin: 0 2em;
     font-size: 1.75em;
     display: inline-block;
+}
+
+.strip-controls button {
+	height: 1.5em;
+	float: left;
 }
 
 #interface {
@@ -412,9 +417,6 @@ progress[value]::-webkit-progress-value {
 
 #save, #permalink {
 	display:none;
-    height: 1.5em;
-    float: left;
-
 }
 
 
