@@ -11,7 +11,7 @@
 		<div id="input">
 			<input id="query" type="text" placeholder="ex. An explanation of the distance between the earth and the sun."/>
 			<button id="generate" class="cartoon-button">
-				<img class="burst" src="/assets/images/burst.svg" />
+				<img class="burst" src="/assets/images/speech_bubble.svg" />
 				<span class="cartoon-font">Start</span>
             </button>
 		</div>
@@ -24,7 +24,7 @@
 			<div id="panel3" class="panel"></div>
 			<div class="strip-controls">
 				<button id="save" class="cartoon-button">
-					<img class="burst" src="/assets/images/burst.svg" />
+					<img class="burst" src="/assets/images/speech_bubble.svg" />
 					<span class="cartoon-font">Save</span>
 				</button>
 				<div id="permalink" class="cartoon-button"></div>

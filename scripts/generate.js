@@ -175,7 +175,7 @@ function SaveStrip(){
 			document.getElementById('permalink').style.display = 'initial';
 			document.getElementById('permalink').innerHTML = `
                 <a href="/detail/${data.response.permalink}">
-					<img class="burst" src="/assets/images/burst.svg" />
+					<img class="burst" src="/assets/images/speech_bubble.svg" />
 					<span class="cartoon-font">Permalink</span>
 				</a>
 			`;

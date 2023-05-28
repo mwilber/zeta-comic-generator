@@ -97,8 +97,8 @@ input,
 }
 
 .cartoon-button span svg {
-	height: 1.75em;
-	width: 1.75em;
+	height: 2em;
+	width: 2em;
 }
 
 .cartoon-button:not([disabled]):hover img {
@@ -368,9 +368,18 @@ progress[value]::-webkit-progress-value {
 #generate,
 #permalink {
 	flex: 0;
-	margin: 0 2em;
-    font-size: 1.75em;
+	margin: 0.12em 2em;
+    font-size: 1.5em;
     display: inline-block;
+}
+
+#generate .cartoon-font,
+#save .cartoon-font {
+	font-size: 1.3em;
+}
+
+#permalink .cartoon-font {
+	font-size: 0.9em;
 }
 
 .strip-controls button,
@@ -421,7 +430,7 @@ progress[value]::-webkit-progress-value {
 .share-buttons button {
 	height: 1.5em;
 	margin: 0 2em;
-    font-size: 1.75em;
+    font-size: 1.25em;
     display: inline-block;
 }
 
