@@ -224,7 +224,9 @@ async function GenerateStrip(query) {
 					`;
 				if(panel.dialog)
 					document.getElementById('panel' + (idx + 1)).innerHTML += `
-						<div class="dialog bubble speech">${panel.dialog}</div>
+						<div class="bubble-container">
+						<div class="bubble speech" title="Speech Balloon">${panel.dialog}</div>
+						</div>
 						`;
 
 				document.getElementById('save').style.display = 'initial';

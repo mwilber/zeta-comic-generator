@@ -65,8 +65,8 @@ if(comicId) {
 						`;
 					if(panel.dialog)
 						document.getElementById('panel' + (idx + 1)).innerHTML += `
-							<div class="dialog-container">
-							<div class="dialog bubble speech" title="Speech Balloon">${panel.dialog}</div>
+							<div class="bubble-container">
+							<div class="bubble speech" title="Speech Balloon">${panel.dialog}</div>
 							</div>
 							`;
 
