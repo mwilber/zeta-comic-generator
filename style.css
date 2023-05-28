@@ -11,6 +11,16 @@ body {
 	--bounce-function: cubic-bezier(0.680, -0.550, 0.265, 1.550);
 }
 
+input,
+#query {
+	background: #e5f0ff;
+	box-shadow: inset 1px 1px 2px rgba(0,0,0,0.5);
+	font-size: inherit;
+	padding: 0.5em 1em;
+	border: solid 1px #333e4d;
+	border-radius: 5px;
+}
+
 .halftone {
 	--dotSize: 0.25rem;
 	--bgSize: 1.5rem;
@@ -86,6 +96,11 @@ body {
     transform: translate(-50%, -50%) rotate(-10deg);
 }
 
+.cartoon-button span svg {
+	height: 1.75em;
+	width: 1.75em;
+}
+
 .cartoon-button:not([disabled]):hover img {
 	transform: translate(-50%, -50%) rotate(-5deg);
 	height: 105%;
@@ -98,6 +113,9 @@ body {
 
 .cartoon-font {
     color: red;
+	fill: red;
+	stroke: #000;
+	stroke-width: 0.5em;
     font-family: 'Bangers', Arial, Helvetica, sans-serif;
     /* font-family: 'Luckiest Guy', Arial, Helvetica, sans-serif; */
     text-shadow:
@@ -108,6 +126,74 @@ body {
                 4px 4px 0 #000;
     text-transform: uppercase;
     letter-spacing: 2px;
+}
+
+.cartoon-font svg {
+-webkit-filter: drop-shadow( 4px 4px 0 #000);
+  filter: drop-shadow( 4px 4px 0 #000);
+}
+
+.dialog-wrapper {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background:rgba(0, 0, 0, 0.5);
+	z-index: -1;
+	opacity: 0;
+	transition: all 500ms linear;
+}
+
+.dialog {
+	position: fixed;
+    top: calc(40vh - 4em);
+    left: 10%;
+    width: calc(80% - 4em);
+    padding: 2em 2em;
+    transform: scale(0);
+    background: #3050cc;
+	color: #fff;
+	text-transform: uppercase;
+	text-align: center;
+	font-weight: bold;
+	font-size: 3em;
+    border: solid 3px #000;
+    border-radius: 15px;
+	box-shadow: 10px 15px 40px rgba(0,0,0,0.75);
+    z-index: -1;
+	opacity: 0;
+	transition: all 500ms var(--bounce-function);
+}
+
+.active .dialog,
+.active.dialog-wrapper {
+	transform: scale(1);
+	opacity: 1;
+	z-index: 501;
+}
+
+.dialog .close {
+	border: none;
+	background: transparent;
+	box-shadow: none;
+	position: absolute;
+    top: 0;
+    right: 0;
+    cursor: pointer;
+}
+
+.dialog .close:before {
+	content: '+';
+    display: inline-block;
+	height: 48px;
+    width: 48px;
+	transform: rotate(45deg);
+	font-size: 48px;
+	font-weight: bold;
+	color: #fff;
+    text-align: center;
+    vertical-align: middle;
 }
 
 header {
@@ -230,27 +316,6 @@ header nav a:hover {
 
 /* Generate */
 
-#statusdialog {
-	position: fixed;
-    top: 40vh;
-    left: 50vw;
-	width: 50vw;
-    padding: 2em 4em;
-    transform: translate(-50%, -50%) scale(0);
-    background: #3050cc;
-	color: #fff;
-	text-transform: uppercase;
-	text-align: center;
-	font-weight: bold;
-	font-size: 3em;
-    border: solid 3px #000;
-    border-radius: 15px;
-	box-shadow: 10px 15px 40px rgba(0,0,0,0.75);
-    z-index: -1;
-	opacity: 0;
-	transition: all 500ms var(--bounce-function);
-}
-
 #statusdialog #status {
 	margin-bottom: 0.5em;
 	display: inline-block;
@@ -296,16 +361,7 @@ progress[value]::-webkit-progress-value {
 }
 
 #query {
-	font-size: inherit;
-	padding: 0.5em 1em;
-	border: solid 1px #333e4d;
-	border-radius: 5px;
-}
-
-#query {
 	flex: 1;
-	background: #e5f0ff;
-	box-shadow: inset 1px 1px 2px rgba(0,0,0,0.5);
 }
 
 .strip-controls button,
@@ -317,9 +373,56 @@ progress[value]::-webkit-progress-value {
     display: inline-block;
 }
 
-.strip-controls button {
+.strip-controls button,
+#permalink {
 	height: 1.5em;
 	float: left;
+}
+
+#shareurl {
+	font-size: 15px;
+    width: 75%;
+	vertical-align: middle;
+}
+
+#cpshare {
+	background: transparent;
+	border: none;
+	box-shadow: none;
+	color: #fff;
+	height: 34px;
+	width: 34px;
+	vertical-align: middle;
+	cursor: pointer;
+}
+
+#cpshare svg {
+	fill: #fff;
+}
+
+#cpshare #copied-icon {
+	display: none;
+}
+
+#cpshare[disabled] #copy-icon {
+	display: none;
+}
+
+#cpshare[disabled] #copied-icon {
+	display: initial;
+}
+
+.share-buttons {
+    height: 2.5em;
+	margin-top: 1.5em;
+    font-size: 18px;
+}
+
+.share-buttons button {
+	height: 1.5em;
+	margin: 0 2em;
+    font-size: 1.75em;
+    display: inline-block;
 }
 
 #interface {
@@ -368,13 +471,6 @@ progress[value]::-webkit-progress-value {
 
 .generate .script-wrapper {
 	display: none;
-}
-
-.generate[data-status='generating'] #statusdialog {
-	display: initial;
-	transform: translate(-50%, -50%) scale(1);
-	opacity: 1;
-	z-index: 500;
 }
 
 .generate[data-status='complete'] .strip-wrapper,

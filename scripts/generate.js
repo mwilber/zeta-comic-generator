@@ -22,6 +22,7 @@ function SetStatus(status) {
 	['generate', 'query'].forEach((id) => {
 		document.getElementById(id)[status === 'generating' ? 'setAttribute' : 'removeAttribute']('disabled', '');
 	});
+	document.getElementById('statusdialog').classList[status === 'generating' ? 'add' : 'remove']('active');
 
 	const el = document.getElementById("status");
 	el.innerHTML = status;

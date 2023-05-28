@@ -5,7 +5,8 @@
 	$meta = new stdClass();
 	$meta->siteTitle = "Zeta Comic Generator";
 	$meta->title = "Zeta Comic Generator";
-	$meta->url = "https://comicgenerator.greenzeta.com";
+	$meta->siteUrl = (empty($_SERVER['HTTPS']) ? 'http' : 'https') . "://$_SERVER[HTTP_HOST]";
+	$meta->url = (empty($_SERVER['HTTPS']) ? 'http' : 'https') . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
 	$meta->image = "https://comicgenerator.greenzeta.com";
 	$meta->description = "InsertDescriptionHere";
 	$meta->imageDescription = "InsertImageDescriptionHere";
@@ -35,7 +36,7 @@
 				if ($result && isset($result->json)) {
 					$meta->hash = $result->permalink;
 					$meta->title = $result->title;
-					$meta->image = $meta->url."/assets/thumbnails/thumb_".$result->permalink.".png";
+					$meta->image = $meta->siteUrl."/assets/thumbnails/thumb_".$result->permalink.".png";
 				}
 			} catch(PDOException $e) {	}
 		}

@@ -110,3 +110,45 @@ document.getElementById('download').addEventListener("click", () => {
 		link.click();
 	});
 });
+
+document.getElementById('share').addEventListener("click", () => {
+	const dialog = document.getElementById('sharedialog');
+	dialog.classList[dialog.classList.contains('active') ? 'remove' : 'add']('active');
+});
+
+document.getElementById('closedialog').addEventListener("click", () => {
+	document.getElementById('sharedialog').classList.remove('active');
+});
+
+document.querySelector('.dialog-wrapper').addEventListener("click", () => {
+	document.getElementById('sharedialog').classList.remove('active');
+});
+
+document.querySelector('.dialog').addEventListener("click", (e) => {
+	e.stopPropagation();
+});
+
+document.getElementById('cpshare').addEventListener("click", () => {
+	let btnEl = document.getElementById('cpshare');
+	btnEl.setAttribute('disabled', '');
+	navigator.clipboard.writeText(document.getElementById('shareurl').value);
+	setTimeout(() => btnEl.removeAttribute('disabled'), 3000);
+});
+
+document.getElementById('twshare').addEventListener('click',function(event){
+    event.preventDefault();
+    window.open("https://twitter.com/share?url="+encodeURIComponent(document.getElementById('shareurl').value));
+},false);
+
+document.getElementById('fbshare').addEventListener('click',function(event){
+    event.preventDefault();
+    window.open(
+		"https://www.facebook.com/sharer/sharer.php?u="+encodeURIComponent(document.getElementById('shareurl').value),
+		'Facebook',
+		`scrollbars=no,resizable=no,status=no,location=no,toolbar=no,menubar=no,width=600,height=300,left=100,top=100`
+	);
+},false);
+
+document.getElementById('shareurl').addEventListener('focus', function(event){
+	event.target.select();
+});
