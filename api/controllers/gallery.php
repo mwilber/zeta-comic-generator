@@ -6,7 +6,7 @@
 	$output->gallery = array();
 
 	try {
-		$stmt = $db->prepare("SELECT * FROM `comics` WHERE permalink <> \"\" AND title <> \"\" ORDER BY timestamp DESC");
+		$stmt = $db->prepare("SELECT * FROM `comics` WHERE `gallery` = 1 ORDER BY timestamp DESC");
 		$stmt->execute();
 		$rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
