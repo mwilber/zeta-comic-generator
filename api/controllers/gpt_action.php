@@ -74,6 +74,7 @@ if($mode == "simulation") {
 	}
 
 	if (!in_array($response->json->action, $actions)) {
+		if(!isset($response->json)) $response->json = new stdClass();
 		$response->json->action = "standing";
 	}
 

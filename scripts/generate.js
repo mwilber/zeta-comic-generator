@@ -49,7 +49,7 @@ async function fetchSceneComponent(scene, endpoint, property, premise, part) {
 	// Sometimes GPT returns a null, retry up to 2 times to get a usable result.
 	while(retry > 0) {
 		retry--;
-		let response = await queryApi('/api/' + endpoint, sceneData);
+		let response = await queryApi('/api/' + endpoint + '/?c='+(Math.floor(Math.random()*10000000000000000)), sceneData);
 		if(response.json) {
 			result = response.json[property];
 			break;
@@ -68,7 +68,7 @@ async function fetchComic(prompt) {
 
 	let comic = {};
 
-    const script = await queryApi('/api/gpt_script', formData);
+    const script = await queryApi('/api/gpt_script/?c='+(Math.floor(Math.random()*10000000000000000)), formData);
 	if(script.json && script.json.panels && script.json.panels.length) comic.script = script.json;
 	UpdateProgress(13);
 
@@ -123,7 +123,7 @@ async function fetchBackground(prompt) {
 	formData.append('mode', API_MODE);
 	formData.append('query', prompt);
 
-	return await queryApi('/api/image', formData);
+	return await queryApi('/api/image/?c='+(Math.floor(Math.random()*10000000000000000)), formData);
 }
 
 async function queryApi(apiUrl, formData) {
@@ -159,7 +159,7 @@ function SaveStrip(){
 	formData.append('fg3', saveObj.foregrounds[2]);
 	//formData.append('thumbnail', saveObj.thumbnail);
 
-	fetch('/api/save', {
+	fetch('/api/save/?c='+(Math.floor(Math.random()*10000000000000000)), {
 		method: 'POST',
 		body: formData
 	})

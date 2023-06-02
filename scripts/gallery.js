@@ -1,4 +1,4 @@
-fetch('/api/gallery')
+fetch('/api/gallery/?c='+(Math.floor(Math.random()*10000000000000000)))
 	.then((response) => response.json())
 	.then((listing)=>{
 		if(!listing.gallery) return;

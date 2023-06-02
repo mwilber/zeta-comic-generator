@@ -81,7 +81,7 @@
 
     <link rel="stylesheet" href="/style.css">
   </head>
-  <body class="<?php echo $path[1] ?>">
+  <body class="<?php echo $path[1] ?>" data-status="ready">
 	<div class="halftone"></div>
 	<!-- <script src="index.js"></script> -->
 	<?php

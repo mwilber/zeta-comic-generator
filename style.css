@@ -269,19 +269,20 @@ header nav a:hover {
 
 #gallery {
 	width: 100%;
-	display: flex;
-	flex-wrap: wrap;
+	display: grid;
+	grid-template-rows: 1fr;
+	grid-template-columns: 1fr 1fr 1fr 1fr;
 }
 
 .frame {
 	flex: 1;
 }
 
-.strip {
+#gallery .strip {
 	display: block;
 	position: relative;
-	min-width: 250px;
-    min-height: 250px;
+	/* min-width: 250px;
+    min-height: 250px; */
 	margin: 5px;
 	border: solid 2px black;
 	/* padding-bottom: calc(33.3% - 14px); */
@@ -473,8 +474,8 @@ progress[value]::-webkit-progress-value {
 	transition: transform 500ms;
 }
 
-.generate[data-status='ready'] .query-wrapper{
-	/* transform:translateY(10vh); */
+.generate[data-status='ready'] .dialog-wrapper{
+	display: none;
 }
 
 
@@ -743,6 +744,10 @@ progress[value]::-webkit-progress-value {
 	#strip .panel .bubble {
 		font-size: 10px;
 	}
+
+	#gallery {
+		grid-template-columns: 1fr 1fr 1fr;
+	}
 }
 
 @media screen and (max-width: 550px) {
@@ -761,6 +766,10 @@ progress[value]::-webkit-progress-value {
 		font-size: 1.5em;
 		padding-left: 0;
 		width: 100%;
+	}
+
+	#gallery {
+		grid-template-columns: 1fr 1fr;
 	}
 }
 

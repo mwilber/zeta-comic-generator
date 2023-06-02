@@ -22,7 +22,7 @@ function SetStatus(status) {
 ClearElements();
 SetStatus('ready');
 if(comicId) {
-	fetch('/api/detail/'+comicId)
+	fetch('/api/detail/'+comicId+'/?c='+(Math.floor(Math.random()*10000000000000000)))
 		.then((response) => response.json())
 		.then((data) => {
 			if(!data || !data.script){
@@ -95,7 +95,8 @@ document.getElementById('download').addEventListener("click", () => {
 		ctx.fillStyle = 'black';
 		ctx.textAlign = 'right';
 		ctx.font = 'bold 20px sans-serif';
-		ctx.fillText(window.location.host, 945, 340);
+		// ctx.fillText(window.location.host, 945, 340);
+		ctx.fillText("greenzeta.com/project/zetacomicgenerator", 945, 340);
 
 		ctx.textAlign = 'left';
 		ctx.fillText(window.stripData.script.title, 15, 340);
