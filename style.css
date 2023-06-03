@@ -7,8 +7,17 @@ body {
 	padding: 0;
 	font-family:Arial, Helvetica, sans-serif;
 	font-size: 14px;
+	color:#333e4d;
 
 	--bounce-function: cubic-bezier(0.680, -0.550, 0.265, 1.550);
+}
+
+a,
+a:hover,
+a:active,
+a:visited {
+	color:#3050cc;
+	font-weight: bold;;
 }
 
 input,
@@ -94,6 +103,7 @@ input,
 .cartoon-button span {
     font-size: 1em;
     transform: translate(-50%, -50%) rotate(-10deg);
+	white-space: nowrap;
 }
 
 .cartoon-button span svg {
@@ -263,6 +273,33 @@ header nav a:hover {
 	background: #feff70;
     border: solid 2px #000;
 	text-transform: uppercase;
+}
+
+/* Home | About */
+main header {
+	position: initial;
+    height: auto;
+    width: 70%;
+    font-size: 2.5em;
+    margin: 2em 15% 1em 15%;
+    line-height: 1.5em;
+}
+
+main p {
+	font-size: 1.5em;
+	margin: 0;
+}
+
+.action-buttons {
+	font-size: 3em;
+    margin-top: 0.25em;
+	margin-bottom: 1em;
+    text-align: center;
+    line-height: 3em;
+}
+.action-buttons .cartoon-button {
+	display: inline-block;
+	height: 1.5em;
 }
 
 /* Gallery */
