@@ -58,6 +58,18 @@
 		$output->data = $response->data;
 		$output->debug = $response->debug;
 	}
-	$output->json = $response->json;
 
+	if (is_array($response->json->panels)) {
+		foreach($response->json->panels as &$value) {
+			$oldVal = $value;
+			$value = new stdClass;
+			$value->action = $oldVal;
+			if(!in_array($value->action, $actions)) {
+				$value->altAction = $oldVal;
+				$value->action = "standing";
+			}
+		}
+	}
+
+	$output->json = $response->json;
 ?>

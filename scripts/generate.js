@@ -68,11 +68,18 @@ async function fetchComic(prompt) {
 		// UpdateProgress(3);
 		panel.background_url = await renderBackground(idx, panel.background, prompt);
 		UpdateProgress(20);
-		panel.action = await fetchSceneComponent(panel.scene, 'gpt_action', 'action');
-		UpdateProgress(3);
+		// panel.action = await fetchSceneComponent(panel.scene, 'gpt_action', 'action');
+		// UpdateProgress(3);
 		// panel.altdialog = await fetchSceneComponent(panel.scene, 'gpt_dialog', 'dialog', prompt, partNames[idx]);
 		// UpdateProgress(3);
 	}
+
+	const altAction = await fetchAltSceneComponent(comic.script.panels, 'gpt_action');
+	altAction.forEach((action, idx) => {
+		comic.script.panels[idx].action = action.action;
+		comic.script.panels[idx].altAction = action.altAction || "";
+	});
+	UpdateProgress(9);
 
 	console.log(comic);
 
@@ -246,6 +253,8 @@ async function GenerateStrip(query) {
 						<li>Action: ${panel.action}</li>
 						<li>Dialog: ${panel.dialog}</li>
 						<li>Background: ${panel.background}</li>
+						<li>Suggested Action: ${panel.altAction}</li>
+						<li>Inline Dialog: ${panel.altDialog}</li>
 					</ul>
 				</li>
 				`;
