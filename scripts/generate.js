@@ -38,9 +38,50 @@ function UpdateProgress(amount) {
 	el.innerHTML = window.progress + "%";
 }
 
+async function fetchComic(prompt) {
+	
+	const partNames = ['first', 'second', 'third'];
+    const formData = new FormData();
+	formData.append('query', prompt);
+
+	let comic = {};
+
+    const script = await queryApi('/api/gpt_script', formData);
+	if(script.json && script.json.panels && script.json.panels.length) comic.script = script.json;
+	UpdateProgress(13);
+
+	const altDialog = await fetchAltSceneComponent(comic.script.panels, 'gpt_dialog');
+	altDialog.forEach((dialog, idx) => {
+		comic.script.panels[idx].altDialog = comic.script.panels[idx].dialog;
+		comic.script.panels[idx].dialog = dialog;
+	});
+	UpdateProgress(9);
+
+	const altBackground = await fetchAltSceneComponent(comic.script.panels, 'gpt_background');
+	altBackground.forEach((bkg, idx) => {
+		comic.script.panels[idx].background = bkg;
+	});
+	UpdateProgress(9);
+
+	for(let [idx, panel] of comic.script.panels.entries()) {
+		// panel.background = await fetchSceneComponent(prompt + ' - ' + panel.scene, 'gpt_background', 'background');
+		// UpdateProgress(3);
+		panel.background_url = await renderBackground(idx, panel.background, prompt);
+		UpdateProgress(20);
+		panel.action = await fetchSceneComponent(panel.scene, 'gpt_action', 'action');
+		UpdateProgress(3);
+		// panel.altdialog = await fetchSceneComponent(panel.scene, 'gpt_dialog', 'dialog', prompt, partNames[idx]);
+		// UpdateProgress(3);
+	}
+
+	console.log(comic);
+
+    return comic.script;
+}
+
 async function fetchSceneComponent(scene, endpoint, property, premise, part) {
 	let result = "";
-	let retry = 2;
+	let retry = 3;
 	let sceneData = new FormData();
 	sceneData.append('query', scene);
 	if(premise) sceneData.append('premise', premise);
@@ -59,32 +100,30 @@ async function fetchSceneComponent(scene, endpoint, property, premise, part) {
 	return result;
 }
 
-async function fetchComic(prompt) {
-	
-	const partNames = ['first', 'second', 'third'];
-    const formData = new FormData();
-	formData.append('query', prompt);
+async function fetchAltSceneComponent(panels, endpoint) {
+	let result = [];
+	if(!panels || !panels.length) return result;
 
-	let comic = {};
-
-    const script = await queryApi('/api/gpt_script', formData);
-	if(script.json && script.json.panels && script.json.panels.length) comic.script = script.json;
-	UpdateProgress(13);
-
-	for(let [idx, panel] of comic.script.panels.entries()) {
-		panel.background = await fetchSceneComponent(prompt + ' - ' + panel.scene, 'gpt_background', 'background');
-		UpdateProgress(3);
-		panel.background_url = await renderBackground(idx, panel.background, prompt);
-		UpdateProgress(20);
-		panel.action = await fetchSceneComponent(panel.scene, 'gpt_action', 'action');
-		UpdateProgress(3);
-		panel.altdialog = await fetchSceneComponent(panel.scene, 'gpt_dialog', 'dialog', prompt, partNames[idx]);
-		UpdateProgress(3);
+	let retry = 3;
+	let sceneData = new FormData();
+	for(let idx = 0; idx < 3; idx++) {
+		sceneData.append(
+			'panel'+(idx+1), 
+			(panels[idx] && panels[idx].scene) ? panels[idx].scene : ''
+		);
 	}
 
-	console.log(comic);
+	// Sometimes GPT returns a null, retry up to 2 times to get a usable result.
+	while(retry > 0) {
+		retry--;
+		let response = await queryApi('/api/' + endpoint + "_3", sceneData);
+		if(response.json && response.json.panels && response.json.panels.length) {
+			result = [...response.json.panels];
+			break;
+		}
+	}
 
-    return comic.script;
+	return result;
 }
 
 async function renderBackground(idx, description, premise) {
@@ -110,10 +149,22 @@ async function renderBackground(idx, description, premise) {
 }
 
 async function fetchBackground(prompt) {
+	let result = {};
+	let retry = 3;
     const formData = new FormData();
 	formData.append('query', prompt);
 
-	return await queryApi('/api/image', formData);
+	// Sometimes GPT returns a null, retry up to 2 times to get a usable result.
+	while(retry > 0) {
+		retry--;
+		let response = await queryApi('/api/image', formData);
+		if(response.data && response.data.length) {
+			result = response;
+			break;
+		}
+	}
+
+	return result;
 }
 
 async function queryApi(apiUrl, formData) {

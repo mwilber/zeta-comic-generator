@@ -1,11 +1,4 @@
 <?php
-	if(isset($_POST["query"])) {
-		$query = $_POST["query"];
-	} else {
-		// FOR TESTING
-		$query = "The figure stares as the light gets closer and sees it is a flashlight.";
-	}
-
 	if(isset($_POST["panel1"])) {
 		$panel1 = $_POST["panel1"];
 	} else {
