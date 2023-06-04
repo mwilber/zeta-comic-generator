@@ -77,7 +77,7 @@
 			$script = str_replace("\\r", "", $script);
 			$script = str_replace("\\t", "", $script);
 			$script = str_replace("```json", "", $script);
-			$script = str_replace("```", "", $script);
+			$script = str_replace("`", "", $script);
 			$jscript = json_decode($script);
 
 			$response->debug = $script;
