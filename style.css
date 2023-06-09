@@ -643,6 +643,7 @@ progress[value]::-webkit-progress-value {
 #strip .panel .bubble {
 	position: relative;
 	width: fit-content;
+	min-width: 65px;
 	/* width: calc(100%); */
 	/* background: #feff70; */
 	background: white;
