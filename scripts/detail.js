@@ -78,14 +78,44 @@ if(comicId) {
 	SetStatus('error');
 }
 
-document.getElementById('download').addEventListener("click", () => {
+document.getElementById('download-ig').addEventListener('click', () => {
+	//const output = document.getElementById('output');
+	for(let idx = 1; idx <= 3; idx++){
+		let link = document.createElement('a');
+		html2canvas(document.getElementById('panel'+idx)).then(canvas => {
+			//output.appendChild(canvas);
+			let ctx = canvas.getContext("2d");
+			ctx.resetTransform();
+			ctx.strokeStyle = 'black';
+			ctx.fillStyle = 'white';
+			ctx.lineWidth = 4;
+			ctx.font = 'bold 14px sans-serif';
+
+			if(idx === 1){
+				ctx.textAlign = 'left';
+				ctx.strokeText(window.stripData.script.title, 5, 295);
+				ctx.fillText(window.stripData.script.title, 5, 295);
+			}else if(idx === 3){
+				ctx.textAlign = 'right';
+				// ctx.fillText(window.location.host, 945, 340);
+				ctx.strokeText("greenzeta.com/project/zetacomicgenerator", 295, 295);
+				ctx.fillText("greenzeta.com/project/zetacomicgenerator", 295, 295);
+			}
+
+			let uri = canvas.toDataURL();
+			link.download = window.stripData.script.title.replaceAll(' ', '_') + '_' + idx + '.png';
+			link.href = uri;
+			link.click();
+		});
+	}
+});
+
+document.getElementById('download-strip').addEventListener('click', () => {
 	const strip = document.getElementById('strip');
-	const output = document.getElementById('output');
-	if(!strip || !output) return;
+	if(!strip) return;
 
 	strip.style.boxShadow = 'none';
 	html2canvas(strip).then(canvas => {
-		//output.appendChild(canvas);
 		let ctx = canvas.getContext("2d");
 		window.ctxt = ctx;
 		ctx.resetTransform();
@@ -117,8 +147,17 @@ document.getElementById('share').addEventListener("click", () => {
 	dialog.classList[dialog.classList.contains('active') ? 'remove' : 'add']('active');
 });
 
-document.getElementById('closedialog').addEventListener("click", () => {
-	document.getElementById('sharedialog').classList.remove('active');
+document.getElementById('download').addEventListener("click", () => {
+	const dialog = document.getElementById('downloaddialog');
+	dialog.classList[dialog.classList.contains('active') ? 'remove' : 'add']('active');
+});
+
+document.querySelectorAll('.dialog-wrapper').forEach((wrapper) => {
+	wrapper.querySelector('.dialog').addEventListener('click', (e) => e.stopPropagation());
+	
+	const closeDialog = (el) => el.classList.remove('active');
+	wrapper.addEventListener('click', closeDialog.bind(null, wrapper));
+	wrapper.querySelector('.close').addEventListener('click', closeDialog.bind(null, wrapper));
 });
 
 document.querySelector('.dialog-wrapper').addEventListener("click", () => {

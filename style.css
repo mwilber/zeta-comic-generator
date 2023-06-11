@@ -7,6 +7,7 @@ body {
 	padding: 0;
 	font-family:Arial, Helvetica, sans-serif;
 	font-size: 14px;
+	background: #f9f5ec;
 
 	--bounce-function: cubic-bezier(0.680, -0.550, 0.265, 1.550);
 }
@@ -33,7 +34,7 @@ input,
 	
 	position: absolute;
 	width: 100%;
-	height: 100%;
+	height: 200px;
 	background: white;
   	filter: contrast(50);
 	opacity: 0.08;
@@ -150,7 +151,7 @@ input,
     top: calc(40vh - 4em);
     left: 10%;
     width: calc(80% - 4em);
-    padding: 2em 2em;
+    padding: 1em 2em 1.5em 2em;
     transform: scale(0);
     background: #3050cc;
 	color: #fff;
@@ -171,6 +172,10 @@ input,
 	transform: scale(1);
 	opacity: 1;
 	z-index: 501;
+}
+
+.active .dialog {
+	z-index: 502;
 }
 
 .dialog .close {
@@ -435,6 +440,34 @@ progress[value]::-webkit-progress-value {
     display: inline-block;
 }
 
+.download-buttons {
+	display: flex;
+	width: 100%;
+}
+
+.download-buttons .button-group {
+	flex: 1;
+	margin: 0 1em;
+}
+
+.download-buttons button {
+	width: calc(100% - 2em);
+    padding: 1em;
+    background: rgb(0 0 0 / 10%);
+    border-radius: 10px;
+    border-width: 1px;
+	margin: 0 1em 1em 1em;
+	cursor: pointer;
+}
+
+.download-buttons span {
+	font-size: 1rem;
+}
+
+.dialog p {
+	margin-top: 0;
+}
+
 #interface {
 	display: flex;
 	flex-direction: column;
@@ -560,7 +593,7 @@ progress[value]::-webkit-progress-value {
 #script {
 	background: #fefae7;
 	margin: 0;
-    padding: 20px 30px;
+	padding: 75px 100px 100px 100px;
 	border: solid 1px rgba(203, 170, 56, 1);
     border-radius: 20px;
 	list-style: none;
@@ -568,7 +601,7 @@ progress[value]::-webkit-progress-value {
 }
 
 #script h2, #script h3 {
-	margin: 0 0 10px 0;
+	margin: 0 0 2em 0;
 }
 
 #script h2 {
@@ -578,7 +611,7 @@ progress[value]::-webkit-progress-value {
     padding: 0;
     width: 100%;
     text-align: center;
-    margin-bottom: 1em;
+    margin-bottom: 3em;
 }
 
 #script h3 {
@@ -587,6 +620,7 @@ progress[value]::-webkit-progress-value {
 
 #script ul {
 	list-style: none;
+	margin-bottom: 5em;
 }
 
 #script table {
