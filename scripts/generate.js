@@ -47,10 +47,17 @@ async function fetchComic(prompt) {
 	let comic = {};
 
     const script = await queryApi('/api/gpt_script', formData);
-	if(script.json && script.json.panels && script.json.panels.length) comic.script = script.json;
-	UpdateProgress(13);
+	let errorMsg = '';
+	if(!script || !script.json || !script.json.panels || !script.json.panels.length) errorMsg = "Script object not returned.";
+	if(script.error) errorMsg = script.error.message;
 
+	if(errorMsg) return {error: errorMsg};
+	else comic.script = script.json;
+
+	UpdateProgress(13);
+	
 	const altDialog = await fetchAltSceneComponent(comic.script.panels, 'gpt_dialog');
+	if(!altDialog.length) return {error: "Dialog not received."}
 	altDialog.forEach((dialog, idx) => {
 		comic.script.panels[idx].altDialog = comic.script.panels[idx].dialog;
 		comic.script.panels[idx].dialog = dialog;
@@ -58,6 +65,7 @@ async function fetchComic(prompt) {
 	UpdateProgress(9);
 
 	const altBackground = await fetchAltSceneComponent(comic.script.panels, 'gpt_background');
+	if(!altBackground.length) return {error: "Background descriptions not received."}
 	altBackground.forEach((bkg, idx) => {
 		comic.script.panels[idx].background = bkg;
 	});
@@ -67,6 +75,7 @@ async function fetchComic(prompt) {
 		// panel.background = await fetchSceneComponent(prompt + ' - ' + panel.scene, 'gpt_background', 'background');
 		// UpdateProgress(3);
 		panel.background_url = await renderBackground(idx, panel.background, prompt);
+		if(panel.background_url.error) return {error: panel.background_url.error}
 		UpdateProgress(20);
 		// panel.action = await fetchSceneComponent(panel.scene, 'gpt_action', 'action');
 		// UpdateProgress(3);
@@ -75,6 +84,7 @@ async function fetchComic(prompt) {
 	}
 
 	const altAction = await fetchAltSceneComponent(comic.script.panels, 'gpt_action');
+	if(!altAction.length) return {error: "Character action not received."}
 	altAction.forEach((action, idx) => {
 		comic.script.panels[idx].action = action.action;
 		comic.script.panels[idx].altAction = action.altAction || "";
@@ -140,9 +150,10 @@ async function renderBackground(idx, description, premise) {
 	document.getElementById('panel' + (idx + 1)).innerHTML = `Rendering...`;
 
 	let image = await fetchBackground(premise + " - " + description);
-	if(!image){
-		SetStatus('error');
-		return;
+	if(!image || !image.data || !image.data.length || image.error){
+		let errorMsg = 'Image did not return.';
+		if(image.error && image.error.message) errorMsg = image.error.message;
+		return {error: errorMsg};
 	}
 
 	console.log("image data", image);
@@ -234,8 +245,9 @@ async function GenerateStrip(query) {
 	UpdateProgress(0);
 	SetStatus('generating');
 	fetchComic(query).then(async (script) => {
-		if(!script){
+		if(!script || script.error){
 			SetStatus('error');
+			alert("There was a problem generating the script. There may be a problem with your premise or GPT may just be busy at the moment. Check your premise and remove any special characters and try again. [" + script.error +"]");
 			return;
 		}
 		console.log("response", script);
