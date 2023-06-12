@@ -1,5 +1,5 @@
 var API_MODE = 'simulation';
-// API_MODE = 'production';
+API_MODE = 'production';
 
 function ClearElements() {
 	[
@@ -69,17 +69,28 @@ async function fetchComic(prompt) {
 	let comic = {};
 
     const script = await queryApi('/api/gpt_script/?c='+(Math.floor(Math.random()*10000000000000000)), formData);
-	if(script.json && script.json.panels && script.json.panels.length) comic.script = script.json;
+	let errorMsg = '';
+	if(!script || !script.json || !script.json.panels || !script.json.panels.length) errorMsg = "Script object not returned.";
+	if(script.error) errorMsg = script.error.message;
+	
+	if(errorMsg) return {error: errorMsg};
+	else comic.script = script.json;
+
 	UpdateProgress(13);
 
 	for(let [idx, panel] of comic.script.panels.entries()) {
 		panel.background = await fetchSceneComponent(prompt + ' - ' + panel.scene, 'gpt_background', 'background');
+		if(panel.background.error) return {error: panel.background.error}
 		UpdateProgress(3);
 		panel.background_url = await renderBackground(idx, panel.background, prompt);
+		if(panel.background_url.error) return {error: panel.background_url.error}
 		UpdateProgress(20);
 		panel.action = await fetchSceneComponent(panel.scene, 'gpt_action', 'action');
+		if(panel.action.error) return {error: panel.action.error}
 		UpdateProgress(3);
+		//prompt += '"the test"';
 		panel.altdialog = await fetchSceneComponent(panel.scene, 'gpt_dialog', 'dialog', prompt, partNames[idx]);
+		if(panel.altdialog.error) return {error: panel.altdialog.error}
 		UpdateProgress(3);
 	}
 
@@ -97,9 +108,10 @@ async function renderBackground(idx, description, premise) {
 	panelEl.innerHTML = ``;
 
 	let image = await fetchBackground(premise + " - " + description);
-	if(!image){
-		SetStatus('error');
-		return;
+	if(!image || image.error){
+		let errorMsg = 'Image did not return.';
+		if(image.error && image.error.message) errorMsg = image.error.message;
+		return {error: errorMsg};
 	}
 
 	console.log("image data", image);
@@ -189,8 +201,9 @@ async function GenerateStrip(query) {
 	UpdateProgress(0);
 	SetStatus('generating');
 	fetchComic(query).then(async (script) => {
-		if(!script){
+		if(!script || script.error){
 			SetStatus('error');
+			alert("There was a problem generating the script. Check your premise and avoid any special characters. [" + script.error +"]");
 			return;
 		}
 		console.log("response", script);

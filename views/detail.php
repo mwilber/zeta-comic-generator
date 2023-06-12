@@ -33,7 +33,7 @@
 		<div class="download-buttons">
 			<div class="button-group">
 				<button id="download-strip">
-					<img class="burst" src="/assets/images/icon_full_strip.svg" />
+					<img class="burst" src="/assets/images/icon_full_strip.svg" style="background: rgba(255,255,255,0.5);" />
 				</button>
 				<span>Complete Strip</span>
 			</div>

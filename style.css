@@ -521,7 +521,8 @@ progress[value]::-webkit-progress-value {
 	display: initial;
 }
 
-.generate[data-status='ready'] #strip .panel {
+.generate[data-status='ready'] #strip .panel,
+.generate[data-status='error'] #strip .panel {
 	background: #fff;
 }
 
