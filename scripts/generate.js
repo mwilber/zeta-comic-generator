@@ -1,5 +1,5 @@
 var API_MODE = 'simulation';
-// API_MODE = 'production';
+API_MODE = 'production';
 
 function ClearElements() {
 	[
@@ -253,9 +253,11 @@ SetStatus('ready');
 
 document.getElementById('generate').addEventListener("click", () => {
 	const query = document.getElementById('query');
-	if(!query) return;
+	if(!query || !query.value) return;
 
-	GenerateStrip(query.value);
+	let safeQuery = query.value.replace(/[\\"']/g, '\\$&').replace(/\u0000/g, '\\0');
+
+	GenerateStrip(safeQuery);
 });
 
 document.getElementById('save').addEventListener("click", () => {
