@@ -363,11 +363,19 @@ progress[value]::-webkit-progress-value {
 #input {
 	width:100%;
 	display: flex;
+	flex-wrap: wrap;
 	font-size: 18px;
 }
 
 #query {
 	flex: 1;
+}
+
+#character-count {
+	flex: auto;
+    width: 100%;
+    font-size: 0.75em;
+    padding: 0.5em 0 0 1em;
 }
 
 .strip-controls button,

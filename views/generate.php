@@ -14,6 +14,7 @@
 				<img class="burst" src="/assets/images/speech_bubble.svg" />
 				<span class="cartoon-font">Start</span>
             </button>
+			<span id="character-count">140 characters left</span>
 		</div>
 	</div>
 	<div class="strip-wrapper">

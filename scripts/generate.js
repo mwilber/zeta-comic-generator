@@ -249,16 +249,43 @@ async function GenerateStrip(query) {
 	});
 }
 
+function SetCharCount() {
+	let el = document.getElementById('character-count');
+    let characterCount = document.getElementById('query').value.length;
+    let characterleft = 140 - characterCount;
+
+    // console.log(characterleft);
+
+	if(characterleft < 0)
+		el.style.color = '#c00';
+	else if(characterleft < 15)
+		el.style.color = '#600';
+	else
+		el.style.color = '';
+
+	if(characterleft < 0)
+		el.innerText = Math.abs(characterleft) + " over limit.";
+	else
+		el.innerText = characterleft + " characters left.";
+
+	return true;
+
+}
+
 SetStatus('ready');
 
 document.getElementById('generate').addEventListener("click", () => {
 	const query = document.getElementById('query');
-	if(!query || !query.value) return;
+	if(!query || !query.value || query.value.length > 140) return;
 
 	let safeQuery = query.value.replace(/[\\"']/g, '\\$&').replace(/\u0000/g, '\\0');
 
 	GenerateStrip(safeQuery);
 });
+
+['keyup', 'change', 'paste'].forEach(
+	(evt) => document.getElementById('query').addEventListener('keyup', SetCharCount)
+);
 
 document.getElementById('save').addEventListener("click", () => {
 	const query = document.getElementById('query');
