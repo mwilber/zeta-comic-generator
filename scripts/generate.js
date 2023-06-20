@@ -1,6 +1,8 @@
+var API_MODE = 'simulation';
+API_MODE = 'production';
+
 function ClearElements() {
 	[
-		'title',
 		'script',
 		'panel1',
 		'panel2',
@@ -15,18 +17,15 @@ function ClearElements() {
 }
 
 function SetStatus(status) {
-	document.body.className = status;
+	document.body.dataset.status = status;
 
 	['generate', 'query'].forEach((id) => {
 		document.getElementById(id)[status === 'generating' ? 'setAttribute' : 'removeAttribute']('disabled', '');
 	});
+	document.getElementById('statusdialog').classList[status === 'generating' ? 'add' : 'remove']('active');
 
 	const el = document.getElementById("status");
 	el.innerHTML = status;
-
-	if(status === 'generating'){
-		
-	}
 }
 
 function UpdateProgress(amount) {
@@ -46,7 +45,7 @@ async function fetchComic(prompt) {
 
 	let comic = {};
 
-    const script = await queryApi('/api/gpt_script', formData);
+    const script = await queryApi('/api/gpt_script/?c='+(Math.floor(Math.random()*10000000000000000)), formData);
 	let errorMsg = '';
 	if(!script || !script.json || !script.json.panels || !script.json.panels.length) errorMsg = "Script object not returned.";
 	if(script.error) errorMsg = script.error.message;
@@ -100,6 +99,7 @@ async function fetchSceneComponent(scene, endpoint, property, premise, part) {
 	let result = "";
 	let retry = 3;
 	let sceneData = new FormData();
+	sceneData.append('mode', API_MODE);
 	sceneData.append('query', scene);
 	if(premise) sceneData.append('premise', premise);
 	if(part) sceneData.append('part', part);
@@ -107,7 +107,7 @@ async function fetchSceneComponent(scene, endpoint, property, premise, part) {
 	// Sometimes GPT returns a null, retry up to 2 times to get a usable result.
 	while(retry > 0) {
 		retry--;
-		let response = await queryApi('/api/' + endpoint, sceneData);
+		let response = await queryApi('/api/' + endpoint + '/?c='+(Math.floor(Math.random()*10000000000000000)), sceneData);
 		if(response.json) {
 			result = response.json[property];
 			break;
@@ -133,7 +133,7 @@ async function fetchAltSceneComponent(panels, endpoint) {
 	// Sometimes GPT returns a null, retry up to 2 times to get a usable result.
 	while(retry > 0) {
 		retry--;
-		let response = await queryApi('/api/' + endpoint + "_3", sceneData);
+		let response = await queryApi('/api/' + endpoint + '_3/?c='+(Math.floor(Math.random()*10000000000000000)), sceneData);
 		if(response.json && response.json.panels && response.json.panels.length) {
 			result = [...response.json.panels];
 			break;
@@ -147,7 +147,9 @@ async function renderBackground(idx, description, premise) {
 	// Bypass images. For testing prompts
 	// return;
 
-	document.getElementById('panel' + (idx + 1)).innerHTML = `Rendering...`;
+	let panelEl = document.getElementById('panel' + (idx + 1));
+	panelEl.classList.add('rendering');
+	panelEl.innerHTML = ``;
 
 	let image = await fetchBackground(premise + " - " + description);
 	if(!image || !image.data || !image.data.length || image.error){
@@ -157,11 +159,17 @@ async function renderBackground(idx, description, premise) {
 	}
 
 	console.log("image data", image);
-	console.log("attempting panel", idx)
+	console.log("attempting panel", idx);
 
-	document.getElementById('panel' + (idx + 1)).innerHTML = `
-		<img class="background" src="${image.data[0].url}"/>
-		`;
+	panelEl.classList.remove('rendering');
+	panelEl.classList.add('rendered');
+
+	panelEl.innerHTML += `
+	<img class="background" src="${image.data[0].url}"/>
+	`;
+	setTimeout(() => {
+		panelEl.classList.remove('rendered');
+	}, 1000);
 
 	return image.data[0].url;
 }
@@ -170,12 +178,13 @@ async function fetchBackground(prompt) {
 	let result = {};
 	let retry = 3;
     const formData = new FormData();
+	formData.append('mode', API_MODE);
 	formData.append('query', prompt);
 
 	// Sometimes GPT returns a null, retry up to 2 times to get a usable result.
 	while(retry > 0) {
 		retry--;
-		let response = await queryApi('/api/image', formData);
+		let response = await queryApi('/api/image/?c='+(Math.floor(Math.random()*10000000000000000)), formData);
 		if(response.data && response.data.length) {
 			result = response;
 			break;
@@ -218,7 +227,7 @@ function SaveStrip(){
 	formData.append('fg3', saveObj.foregrounds[2]);
 	//formData.append('thumbnail', saveObj.thumbnail);
 
-	fetch('/api/save', {
+	fetch('/api/save/?c='+(Math.floor(Math.random()*10000000000000000)), {
 		method: 'POST',
 		body: formData
 	})
@@ -233,7 +242,10 @@ function SaveStrip(){
 			}
 			document.getElementById('permalink').style.display = 'initial';
 			document.getElementById('permalink').innerHTML = `
-				<a href="/detail/${data.response.permalink}">Permalink</a>
+                <a href="/detail/${data.response.permalink}">
+					<img class="burst" src="/assets/images/speech_bubble.svg" />
+					<span class="cartoon-font">Permalink</span>
+				</a>
 			`;
 			console.log('Success:', data);
 		})
@@ -254,12 +266,13 @@ async function GenerateStrip(query) {
 
 		window["saveObj"] = {prompt: query, script, backgrounds: [], foregrounds: []};
 
+		document.getElementById("script").innerHTML = `<li><h2>${script.title}</h2></li>`;
 		if(script.panels && script.panels.length){
 			for(const [idx,panel] of script.panels.entries()){
 				//panel.background = panel.setting;
 				document.getElementById("script").innerHTML += `
 				<li>
-					Panel ${idx + 1}
+					<h3>Panel ${idx + 1}</h3>
 					<ul>
 						<li>Description: ${panel.scene}</li>
 						<li>Action: ${panel.action}</li>
@@ -278,7 +291,9 @@ async function GenerateStrip(query) {
 					`;
 				if(panel.dialog)
 					document.getElementById('panel' + (idx + 1)).innerHTML += `
-						<div class="dialog bubble speech">${panel.dialog}</div>
+						<div class="bubble-container">
+						<div class="bubble speech" title="Speech Balloon">${panel.dialog}</div>
+						</div>
 						`;
 
 				document.getElementById('save').style.display = 'initial';
@@ -296,18 +311,48 @@ async function GenerateStrip(query) {
 			// });
 
 			saveObj.title = script.title;
-			document.getElementById('title').innerText = saveObj.title;
-			SetStatus('');
+			SetStatus('complete');
 		}
 	});
 }
 
+function SetCharCount() {
+	let el = document.getElementById('character-count');
+    let characterCount = document.getElementById('query').value.length;
+    let characterleft = 140 - characterCount;
+
+    // console.log(characterleft);
+
+	if(characterleft < 0)
+		el.style.color = '#c00';
+	else if(characterleft < 15)
+		el.style.color = '#600';
+	else
+		el.style.color = '';
+
+	if(characterleft < 0)
+		el.innerText = Math.abs(characterleft) + " over limit.";
+	else
+		el.innerText = characterleft + " characters left.";
+
+	return true;
+
+}
+
+SetStatus('ready');
+
 document.getElementById('generate').addEventListener("click", () => {
 	const query = document.getElementById('query');
-	if(!query) return;
+	if(!query || !query.value || query.value.length > 140) return;
 
-	GenerateStrip(query.value);
+	let safeQuery = query.value.replace(/[\\"']/g, '\\$&').replace(/\u0000/g, '\\0');
+
+	GenerateStrip(safeQuery);
 });
+
+['keyup', 'change', 'paste'].forEach(
+	(evt) => document.getElementById('query').addEventListener('keyup', SetCharCount)
+);
 
 document.getElementById('save').addEventListener("click", () => {
 	const query = document.getElementById('query');
