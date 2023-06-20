@@ -37,9 +37,67 @@ function UpdateProgress(amount) {
 	el.innerHTML = window.progress + "%";
 }
 
+async function fetchComic(prompt) {
+	
+	const partNames = ['first', 'second', 'third'];
+    const formData = new FormData();
+	formData.append('query', prompt);
+
+	let comic = {};
+
+    const script = await queryApi('/api/gpt_script/?c='+(Math.floor(Math.random()*10000000000000000)), formData);
+	let errorMsg = '';
+	if(!script || !script.json || !script.json.panels || !script.json.panels.length) errorMsg = "Script object not returned.";
+	if(script.error) errorMsg = script.error.message;
+
+	if(errorMsg) return {error: errorMsg};
+	else comic.script = script.json;
+
+	UpdateProgress(13);
+	
+	const altDialog = await fetchAltSceneComponent(comic.script.panels, 'gpt_dialog');
+	if(!altDialog.length) return {error: "Dialog not received."}
+	altDialog.forEach((dialog, idx) => {
+		comic.script.panels[idx].altDialog = comic.script.panels[idx].dialog;
+		comic.script.panels[idx].dialog = dialog;
+	});
+	UpdateProgress(9);
+
+	const altBackground = await fetchAltSceneComponent(comic.script.panels, 'gpt_background');
+	if(!altBackground.length) return {error: "Background descriptions not received."}
+	altBackground.forEach((bkg, idx) => {
+		comic.script.panels[idx].background = bkg;
+	});
+	UpdateProgress(9);
+
+	for(let [idx, panel] of comic.script.panels.entries()) {
+		// panel.background = await fetchSceneComponent(prompt + ' - ' + panel.scene, 'gpt_background', 'background');
+		// UpdateProgress(3);
+		panel.background_url = await renderBackground(idx, panel.background, prompt);
+		if(panel.background_url.error) return {error: panel.background_url.error}
+		UpdateProgress(20);
+		// panel.action = await fetchSceneComponent(panel.scene, 'gpt_action', 'action');
+		// UpdateProgress(3);
+		// panel.altdialog = await fetchSceneComponent(panel.scene, 'gpt_dialog', 'dialog', prompt, partNames[idx]);
+		// UpdateProgress(3);
+	}
+
+	const altAction = await fetchAltSceneComponent(comic.script.panels, 'gpt_action');
+	if(!altAction.length) return {error: "Character action not received."}
+	altAction.forEach((action, idx) => {
+		comic.script.panels[idx].action = action.action;
+		comic.script.panels[idx].altAction = action.altAction || "";
+	});
+	UpdateProgress(9);
+
+	console.log(comic);
+
+    return comic.script;
+}
+
 async function fetchSceneComponent(scene, endpoint, property, premise, part) {
 	let result = "";
-	let retry = 2;
+	let retry = 3;
 	let sceneData = new FormData();
 	sceneData.append('mode', API_MODE);
 	sceneData.append('query', scene);
@@ -59,33 +117,30 @@ async function fetchSceneComponent(scene, endpoint, property, premise, part) {
 	return result;
 }
 
-async function fetchComic(prompt) {
-	
-	const partNames = ['first', 'second', 'third'];
-    const formData = new FormData();
-	formData.append('mode', API_MODE);
-	formData.append('query', prompt);
+async function fetchAltSceneComponent(panels, endpoint) {
+	let result = [];
+	if(!panels || !panels.length) return result;
 
-	let comic = {};
-
-    const script = await queryApi('/api/gpt_script/?c='+(Math.floor(Math.random()*10000000000000000)), formData);
-	if(script.json && script.json.panels && script.json.panels.length) comic.script = script.json;
-	UpdateProgress(13);
-
-	for(let [idx, panel] of comic.script.panels.entries()) {
-		panel.background = await fetchSceneComponent(prompt + ' - ' + panel.scene, 'gpt_background', 'background');
-		UpdateProgress(3);
-		panel.background_url = await renderBackground(idx, panel.background, prompt);
-		UpdateProgress(20);
-		panel.action = await fetchSceneComponent(panel.scene, 'gpt_action', 'action');
-		UpdateProgress(3);
-		panel.altdialog = await fetchSceneComponent(panel.scene, 'gpt_dialog', 'dialog', prompt, partNames[idx]);
-		UpdateProgress(3);
+	let retry = 3;
+	let sceneData = new FormData();
+	for(let idx = 0; idx < 3; idx++) {
+		sceneData.append(
+			'panel'+(idx+1), 
+			(panels[idx] && panels[idx].scene) ? panels[idx].scene : ''
+		);
 	}
 
-	console.log(comic);
+	// Sometimes GPT returns a null, retry up to 2 times to get a usable result.
+	while(retry > 0) {
+		retry--;
+		let response = await queryApi('/api/' + endpoint + '_3/?c='+(Math.floor(Math.random()*10000000000000000)), sceneData);
+		if(response.json && response.json.panels && response.json.panels.length) {
+			result = [...response.json.panels];
+			break;
+		}
+	}
 
-    return comic.script;
+	return result;
 }
 
 async function renderBackground(idx, description, premise) {
@@ -97,9 +152,10 @@ async function renderBackground(idx, description, premise) {
 	panelEl.innerHTML = ``;
 
 	let image = await fetchBackground(premise + " - " + description);
-	if(!image){
-		SetStatus('error');
-		return;
+	if(!image || !image.data || !image.data.length || image.error){
+		let errorMsg = 'Image did not return.';
+		if(image.error && image.error.message) errorMsg = image.error.message;
+		return {error: errorMsg};
 	}
 
 	console.log("image data", image);
@@ -119,11 +175,23 @@ async function renderBackground(idx, description, premise) {
 }
 
 async function fetchBackground(prompt) {
+	let result = {};
+	let retry = 3;
     const formData = new FormData();
 	formData.append('mode', API_MODE);
 	formData.append('query', prompt);
 
-	return await queryApi('/api/image/?c='+(Math.floor(Math.random()*10000000000000000)), formData);
+	// Sometimes GPT returns a null, retry up to 2 times to get a usable result.
+	while(retry > 0) {
+		retry--;
+		let response = await queryApi('/api/image/?c='+(Math.floor(Math.random()*10000000000000000)), formData);
+		if(response.data && response.data.length) {
+			result = response;
+			break;
+		}
+	}
+
+	return result;
 }
 
 async function queryApi(apiUrl, formData) {
@@ -189,8 +257,9 @@ async function GenerateStrip(query) {
 	UpdateProgress(0);
 	SetStatus('generating');
 	fetchComic(query).then(async (script) => {
-		if(!script){
+		if(!script || script.error){
 			SetStatus('error');
+			alert("There was a problem generating the script. There may be a problem with your premise or GPT may just be busy at the moment. Check your premise and remove any special characters and try again. [" + script.error +"]");
 			return;
 		}
 		console.log("response", script);
@@ -205,14 +274,12 @@ async function GenerateStrip(query) {
 				<li>
 					<h3>Panel ${idx + 1}</h3>
 					<ul>
-						<li>
-							<table>
-								<tr><td>Description</td> <td>${panel.scene}</td></tr>
-								<tr><td>Action</td> <td>${panel.action}</td></tr>
-								<tr><td>Dialog</td> <td>${panel.dialog}</td></tr>
-								<tr><td>Background</td> <td>${panel.background}</td></tr>
-							</table>
-						</li>
+						<li>Description: ${panel.scene}</li>
+						<li>Action: ${panel.action}</li>
+						<li>Dialog: ${panel.dialog}</li>
+						<li>Background: ${panel.background}</li>
+						<li>Suggested Action: ${panel.altAction}</li>
+						<li>Inline Dialog: ${panel.altDialog}</li>
 					</ul>
 				</li>
 				`;

@@ -39,6 +39,9 @@
 		case 'gpt_background':
 		case 'gpt_dialog':
 		case 'gpt_action':
+        case 'gpt_background_3':
+        case 'gpt_dialog_3':
+        case 'gpt_action_3':
         case 'comic':
         case 'detail':
 		case 'gallery':
