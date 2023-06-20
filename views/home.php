@@ -11,7 +11,9 @@
 	}
 ?>
 	<header>
-		Easily create you own comic strips with the help of <a href="#">OpenAI</a> models and Alpha Zeta, 
+		Easily <a href="/generate">create</a> your own comic strips with the help of 
+		<a href="https://openai.com/product" target="_blank" rel="noopener noreferrer">OpenAI</a> models and 
+		<a href="https://greenzeta.com/project/illustrations/" target="_blank" rel="noopener noreferrer">Alpha Zeta</a>, 
 		the alien mascot of <a href="https://greenzeta.com" target="_blank" rel="noopener noreferrer">GreenZeta.com</a>
 	</header>
 
