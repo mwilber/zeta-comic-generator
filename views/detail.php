@@ -4,6 +4,7 @@
 <div id="sharedialog" class="dialog-wrapper">
 	<div class="dialog">
 		<button id="closedialog" class="close"></button>
+		<p>Share</p>
 		<input id="shareurl" value="<?php echo $meta->url ?>"/>
 			<button id="cpshare" title="Copy to Clipboard">
 				<svg id="copy-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Pro 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. --><path d="M192 0c-41.8 0-77.4 26.7-90.5 64H64C28.7 64 0 92.7 0 128V448c0 35.3 28.7 64 64 64H320c35.3 0 64-28.7 64-64V128c0-35.3-28.7-64-64-64H282.5C269.4 26.7 233.8 0 192 0zm0 64a32 32 0 1 1 0 64 32 32 0 1 1 0-64zM112 192H272c8.8 0 16 7.2 16 16s-7.2 16-16 16H112c-8.8 0-16-7.2-16-16s7.2-16 16-16z"/></svg>	
@@ -22,6 +23,26 @@
 				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Pro 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. --><path d="M279.14 288l14.22-92.66h-88.91v-60.13c0-25.35 12.42-50.06 52.24-50.06h40.42V6.26S260.43 0 225.36 0c-73.22 0-121.08 44.38-121.08 124.72v70.62H22.89V288h81.39v224h100.17V288z"/></svg>
 				</span>
 			</button>
+		</div>
+	</div>
+</div>
+<div id="downloaddialog" class="dialog-wrapper">
+	<div class="dialog">
+		<button id="closedialog" class="close"></button>
+		<p>Download</p>
+		<div class="download-buttons">
+			<div class="button-group">
+				<button id="download-strip">
+					<img class="burst" src="/assets/images/icon_full_strip.svg" style="background: rgba(255,255,255,0.5);" />
+				</button>
+				<span>Complete Strip</span>
+			</div>
+			<div class="button-group">
+				<button id="download-ig">
+					<img class="burst" src="/assets/images/icon_indiv_panels.svg" />
+				</button>
+				<span>Individual Panels</span>
+			</div>
 		</div>
 	</div>
 </div>

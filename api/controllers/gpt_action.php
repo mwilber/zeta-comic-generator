@@ -68,6 +68,8 @@ if($mode == "simulation") {
 	$prompt = generatePrompt($instructions);
 	$response = gptComplete($OPENAI_KEY, $prompt);
 
+	if(isset($response->data->error)) $output->error = $response->data->error;
+
 	if(OUTPUT_DEBUG_DATA) {
 		$output->data = $response->data;
 		$output->debug = $response->debug;
