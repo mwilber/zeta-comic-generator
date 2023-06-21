@@ -311,6 +311,7 @@ async function GenerateStrip(query) {
 			// });
 
 			saveObj.title = script.title;
+			document.getElementById('query').value = '';
 			SetStatus('complete');
 		}
 	});
