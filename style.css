@@ -264,7 +264,7 @@ header nav a:hover {
 
 .content {
 	margin: 3em auto;
-	width: 96%;
+	width: calc(96% - 2em);
 	max-width: 960px;
 	min-height: calc(100% - 132px - 5em);
 	padding: 0 1em 2em 1em;
@@ -847,10 +847,12 @@ progress[value]::-webkit-progress-value {
 	header nav {
 		margin: 0;
 		width: 100%;
+		overflow: hidden;
 	}
 	header nav a {
 		height: 50px;
 		margin-top: 30px;
+		font-size: 2.5em !important;
 	}
 	header h1{
 		font-size: 1.5em;
@@ -858,8 +860,64 @@ progress[value]::-webkit-progress-value {
 		width: 100%;
 	}
 
+	.dialog {
+		padding: 0.5em;
+    	width: calc(92% - 1em);
+		left: 3%;
+		top: 30vh;
+		font-size: 1.5em;
+	}
+
+	#statusdialog .dialog {
+		font-size: 3em;
+	}
+
+	.dialog p {
+		margin-top: 0.4em;
+		margin-bottom: 0.5em;
+	}
+
 	#gallery {
 		grid-template-columns: 1fr 1fr;
+	}
+
+	#script {
+		padding: 50px 10px;
+	}
+
+	#script h3 {
+		margin-bottom: 0.5em;
+	}
+
+	#script ul {
+		padding: 0 0 0 5px;
+	}
+
+	#script table tr {
+		display: grid;
+		width: 100%;
+	}
+
+	#script table tr td:first-child {
+		text-align: left;
+		font-weight: bold;
+		border-right: none;
+		padding: 1em 0 0.5em 0;
+	}
+
+	#generate {
+		flex: 1;
+		margin-top: 2em;
+	}
+
+	#character-count {
+		margin-top: -4.5em;
+	}
+}
+
+@media screen and (max-height: 550px) {
+	.dialog {
+		top: 10vh;
 	}
 }
 
