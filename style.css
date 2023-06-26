@@ -306,7 +306,7 @@ main p {
 
 .action-buttons {
 	font-size: 3em;
-    margin-top: 0.25em;
+    margin-top: 0.5em;
 	margin-bottom: 1em;
     text-align: center;
     line-height: 3em;
@@ -314,6 +314,20 @@ main p {
 .action-buttons .cartoon-button {
 	display: inline-block;
 	height: 1.5em;
+}
+
+p.diagram {
+    margin-top: 0.5em;
+    text-align: center;
+}
+
+p.diagram img {
+    width: 75%;
+}
+
+p.description {
+	line-height: 1.5em;
+    padding: 1em 0 2em 0;
 }
 
 /* Gallery */
@@ -872,10 +886,20 @@ progress[value]::-webkit-progress-value {
 		font-size: 3em;
 	}
 
+    p.diagram img {
+        width: 100%;
+    }
+
 	.dialog p {
 		margin-top: 0.4em;
 		margin-bottom: 0.5em;
 	}
+
+    main header {
+        width: 100%;
+        margin: 1.25em 0 0.5em 0;
+        font-size: 2em;
+    }
 
 	#gallery {
 		grid-template-columns: 1fr 1fr;

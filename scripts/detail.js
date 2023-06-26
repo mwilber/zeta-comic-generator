@@ -7,6 +7,8 @@ function ClearElements() {
 	].forEach((id) => document.getElementById(id).innerHTML = '');
 }
 
+alert('testing');
+
 function SetStatus(status) {
 	document.body.dataset.status = status;
 
@@ -17,6 +19,10 @@ function SetStatus(status) {
 	if(status === 'generating'){
 		
 	}
+}
+
+function GetShareMessage() {
+	return `Check out my comic strip "${comicTitle}" from Zeta Comic Generator. Easily create unique comic strips with the help of OpenAI models and hand drawn character art.`;
 }
 
 ClearElements();
@@ -32,6 +38,8 @@ if(comicId) {
 			window.stripData = data;
 			const script = data.script;
 			console.log("response", script);
+
+			window['comicTitle'] = script.title;
 
 			document.getElementById("query").innerHTML = `${data.prompt}`;
 			document.getElementById("script").innerHTML = `<li><h2>${script.title}</h2></li>`;
@@ -177,7 +185,7 @@ document.getElementById('cpshare').addEventListener("click", () => {
 
 document.getElementById('twshare').addEventListener('click',function(event){
     event.preventDefault();
-    window.open("https://twitter.com/share?url="+encodeURIComponent(document.getElementById('shareurl').value));
+    window.open("https://twitter.com/share?text=" + GetShareMessage() + "&url="+encodeURIComponent(document.getElementById('shareurl').value) + "&hashtags=ai,AIart,generativeart,dalle2,openai");
 },false);
 
 document.getElementById('fbshare').addEventListener('click',function(event){
@@ -192,3 +200,4 @@ document.getElementById('fbshare').addEventListener('click',function(event){
 document.getElementById('shareurl').addEventListener('focus', function(event){
 	event.target.select();
 });
+
