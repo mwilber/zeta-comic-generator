@@ -98,7 +98,8 @@
 		// Render the view
 		switch ($path[1]) {
 
-			case 'detail':
+			case 'about':
+            case 'detail':
 			case 'gallery':
 			case 'generate':
 				require __DIR__ . '/views/'.$path[1].'.php';
