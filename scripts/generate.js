@@ -267,6 +267,8 @@ async function GenerateStrip(query) {
 		window["saveObj"] = {prompt: query, script, backgrounds: [], foregrounds: []};
 
 		document.getElementById("script").innerHTML = `<li><h2>${script.title}</h2></li>`;
+        document.getElementById("strip-title").innerText = script.title;
+        
 		if(script.panels && script.panels.length){
 			for(const [idx,panel] of script.panels.entries()){
 				//panel.background = panel.setting;

@@ -7,8 +7,6 @@ function ClearElements() {
 	].forEach((id) => document.getElementById(id).innerHTML = '');
 }
 
-alert('testing');
-
 function SetStatus(status) {
 	document.body.dataset.status = status;
 
@@ -43,6 +41,7 @@ if(comicId) {
 
 			document.getElementById("query").innerHTML = `${data.prompt}`;
 			document.getElementById("script").innerHTML = `<li><h2>${script.title}</h2></li>`;
+            document.getElementById("strip-title").innerText = script.title;
 
 			if(script.panels && script.panels.length){
 				script.panels.forEach((panel, idx) => {

@@ -19,7 +19,7 @@
 </p>
 <p class="description">
     Zeta Comic Generator starts with a premise, a short description of what the comic should be about. 
-    Massive Language Models at <a href="https://openai.com/product" target="_blank" rel="noopener noreferrer">OpenAI</a> 
+    Large Language Models at <a href="https://openai.com/product" target="_blank" rel="noopener noreferrer">OpenAI</a> 
     use the premise to write a complete script for a three panel comic strip. 
     The model then elaborates on a scene description for each panel. 
     That description is sent to the <a href="https://openai.com/dall-e-2" target="_blank" rel="noopener noreferrer">Dall-E</a> 
@@ -27,7 +27,7 @@
     Finally the model selects from a list of <a href="/about#character-art">character actions</a>, each one representing an image of 
     <a href="https://greenzeta.com/project/illustrations/" target="_blank" rel="noopener noreferrer">Alpha Zeta</a>, 
     the alien mascot of <a href="https://greenzeta.com" target="_blank" rel="noopener noreferrer">GreenZeta.com</a>. 
-    All of the assets are combined into a single comic strip!
+    All of the assets are combined here into a single comic strip!
 </p>
 <div class="action-buttons" style="margin-top: 0.5em;">
     <a href="/generate" class="cartoon-button">

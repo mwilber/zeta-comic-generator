@@ -16,5 +16,5 @@
 			<span class="cartoon-font">About</span>
 		</a>
 	</nav>
-	<h1>Zeta Comic Generator</h1>
+	<a href="/"><h1>Zeta Comic Generator</h1></a>
 </header>
