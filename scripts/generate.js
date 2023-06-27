@@ -348,7 +348,7 @@ document.getElementById('generate').addEventListener("click", () => {
 	const query = document.getElementById('query');
 	if(!query || !query.value || query.value.length > 140) return;
 
-	let safeQuery = query.value.replace(/[\\"']/g, '\\$&').replace(/\u0000/g, '\\0');
+	let safeQuery = query.value.replace(/[\\"]/g, '\\$&').replace(/\u0000/g, '\\0');
 
 	GenerateStrip(safeQuery);
 });

@@ -127,19 +127,19 @@ document.getElementById('download-strip').addEventListener('click', () => {
 		window.ctxt = ctx;
 		ctx.resetTransform();
 		ctx.fillStyle = 'white';
-		ctx.fillRect(10, 318, 940, 57);
+		ctx.fillRect(10, 310, 910, 65);
 
 		ctx.fillStyle = 'black';
 		ctx.textAlign = 'right';
 		ctx.font = 'bold 20px sans-serif';
-		// ctx.fillText(window.location.host, 945, 340);
-		ctx.fillText("greenzeta.com/project/zetacomicgenerator", 945, 340);
+		ctx.fillText(window.location.host, 905, 335);
+		// ctx.fillText("greenzeta.com/project/zetacomicgenerator", 905, 335);
 
 		ctx.textAlign = 'left';
-		ctx.fillText(window.stripData.script.title, 15, 340);
+		ctx.fillText(window.stripData.script.title, 15, 335);
 
 		ctx.font = 'normal 14px sans-serif';
-		ctx.fillText('\u201C' + window.stripData.prompt + '\u201D', 15, 360);
+		ctx.fillText('\u201C' + window.stripData.prompt + '\u201D', 15, 355);
 
 		let uri = canvas.toDataURL();
 		var link = document.createElement('a');
