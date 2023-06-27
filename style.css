@@ -359,6 +359,25 @@ p.description {
     border: solid 2px black;
 }
 
+.prompts {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.prompts li {
+	width: 90%;
+	margin-left: 5%;
+	margin-bottom: 2em;
+}
+
+.prompts .codeblock {
+	background: #333e4d;
+	color: #d6dcf5;
+	padding: 1em;
+	line-height: 1.5em;
+}
+
 /* Gallery */
 
 #gallery, .character-art {
