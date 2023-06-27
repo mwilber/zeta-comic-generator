@@ -96,17 +96,18 @@ document.getElementById('download-ig').addEventListener('click', () => {
 			ctx.strokeStyle = 'black';
 			ctx.fillStyle = 'white';
 			ctx.lineWidth = 4;
-			ctx.font = 'bold 14px sans-serif';
+			ctx.font = 'bold 15px sans-serif';
 
 			if(idx === 1){
 				ctx.textAlign = 'left';
-				ctx.strokeText(window.stripData.script.title, 5, 295);
-				ctx.fillText(window.stripData.script.title, 5, 295);
+				ctx.strokeText(window.stripData.script.title, 5, 285);
+				ctx.fillText(window.stripData.script.title, 5, 285);
 			}else if(idx === 3){
 				ctx.textAlign = 'right';
-				// ctx.fillText(window.location.host, 945, 340);
-				ctx.strokeText("greenzeta.com/project/zetacomicgenerator", 295, 295);
-				ctx.fillText("greenzeta.com/project/zetacomicgenerator", 295, 295);
+				ctx.strokeText(window.location.host, 285, 285);
+				ctx.fillText(window.location.host, 285, 285);
+				// ctx.strokeText("greenzeta.com/project/zetacomicgenerator", 290, 290);
+				// ctx.fillText("greenzeta.com/project/zetacomicgenerator", 290, 290);
 			}
 
 			let uri = canvas.toDataURL();
