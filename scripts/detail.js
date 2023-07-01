@@ -89,8 +89,7 @@ document.getElementById('download-ig').addEventListener('click', () => {
 	const strip = document.getElementById('strip');
 	if(!strip) return;
 
-	strip.style.boxShadow = 'none';
-	strip.style.width = '942px';
+	strip.classList.add("capture");
 	//const output = document.getElementById('output');
 	for(let idx = 1; idx <= 3; idx++){
 		let link = document.createElement('a');
@@ -108,8 +107,7 @@ document.getElementById('download-ig').addEventListener('click', () => {
 				ctx.strokeText(window.stripData.script.title, 5, 295);
 				ctx.fillText(window.stripData.script.title, 5, 295);
 			}else if(idx === 3){
-				strip.style.width = '';
-				strip.style.boxShadow = '';
+				strip.classList.remove("capture");
 				ctx.textAlign = 'right';
 				ctx.strokeText(window.location.host, 295, 295);
 				ctx.fillText(window.location.host, 295, 295);
@@ -129,11 +127,9 @@ document.getElementById('download-strip').addEventListener('click', () => {
 	const strip = document.getElementById('strip');
 	if(!strip) return;
 
-	strip.style.boxShadow = 'none';
-	strip.style.width = '942px';
+	strip.classList.add("capture");
 	html2canvas(strip).then(canvas => {
-		strip.style.width = '';
-		strip.style.boxShadow = '';
+		strip.classList.remove("capture");
 		let ctx = canvas.getContext("2d");
 		window.ctxt = ctx;
 		ctx.resetTransform();

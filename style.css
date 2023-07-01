@@ -780,6 +780,13 @@ progress[value]::-webkit-progress-value {
     box-shadow: 2px 2px 6px rgba(0,0,0,0.5);
 }
 
+#strip.capture {
+	max-width: none !important;
+	width: 942px !important;
+	flex-direction: row !important;
+	box-shadow: none !important;
+}
+
 #strip .panel {
 	position: relative;
 	flex: 1;
@@ -791,6 +798,10 @@ progress[value]::-webkit-progress-value {
 	background: black;
 	aspect-ratio: 1;
 	transition: background-color 500ms;
+}
+
+#strip.capture .panel {
+	margin: 5px !important;
 }
 
 #strip .panel img {
