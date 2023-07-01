@@ -267,6 +267,8 @@ async function GenerateStrip(query) {
 		window["saveObj"] = {prompt: query, script, backgrounds: [], foregrounds: []};
 
 		document.getElementById("script").innerHTML = `<li><h2>${script.title}</h2></li>`;
+        document.getElementById("strip-title").innerText = script.title;
+        
 		if(script.panels && script.panels.length){
 			for(const [idx,panel] of script.panels.entries()){
 				//panel.background = panel.setting;
@@ -346,7 +348,7 @@ document.getElementById('generate').addEventListener("click", () => {
 	const query = document.getElementById('query');
 	if(!query || !query.value || query.value.length > 140) return;
 
-	let safeQuery = query.value.replace(/[\\"']/g, '\\$&').replace(/\u0000/g, '\\0');
+	let safeQuery = query.value.replace(/[\\"]/g, '\\$&').replace(/\u0000/g, '\\0');
 
 	GenerateStrip(safeQuery);
 });

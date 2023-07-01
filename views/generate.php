@@ -23,6 +23,7 @@
 			<div id="panel1" class="panel"></div>
 			<div id="panel2" class="panel"></div>
 			<div id="panel3" class="panel"></div>
+            <h3 id="strip-title"></h3>
 			<div class="strip-controls">
 				<button id="save" class="cartoon-button">
 					<img class="burst" src="/assets/images/speech_bubble.svg" />

@@ -19,6 +19,10 @@ function SetStatus(status) {
 	}
 }
 
+function GetShareMessage() {
+	return `Check out my comic strip "${comicTitle}" from Zeta Comic Generator. Easily create unique comic strips with the help of OpenAI models and hand drawn character art.`;
+}
+
 ClearElements();
 SetStatus('ready');
 if(comicId) {
@@ -33,8 +37,11 @@ if(comicId) {
 			const script = data.script;
 			console.log("response", script);
 
+			window['comicTitle'] = script.title;
+
 			document.getElementById("query").innerHTML = `${data.prompt}`;
 			document.getElementById("script").innerHTML = `<li><h2>${script.title}</h2></li>`;
+            document.getElementById("strip-title").innerText = script.title;
 
 			if(script.panels && script.panels.length){
 				script.panels.forEach((panel, idx) => {
@@ -89,17 +96,18 @@ document.getElementById('download-ig').addEventListener('click', () => {
 			ctx.strokeStyle = 'black';
 			ctx.fillStyle = 'white';
 			ctx.lineWidth = 4;
-			ctx.font = 'bold 14px sans-serif';
+			ctx.font = 'bold 15px sans-serif';
 
 			if(idx === 1){
 				ctx.textAlign = 'left';
-				ctx.strokeText(window.stripData.script.title, 5, 295);
-				ctx.fillText(window.stripData.script.title, 5, 295);
+				ctx.strokeText(window.stripData.script.title, 5, 285);
+				ctx.fillText(window.stripData.script.title, 5, 285);
 			}else if(idx === 3){
 				ctx.textAlign = 'right';
-				// ctx.fillText(window.location.host, 945, 340);
-				ctx.strokeText("greenzeta.com/project/zetacomicgenerator", 295, 295);
-				ctx.fillText("greenzeta.com/project/zetacomicgenerator", 295, 295);
+				ctx.strokeText(window.location.host, 285, 285);
+				ctx.fillText(window.location.host, 285, 285);
+				// ctx.strokeText("greenzeta.com/project/zetacomicgenerator", 290, 290);
+				// ctx.fillText("greenzeta.com/project/zetacomicgenerator", 290, 290);
 			}
 
 			let uri = canvas.toDataURL();
@@ -120,19 +128,19 @@ document.getElementById('download-strip').addEventListener('click', () => {
 		window.ctxt = ctx;
 		ctx.resetTransform();
 		ctx.fillStyle = 'white';
-		ctx.fillRect(10, 318, 940, 57);
+		ctx.fillRect(10, 310, 910, 65);
 
 		ctx.fillStyle = 'black';
 		ctx.textAlign = 'right';
 		ctx.font = 'bold 20px sans-serif';
-		// ctx.fillText(window.location.host, 945, 340);
-		ctx.fillText("greenzeta.com/project/zetacomicgenerator", 945, 340);
+		ctx.fillText(window.location.host, 905, 335);
+		// ctx.fillText("greenzeta.com/project/zetacomicgenerator", 905, 335);
 
 		ctx.textAlign = 'left';
-		ctx.fillText(window.stripData.script.title, 15, 340);
+		ctx.fillText(window.stripData.script.title, 15, 335);
 
 		ctx.font = 'normal 14px sans-serif';
-		ctx.fillText('\u201C' + window.stripData.prompt + '\u201D', 15, 360);
+		ctx.fillText('\u201C' + window.stripData.prompt + '\u201D', 15, 355);
 
 		let uri = canvas.toDataURL();
 		var link = document.createElement('a');
@@ -177,7 +185,7 @@ document.getElementById('cpshare').addEventListener("click", () => {
 
 document.getElementById('twshare').addEventListener('click',function(event){
     event.preventDefault();
-    window.open("https://twitter.com/share?url="+encodeURIComponent(document.getElementById('shareurl').value));
+    window.open("https://twitter.com/share?text=" + GetShareMessage() + "&url="+encodeURIComponent(document.getElementById('shareurl').value) + "&hashtags=ai,AIart,generativeart,dalle2,openai");
 },false);
 
 document.getElementById('fbshare').addEventListener('click',function(event){
@@ -192,3 +200,4 @@ document.getElementById('fbshare').addEventListener('click',function(event){
 document.getElementById('shareurl').addEventListener('focus', function(event){
 	event.target.select();
 });
+
