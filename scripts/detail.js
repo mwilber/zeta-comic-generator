@@ -86,6 +86,11 @@ if(comicId) {
 }
 
 document.getElementById('download-ig').addEventListener('click', () => {
+	const strip = document.getElementById('strip');
+	if(!strip) return;
+
+	strip.style.boxShadow = 'none';
+	strip.style.width = '942px';
 	//const output = document.getElementById('output');
 	for(let idx = 1; idx <= 3; idx++){
 		let link = document.createElement('a');
@@ -100,12 +105,14 @@ document.getElementById('download-ig').addEventListener('click', () => {
 
 			if(idx === 1){
 				ctx.textAlign = 'left';
-				ctx.strokeText(window.stripData.script.title, 5, 285);
-				ctx.fillText(window.stripData.script.title, 5, 285);
+				ctx.strokeText(window.stripData.script.title, 5, 295);
+				ctx.fillText(window.stripData.script.title, 5, 295);
 			}else if(idx === 3){
+				strip.style.width = '';
+				strip.style.boxShadow = '';
 				ctx.textAlign = 'right';
-				ctx.strokeText(window.location.host, 285, 285);
-				ctx.fillText(window.location.host, 285, 285);
+				ctx.strokeText(window.location.host, 295, 295);
+				ctx.fillText(window.location.host, 295, 295);
 				// ctx.strokeText("greenzeta.com/project/zetacomicgenerator", 290, 290);
 				// ctx.fillText("greenzeta.com/project/zetacomicgenerator", 290, 290);
 			}
@@ -123,24 +130,27 @@ document.getElementById('download-strip').addEventListener('click', () => {
 	if(!strip) return;
 
 	strip.style.boxShadow = 'none';
+	strip.style.width = '942px';
 	html2canvas(strip).then(canvas => {
+		strip.style.width = '';
+		strip.style.boxShadow = '';
 		let ctx = canvas.getContext("2d");
 		window.ctxt = ctx;
 		ctx.resetTransform();
 		ctx.fillStyle = 'white';
-		ctx.fillRect(10, 310, 910, 65);
+		ctx.fillRect(10, 320, 950, 60);
 
 		ctx.fillStyle = 'black';
 		ctx.textAlign = 'right';
 		ctx.font = 'bold 20px sans-serif';
-		ctx.fillText(window.location.host, 905, 335);
+		ctx.fillText(window.location.host, 945, 340);
 		// ctx.fillText("greenzeta.com/project/zetacomicgenerator", 905, 335);
 
 		ctx.textAlign = 'left';
-		ctx.fillText(window.stripData.script.title, 15, 335);
+		ctx.fillText(window.stripData.script.title, 15, 340);
 
 		ctx.font = 'normal 14px sans-serif';
-		ctx.fillText('\u201C' + window.stripData.prompt + '\u201D', 15, 355);
+		ctx.fillText('\u201C' + window.stripData.prompt + '\u201D', 15, 365);
 
 		let uri = canvas.toDataURL();
 		var link = document.createElement('a');
