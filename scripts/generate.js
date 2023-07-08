@@ -151,7 +151,7 @@ async function renderBackground(idx, description, premise) {
 	panelEl.classList.add('rendering');
 	panelEl.innerHTML = ``;
 
-	let image = await fetchBackground(premise + " - " + description);
+	let image = await fetchBackground(description);
 	if(!image || !image.data || !image.data.length || image.error){
 		let errorMsg = 'Image did not return.';
 		if(image.error && image.error.message) errorMsg = image.error.message;
