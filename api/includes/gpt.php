@@ -1,6 +1,8 @@
 <?php
 
 	define("OUTPUT_DEBUG_DATA", true);
+	//define("OAI_MODEL", "gpt-3.5-turbo-16k");
+	define("OAI_MODEL", "gpt-4");
 
 	function add_period($str) {
 		$last_char = substr($str, -1);
@@ -37,7 +39,7 @@
 		$response->data = null;
 		$response->script = null;
 
-		$url = "https://api.openai.com/v1/completions";
+		$url = "https://api.openai.com/v1/chat/completions";
 	
 		$ch = curl_init();
 		$headers = array(
@@ -48,15 +50,15 @@
 		curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 		curl_setopt($ch, CURLOPT_HEADER, 0);
 		$body = '{
-				"model": "text-davinci-003",
-				"prompt": "'.$prompt.'",
-				"temperature": 0.9,
-				"max_tokens": 500,
-				"top_p": 1,
-				"frequency_penalty": 0.0,
-				"presence_penalty": 1.5
-				}';
-	
+			"model": "'.OAI_MODEL.'",
+			"messages": [
+				{
+					"role": "user",
+					"content": "'.$prompt.'"
+				}
+			]
+		}';
+
 		//echo $body; die;
 	
 		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST"); 
@@ -70,9 +72,9 @@
 		$data = json_decode($json);
 		$response->data = $data;
 	
-		if(isset($data->choices[0]->text)) {
+		if(isset($data->choices[0]->message->content)) {
 	
-			$script = trim($data->choices[0]->text);
+			$script = trim($data->choices[0]->message->content);
 			$script = str_replace("\\n", "", $script);
 			$script = str_replace("\\r", "", $script);
 			$script = str_replace("\\t", "", $script);
