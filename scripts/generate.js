@@ -137,6 +137,9 @@ async function fetchAltSceneComponent(panels, endpoint) {
 		if(response.json && response.json.panels && response.json.panels.length) {
 			result = [...response.json.panels];
 			break;
+		} else if(response.json && response.json.descriptions && response.json.descriptions.length) {
+			result = [...response.json.descriptions];
+			break;
 		}
 	}
 
