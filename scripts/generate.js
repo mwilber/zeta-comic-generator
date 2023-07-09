@@ -61,7 +61,7 @@ async function fetchComic(prompt) {
 	// 	comic.script.panels[idx].altDialog = comic.script.panels[idx].dialog;
 	// 	comic.script.panels[idx].dialog = dialog;
 	// });
-	// UpdateProgress(9);
+	UpdateProgress(9);
 
 	const altBackground = await fetchAltSceneComponent(comic.script.panels, 'gpt_background');
 	if(!altBackground.length) return {error: "Background descriptions not received."}
