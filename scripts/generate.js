@@ -55,13 +55,13 @@ async function fetchComic(prompt) {
 
 	UpdateProgress(13);
 	
-	const altDialog = await fetchAltSceneComponent(comic.script.panels, 'gpt_dialog');
-	if(!altDialog.length) return {error: "Dialog not received."}
-	altDialog.forEach((dialog, idx) => {
-		comic.script.panels[idx].altDialog = comic.script.panels[idx].dialog;
-		comic.script.panels[idx].dialog = dialog;
-	});
-	UpdateProgress(9);
+	// const altDialog = await fetchAltSceneComponent(comic.script.panels, 'gpt_dialog');
+	// if(!altDialog.length) return {error: "Dialog not received."}
+	// altDialog.forEach((dialog, idx) => {
+	// 	comic.script.panels[idx].altDialog = comic.script.panels[idx].dialog;
+	// 	comic.script.panels[idx].dialog = dialog;
+	// });
+	// UpdateProgress(9);
 
 	const altBackground = await fetchAltSceneComponent(comic.script.panels, 'gpt_background');
 	if(!altBackground.length) return {error: "Background descriptions not received."}
@@ -276,12 +276,14 @@ async function GenerateStrip(query) {
 				<li>
 					<h3>Panel ${idx + 1}</h3>
 					<ul>
-						<li>Description: ${panel.scene}</li>
-						<li>Action: ${panel.action}</li>
-						<li>Dialog: ${panel.dialog}</li>
-						<li>Background: ${panel.background}</li>
-						<li>Suggested Action: ${panel.altAction}</li>
-						<li>Inline Dialog: ${panel.altDialog}</li>
+						<li>
+							<table>
+								<tr><td>Description</td> <td>${panel.scene}</td></tr>
+								<tr><td>Action</td> <td>${panel.action}</td></tr>
+								<tr><td>Dialog</td> <td>${panel.dialog}</td></tr>
+								<tr><td>Background</td> <td>${panel.background}</td></tr>
+							</table>
+						</li>
 					</ul>
 				</li>
 				`;
