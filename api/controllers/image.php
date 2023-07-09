@@ -54,7 +54,7 @@ if($mode == "simulation") {
 	$body = '{
 			"prompt": "'.$query.'",
 			"n": 1,
-			"size": "256x256"
+			"size": "512x512"
 	}';
 
 	//print_r($body);
