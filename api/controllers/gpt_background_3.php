@@ -29,12 +29,13 @@
 
     
 	$instructions = array(
-        "The following statements describe a scene in a story.",
+        "The following statements are passages in a story.",
 		"- " . add_period($panel1),
         "- " . add_period($panel2),
         "- " . add_period($panel3),
-        "Rewrite each of the three scenes as a detailed description of what it would look like without any characters present.",
-		"Write your response as a json object with a single property `panels`, which is an array of strings containing each of the descriptions."
+        "Rewrite each of the three passages as a detailed description of what the scene would look like without the main character present.",
+		"Write your response as a json object with a single property `descriptions`, which is an array of strings containing each of the descriptions.",
+		"Do not reference a panel in the description."
     );
 
 	$prompt = generatePrompt($instructions);
