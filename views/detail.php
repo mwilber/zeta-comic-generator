@@ -65,6 +65,7 @@
 		</button>
 	</div>
 </div>
+<div id="strip-output"></div>
 <div id="output"></div>
 <h2>Script</h2>
 <ul id="script"></ul>
