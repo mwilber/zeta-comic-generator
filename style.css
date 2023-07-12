@@ -847,22 +847,33 @@ progress[value]::-webkit-progress-value {
 	left: 150%;
 }
 
-#strip-output .panel {
+#strip-output > .panel {
 	width: 504px;
     height: 504px;
     margin: 0;
     border-width: 4px;
 }
 
-#strip-output .panel .bubble {
+#strip-output > .panel .bubble {
     font-size: 24px;
     border-radius: 30px;
     padding: 10px 20px;
 }
 
-#strip-output .panel .bubble-container {
+#strip-output > .panel .bubble-container {
 	padding: 10px;
 	width: calc(100% - 20px);
+}
+
+#strip-output > #strip {
+	width: 1024px;
+	max-width: none;
+	box-shadow: none;
+	padding-bottom: 16px;
+}
+
+#strip-output > #strip .panel .bubble {
+	font-size: 15px;
 }
 
 .bubble {

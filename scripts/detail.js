@@ -23,20 +23,52 @@ function GetShareMessage() {
 	return `Check out my comic strip "${comicTitle}" from Zeta Comic Generator. Easily create unique comic strips with the help of OpenAI models and hand drawn character art.`;
 }
 
-async function RenderPanelsForDownload() {
+async function RenderStripForDownload() {
 	const strip = document.getElementById('strip');
 	const output = document.getElementById('strip-output');
-	// const testout = document.getElementById('output');
 	if(!strip || !output) return;
 
-	//strip.classList.add("capture");
-	// let idx = 1;
+	output.innerHTML = strip.outerHTML;
+	output.querySelector('#strip-title').remove();
+	output.querySelectorAll('.strip-controls button').forEach((button) => button.remove());
+
+	let link = document.createElement('a');
+	let canvas = await html2canvas(output);
+
+	// document.getElementById('output').appendChild(canvas);
+	let ctx = canvas.getContext("2d");
+	ctx.resetTransform();
+
+	ctx.fillStyle = 'black';
+	ctx.textAlign = 'right';
+	ctx.font = 'bold 20px sans-serif';
+	ctx.fillText(window.location.host, 1028, 370);
+	// ctx.fillText("greenzeta.com/project/zetacomicgenerator", 905, 335);
+
+	ctx.textAlign = 'left';
+	ctx.fillText(window.stripData.script.title, 15, 370);
+
+	ctx.font = 'normal 14px sans-serif';
+	ctx.fillText('\u201C' + window.stripData.prompt + '\u201D', 15, 390);
+
+	let uri = canvas.toDataURL();
+	link.download = window.stripData.script.title.replaceAll(' ', '_') + '.png';
+	link.href = uri;
+	link.click();
+	output.innerHTML = "";
+	output.innerHTML = "";
+}
+
+async function RenderPanelsForDownload() {
+	const output = document.getElementById('strip-output');
+	if(!output) return;
+
 	for(let idx = 1; idx <= 3; idx++){
 		output.innerHTML = document.getElementById('panel'+idx).outerHTML;
 		let link = document.createElement('a');
 		let canvas = await html2canvas(output);
 		
-		// testout.appendChild(canvas);
+		// document.getElementById('output').appendChild(canvas);
 		let ctx = canvas.getContext("2d");
 		ctx.resetTransform();
 		ctx.strokeStyle = 'black';
@@ -49,18 +81,16 @@ async function RenderPanelsForDownload() {
 			ctx.strokeText(window.stripData.script.title, 10, 498);
 			ctx.fillText(window.stripData.script.title, 10, 498);
 		}else if(idx === 3){
-			strip.classList.remove("capture");
 			ctx.textAlign = 'right';
 			ctx.strokeText(window.location.host, 498, 498);
 			ctx.fillText(window.location.host, 498, 498);
-			// ctx.strokeText("greenzeta.com/project/zetacomicgenerator", 290, 290);
-			// ctx.fillText("greenzeta.com/project/zetacomicgenerator", 290, 290);
 		}
 
 		let uri = canvas.toDataURL();
 		link.download = window.stripData.script.title.replaceAll(' ', '_') + '_' + idx + '.png';
 		link.href = uri;
 		link.click();
+		output.innerHTML = "";
 	}
 }
 
