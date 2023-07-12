@@ -843,8 +843,8 @@ progress[value]::-webkit-progress-value {
 	margin: 0;
     padding: 0;
     width: fit-content;
-	/* position: absolute;
-	left: 150%; */
+	position: absolute;
+	left: 150%;
 }
 
 #strip-output > .panel {
