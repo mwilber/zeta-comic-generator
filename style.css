@@ -843,8 +843,8 @@ progress[value]::-webkit-progress-value {
 	margin: 0;
     padding: 0;
     width: fit-content;
-	position: absolute;
-	left: 150%;
+	/* position: absolute;
+	left: 150%; */
 }
 
 #strip-output > .panel {
@@ -870,6 +870,11 @@ progress[value]::-webkit-progress-value {
 	max-width: none;
 	box-shadow: none;
 	padding-bottom: 16px;
+	flex-direction: inherit;
+}
+
+#strip-output > #strip .panel {
+	margin: 5px;
 }
 
 #strip-output > #strip .panel .bubble {

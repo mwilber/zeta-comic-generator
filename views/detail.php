@@ -71,4 +71,4 @@
 <ul id="script"></ul>
 
 <script type="text/javascript" src="/scripts/html2canvas.min.js"></script>
-<script type="text/javascript" src="/scripts/detail.js"></script>
+<script type="text/javascript" src="/scripts/detail.js?v=<?php echo $version ?>"></script>

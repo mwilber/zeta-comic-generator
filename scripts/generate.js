@@ -45,7 +45,7 @@ async function fetchComic(prompt) {
 
 	let comic = {};
 
-    const script = await queryApi('/api/gpt_script/?c='+(Math.floor(Math.random()*10000000000000000)), formData);
+    const script = await queryApi('/api/gpt_script/?c='+(Math.floor(Math.random()*1000000)), formData);
 	let errorMsg = '';
 	if(!script || !script.json || !script.json.panels || !script.json.panels.length) errorMsg = "Script object not returned.";
 	if(script.error) errorMsg = script.error.message;
@@ -107,7 +107,7 @@ async function fetchSceneComponent(scene, endpoint, property, premise, part) {
 	// Sometimes GPT returns a null, retry up to 2 times to get a usable result.
 	while(retry > 0) {
 		retry--;
-		let response = await queryApi('/api/' + endpoint + '/?c='+(Math.floor(Math.random()*10000000000000000)), sceneData);
+		let response = await queryApi('/api/' + endpoint + '/?c='+(Math.floor(Math.random()*1000000)), sceneData);
 		if(response.json) {
 			result = response.json[property];
 			break;
@@ -133,7 +133,7 @@ async function fetchAltSceneComponent(panels, endpoint) {
 	// Sometimes GPT returns a null, retry up to 2 times to get a usable result.
 	while(retry > 0) {
 		retry--;
-		let response = await queryApi('/api/' + endpoint + '_3/?c='+(Math.floor(Math.random()*10000000000000000)), sceneData);
+		let response = await queryApi('/api/' + endpoint + '_3/?c='+(Math.floor(Math.random()*1000000)), sceneData);
 		if(response.json && response.json.panels && response.json.panels.length) {
 			result = [...response.json.panels];
 			break;
@@ -187,7 +187,7 @@ async function fetchBackground(prompt) {
 	// Sometimes GPT returns a null, retry up to 2 times to get a usable result.
 	while(retry > 0) {
 		retry--;
-		let response = await queryApi('/api/image/?c='+(Math.floor(Math.random()*10000000000000000)), formData);
+		let response = await queryApi('/api/image/?c='+(Math.floor(Math.random()*1000000)), formData);
 		if(response.data && response.data.length) {
 			result = response;
 			break;
@@ -230,7 +230,7 @@ function SaveStrip(){
 	formData.append('fg3', saveObj.foregrounds[2]);
 	//formData.append('thumbnail', saveObj.thumbnail);
 
-	fetch('/api/save/?c='+(Math.floor(Math.random()*10000000000000000)), {
+	fetch('/api/save/?c='+(Math.floor(Math.random()*1000000)), {
 		method: 'POST',
 		body: formData
 	})
