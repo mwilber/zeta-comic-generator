@@ -23,10 +23,80 @@ function GetShareMessage() {
 	return `Check out my comic strip "${comicTitle}" from Zeta Comic Generator. Easily create unique comic strips with the help of OpenAI models and hand drawn character art.`;
 }
 
+async function RenderStripForDownload() {
+	const strip = document.getElementById('strip');
+	const output = document.getElementById('strip-output');
+	if(!strip || !output) return;
+
+	output.innerHTML = strip.outerHTML;
+	output.querySelector('#strip-title').remove();
+	output.querySelectorAll('.strip-controls button').forEach((button) => button.remove());
+
+	let link = document.createElement('a');
+	let canvas = await html2canvas(output, {scale: 1});
+
+	// document.getElementById('output').appendChild(canvas);
+	let ctx = canvas.getContext("2d");
+	ctx.resetTransform();
+
+	ctx.fillStyle = 'black';
+	ctx.textAlign = 'right';
+	ctx.font = 'bold 20px sans-serif';
+	ctx.fillText(window.location.host, 1028, 370);
+	// ctx.fillText("greenzeta.com/project/zetacomicgenerator", 905, 335);
+
+	ctx.textAlign = 'left';
+	ctx.fillText(window.stripData.script.title, 15, 370);
+
+	ctx.font = 'normal 14px sans-serif';
+	ctx.fillText('\u201C' + window.stripData.prompt + '\u201D', 15, 390);
+
+	let uri = canvas.toDataURL();
+	link.download = window.stripData.script.title.replaceAll(' ', '_') + '.png';
+	link.href = uri;
+	link.click();
+	output.innerHTML = "";
+}
+
+async function RenderPanelsForDownload() {
+	const output = document.getElementById('strip-output');
+	if(!output) return;
+
+	for(let idx = 1; idx <= 3; idx++){
+		output.innerHTML = document.getElementById('panel'+idx).outerHTML;
+		let link = document.createElement('a');
+		let canvas = await html2canvas(output, {scale: 1});
+		
+		// document.getElementById('output').appendChild(canvas);
+		let ctx = canvas.getContext("2d");
+		ctx.resetTransform();
+		ctx.strokeStyle = 'black';
+		ctx.fillStyle = 'white';
+		ctx.lineWidth = 4;
+		ctx.font = 'bold 18px sans-serif';
+
+		if(idx === 1){
+			ctx.textAlign = 'left';
+			ctx.strokeText(window.stripData.script.title, 10, 498);
+			ctx.fillText(window.stripData.script.title, 10, 498);
+		}else if(idx === 3){
+			ctx.textAlign = 'right';
+			ctx.strokeText(window.location.host, 498, 498);
+			ctx.fillText(window.location.host, 498, 498);
+		}
+
+		let uri = canvas.toDataURL();
+		link.download = window.stripData.script.title.replaceAll(' ', '_') + '_' + idx + '.png';
+		link.href = uri;
+		link.click();
+		output.innerHTML = "";
+	}
+}
+
 ClearElements();
 SetStatus('ready');
 if(comicId) {
-	fetch('/api/detail/'+comicId+'/?c='+(Math.floor(Math.random()*10000000000000000)))
+	fetch('/api/detail/'+comicId+'/?c='+(Math.floor(Math.random()*1000000)))
 		.then((response) => response.json())
 		.then((data) => {
 			if(!data || !data.script){
@@ -85,76 +155,8 @@ if(comicId) {
 	SetStatus('error');
 }
 
-document.getElementById('download-ig').addEventListener('click', () => {
-	const strip = document.getElementById('strip');
-	if(!strip) return;
-
-	strip.classList.add("capture");
-	//const output = document.getElementById('output');
-	for(let idx = 1; idx <= 3; idx++){
-		let link = document.createElement('a');
-		html2canvas(document.getElementById('panel'+idx)).then(canvas => {
-			//output.appendChild(canvas);
-			let ctx = canvas.getContext("2d");
-			ctx.resetTransform();
-			ctx.strokeStyle = 'black';
-			ctx.fillStyle = 'white';
-			ctx.lineWidth = 4;
-			ctx.font = 'bold 15px sans-serif';
-
-			if(idx === 1){
-				ctx.textAlign = 'left';
-				ctx.strokeText(window.stripData.script.title, 5, 295);
-				ctx.fillText(window.stripData.script.title, 5, 295);
-			}else if(idx === 3){
-				strip.classList.remove("capture");
-				ctx.textAlign = 'right';
-				ctx.strokeText(window.location.host, 295, 295);
-				ctx.fillText(window.location.host, 295, 295);
-				// ctx.strokeText("greenzeta.com/project/zetacomicgenerator", 290, 290);
-				// ctx.fillText("greenzeta.com/project/zetacomicgenerator", 290, 290);
-			}
-
-			let uri = canvas.toDataURL();
-			link.download = window.stripData.script.title.replaceAll(' ', '_') + '_' + idx + '.png';
-			link.href = uri;
-			link.click();
-		});
-	}
-});
-
-document.getElementById('download-strip').addEventListener('click', () => {
-	const strip = document.getElementById('strip');
-	if(!strip) return;
-
-	strip.classList.add("capture");
-	html2canvas(strip).then(canvas => {
-		strip.classList.remove("capture");
-		let ctx = canvas.getContext("2d");
-		window.ctxt = ctx;
-		ctx.resetTransform();
-		ctx.fillStyle = 'white';
-		ctx.fillRect(10, 320, 950, 60);
-
-		ctx.fillStyle = 'black';
-		ctx.textAlign = 'right';
-		ctx.font = 'bold 20px sans-serif';
-		ctx.fillText(window.location.host, 945, 340);
-		// ctx.fillText("greenzeta.com/project/zetacomicgenerator", 905, 335);
-
-		ctx.textAlign = 'left';
-		ctx.fillText(window.stripData.script.title, 15, 340);
-
-		ctx.font = 'normal 14px sans-serif';
-		ctx.fillText('\u201C' + window.stripData.prompt + '\u201D', 15, 365);
-
-		let uri = canvas.toDataURL();
-		var link = document.createElement('a');
-		link.download = window.stripData.script.title.replaceAll(' ', '_') + '.png';
-		link.href = uri;
-		link.click();
-	});
-});
+document.getElementById('download-ig').addEventListener('click', RenderPanelsForDownload);
+document.getElementById('download-strip').addEventListener('click', RenderStripForDownload);
 
 document.getElementById('share').addEventListener("click", () => {
 	const dialog = document.getElementById('sharedialog');

@@ -1,10 +1,11 @@
 <?php
-	error_reporting(E_ALL);
-	ini_set('display_errors', 1);
+	// error_reporting(E_ALL);
+	// ini_set('display_errors', 1);
 
 	$request = $_SERVER['REQUEST_URI'];
 	//echo $request;
 
+	$version = "1.0.1";
 	$meta = new stdClass();
 	$meta->siteTitle = "Zeta Comic Generator";
 	$meta->title = "Zeta Comic Generator";
@@ -84,7 +85,7 @@
 	<meta name="twitter:image" content="<?php echo $meta->image; ?>">
 	<meta name="twitter:image:alt" content="<?php echo $meta->imageDescription; ?>">
 
-    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="/style.css?v=<?php echo $version ?>">
   </head>
   <body class="<?php echo $path[1] ?>" data-status="ready">
 	<div class="halftone"></div>
