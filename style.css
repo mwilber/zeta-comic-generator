@@ -1042,15 +1042,6 @@ progress[value]::-webkit-progress-value {
 		border-right: none;
 		padding: 1em 0 0.5em 0;
 	}
-
-	#generate {
-		flex: 1;
-		margin-top: 2em;
-	}
-
-	#character-count {
-		margin-top: -4.5em;
-	}
 }
 
 @media screen and (max-height: 550px) {
@@ -1060,6 +1051,30 @@ progress[value]::-webkit-progress-value {
 }
 
 @media screen and (max-width: 700px) {
+
+	#statusdialog #status {
+		margin-bottom: 0;
+		width: 100%;
+	}
+
+	#statusdialog .lds-grid {
+		width: 2em;
+    	height: 2em;
+	}
+
+	#query {
+		flex-basis: 100%;
+	}
+
+	#generate {
+		flex: 1;
+		margin-top: 2em;
+	}
+
+	#character-count {
+		margin-top: -4.5em;
+	}
+
 	#strip {
 		flex-direction: column;
 		max-width: 275px;
@@ -1069,6 +1084,10 @@ progress[value]::-webkit-progress-value {
 	}
 	#strip .panel .bubble {
 		font-size: 14px;
+	}
+
+	#strip-title {
+		margin: 0 5px 10px 5px;
 	}
 }
 
