@@ -65,9 +65,10 @@
 		</button>
 	</div>
 </div>
+<div id="strip-output"></div>
 <div id="output"></div>
 <h2>Script</h2>
 <ul id="script"></ul>
 
 <script type="text/javascript" src="/scripts/html2canvas.min.js"></script>
-<script type="text/javascript" src="/scripts/detail.js"></script>
+<script type="text/javascript" src="/scripts/detail.js?v=<?php echo $version ?>"></script>

@@ -263,6 +263,7 @@ header nav a:hover {
 }
 
 .content {
+	position: relative;
 	margin: 3em auto;
 	width: calc(96% - 2em);
 	max-width: 960px;
@@ -271,6 +272,7 @@ header nav a:hover {
 	/* background: hsl(41 100% 98% / 1);; */
 	margin-bottom: 3em;
 	/* box-shadow: 3px 3px 8px rgba(0,0,0,0.5); */
+	overflow-x: hidden;
 }
 
 .content h2 {
@@ -787,7 +789,8 @@ progress[value]::-webkit-progress-value {
 	box-shadow: none !important;
 }
 
-#strip .panel {
+#strip .panel,
+#strip-output .panel {
 	position: relative;
 	flex: 1;
 	width: 260px;
@@ -804,12 +807,14 @@ progress[value]::-webkit-progress-value {
 	margin: 5px !important;
 }
 
-#strip .panel img {
+#strip .panel img,
+#strip-output .panel img {
 	position: absolute;
 	width: 100%;
 }
 
-#strip .panel .bubble {
+#strip .panel .bubble,
+#strip-output .panel .bubble {
 	position: relative;
 	width: fit-content;
 	min-width: 65px;
@@ -826,11 +831,54 @@ progress[value]::-webkit-progress-value {
 	margin: auto;
 }
 
-#strip .panel .bubble-container {
+#strip .panel .bubble-container,
+#strip-output .panel .bubble-container {
 	position: absolute;
     width: calc(100% - 10px);
     /* height: calc(100% - 10px); */
     padding: 5px;
+}
+
+#strip-output {
+	margin: 0;
+    padding: 0;
+    width: fit-content;
+	position: absolute;
+	left: 150%;
+}
+
+#strip-output > .panel {
+	width: 504px;
+    height: 504px;
+    margin: 0;
+    border-width: 4px;
+}
+
+#strip-output > .panel .bubble {
+    font-size: 24px;
+    border-radius: 30px;
+    padding: 10px 20px;
+}
+
+#strip-output > .panel .bubble-container {
+	padding: 10px;
+	width: calc(100% - 20px);
+}
+
+#strip-output > #strip {
+	width: 1024px;
+	max-width: none;
+	box-shadow: none;
+	padding-bottom: 16px;
+	flex-direction: inherit;
+}
+
+#strip-output > #strip .panel {
+	margin: 5px;
+}
+
+#strip-output > #strip .panel .bubble {
+	font-size: 15px;
 }
 
 .bubble {
@@ -994,15 +1042,6 @@ progress[value]::-webkit-progress-value {
 		border-right: none;
 		padding: 1em 0 0.5em 0;
 	}
-
-	#generate {
-		flex: 1;
-		margin-top: 2em;
-	}
-
-	#character-count {
-		margin-top: -4.5em;
-	}
 }
 
 @media screen and (max-height: 550px) {
@@ -1012,6 +1051,30 @@ progress[value]::-webkit-progress-value {
 }
 
 @media screen and (max-width: 700px) {
+
+	#statusdialog #status {
+		margin-bottom: 0;
+		width: 100%;
+	}
+
+	#statusdialog .lds-grid {
+		width: 2em;
+    	height: 2em;
+	}
+
+	#query {
+		flex-basis: 100%;
+	}
+
+	#generate {
+		flex: 1;
+		margin-top: 2em;
+	}
+
+	#character-count {
+		margin-top: -4.5em;
+	}
+
 	#strip {
 		flex-direction: column;
 		max-width: 275px;
@@ -1021,6 +1084,10 @@ progress[value]::-webkit-progress-value {
 	}
 	#strip .panel .bubble {
 		font-size: 14px;
+	}
+
+	#strip-title {
+		margin: 0 5px 10px 5px;
 	}
 }
 

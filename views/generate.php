@@ -39,4 +39,4 @@
 	</div>
 </div>
 
-<script type="text/javascript" src="/scripts/generate.js"></script>
+<script type="text/javascript" src="/scripts/generate.js?v=<?php echo $version ?>"></script>
