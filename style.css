@@ -83,10 +83,6 @@ input,
     cursor: pointer;
 }
 
-.cartoon-button[disabled] {
-    opacity: 0.5;
-}
-
 .cartoon-button img,
 .cartoon-button span {
 	position: absolute;
@@ -1159,3 +1155,34 @@ progress[value]::-webkit-progress-value {
 	  opacity: 0.5;
 	}
   }
+
+
+@keyframes fade-out {
+	0% {
+		transform: translate(-50%, -50%) rotate(-10deg) scale(1);
+	}
+	30% {
+		transform: translate(-50%, -75%) rotate(-15deg) scale(1.5);
+	}
+	100% {
+		transform: translate(-50%, -60%) rotate(-25deg) scale(0);
+	}
+}
+
+@keyframes center-bounce {
+	0% {
+		transform: translate(-50%, -50%);
+	}
+	100% {
+		transform: translate(-50%, -75%);
+	}
+}
+
+
+.cartoon-button[disabled] .cartoon-font{
+	animation: fade-out 0.3s ease-in forwards;
+}
+
+.cartoon-button[disabled] img{
+	animation: center-bounce 0.4s ease-out infinite alternate;
+}

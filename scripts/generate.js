@@ -215,7 +215,7 @@ async function queryApi(apiUrl, formData) {
 function SaveStrip(){
 	if(!saveObj) return;
 
-	document.getElementById('save').style.display = null;
+	document.getElementById('save').setAttribute('disabled', 'true');
 	document.getElementById('permalink').style.display = null;
 
 	const formData = new FormData();
@@ -238,11 +238,13 @@ function SaveStrip(){
 		.then(data => {
 			if(!data || !data.response || !data.response.comicId) {
 				document.getElementById('save').style.display = 'initial';
+				document.getElementById('save').removeAttribute('disabled');
 				document.getElementById('permalink').style.display = 'initial';
 				document.getElementById('permalink').innerHTML = `
 					There was a problem saving.
 				`;
 			}
+			document.getElementById('save').style.display = null;
 			document.getElementById('permalink').style.display = 'initial';
 			document.getElementById('permalink').innerHTML = `
                 <a href="/detail/${data.response.permalink}">
