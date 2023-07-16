@@ -50,12 +50,14 @@
 		<h3>Script</h3>
 		<div class="codeblock">
 			<code>
-				Write a json object containing the description of a three panel comic strip.
-				In the comic strip, a single character engages in the following premise in a humourous way: {Premise}
+				Write a json object containing the description of a humorous, three panel, comic strip.
+				In the comic strip our main character, a short green humaniod alien named Alpha Zeta, engages in the following premise: {Premise}
 				<br/>
 				Include a detailed scene description and words spoken by the main character. 
 				<br/>
-				The json object has the following properties: `title` and `panels`. The following is a description of each property value:
+				The json object has the following properties: `title` and `panels`. 
+				<br/>
+				The following is a description of each property value:
 				<br/>
 				`title`: The title of the comic strip. Limit to 50 letters.
 				<br/>
@@ -71,7 +73,7 @@
 		<h3>Backgrounds</h3>
 		<div class="codeblock">
 			<code>
-				The following statements describe a three part story.
+				The following statements are passages in a story.
 				<br/>
 				- {Scene from panel 1 of the script}
 				<br/>
@@ -79,9 +81,11 @@
 				<br/>
 				- {Scene from panel 3 of the script}
 				<br/>
-				Rewrite each of the three parts as a very detailed description of what the scene would look like without any characters present.
+				Rewrite each of the three passages as a detailed description of what the scene would look like without the main character present.
 				<br/>
-				Write your response as a json object with a single property `panels`, which is an array of strings containing each of the descriptions.
+				Write your response as a json object with a single property `descriptions`, which is an array of strings containing each of the descriptions.
+				<br/>
+				Do not reference a panel in the description.
 			</code>
 		</div>
 	</li>
