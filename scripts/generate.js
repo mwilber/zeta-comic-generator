@@ -14,6 +14,8 @@ function ClearElements() {
 		'save',
 		'permalink'
 	].forEach((id) => document.getElementById(id).style.display = null);
+
+	document.getElementById('save').removeAttribute('disabled');
 }
 
 function SetStatus(status) {
