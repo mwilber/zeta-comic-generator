@@ -4,6 +4,7 @@ if(isset($_POST["mode"])) {
 } else {
 	$mode = "production";
 }
+//$mode = "simulation";
 
 $query = $_POST["query"];
 //print_r($query);

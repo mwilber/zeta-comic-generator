@@ -4,6 +4,7 @@ if(isset($_POST["mode"])) {
 } else {
 	$mode = "production";
 }
+//$mode = "simulation";
 
 if(isset($_POST["query"])) {
 	$query = $_POST["query"];
@@ -36,21 +37,21 @@ if($mode == "simulation") {
 		},
 		\"debug\": \"{\\n    \\\"title\\\": \\\"Turtle Surprise\\\", \\n    \\\"panels\\\": [\\n        {\\n            \\\"scene\\\": \\\"The main character is walking through a dark sewer. Suddenly, four mutant turtles surround him.\\\", \\n            \\\"dialog\\\": \\\"\\\"\\n        }, \\n        {\\n            \\\"scene\\\": \\\"The turtles are all wearing masks and brandishing various pieces of equipment. The main character looks slightly fearful but excited at the same time.\\\", \\n            \\\"dialog\\\": \\\"What… what have I stumbled upon?\\\"\\n        }, \\n        {\\n            \\\"scene\\\": \\\"The turtles start talking to the main character in their high-pitched voices.\\\", \\n            \\\"dialog\\\": \\\"'Greetings! We are the mutant turtle squad! Are you ready for an adventure?'\\\"\\n        }\\n    ]\\n}\",
 		\"json\": {
-		  \"title\": \"Turtle Surprise\",
-		  \"panels\": [
-			{
-			  \"scene\": \"The main character is walking through a dark sewer. Suddenly, four mutant turtles surround him.\",
-			  \"dialog\": \"\"
-			},
-			{
-			  \"scene\": \"The turtles are all wearing masks and brandishing various pieces of equipment. The main character looks slightly fearful but excited at the same time.\",
-			  \"dialog\": \"What… what have I stumbled upon?\"
-			},
-			{
-			  \"scene\": \"The turtles start talking to the main character in their high-pitched voices.\",
-			  \"dialog\": \"'Greetings! We are the mutant turtle squad! Are you ready for an adventure?'\"
-			}
-		  ]
+			\"title\": \"Dracula's Dietary Debate\",
+			\"panels\": [
+			  {
+				\"scene\": \"Panel 1: Dracula, with fangs out and red cape flowing, hovers menacingly over a terrified villager. In the corner of the scene, Alpha Zeta, the short green humanoid alien, is seen holding a brochure titled 'Vegan Benefits'.\",
+				\"dialog\": \"Ever considered going vegan, Drac?\"
+			  },
+			  {
+				\"scene\": \"Panel 2: Dracula looks intrigued and slightly confused, turning his attention towards Alpha Zeta, while the villager sneaks away unnoticed. Alpha Zeta confidently holds up a chart showing 'Health Benefits of Veganism'.\",
+				\"dialog\": \"It's better for your heart... and fewer villagers will run from you!\"
+			  },
+			  {
+				\"scene\": \"Panel 3: Dracula ponders, scratching his chin, imagining himself surrounded by vegetables like carrots, broccoli, and tomatoes. Alpha Zeta gives a thumbs-up, looking proud of his pitch.\",
+				\"dialog\": \"Plus, garlic is vegan! Embrace it, not fear it!\"
+			  }
+			]
 		}
 	}";
 	$simResponse = json_decode($simJson);
@@ -68,7 +69,7 @@ if($mode == "simulation") {
 		"`title`: The title of the comic strip. Limit to 50 letters.",
 		"`panels` is an array of objects with the following properties: `scene` and `dialog`",
 		"`scene`: A description of the panel scene including all characters.",
-		"`dialog`: Words spoken by the main character. This can be an empty string if the character is not speaking.",
+		"`dialog`: Words spoken by Alpha Zeta. He is the only character that speaks so there is no need to label with a name. This can be an empty string if the character is not speaking.",
 	);
 
 	$prompt = generatePrompt($instructions);
