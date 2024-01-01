@@ -46,6 +46,7 @@ if($mode == "simulation") {
 		"none",
 		"angry",
 		"approval",
+		"creeping",
 		"explaining",
 		"joyous",
 		"running",

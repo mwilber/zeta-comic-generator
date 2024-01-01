@@ -30,6 +30,7 @@
 	$actions = [
 		"angry",
 		"approval",
+		"creeping",
 		"explaining",
 		"joyous",
 		"running",
