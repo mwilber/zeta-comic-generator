@@ -53,9 +53,10 @@ if($mode == "simulation") {
 	curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 	curl_setopt($ch, CURLOPT_HEADER, 0);
 	$body = '{
-			"prompt": "'.$query.'",
-			"n": 1,
-			"size": "512x512"
+		"model": "dall-e-3",
+		"prompt": "'.$query.'",
+		"n": 1,
+		"size": "1024x1024"
 	}';
 
 	//print_r($body);

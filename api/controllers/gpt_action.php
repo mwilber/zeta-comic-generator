@@ -49,6 +49,7 @@ if($mode == "simulation") {
 		"explaining",
 		"joyous",
 		"running",
+		"santa_claus_costume",
 		"sitting",
 		"standing",
 		"teaching",

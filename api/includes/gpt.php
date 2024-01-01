@@ -2,7 +2,8 @@
 
 	define("OUTPUT_DEBUG_DATA", true);
 	//define("OAI_MODEL", "gpt-3.5-turbo-16k");
-	define("OAI_MODEL", "gpt-4");
+	//define("OAI_MODEL", "gpt-4");
+	define("OAI_MODEL", "gpt-4-1106-preview");
 
 	function add_period($str) {
 		$last_char = substr($str, -1);

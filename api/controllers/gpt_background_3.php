@@ -27,16 +27,17 @@
 		$panel3 = "The main character clenches his fists and grins as he begins to consider all of the imaginative possibilities that the new headset offers.";
 	}
 
+    
 	$instructions = array(
-		"The following are descriptions of three panels in a comic strip:",
+        "The following are descriptions of three panels in a comic strip:",
 		"- " . add_period($panel1),
-		"- " . add_period($panel2),
-		"- " . add_period($panel3),
-		"Generate a Dall-E prompt that creates an image for each scene. ",
+        "- " . add_period($panel2),
+        "- " . add_period($panel3),
+        "Generate a Dall-E prompt that creates an image for each scene in the cartoon style of Disney. ",
 		"Describe each scene as it would look if the main character, Alpha Zeta, is not present. No characters will speak to each other.",
 		"Do not reference a comic strip panel in the prompts. Do not include any items that contain readable text.",
 		"Write the response as a json object with a single property `descriptions`, which is an array of strings containing each of the prompts."
-	);
+    );
 
 	$prompt = generatePrompt($instructions);
 	//print_r($prompt); die;
