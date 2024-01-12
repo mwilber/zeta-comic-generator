@@ -101,6 +101,7 @@
 
 			case 'about':
             case 'detail':
+            case 'edit':
 			case 'gallery':
 			case 'generate':
 				require __DIR__ . '/views/'.$path[1].'.php';

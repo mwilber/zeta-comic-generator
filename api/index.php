@@ -1,7 +1,7 @@
 <?php
-	// ini_set('display_errors', 1);
-	// ini_set('display_startup_errors', 1);
-	// error_reporting(E_ERROR);
+	ini_set('display_errors', 1);
+	ini_set('display_startup_errors', 1);
+	error_reporting(E_ERROR);
 
 	$request = $_SERVER['REQUEST_URI'];
 	$path = explode('/', $request);
@@ -47,6 +47,8 @@
 		case 'gallery':
         case 'image':
         case 'save':
+        case 'update':
+        case 'thumbnail':
 			require __DIR__ . '/controllers/'.$controller.'.php';
 			break;
 	
