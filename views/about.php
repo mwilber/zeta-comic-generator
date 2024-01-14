@@ -3,6 +3,7 @@
 		"angry",
 		"approval",
 		"creeping",
+        "disguised",
 		"explaining",
 		"joyous",
 		"running",
