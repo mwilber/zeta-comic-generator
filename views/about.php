@@ -52,22 +52,25 @@
 		<h3>Script</h3>
 		<div class="codeblock">
 			<code>
-				Write a json object containing the description of a humorous, three panel, comic strip.
-				In the comic strip our main character, a short green humaniod alien named Alpha Zeta, engages in the following premise: {Premise}
-				<br/>
-				Include a detailed scene description and words spoken by the main character. 
-				<br/>
-				The json object has the following properties: `title` and `panels`. 
-				<br/>
-				The following is a description of each property value:
-				<br/>
-				`title`: The title of the comic strip. Limit to 50 letters.
-				<br/>
-				`panels` is an array of objects with the following properties: `scene` and `dialog`
-				<br/>
-				`scene`: A description of the panel scene including all characters.
-				<br/>
-				`dialog`: Words spoken by the main character. This can be an empty string if the character is not speaking.
+                You are a cartoonist and humorist. Write the script for a three panel comic strip.
+                <br/>
+                In the comic strip our main character, a short green humaniod alien named Alpha Zeta, engages in the following premise: 
+                <br/>
+                {Premise}
+                <br/>
+                Include a detailed scene description and words spoken by the main character.
+                <br/>
+                Write your script in the form of a json object. The json object has the following properties: `title` and `panels`.
+                <br/>
+                The following is a description of each property value:
+                <br/>
+                `title`: The title of the comic strip. Limit to 50 letters.
+                <br/>
+                `panels` is an array of objects with the following properties: `scene` and `dialog`
+                <br/>
+                `scene`: A description of the panel scene including all characters.
+                <br/>
+                `dialog`: Words spoken by Alpha Zeta. He is the only character that speaks so there is no need to label with a name. This can be an empty string if the character is not speaking.",
 			</code>
 		</div>
 	</li>
@@ -75,19 +78,22 @@
 		<h3>Backgrounds</h3>
 		<div class="codeblock">
 			<code>
-				The following statements are passages in a story.
-				<br/>
+                You are a talented artist who draws background art for animated cartoons.
+                <br/>
+                Write Dall-E prompts to draw backgrounds for three animation cells. These animation cells depict our main character, Alpha Zeta, in the scene.
+                <br/>
+                Your background art complements the contents of the animation cell. It depicts the following three scenes:
+                <br/>
 				- {Scene from panel 1 of the script}
 				<br/>
 				- {Scene from panel 2 of the script}
 				<br/>
 				- {Scene from panel 3 of the script}
 				<br/>
-				Rewrite each of the three passages as a detailed description of what the scene would look like without the main character present.
-				<br/>
-				Write your response as a json object with a single property `descriptions`, which is an array of strings containing each of the descriptions.
-				<br/>
-				Do not reference a panel in the description.
+				In the background, no characters will speak to each other. Do not include any items that contain readable text. Do not reference a comic strip panel in the prompts.
+                <br/>
+		        Write the prompts as a json object with a single property `descriptions`, which is an array of strings containing each of the prompts.
+                <br/>
 			</code>
 		</div>
 	</li>

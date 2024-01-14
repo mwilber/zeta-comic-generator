@@ -59,12 +59,12 @@ if($mode == "simulation") {
 	sleep(1);
 } else {
 	$instructions = array(
-		"Write a json object containing the description of a humorous, three panel, comic strip.",
+        "You are a cartoonist and humorist. Write the script for a three panel comic strip.",
 		"In the comic strip our main character, a short green humaniod alien named Alpha Zeta, engages in the following premise: ",
 		add_period($query),
 		"Include a detailed scene description and words spoken by the main character.",
 		//"The description is written as a json object, describing the content that makes up the comic strip.", 
-		"The json object has the following properties: `title` and `panels`.",
+		"Write your script in the form of a json object. The json object has the following properties: `title` and `panels`.",
 		"The following is a description of each property value:",
 		"`title`: The title of the comic strip. Limit to 50 letters.",
 		"`panels` is an array of objects with the following properties: `scene` and `dialog`",

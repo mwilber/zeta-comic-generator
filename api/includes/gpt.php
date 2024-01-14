@@ -52,6 +52,7 @@
 		curl_setopt($ch, CURLOPT_HEADER, 0);
 		$body = '{
 			"model": "'.OAI_MODEL.'",
+            "response_format": { "type": "json_object" },
 			"messages": [
 				{
 					"role": "user",

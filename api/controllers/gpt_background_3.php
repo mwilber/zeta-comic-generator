@@ -29,14 +29,16 @@
 
     
 	$instructions = array(
-        "The following are descriptions of three panels in a comic strip:",
+        "You are a talented artist who draws background art for animated cartoons. ",
+        "Write Dall-E prompts to draw backgrounds for three animation cells. These animation cells depict our main character, Alpha Zeta, in the scene.",
+        "Your background art complements the contents of the animation cell. It depicts the following three scenes:",
 		"- " . add_period($panel1),
         "- " . add_period($panel2),
         "- " . add_period($panel3),
-        "Generate a Dall-E prompt that creates an image for each scene in the cartoon style of Disney. ",
-		"Describe each scene as it would look if the main character, Alpha Zeta, is not present. No characters will speak to each other.",
-		"Do not reference a comic strip panel in the prompts. Do not include any items that contain readable text.",
-		"Write the response as a json object with a single property `descriptions`, which is an array of strings containing each of the prompts."
+        //"Generate a Dall-E prompt that creates an image for each scene in cartoon style. ",
+		//"The main character, Alpha Zeta, will not appear in the background, his image will be overlaid on top of the background.",
+        "In the background, no characters will speak to each other. Do not include any items that contain readable text. Do not reference a comic strip panel in the prompts.",
+		"Write the prompts as a json object with a single property `descriptions`, which is an array of strings containing each of the prompts."
     );
 
 	$prompt = generatePrompt($instructions);
