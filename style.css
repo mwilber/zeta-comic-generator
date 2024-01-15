@@ -22,6 +22,7 @@ a:visited {
 }
 
 input,
+textarea,
 #query {
 	background: #e5f0ff;
 	box-shadow: inset 1px 1px 2px rgba(0,0,0,0.5);
@@ -407,13 +408,11 @@ p.description {
 .strip img {
 	position: absolute;
 	width: 100%;
-	opacity: 0.6;
 	transition: all 500ms var(--bounce-function);
 }
 
 .strip:hover img {
 	transform: scale(1.15) rotate(5deg);
-	opacity: 1;
 }
 
 .strip h3 {
@@ -421,16 +420,14 @@ p.description {
 	bottom: 0;
 	color: white;
 	font-family: sans-serif;
-	font-size: 18px;
+	font-size: 20px;
 	font-weight: bold;
-	margin: 10% 7%;
+	margin: 5px;
 	text-shadow: 0px 0px 1px black, 0px 0px 2px black, 0px 0px 2px black, 0px 0px 5px black;
-	opacity: 1;
-	transition: opacity 500ms var(--bounce-function);
 }
 
-.strip:hover h3 {
-	opacity: 0;
+#gallery .action-buttons {
+	grid-column: 1/5;
 }
 
 
@@ -1193,4 +1190,18 @@ progress[value]::-webkit-progress-value {
 
 .cartoon-button[disabled] img{
 	animation: center-bounce 0.4s ease-out infinite alternate;
+}
+
+/* Script Editor */
+.edit table {
+    width: 100%;
+}
+
+.edit table tr td:first-child {
+    width: 20%;
+}
+
+.edit input,
+.edit textarea {
+    width: 100%;
 }
