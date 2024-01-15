@@ -407,11 +407,13 @@ p.description {
 .strip img {
 	position: absolute;
 	width: 100%;
+	opacity: 0.6;
 	transition: all 500ms var(--bounce-function);
 }
 
 .strip:hover img {
 	transform: scale(1.15) rotate(5deg);
+	opacity: 1;
 }
 
 .strip h3 {
@@ -419,10 +421,16 @@ p.description {
 	bottom: 0;
 	color: white;
 	font-family: sans-serif;
-	font-size: 20px;
+	font-size: 18px;
 	font-weight: bold;
-	margin: 5px;
+	margin: 10% 7%;
 	text-shadow: 0px 0px 1px black, 0px 0px 2px black, 0px 0px 2px black, 0px 0px 5px black;
+	opacity: 1;
+	transition: opacity 500ms var(--bounce-function);
+}
+
+.strip:hover h3 {
+	opacity: 0;
 }
 
 
