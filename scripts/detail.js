@@ -42,7 +42,8 @@ async function RenderStripForDownload() {
 	ctx.fillStyle = 'black';
 	ctx.textAlign = 'right';
 	ctx.font = 'bold 20px sans-serif';
-	ctx.fillText(window.location.host, 1028, 370);
+	//ctx.fillText(window.location.host, 1028, 370);
+	ctx.fillText('comicgenerator.greenzeta.com', 1028, 370);
 	// ctx.fillText("greenzeta.com/project/zetacomicgenerator", 905, 335);
 
 	ctx.textAlign = 'left';
@@ -81,8 +82,10 @@ async function RenderPanelsForDownload() {
 			ctx.fillText(window.stripData.script.title, 10, 498);
 		}else if(idx === 3){
 			ctx.textAlign = 'right';
-			ctx.strokeText(window.location.host, 498, 498);
-			ctx.fillText(window.location.host, 498, 498);
+			// ctx.strokeText(window.location.host, 498, 498);
+			// ctx.fillText(window.location.host, 498, 498);
+			ctx.strokeText('comicgenerator.greenzeta.com', 498, 498);
+			ctx.fillText('comicgenerator.greenzeta.com', 498, 498);
 		}
 
 		let uri = canvas.toDataURL();
