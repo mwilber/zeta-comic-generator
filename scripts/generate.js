@@ -39,7 +39,7 @@ function UpdateProgress(amount) {
 	el.innerHTML = window.progress + "%";
 }
 
-async function fetchComic(prompt) {
+async function fetchComic(prompt, script) {
 	
 	const partNames = ['first', 'second', 'third'];
     const formData = new FormData();
@@ -47,7 +47,7 @@ async function fetchComic(prompt) {
 
 	let comic = {};
 
-    const script = await queryApi('/api/gpt_script/?c='+(Math.floor(Math.random()*1000000)), formData);
+	if (!script) script = await queryApi('/api/gpt_script/?c='+(Math.floor(Math.random()*1000000)), formData);
 	let errorMsg = '';
 	if(!script || !script.json || !script.json.panels || !script.json.panels.length) errorMsg = "Script object not returned.";
 	if(script.error) errorMsg = script.error.message;
@@ -259,11 +259,11 @@ function SaveStrip(){
 		.catch(error => console.error('Error:', error));
 }
 
-async function GenerateStrip(query) {
+async function GenerateStrip(query, override) {
 	ClearElements();
 	UpdateProgress(0);
 	SetStatus('generating');
-	fetchComic(query).then(async (script) => {
+	fetchComic(query, override).then(async (script) => {
 		if(!script || script.error){
 			SetStatus('error');
 			alert("There was a problem generating the script. There may be a problem with your premise or GPT may just be busy at the moment. Check your premise and remove any special characters and try again. [" + script.error +"]");
