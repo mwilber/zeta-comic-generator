@@ -42,7 +42,8 @@ async function RenderStripForDownload() {
 	ctx.fillStyle = 'black';
 	ctx.textAlign = 'right';
 	ctx.font = 'bold 20px sans-serif';
-	ctx.fillText(window.location.host, 1028, 370);
+	//ctx.fillText(window.location.host, 1028, 370);
+	ctx.fillText('comicgenerator.greenzeta.com', 1028, 370);
 	// ctx.fillText("greenzeta.com/project/zetacomicgenerator", 905, 335);
 
 	ctx.textAlign = 'left';
