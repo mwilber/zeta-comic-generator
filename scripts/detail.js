@@ -82,8 +82,10 @@ async function RenderPanelsForDownload() {
 			ctx.fillText(window.stripData.script.title, 10, 498);
 		}else if(idx === 3){
 			ctx.textAlign = 'right';
-			ctx.strokeText(window.location.host, 498, 498);
-			ctx.fillText(window.location.host, 498, 498);
+			// ctx.strokeText(window.location.host, 498, 498);
+			// ctx.fillText(window.location.host, 498, 498);
+			ctx.strokeText('comicgenerator.greenzeta.com', 498, 498);
+			ctx.fillText('comicgenerator.greenzeta.com', 498, 498);
 		}
 
 		let uri = canvas.toDataURL();
