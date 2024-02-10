@@ -143,13 +143,13 @@ if(comicId) {
 						<img class="background" src="/assets/backgrounds/${data.backgrounds[idx]}"/>
 						<img class="character" src="/assets/character_art/${panel.action.toLowerCase()}.png"/>
 						`;
-					if(panel.dialog)
-						document.getElementById('panel' + (idx + 1)).innerHTML += `
-							<div class="bubble-container">
-							<div class="bubble speech" title="Speech Balloon">${panel.dialog}</div>
-							</div>
-							`;
-
+					if(panel.dialog){
+						renderDialog(panel.dialog, panel.action.toLowerCase())
+							.then((canvas) => {
+								document.getElementById('panel' + (idx + 1))
+									.appendChild(canvas);
+							});
+					}
 				});
 				SetStatus('');
 			}

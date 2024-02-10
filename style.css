@@ -817,7 +817,8 @@ progress[value]::-webkit-progress-value {
 }
 
 #strip .panel img,
-#strip-output .panel img {
+#strip-output .panel img,
+#strip .panel canvas {
 	position: absolute;
 	width: 100%;
 }
