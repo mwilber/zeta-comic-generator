@@ -1,12 +1,102 @@
 const pointerInfo = {
+	angry: {
+		center: {
+			x: 256,
+			y: 10
+		},
+		pointer: {
+			x: 260,
+			y: 120
+		}
+	},
+	approval: {
+		center: {
+			x: 256,
+			y: 10
+		},
+		pointer: {
+			x: 305,
+			y: 205
+		}
+	},
+	creeping: {
+		center: {
+			x: 256,
+			y: 10
+		},
+		pointer: {
+			x: 290,
+			y: 175
+		}
+	},
+	disguised: {
+		center: {
+			x: 256,
+			y: 10
+		},
+		pointer: {
+			x: 230,
+			y: 125
+		}
+	},
+	enamored: {
+		center: {
+			x: 256,
+			y: 10
+		},
+		pointer: {
+			x: 300,
+			y: 140
+		}
+	},
+	explaining: {
+		center: {
+			x: 256,
+			y: 10
+		},
+		pointer: {
+			x: 280,
+			y: 130
+		}
+	},
+	joyous: {
+		center: {
+			x: 256,
+			y: 10
+		},
+		pointer: {
+			x: 280,
+			y: 70
+		}
+	},
+	running: {
+		center: {
+			x: 256,
+			y: 10
+		},
+		pointer: {
+			x: 280,
+			y: 165
+		}
+	},
+	santa_claus_costume: {
+		center: {
+			x: 256,
+			y: 10
+		},
+		pointer: {
+			x: 240,
+			y: 215
+		}
+	},
 	sitting: {
 		center: {
 			x: 256,
 			y: 10
 		},
 		pointer: {
-			x: 180,
-			y: 180
+			x: 190,
+			y: 190
 		}
 	},
 	standing: {
@@ -15,8 +105,38 @@ const pointerInfo = {
 			y: 10
 		},
 		pointer: {
-			x: 320,
-			y: 150
+			x: 310,
+			y: 140
+		}
+	},
+	teaching: {
+		center: {
+			x: 256,
+			y: 10
+		},
+		pointer: {
+			x: 360,
+			y: 220
+		}
+	},
+	terrified: {
+		center: {
+			x: 256,
+			y: 10
+		},
+		pointer: {
+			x: 265,
+			y: 105
+		}
+	},
+	typing: {
+		center: {
+			x: 256,
+			y: 10
+		},
+		pointer: {
+			x: 335,
+			y: 235
 		}
 	}
 };
@@ -26,7 +146,7 @@ async function renderDialog(dialog, action) {
 	balloon.width = 512;
 	balloon.height = 512;
 
-	const ctx = balloon.getContext("2d");
+	const ctx = balloon.getContext('2d');
 
 	// Load the google font
 	var myFont = new FontFace('Patrick Hand', 'url(https://fonts.gstatic.com/s/patrickhand/v23/LDI1apSQOAYtSuYWp8ZhfYe8XsLLubg58w.woff2)');
@@ -46,7 +166,11 @@ async function renderDialog(dialog, action) {
 		pI.pointer.y
 	);
 
-	return balloon;
+	var image = new Image();
+	image.classList.add('balloon');
+	image.src = balloon.toDataURL();
+
+	return image;
 }
 
 function drawBalloon(ctx, dialog, cx, cy, px, py) {
@@ -93,6 +217,10 @@ function drawBalloon(ctx, dialog, cx, cy, px, py) {
 	const boxHeight = lineHeight * lines.length + padding * 1.5;
 	const borderWidth = ctx.lineWidth;
 
+	// Lower the balloon when the pointer is long
+	// const tdist = Math.sqrt((cx - px) * (cx - px) + ((cy + boxHeight / 2 ) - py) * ((cy + boxHeight / 2 ) - py));
+	// if(tdist > 100) cy += (tdist - 100) * 0.5;
+
 	// Calculate balloon position based on cx and cy
 	const balloonX = cx - boxWidth / 2;
 	const balloonY = cy;
@@ -107,8 +235,10 @@ function drawBalloon(ctx, dialog, cx, cy, px, py) {
 	const dy = baseCenterY - py;
 	const dist = Math.sqrt(dx * dx + dy * dy);
 
-	const baseOffsetX = (pointerWidth * dy) / dist; // Offset along the balloon border
-	const baseOffsetY = (pointerWidth * dx) / dist; // Offset along the balloon border
+	let adjPointerWidth = pointerWidth * (125 / dist);
+
+	const baseOffsetX = (adjPointerWidth * dy) / dist; // Offset along the balloon border
+	const baseOffsetY = (adjPointerWidth * dx) / dist; // Offset along the balloon border
 
 	const baseLeftX = baseCenterX + baseOffsetX;
 	const baseLeftY = baseCenterY - baseOffsetY;
