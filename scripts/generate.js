@@ -255,6 +255,7 @@ function SaveStrip(){
 				</a>
 			`;
 			console.log('Success:', data);
+			window.location.replace("/detail/"+data.response.permalink);
 		})
 		.catch(error => console.error('Error:', error));
 }
