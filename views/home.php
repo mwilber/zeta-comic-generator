@@ -21,7 +21,7 @@
 	<?php foreach ($rows as $row): ?>
 		<div class="frame">
 			<a class="strip" href="/detail/<?php echo $row["permalink"] ?>">
-				<img src="/assets/thumbnails/thumb_<?php echo $row["permalink"] ?>.png">
+				<img src="https://zeta-comic-generator.s3.us-east-2.amazonaws.com/thumbnails/thumb_<?php echo $row["permalink"] ?>.png">
 				<h3><?php echo $row["title"] ?></h3>
 			</a>
 		</div>

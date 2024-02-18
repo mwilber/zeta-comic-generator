@@ -14,7 +14,7 @@ function PopGallery(pageNum) {
                 frameEl.className = 'frame';
                 frameEl.innerHTML += `
                     <a class="strip" href="/detail/${strip.id}">
-                        <img src="/assets/thumbnails/thumb_${strip.id}.png"/>
+                        <img src="https://zeta-comic-generator.s3.us-east-2.amazonaws.com/thumbnails/thumb_${strip.id}.png"/>
                         <h3>${strip.title}</h3>
                     </a>
                 `;

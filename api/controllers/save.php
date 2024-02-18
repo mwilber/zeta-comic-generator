@@ -1,6 +1,7 @@
 <?php
 
-	function downloadImage($url, $savePath = '../assets/backgrounds/') {
+	function downloadImage($url, $saveDir = 'backgrounds/') {
+		$savePath = '../assets/' . $saveDir;
 		// Create the directory if it doesn't exist
 		if (!file_exists($savePath)) {
 			mkdir($savePath, 0777, true);
@@ -33,7 +34,7 @@
 		// Save the image to the local filesystem
 		file_put_contents($filePath, $imageData);
 
-		uploadS3($filePath, $fileName, 'backgrounds/');
+		uploadS3($filePath, $fileName, $saveDir);
 
 		return $fileName;
 	}
@@ -72,7 +73,7 @@
 		// Save the new image to the file system
 		imagepng($newImage, '../assets/thumbnails/thumb_'.$id.'.png');
 
-		uploadS3('../assets/thumbnails/thumb_'.$id.'.png', $id.'.png', 'thumbnails/');
+		uploadS3('../assets/thumbnails/thumb_'.$id.'.png', 'thumb_'.$id.'.png', 'thumbnails/');
 
 		// Free up memory
 		imagedestroy($image1);

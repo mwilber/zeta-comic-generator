@@ -36,7 +36,7 @@
 				'ACL'    => 'public-read', // or use 'private'
 			]);
 	
-			echo "Image uploaded successfully. Image URL: " . $result['ObjectURL'] . PHP_EOL;
+			//echo "Image uploaded successfully. Image URL: " . $result['ObjectURL'] . PHP_EOL;
 		} catch (AwsException $e) {
 			// Output error message if something goes wrong.
 			// Suppressing error messages for now.
