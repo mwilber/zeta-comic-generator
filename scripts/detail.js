@@ -140,7 +140,7 @@ if(comicId) {
 					document.getElementById('panel' + (idx + 1)).innerHTML = `Rendering...`;
 
 					document.getElementById('panel' + (idx + 1)).innerHTML = `
-						<img class="background" src="https://zeta-comic-generator.s3.us-east-2.amazonaws.com/backgrounds/${data.backgrounds[idx]}"/>
+						<img class="background" src="/assets/backgrounds/${data.backgrounds[idx]}"/>
 						<img class="character" src="/assets/character_art/${panel.action.toLowerCase()}.png"/>
 						`;
 					if(panel.dialog){
