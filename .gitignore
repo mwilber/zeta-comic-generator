@@ -4,3 +4,5 @@ testimg/
 assets/backgrounds
 assets/thumbnails
 admin.php
+composer.phar
+vendor/

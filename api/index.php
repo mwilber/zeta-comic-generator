@@ -2,6 +2,8 @@
 	// ini_set('display_errors', 1);
 	// ini_set('display_startup_errors', 1);
 	// error_reporting(E_ERROR);
+	ini_set('display_errors', 1);
+	error_reporting(E_ALL);
 
 	$request = $_SERVER['REQUEST_URI'];
 	$path = explode('/', $request);
@@ -32,6 +34,8 @@
     require __DIR__ . '/includes/db.php';
     require __DIR__ . '/includes/key.php';
 	require __DIR__ . '/includes/gpt.php';
+	require __DIR__ . '/includes/s3.php';
+	require __DIR__ . '/../vendor/autoload.php';
 
 	switch ($controller) {
 

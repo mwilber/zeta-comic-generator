@@ -1,4 +1,5 @@
 <?php
+
 	function downloadImage($url, $savePath = '../assets/backgrounds/') {
 		// Create the directory if it doesn't exist
 		if (!file_exists($savePath)) {
@@ -26,13 +27,15 @@
 		curl_close($ch);
 
 		// Generate a unique file name
-		$filename = uniqid() . '.png';
-		$filePath = $savePath . $filename;
+		$fileName = uniqid() . '.png';
+		$filePath = $savePath . $fileName;
 
 		// Save the image to the local filesystem
 		file_put_contents($filePath, $imageData);
 
-		return $filename;
+		uploadS3($filePath, $fileName, 'backgrounds/');
+
+		return $fileName;
 	}
 
 	function renderThumbnail($id, $background, $foreground) {
@@ -68,6 +71,8 @@
 
 		// Save the new image to the file system
 		imagepng($newImage, '../assets/thumbnails/thumb_'.$id.'.png');
+
+		uploadS3('../assets/thumbnails/thumb_'.$id.'.png', $id.'.png', 'thumbnails/');
 
 		// Free up memory
 		imagedestroy($image1);
@@ -108,22 +113,22 @@
 				$panel = ($idx + 1);
 
 				try {
-					$filename = downloadImage($bkgUrl);
-					//echo "Image saved as: " . $filename;
+					$fileName = downloadImage($bkgUrl);
+					//echo "Image saved as: " . $fileName;
 				} catch (Exception $e) {
 					$output->error = "Error getting background image: " . $e->getMessage();
 				}
 			
-				if(isset($filename)){
+				if(isset($fileName)){
 					// prepare query statement
-					$stmt = $db->prepare("INSERT INTO `backgrounds` (`comic_id`, `panel`, `filename`) VALUES ('".$output->response->comicId."', '".$panel."', '".$filename."');");
+					$stmt = $db->prepare("INSERT INTO `backgrounds` (`comic_id`, `panel`, `filename`) VALUES ('".$output->response->comicId."', '".$panel."', '".$fileName."');");
 					// execute query
 					$stmt->execute();
 				}
 
 				if($idx == 1){
 					//Save the images to composite into a thumbnail
-					renderThumbnail($output->response->permalink, "../assets/backgrounds/".$filename, "../assets/character_art/".$_POST["fg".($idx + 1)]);
+					renderThumbnail($output->response->permalink, "../assets/backgrounds/".$fileName, "../assets/character_art/".$_POST["fg".($idx + 1)]);
 				}
 			}
 		}
