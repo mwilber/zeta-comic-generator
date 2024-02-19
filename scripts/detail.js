@@ -33,7 +33,14 @@ async function RenderStripForDownload() {
 	output.querySelectorAll('.strip-controls button').forEach((button) => button.remove());
 
 	let link = document.createElement('a');
-	let canvas = await html2canvas(output, {scale: 1});
+	let canvas = await html2canvas(
+		output,
+		{
+			scale: 1,
+			allowTaint : true,
+			useCORS: true
+		}
+	);
 
 	// document.getElementById('output').appendChild(canvas);
 	let ctx = canvas.getContext("2d");
@@ -66,7 +73,14 @@ async function RenderPanelsForDownload() {
 	for(let idx = 1; idx <= 3; idx++){
 		output.innerHTML = document.getElementById('panel'+idx).outerHTML;
 		let link = document.createElement('a');
-		let canvas = await html2canvas(output, {scale: 1});
+		let canvas = await html2canvas(
+			output,
+			{
+				scale: 1,
+				allowTaint : true,
+				useCORS: true
+			}
+		);
 		
 		// document.getElementById('output').appendChild(canvas);
 		let ctx = canvas.getContext("2d");
@@ -140,16 +154,16 @@ if(comicId) {
 					document.getElementById('panel' + (idx + 1)).innerHTML = `Rendering...`;
 
 					document.getElementById('panel' + (idx + 1)).innerHTML = `
-						<img class="background" src="/assets/backgrounds/${data.backgrounds[idx]}"/>
+						<img class="background" src="https://zeta-comic-generator.s3.us-east-2.amazonaws.com/backgrounds/${data.backgrounds[idx]}"/>
 						<img class="character" src="/assets/character_art/${panel.action.toLowerCase()}.png"/>
 						`;
-					if(panel.dialog)
-						document.getElementById('panel' + (idx + 1)).innerHTML += `
-							<div class="bubble-container">
-							<div class="bubble speech" title="Speech Balloon">${panel.dialog}</div>
-							</div>
-							`;
-
+					if(panel.dialog){
+						renderDialog(panel.dialog, panel.action.toLowerCase())
+							.then((canvas) => {
+								document.getElementById('panel' + (idx + 1))
+									.appendChild(canvas);
+							});
+					}
 				});
 				SetStatus('');
 			}

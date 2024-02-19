@@ -81,9 +81,9 @@
 			<code>
                 You are a talented artist who draws background art for animated cartoons.
                 <br/>
-                Write Dall-E prompts to draw backgrounds for three animation cells. These animation cells depict our main character, Alpha Zeta, in the scene.
+                Write Dall-E prompts to draw backgrounds for three animation cells. These animation cells depict our main character, Alpha Zeta, in a scene.
                 <br/>
-                Your background art complements the contents of the animation cell. It depicts the following three scenes:
+                Descriptions of the three scenes are as follows:
                 <br/>
 				- {Scene from panel 1 of the script}
 				<br/>
@@ -91,9 +91,18 @@
 				<br/>
 				- {Scene from panel 3 of the script}
 				<br/>
-				In the background, no characters will speak to each other. Do not include any items that contain readable text. Do not reference a comic strip panel in the prompts.
-                <br/>
-		        Write the prompts as a json object with a single property `descriptions`, which is an array of strings containing each of the prompts.
+				<br/>
+				Your Dall-E prompts will be written within the following rules:
+				<br/>
+				- Describe each scene as it would look if the main character, Alpha Zeta, is not present.
+				<br/>
+				- No characters will speak to each other.
+				<br/>
+				- Do not include any items that contain readable text.
+				<br/>
+				- Do not reference a comic strip panel.
+				<br/>
+				Write the prompts as a json object with a single property `descriptions`, which is an array of strings containing each of the prompts.
                 <br/>
 			</code>
 		</div>

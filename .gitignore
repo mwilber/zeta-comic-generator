@@ -2,5 +2,8 @@ api/includes/db.php
 api/includes/key.php
 testimg/
 assets/backgrounds
+assets/backgrounds-full
 assets/thumbnails
 admin.php
+composer.phar
+vendor/

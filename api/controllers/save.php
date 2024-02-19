@@ -1,8 +1,14 @@
 <?php
-	function downloadImage($url, $savePath = '../assets/backgrounds/') {
+
+	function downloadImage($url, $saveDir = 'backgrounds') {
+		$savePath = '../assets/' . $saveDir . '/';
+		$backupPath = '../assets/' . $saveDir . '-full/';
 		// Create the directory if it doesn't exist
 		if (!file_exists($savePath)) {
 			mkdir($savePath, 0777, true);
+		}
+		if (!file_exists($backupPath)) {
+			mkdir($backupPath, 0777, true);
 		}
 
 		// Initialize cURL session
@@ -26,13 +32,46 @@
 		curl_close($ch);
 
 		// Generate a unique file name
-		$filename = uniqid() . '.png';
-		$filePath = $savePath . $filename;
+		$fileName = uniqid() . '.png';
+		$resizedFilePath = $savePath . $fileName;
+		$backupFilePath = $backupPath . $fileName;
 
 		// Save the image to the local filesystem
-		file_put_contents($filePath, $imageData);
+		file_put_contents($backupFilePath, $imageData);
+		uploadS3($backupFilePath, $fileName, $saveDir . '-full/');
 
-		return $filename;
+		// Load the image
+		$image = imagecreatefromstring($imageData);
+		if ($image === false) {
+			die('Failed to create image from downloaded data');
+		}
+
+		// Calculate resize dimensions (assuming square resize)
+		$width = imagesx($image);
+		$height = imagesy($image);
+		$minSize = min($width, $height);
+		$resizeTo = 512; // New size for resized image
+
+		// Create a new true color image
+		$resizedImage = imagecreatetruecolor($resizeTo, $resizeTo);
+
+		// Resize and crop image
+		imagecopyresampled($resizedImage, $image, 0, 0, ($width-$minSize)/2, ($height-$minSize)/2, $resizeTo, $resizeTo, $minSize, $minSize);
+
+		// Save the resized image
+		if (!imagepng($resizedImage, $resizedFilePath)) {
+			die('Failed to save resized image');
+		}
+
+		uploadS3($resizedFilePath, $fileName, $saveDir . '/');
+
+		//echo "Original and resized images saved successfully.";
+
+		// Clean up
+		imagedestroy($image);
+		imagedestroy($resizedImage);
+
+		return $fileName;
 	}
 
 	function renderThumbnail($id, $background, $foreground) {
@@ -68,6 +107,8 @@
 
 		// Save the new image to the file system
 		imagepng($newImage, '../assets/thumbnails/thumb_'.$id.'.png');
+
+		uploadS3('../assets/thumbnails/thumb_'.$id.'.png', 'thumb_'.$id.'.png', 'thumbnails/');
 
 		// Free up memory
 		imagedestroy($image1);
@@ -108,22 +149,22 @@
 				$panel = ($idx + 1);
 
 				try {
-					$filename = downloadImage($bkgUrl);
-					//echo "Image saved as: " . $filename;
+					$fileName = downloadImage($bkgUrl);
+					//echo "Image saved as: " . $fileName;
 				} catch (Exception $e) {
 					$output->error = "Error getting background image: " . $e->getMessage();
 				}
 			
-				if(isset($filename)){
+				if(isset($fileName)){
 					// prepare query statement
-					$stmt = $db->prepare("INSERT INTO `backgrounds` (`comic_id`, `panel`, `filename`) VALUES ('".$output->response->comicId."', '".$panel."', '".$filename."');");
+					$stmt = $db->prepare("INSERT INTO `backgrounds` (`comic_id`, `panel`, `filename`) VALUES ('".$output->response->comicId."', '".$panel."', '".$fileName."');");
 					// execute query
 					$stmt->execute();
 				}
 
 				if($idx == 1){
 					//Save the images to composite into a thumbnail
-					renderThumbnail($output->response->permalink, "../assets/backgrounds/".$filename, "../assets/character_art/".$_POST["fg".($idx + 1)]);
+					renderThumbnail($output->response->permalink, "../assets/backgrounds/".$fileName, "../assets/character_art/".$_POST["fg".($idx + 1)]);
 				}
 			}
 		}

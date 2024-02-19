@@ -255,6 +255,7 @@ function SaveStrip(){
 				</a>
 			`;
 			console.log('Success:', data);
+			window.location.replace("/detail/"+data.response.permalink);
 		})
 		.catch(error => console.error('Error:', error));
 }
@@ -300,12 +301,13 @@ async function GenerateStrip(query, override) {
 				document.getElementById('panel' + (idx + 1)).innerHTML += `
 					<img class="character" src="../assets/character_art/${panel.action.toLowerCase()}.png"/>
 					`;
-				if(panel.dialog)
-					document.getElementById('panel' + (idx + 1)).innerHTML += `
-						<div class="bubble-container">
-						<div class="bubble speech" title="Speech Balloon">${panel.dialog}</div>
-						</div>
-						`;
+				if(panel.dialog){
+					renderDialog(panel.dialog, panel.action.toLowerCase())
+						.then((canvas) => {
+							document.getElementById('panel' + (idx + 1))
+								.appendChild(canvas);
+						});
+				}
 
 				document.getElementById('save').style.display = 'initial';
 			}
