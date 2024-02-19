@@ -1,10 +1,14 @@
 <?php
 
-	function downloadImage($url, $saveDir = 'backgrounds/') {
-		$savePath = '../assets/' . $saveDir;
+	function downloadImage($url, $saveDir = 'backgrounds') {
+		$savePath = '../assets/' . $saveDir . '/';
+		$backupPath = '../assets/' . $saveDir . '-full/';
 		// Create the directory if it doesn't exist
 		if (!file_exists($savePath)) {
 			mkdir($savePath, 0777, true);
+		}
+		if (!file_exists($backupPath)) {
+			mkdir($backupPath, 0777, true);
 		}
 
 		// Initialize cURL session
@@ -29,12 +33,43 @@
 
 		// Generate a unique file name
 		$fileName = uniqid() . '.png';
-		$filePath = $savePath . $fileName;
+		$resizedFilePath = $savePath . $fileName;
+		$backupFilePath = $backupPath . $fileName;
 
 		// Save the image to the local filesystem
-		file_put_contents($filePath, $imageData);
+		file_put_contents($backupFilePath, $imageData);
+		uploadS3($backupFilePath, $fileName, $saveDir . '-full/');
 
-		uploadS3($filePath, $fileName, $saveDir);
+		// Load the image
+		$image = imagecreatefromstring($imageData);
+		if ($image === false) {
+			die('Failed to create image from downloaded data');
+		}
+
+		// Calculate resize dimensions (assuming square resize)
+		$width = imagesx($image);
+		$height = imagesy($image);
+		$minSize = min($width, $height);
+		$resizeTo = 512; // New size for resized image
+
+		// Create a new true color image
+		$resizedImage = imagecreatetruecolor($resizeTo, $resizeTo);
+
+		// Resize and crop image
+		imagecopyresampled($resizedImage, $image, 0, 0, ($width-$minSize)/2, ($height-$minSize)/2, $resizeTo, $resizeTo, $minSize, $minSize);
+
+		// Save the resized image
+		if (!imagepng($resizedImage, $resizedFilePath)) {
+			die('Failed to save resized image');
+		}
+
+		uploadS3($resizedFilePath, $fileName, $saveDir . '/');
+
+		//echo "Original and resized images saved successfully.";
+
+		// Clean up
+		imagedestroy($image);
+		imagedestroy($resizedImage);
 
 		return $fileName;
 	}
