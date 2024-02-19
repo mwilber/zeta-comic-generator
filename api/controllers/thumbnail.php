@@ -34,6 +34,9 @@ function renderThumbnail($id, $background, $foreground) {
     // Save the new image to the file system
     imagepng($newImage, '../assets/thumbnails/thumb_'.$id.'.png');
 
+	// Upload to S3
+	uploadS3('../assets/thumbnails/thumb_'.$id.'.png', 'thumb_'.$id.'.png', 'thumbnails/');
+
     // Free up memory
     imagedestroy($image1);
     imagedestroy($image2);
