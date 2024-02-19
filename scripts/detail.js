@@ -35,11 +35,7 @@ async function RenderStripForDownload() {
 	let link = document.createElement('a');
 	let canvas = await html2canvas(
 		output,
-		{
-			scale: 1,
-			allowTaint : true,
-			useCORS: true
-		}
+		{scale: 1}
 	);
 
 	// document.getElementById('output').appendChild(canvas);
@@ -75,11 +71,7 @@ async function RenderPanelsForDownload() {
 		let link = document.createElement('a');
 		let canvas = await html2canvas(
 			output,
-			{
-				scale: 1,
-				allowTaint : true,
-				useCORS: true
-			}
+			{scale: 1}
 		);
 		
 		// document.getElementById('output').appendChild(canvas);
@@ -181,11 +173,12 @@ document.getElementById('share').addEventListener("click", () => {
 });
 
 document.getElementById('download').addEventListener("click", () => {
-	// First, reload the background images via proxy so html2canvas can use them
+	// First, reload the background images via proxy so html2canvas can use them.
 	const backgrounds = document.querySelectorAll('.background');
 	backgrounds.forEach((background) => {
-		background.src = '/api/imgproxy.php?url=' + background.src;
+		background.src = '/api/imgproxy/?url=' + background.src;
 	});
+	// Open the dialog.
 	const dialog = document.getElementById('downloaddialog');
 	dialog.classList[dialog.classList.contains('active') ? 'remove' : 'add']('active');
 });

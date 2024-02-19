@@ -49,6 +49,7 @@
 		case 'gallery':
         case 'image':
         case 'save':
+		case 'imgproxy':
 			require __DIR__ . '/controllers/'.$controller.'.php';
 			break;
 	
