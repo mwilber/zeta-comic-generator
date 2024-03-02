@@ -1,6 +1,6 @@
 # Zeta Comic Generator
 
-An experiment in combining AI and original art to generate three panel comic strips
+An experiment in AI and art to create dynamic comic strips.
 
 [![Introductory Comic Strip](http://greenzeta.com/wp-content/uploads/2024/03/Alien_Repo__The_Open-Source_Cosmos.png)](https://comicgenerator.greenzeta.com/detail/8e6b42f1644ecb1327dc03ab345e618b)
 
