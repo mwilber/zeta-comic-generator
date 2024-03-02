@@ -11,7 +11,7 @@
 	}
 ?>
 	<header>
-		Easily <a href="/generate">create</a> unique comic strips with the help of 
+		<a href="/generate">Create</a> unique comic strips with  
 		<a href="https://openai.com/product" target="_blank" rel="noopener noreferrer">OpenAI</a> models and 
 		hand drawn character art.
 	</header>
