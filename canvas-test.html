@@ -1,0 +1,18 @@
+<html>
+	<head>
+		<script type="module">
+			import CanvasComic from './canvas-comic/index.js';
+			import { data } from './canvas-comic/data.js';
+
+			window.addEventListener('load', () => {
+
+				data.container = document.querySelector('.strip');
+				const strip = new CanvasComic(data);
+			});
+		</script>
+	</head>
+	<body>
+		<h1>testing...</h1>
+		<div class="strip"></div>
+	</body>
+</html>
