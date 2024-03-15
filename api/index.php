@@ -50,6 +50,7 @@
         case 'image':
         case 'save':
 		case 'imgproxy':
+		case 'bedrock':
 			require __DIR__ . '/controllers/'.$controller.'.php';
 			break;
 	
