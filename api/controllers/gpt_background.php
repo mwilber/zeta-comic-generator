@@ -1,53 +1,50 @@
 <?php
-if(isset($_POST["mode"])) {
-	$mode = $_POST["mode"];
-} else {
-	$mode = "production";
-}
+	if(isset($_POST["query"])) {
+		$query = $_POST["query"];
+	} else {
+		// FOR TESTING
+		$query = "The figure stares as the light gets closer and sees it is a flashlight.";
+	}
 
-if(isset($_POST["query"])) {
-	$query = $_POST["query"];
-} else {
-	// FOR TESTING
-	$query = "The main character steps back and points at the turtles, shouting \"Whoa! Who are you guys??\"";
-}
+	if(isset($_POST["panel1"])) {
+		$panel1 = $_POST["panel1"];
+	} else {
+		// FOR TESTING
+		$panel1 = "The main character is inside the Apple headquarters. On stage a new virtual reality headset is unveiled to a pleasantly surprised audience.";
+	}
 
-if($mode == "simulation") {
-	$simJson = "{
-		\"error\": \"\",
-		\"data\": {
-		  \"id\": \"cmpl-7JVI6ET0WpqonI286deQZZgiFiHSv\",
-		  \"object\": \"text_completion\",
-		  \"created\": 1684882870,
-		  \"model\": \"text-davinci-003\",
-		  \"choices\": [
-			{
-			  \"text\": \"\\n\\n{\\n    \\\"background\\\": \\\"The sewer is dark and damp, with a stale smell of mildew and decay. The walls are covered in slimy green moss and fungus, and limp strands of neon-tinted algae hang from the grimy ceiling above. The murky water below lurches slowly, carrying away bits of trash and forgotten debris. In the distance, four giant shapes loom out of the shadows, their hard shells glimmering in the darkness.\\\"\\n}\",
-			  \"index\": 0,
-			  \"logprobs\": null,
-			  \"finish_reason\": \"stop\"
-			}
-		  ],
-		  \"usage\": {
-			\"prompt_tokens\": 90,
-			\"completion_tokens\": 99,
-			\"total_tokens\": 189
-		  }
-		},
-		\"debug\": \"{\\n    \\\"background\\\": \\\"The sewer is dark and damp, with a stale smell of mildew and decay. The walls are covered in slimy green moss and fungus, and limp strands of neon-tinted algae hang from the grimy ceiling above. The murky water below lurches slowly, carrying away bits of trash and forgotten debris. In the distance, four giant shapes loom out of the shadows, their hard shells glimmering in the darkness.\\\"\\n}\",
-		\"json\": {
-		  \"background\": \"The sewer is dark and damp, with a stale smell of mildew and decay. The walls are covered in slimy green moss and fungus, and limp strands of neon-tinted algae hang from the grimy ceiling above. The murky water below lurches slowly, carrying away bits of trash and forgotten debris. In the distance, four giant shapes loom out of the shadows, their hard shells glimmering in the darkness.\"
-		}
-	}";
-	$simResponse = json_decode($simJson);
-	$output->json = $simResponse->json;
-} else {
+	if(isset($_POST["panel2"])) {
+		$panel2 = $_POST["panel2"];
+	} else {
+		// FOR TESTING
+		$panel2 = "The main character, awestruck, stares at the headset with wide eyes full of excitement.";
+	}
+
+	if(isset($_POST["panel3"])) {
+		$panel3 = $_POST["panel3"];
+	} else {
+		// FOR TESTING
+		$panel3 = "The main character clenches his fists and grins as he begins to consider all of the imaginative possibilities that the new headset offers.";
+	}
+
+    
 	$instructions = array(
-		"The following is a passage describing a scene in a story.",
-		"Rewrite it as a very detailed description of what the scene would look like without any characters present:",
-		add_period(str_replace('"', "'", $query)),
-		"Output your response as a json object with a single property, `background`. Set the value of `background` to the scene description.",
-	);
+        "You are a talented artist who draws background art for animated cartoons. ",
+        "Write Dall-E prompts to draw backgrounds for three animation cells. These animation cells depict our main character, Alpha Zeta, in a scene.",
+        "Descriptions of the three scenes are as follows:",
+		"- " . add_period($panel1),
+        "- " . add_period($panel2),
+        "- " . add_period($panel3),
+        //"Generate a Dall-E prompt that creates an image for each scene in cartoon style. ",
+		//"The main character, Alpha Zeta, will not appear in the background, his image will be overlaid on top of the background.",
+		" ",
+        "Your Dall-E prompts will be written within the following rules: ",
+		"- Describe each scene as it would look if the main character, Alpha Zeta, is not present.",
+		"- No characters will speak to each other.",
+		"- Do not include any items that contain readable text.",
+		"- Do not reference a comic strip panel.",
+		"Write the prompts as a json object with a single property `descriptions`, which is an array of strings containing each of the prompts."
+    );
 
 	$prompt = generatePrompt($instructions);
 	//print_r($prompt); die;
@@ -60,5 +57,5 @@ if($mode == "simulation") {
 		$output->debug = $response->debug;
 	}
 	$output->json = $response->json;
-}
+
 ?>

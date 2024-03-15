@@ -1,52 +1,38 @@
 <?php
-if(isset($_POST["mode"])) {
-	$mode = $_POST["mode"];
-} else {
-	$mode = "production";
-}
+	if(isset($_POST["query"])) {
+		$query = $_POST["query"];
+	} else {
+		// FOR TESTING
+		$query = "The figure stares as the light gets closer and sees it is a flashlight.";
+	}
 
-if(isset($_POST["query"])) {
-	$query = $_POST["query"];
-} else {
-	// FOR TESTING
-	$query = "The main character takes a bite out of the taco and recoils in disgust.";
-}
+	if(isset($_POST["panel1"])) {
+		$panel1 = $_POST["panel1"];
+	} else {
+		// FOR TESTING
+		$panel1 = "The main character is inside the Apple headquarters. On stage a new virtual reality headset is unveiled to a pleasantly surprised audience.";
+	}
 
-if($mode == "simulation") {
-	$simJson = "{
-		\"error\": \"\",
-		\"data\": {
-		  \"id\": \"cmpl-7JVIZWcC7kbMYvYwofgMti6IcdTaH\",
-		  \"object\": \"text_completion\",
-		  \"created\": 1684882899,
-		  \"model\": \"text-davinci-003\",
-		  \"choices\": [
-			{
-			  \"text\": \"\\n\\n{\\n   \\\"action\\\": \\\"excited\\\" \\n}\",
-			  \"index\": 0,
-			  \"logprobs\": null,
-			  \"finish_reason\": \"stop\"
-			}
-		  ],
-		  \"usage\": {
-			\"prompt_tokens\": 124,
-			\"completion_tokens\": 15,
-			\"total_tokens\": 139
-		  }
-		},
-		\"debug\": \"{\\n   \\\"action\\\": \\\"excited\\\" \\n}\",
-		\"json\": {
-		  \"action\": \"standing\"
-		}
-	}";
-	$simResponse = json_decode($simJson);
-	$output->json = $simResponse->json;
-} else {
+	if(isset($_POST["panel2"])) {
+		$panel2 = $_POST["panel2"];
+	} else {
+		// FOR TESTING
+		$panel2 = "The main character, awestruck, stares at the headset with wide eyes full of excitement.";
+	}
+
+	if(isset($_POST["panel3"])) {
+		$panel3 = $_POST["panel3"];
+	} else {
+		// FOR TESTING
+		$panel3 = "The main character clenches his fists and grins as he begins to consider all of the imaginative possibilities that the new headset offers.";
+	}
+    
 	$actions = [
-		"none",
 		"angry",
 		"approval",
 		"creeping",
+		"disguised",
+		"enamored",
 		"explaining",
 		"joyous",
 		"running",
@@ -57,17 +43,19 @@ if($mode == "simulation") {
 		"terrified",
 		"typing"
 	];
-
+    
 	$instructions = array(
-		"The following is a passage describing a scene in a story.",
-		add_period($query),
-		"Choose, from the following list words, one that best describes the character's action:", 
-		implode(", ", $actions) . ".",
-		"Only choose the word `none` if no character is present.",
-		"Output your response as a json object with a single property, `action`. Set the value of `action` to the chosen word.",
-	);
+        "The following statements describe a three part story.",
+		"- " . add_period($panel1),
+        "- " . add_period($panel2),
+        "- " . add_period($panel3),
+        "For each of the three parts coose one word from the following which most closely describes the action of the main character: ",
+        implode(", ", $actions) . ".",
+		"Write your response as a valid json object with a single property `panels`, which is an array of strings containing each of the chosen words."
+    );
 
 	$prompt = generatePrompt($instructions);
+	// print_r($prompt); die;
 	$response = gptComplete($OPENAI_KEY, $prompt);
 
 	if(isset($response->data->error)) $output->error = $response->data->error;
@@ -77,11 +65,17 @@ if($mode == "simulation") {
 		$output->debug = $response->debug;
 	}
 
-	if (!in_array($response->json->action, $actions)) {
-		if(!isset($response->json)) $response->json = new stdClass();
-		$response->json->action = "standing";
+	if (is_array($response->json->panels)) {
+		foreach($response->json->panels as &$value) {
+			$oldVal = $value;
+			$value = new stdClass;
+			$value->action = $oldVal;
+			if(!in_array($value->action, $actions)) {
+				$value->altAction = $oldVal;
+				$value->action = "standing";
+			}
+		}
 	}
 
 	$output->json = $response->json;
-}
 ?>
