@@ -47,7 +47,7 @@ async function fetchComic(prompt, script) {
 
 	let comic = {};
 
-	if (!script) script = await queryApi('/api/gpt_script/?c='+(Math.floor(Math.random()*1000000)), formData);
+	if (!script) script = await queryApi('/api/script/?c='+(Math.floor(Math.random()*1000)), formData);
 	let errorMsg = '';
 	if(!script || !script.json || !script.json.panels || !script.json.panels.length) errorMsg = "Script object not returned.";
 	if(script.error) errorMsg = script.error.message;
@@ -65,7 +65,7 @@ async function fetchComic(prompt, script) {
 	// });
 	UpdateProgress(9);
 
-	const altBackground = await fetchAltSceneComponent(comic.script.panels, 'gpt_background');
+	const altBackground = await fetchAltSceneComponent(comic.script.panels, 'background');
 	if(!altBackground.length) return {error: "Background descriptions not received."}
 	altBackground.forEach((bkg, idx) => {
 		comic.script.panels[idx].background = bkg;
@@ -84,7 +84,7 @@ async function fetchComic(prompt, script) {
 		// UpdateProgress(3);
 	}
 
-	const altAction = await fetchAltSceneComponent(comic.script.panels, 'gpt_action');
+	const altAction = await fetchAltSceneComponent(comic.script.panels, 'action');
 	if(!altAction.length) return {error: "Character action not received."}
 	altAction.forEach((action, idx) => {
 		comic.script.panels[idx].action = action.action;
@@ -109,7 +109,7 @@ async function fetchSceneComponent(scene, endpoint, property, premise, part) {
 	// Sometimes GPT returns a null, retry up to 2 times to get a usable result.
 	while(retry > 0) {
 		retry--;
-		let response = await queryApi('/api/' + endpoint + '/?c='+(Math.floor(Math.random()*1000000)), sceneData);
+		let response = await queryApi('/api/' + endpoint + '/?c='+(Math.floor(Math.random()*1000)), sceneData);
 		if(response.json) {
 			result = response.json[property];
 			break;
@@ -119,6 +119,8 @@ async function fetchSceneComponent(scene, endpoint, property, premise, part) {
 	return result;
 }
 
+
+// TODO: Clean this up. No longer calling _3 versions of the api which is what I think this function was created for,
 async function fetchAltSceneComponent(panels, endpoint) {
 	let result = [];
 	if(!panels || !panels.length) return result;
@@ -135,7 +137,7 @@ async function fetchAltSceneComponent(panels, endpoint) {
 	// Sometimes GPT returns a null, retry up to 2 times to get a usable result.
 	while(retry > 0) {
 		retry--;
-		let response = await queryApi('/api/' + endpoint + '_3/?c='+(Math.floor(Math.random()*1000000)), sceneData);
+		let response = await queryApi('/api/' + endpoint + '/?c='+(Math.floor(Math.random()*1000)), sceneData);
 		if(response.json && response.json.panels && response.json.panels.length) {
 			result = [...response.json.panels];
 			break;
@@ -189,7 +191,7 @@ async function fetchBackground(prompt) {
 	// Sometimes GPT returns a null, retry up to 2 times to get a usable result.
 	while(retry > 0) {
 		retry--;
-		let response = await queryApi('/api/image/?c='+(Math.floor(Math.random()*1000000)), formData);
+		let response = await queryApi('/api/image/?c='+(Math.floor(Math.random()*1000)), formData);
 		if(response.data && response.data.length) {
 			result = response;
 			break;
@@ -200,6 +202,12 @@ async function fetchBackground(prompt) {
 }
 
 async function queryApi(apiUrl, formData) {
+
+    // TODO: Add option to select api service
+    console.log("apiUrl.", apiUrl);
+    if(apiUrl.includes("script"))
+        formData.append('service', 'aws');
+
 	try {
 		const response = await fetch(apiUrl, {
             method: 'POST',
