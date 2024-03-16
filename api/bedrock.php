@@ -52,10 +52,28 @@
 		echo "Error: ({$e->getCode()}) - {$e->getMessage()}\n";
 	}
 
-	
+	$output_dir = "../assets/titan";
+
+    if (!file_exists($output_dir)) {
+        mkdir($output_dir);
+    }
+
+    $i = 1;
+    while (file_exists("$output_dir/$model_id" . '_' . "$i.png")) {
+        $i++;
+    }
+
+    $image_data = base64_decode($base64_image_data);
+
+    $image_path = "$output_dir/$model_id" . '_' . "$i.png";
+
+    $file = fopen($image_path, 'wb');
+    fwrite($file, $image_data);
+    fclose($file);
+
 
 	//$image_path = $this->saveImage($base64, 'amazon.titan-image-generator-v1');
-	//echo "The generated images have been saved to $image_path";
+	echo "The generated images have been saved to $image_path";
 
 	echo "success";
 ?>

@@ -205,7 +205,7 @@ async function queryApi(apiUrl, formData) {
 
     // TODO: Add option to select api service
     console.log("apiUrl.", apiUrl);
-    if(apiUrl.includes("script"))
+    if(apiUrl.includes("script") || apiUrl.includes("image"))
         formData.append('service', 'aws');
 
 	try {
