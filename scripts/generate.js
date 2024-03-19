@@ -42,8 +42,10 @@ function UpdateProgress(amount) {
 async function fetchComic(prompt, script) {
 	
 	const partNames = ['first', 'second', 'third'];
+	const modelSelect = document.getElementById('script-model');
     const formData = new FormData();
 	formData.append('query', prompt);
+	formData.append('model', modelSelect.value || 'oai');
 
 	let comic = {};
 
@@ -55,9 +57,20 @@ async function fetchComic(prompt, script) {
 	if(errorMsg) return {error: errorMsg};
 	else comic.script = script.json;
 
+	// Begin recording script credits
+	comic.script.credits = {
+		script: script.model || "",
+		image: "",
+		background: "",
+		action: "",
+	};
+
+	// //TODO: Remove this when done testing
+	// return {error: JSON.stringify(comic)};
+
 	UpdateProgress(13);
 	
-	// const altDialog = await fetchAltSceneComponent(comic.script.panels, 'gpt_dialog');
+	// const altDialog = await fetchSceneComponent(comic.script.panels, 'gpt_dialog');
 	// if(!altDialog.length) return {error: "Dialog not received."}
 	// altDialog.forEach((dialog, idx) => {
 	// 	comic.script.panels[idx].altDialog = comic.script.panels[idx].dialog;
@@ -65,31 +78,29 @@ async function fetchComic(prompt, script) {
 	// });
 	UpdateProgress(9);
 
-	const altBackground = await fetchAltSceneComponent(comic.script.panels, 'background');
-	if(!altBackground.length) return {error: "Background descriptions not received."}
-	altBackground.forEach((bkg, idx) => {
+	const altBackground = await fetchSceneComponent(comic.script.panels, 'background');
+	if(!altBackground.result.length) return {error: "Background descriptions not received."}
+	altBackground.result.forEach((bkg, idx) => {
 		comic.script.panels[idx].background = bkg;
 	});
+	comic.script.credits.background = altBackground.model;
 	UpdateProgress(9);
 
 	for(let [idx, panel] of comic.script.panels.entries()) {
-		// panel.background = await fetchSceneComponent(prompt + ' - ' + panel.scene, 'gpt_background', 'background');
-		// UpdateProgress(3);
-		panel.background_url = await renderBackground(idx, panel.background, prompt);
+		let backgroundImg = await renderBackground(idx, panel.background, prompt);
+		panel.background_url = backgroundImg.url;
 		if(panel.background_url.error) return {error: panel.background_url.error}
+		comic.script.credits.image = backgroundImg.model;
 		UpdateProgress(20);
-		// panel.action = await fetchSceneComponent(panel.scene, 'gpt_action', 'action');
-		// UpdateProgress(3);
-		// panel.altdialog = await fetchSceneComponent(panel.scene, 'gpt_dialog', 'dialog', prompt, partNames[idx]);
-		// UpdateProgress(3);
 	}
 
-	const altAction = await fetchAltSceneComponent(comic.script.panels, 'action');
-	if(!altAction.length) return {error: "Character action not received."}
-	altAction.forEach((action, idx) => {
+	const altAction = await fetchSceneComponent(comic.script.panels, 'action');
+	if(!altAction.result.length) return {error: "Character action not received."}
+	altAction.result.forEach((action, idx) => {
 		comic.script.panels[idx].action = action.action;
 		comic.script.panels[idx].altAction = action.altAction || "";
 	});
+	comic.script.credits.action = altAction.model;
 	UpdateProgress(9);
 
 	console.log(comic);
@@ -97,32 +108,9 @@ async function fetchComic(prompt, script) {
     return comic.script;
 }
 
-async function fetchSceneComponent(scene, endpoint, property, premise, part) {
-	let result = "";
-	let retry = 3;
-	let sceneData = new FormData();
-	sceneData.append('mode', API_MODE);
-	sceneData.append('query', scene);
-	if(premise) sceneData.append('premise', premise);
-	if(part) sceneData.append('part', part);
-
-	// Sometimes GPT returns a null, retry up to 2 times to get a usable result.
-	while(retry > 0) {
-		retry--;
-		let response = await queryApi('/api/' + endpoint + '/?c='+(Math.floor(Math.random()*1000)), sceneData);
-		if(response.json) {
-			result = response.json[property];
-			break;
-		}
-	}
-
-	return result;
-}
-
-
-// TODO: Clean this up. No longer calling _3 versions of the api which is what I think this function was created for,
-async function fetchAltSceneComponent(panels, endpoint) {
+async function fetchSceneComponent(panels, endpoint) {
 	let result = [];
+	let model = "";
 	if(!panels || !panels.length) return result;
 
 	let retry = 3;
@@ -140,14 +128,16 @@ async function fetchAltSceneComponent(panels, endpoint) {
 		let response = await queryApi('/api/' + endpoint + '/?c='+(Math.floor(Math.random()*1000)), sceneData);
 		if(response.json && response.json.panels && response.json.panels.length) {
 			result = [...response.json.panels];
+			model = response.model;
 			break;
 		} else if(response.json && response.json.descriptions && response.json.descriptions.length) {
 			result = [...response.json.descriptions];
+			model = response.model;
 			break;
 		}
 	}
 
-	return result;
+	return {result, model};
 }
 
 async function renderBackground(idx, description, premise) {
@@ -178,7 +168,7 @@ async function renderBackground(idx, description, premise) {
 		panelEl.classList.remove('rendered');
 	}, 1000);
 
-	return image.data[0].url;
+	return {url: image.data[0].url, model: image.model};
 }
 
 async function fetchBackground(prompt) {
@@ -202,11 +192,6 @@ async function fetchBackground(prompt) {
 }
 
 async function queryApi(apiUrl, formData) {
-
-    // TODO: Add option to select api service
-    console.log("apiUrl.", apiUrl);
-    if(apiUrl.includes("script") || apiUrl.includes("image"))
-        formData.append('service', 'aws');
 
 	try {
 		const response = await fetch(apiUrl, {
@@ -284,7 +269,17 @@ async function GenerateStrip(query, override) {
 
 		document.getElementById("script").innerHTML = `<li><h2>${script.title}</h2></li>`;
         document.getElementById("strip-title").innerText = script.title;
-        
+
+		// Add the credits
+		document.getElementById("script").innerHTML += `<li>
+			<ul class="credits">
+				<li><span>Script: </span><span>${script.credits.script}</span></li>
+				<li><span>Images: </span><span>${script.credits.image}</span></li>
+				<li><span>Backgrounds: </span><span>${script.credits.background}</span></li>
+				<li><span>Actions: </span><span>${script.credits.action}</span></li>
+			</ul>
+		</li>`;
+
 		if(script.panels && script.panels.length){
 			for(const [idx,panel] of script.panels.entries()){
 				//panel.background = panel.setting;

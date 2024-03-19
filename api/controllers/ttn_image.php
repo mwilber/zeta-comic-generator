@@ -66,6 +66,7 @@
 
         $image_data = base64_decode($base64_image_data);
 
+		// TODO: Send image as url encoded base64 and modify the save script to handle.
         $image_path = "$output_dir/$modelId" . '_' . "$i.png";
 
         $file = fopen($image_path, 'wb');
@@ -83,4 +84,7 @@
 	}
 
 	//$output->data = $base64_image_data;
+
+	// Record the model that was used
+	$output->model = $modelId;
 ?>

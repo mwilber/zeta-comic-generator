@@ -84,4 +84,6 @@
 		echo "Error: ({$e->getCode()}) - {$e->getMessage()}\n";
 	}
 
+	// Record the model that was used
+	$output->model = $modelId;
 ?>
