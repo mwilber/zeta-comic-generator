@@ -58,4 +58,6 @@
 	}
 	$output->json = $response->json;
 
+	// Record the model that was used
+	$output->model = OAI_MODEL;
 ?>

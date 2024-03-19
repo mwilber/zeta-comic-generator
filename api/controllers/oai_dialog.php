@@ -1,10 +1,7 @@
 <?php
-	if(isset($_POST["query"])) {
-		$query = $_POST["query"];
-	} else {
-		// FOR TESTING
-		$query = "The figure stares as the light gets closer and sees it is a flashlight.";
-	}
+	// This script is no longer used. With smaller context models, it was necessary to break out the 
+	// dialog or the model would lose track of what it was writing. Dialog is now written inline with
+	// the script
 
 	if(isset($_POST["panel1"])) {
 		$panel1 = $_POST["panel1"];
@@ -26,36 +23,19 @@
 		// FOR TESTING
 		$panel3 = "The main character clenches his fists and grins as he begins to consider all of the imaginative possibilities that the new headset offers.";
 	}
-    
-	$actions = [
-		"angry",
-		"approval",
-		"creeping",
-		"disguised",
-		"enamored",
-		"explaining",
-		"joyous",
-		"running",
-		"santa_claus_costume",
-		"sitting",
-		"standing",
-		"teaching",
-		"terrified",
-		"typing"
-	];
+
     
 	$instructions = array(
         "The following statements describe a three part story.",
 		"- " . add_period($panel1),
         "- " . add_period($panel2),
         "- " . add_period($panel3),
-        "For each of the three parts coose one word from the following which most closely describes the action of the main character: ",
-        implode(", ", $actions) . ".",
-		"Write your response as a valid json object with a single property `panels`, which is an array of strings containing each of the chosen words."
+        "For each of the three parts, if it is appropriate for the main character to speak, determine what they should say.",
+		"Write your response as a json object with a single property `panels`, which is an array of strings containing each of the the main character speech, or an empty string if they should remain silent."
     );
 
 	$prompt = generatePrompt($instructions);
-	// print_r($prompt); die;
+	//print_r($prompt); die;
 	$response = gptComplete($OPENAI_KEY, $prompt);
 
 	if(isset($response->data->error)) $output->error = $response->data->error;
@@ -64,18 +44,6 @@
 		$output->data = $response->data;
 		$output->debug = $response->debug;
 	}
-
-	if (is_array($response->json->panels)) {
-		foreach($response->json->panels as &$value) {
-			$oldVal = $value;
-			$value = new stdClass;
-			$value->action = $oldVal;
-			if(!in_array($value->action, $actions)) {
-				$value->altAction = $oldVal;
-				$value->action = "standing";
-			}
-		}
-	}
-
 	$output->json = $response->json;
+
 ?>

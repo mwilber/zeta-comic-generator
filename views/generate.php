@@ -9,11 +9,19 @@
 	<div class="query-wrapper">
 		<h2>Premise</h2>
 		<div id="input">
+			<label style="width: 100%;"> 
+				Script Model
+				<select name="script-model" id="script-model">
+					<option value="ttn">Amazon Titan</option>
+					<option value="oai">GPT 4</option>
+				</select>
+			</label>
+			<br/>
 			<input id="query" type="text" placeholder="ex. An explanation of the distance between the earth and the sun."/>
 			<button id="generate" class="cartoon-button" disabled>
 				<img class="burst" src="/assets/images/speech_bubble.svg" />
 				<span class="cartoon-font">Start</span>
-            </button>
+			</button>
 			<span id="character-count">140 characters left</span>
 		</div>
 	</div>

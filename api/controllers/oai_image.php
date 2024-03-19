@@ -6,6 +6,8 @@ if(isset($_POST["mode"])) {
 }
 //$mode = "simulation";
 
+$modelId = "dall-e-3";
+
 $query = $_POST["query"];
 //print_r($query);
 
@@ -53,7 +55,7 @@ if($mode == "simulation") {
 	curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 	curl_setopt($ch, CURLOPT_HEADER, 0);
 	$body = '{
-		"model": "dall-e-3",
+		"model": "'.$modelId.'",
 		"prompt": "'.$query.'",
 		"n": 1,
 		"size": "1024x1024"
@@ -76,5 +78,8 @@ if($mode == "simulation") {
 	//echo $data->data[0]->url; 
 	$output->error = $data->error;
 	$output->data = $data->data;
+
+	// Record the model that was used
+	$output->model = $modelId;
 }
 ?>

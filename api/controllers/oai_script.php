@@ -82,6 +82,10 @@ if($mode == "simulation") {
 		$output->data = $response->data;
 		$output->debug = $response->debug;
 	}
+
 	$output->json = $response->json;
+
+	// Record the model that was used
+	$output->model = OAI_MODEL;
 }
 ?>

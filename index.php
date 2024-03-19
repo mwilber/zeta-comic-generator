@@ -5,14 +5,14 @@
 	$request = $_SERVER['REQUEST_URI'];
 	//echo $request;
 
-	$version = "1.0.5";
+	$version = "1.0.6";
 	$meta = new stdClass();
 	$meta->siteTitle = "Zeta Comic Generator";
 	$meta->title = "Zeta Comic Generator";
 	$meta->siteUrl = (empty($_SERVER['HTTPS']) ? 'http' : 'https') . "://$_SERVER[HTTP_HOST]";
 	$meta->url = (empty($_SERVER['HTTPS']) ? 'http' : 'https') . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
-	$meta->image = $meta->url . "assets/images/social_share_1024.png";
-	$meta->description = "Easily create unique comic strips with the help of OpenAI models and hand drawn character art.";
+	$meta->image = $meta->url . "assets/images/social_share_2_1024.png";
+	$meta->description = "An experiment in AI and art to create dynamic comic strips.";
 	$meta->imageDescription = "Zeta Comic Generator";
 
 	$path = explode('/', $request);

@@ -6,58 +6,63 @@
 	$request = $_SERVER['REQUEST_URI'];
 	$path = explode('/', $request);
 	$controller = "";
-    $hash = "";
+	$hash = "";
 
-    $output = new stdClass;
-    $output->error = "";
+	$output = new stdClass;
+	$output->error = "";
 
 	// Validate the path
 	if(isset($path[2])) {
 		$controller = $path[2];
-        if($controller == 'detail') {
-            if(isset($path[3]) && $path[3]) {
-                $hash = $path[3];
-            } else {
-                $controller = "";
-            }
-        } 
+		if($controller == 'detail') {
+			if(isset($path[3]) && $path[3]) {
+				$hash = $path[3];
+			} else {
+				$controller = "";
+			}
+		} 
 	}
 	// print_r($controller);
 
-    // Required headers
+	// Required headers
 	header("Access-Control-Allow-Origin: *");
 	header("Content-Type: application/json; charset=UTF-8");
 
-    // Global requires
-    require __DIR__ . '/includes/db.php';
-    require __DIR__ . '/includes/key.php';
+	// Global requires
+	require __DIR__ . '/includes/db.php';
+	require __DIR__ . '/includes/key.php';
+	require __DIR__ . '/includes/utility.php';
 	require __DIR__ . '/includes/gpt.php';
 	require __DIR__ . '/includes/s3.php';
 	require __DIR__ . '/../vendor/autoload.php';
 
 	switch ($controller) {
-
-		case 'gpt_script':
-		case 'gpt_background':
-		case 'gpt_dialog':
-		case 'gpt_action':
-        case 'gpt_background_3':
-        case 'gpt_dialog_3':
-        case 'gpt_action_3':
-        case 'comic':
-        case 'detail':
+		// App API endpoints
+		case 'comic':
+		case 'detail':
 		case 'gallery':
         case 'image':
-        case 'save':
-        case 'update':
-        case 'thumbnail':
+		case 'imgproxy':
+		case 'bedrock':
+		case 'save':
+		case 'update':
+		case 'thumbnail':
 			require __DIR__ . '/controllers/'.$controller.'.php';
 			break;
-	
+		// Comic Generation API endpoints
+		case 'image':					
+		case 'script':
+		case 'background':
+		case 'dialog':
+		case 'action':
+			$service = "oai";
+			if (isset($_POST['model'])) $service = $_POST['model'];
+			require __DIR__ . '/controllers/'. $service . "_" . $controller . '.php';
+			break;
 		default:
 			$output->error = "Action not avaialble.";
 			break;
 	}
 
-    echo json_encode($output);
+	echo json_encode($output);
 ?>

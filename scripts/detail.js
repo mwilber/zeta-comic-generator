@@ -35,11 +35,7 @@ async function RenderStripForDownload() {
 	let link = document.createElement('a');
 	let canvas = await html2canvas(
 		output,
-		{
-			scale: 1,
-			allowTaint : true,
-			useCORS: true
-		}
+		{scale: 1}
 	);
 
 	// document.getElementById('output').appendChild(canvas);
@@ -75,11 +71,7 @@ async function RenderPanelsForDownload() {
 		let link = document.createElement('a');
 		let canvas = await html2canvas(
 			output,
-			{
-				scale: 1,
-				allowTaint : true,
-				useCORS: true
-			}
+			{scale: 1}
 		);
 		
 		// document.getElementById('output').appendChild(canvas);
@@ -129,6 +121,16 @@ if(comicId) {
 			document.getElementById("query").innerHTML = `${data.prompt}`;
 			document.getElementById("script").innerHTML = `<li><h2>${script.title}</h2></li>`;
             document.getElementById("strip-title").innerText = script.title;
+
+			// Add the credits
+			document.getElementById("script").innerHTML += `<li>
+				<ul class="credits">
+					<li><span>Script: </span><span>${script.credits.script}</span></li>
+					<li><span>Images: </span><span>${script.credits.image}</span></li>
+					<li><span>Backgrounds: </span><span>${script.credits.background}</span></li>
+					<li><span>Actions: </span><span>${script.credits.action}</span></li>
+				</ul>
+			</li>`;
 
 			if(script.panels && script.panels.length){
 				script.panels.forEach((panel, idx) => {
@@ -181,6 +183,12 @@ document.getElementById('share').addEventListener("click", () => {
 });
 
 document.getElementById('download').addEventListener("click", () => {
+	// First, reload the background images via proxy so html2canvas can use them.
+	const backgrounds = document.querySelectorAll('.background');
+	backgrounds.forEach((background) => {
+		background.src = '/api/imgproxy/?url=' + background.src;
+	});
+	// Open the dialog.
 	const dialog = document.getElementById('downloaddialog');
 	dialog.classList[dialog.classList.contains('active') ? 'remove' : 'add']('active');
 });
