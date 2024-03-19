@@ -12,8 +12,9 @@
 			<label style="width: 100%;"> 
 				Script Model
 				<select name="script-model" id="script-model">
-					<option value="ttn">Amazon Titan</option>
-					<option value="oai">GPT 4</option>
+					<option value="gem">Gemini 1.0</option>
+					<option value="oai" selected>GPT 4</option>
+					<option value="ttn">Titan Text Express v1</option>
 				</select>
 			</label>
 			<br/>

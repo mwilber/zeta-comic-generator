@@ -89,7 +89,7 @@ async function fetchComic(prompt, script) {
 	for(let [idx, panel] of comic.script.panels.entries()) {
 		let backgroundImg = await renderBackground(idx, panel.background, prompt);
 		panel.background_url = backgroundImg.url;
-		if(panel.background_url.error) return {error: panel.background_url.error}
+		if(panel.error) return {error: panel.background_url.error}
 		comic.script.credits.image = backgroundImg.model;
 		UpdateProgress(20);
 	}
