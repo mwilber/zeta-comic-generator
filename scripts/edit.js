@@ -36,11 +36,30 @@ if(comicId) {
             console.log("data", data);
 			console.log("response", script);
 
+			if (!script.credits) {
+				script.credits = {
+					script: '',
+					image: '',
+					background: '',
+					action: ''
+				};
+			}
+
 			window['comicTitle'] = script.title;
 
 			document.getElementById("query").innerHTML = `${data.prompt}`;
 			document.getElementById("script").innerHTML = `<li><input name="script-title" value="${script.title}"/></li>`;
             document.getElementById("strip-title").innerText = script.title;
+
+			// Add the credits
+			document.getElementById("script").innerHTML += `<li>
+				<ul class="credits">
+					<li><span>Script: </span><span><input name="script-credit-script" value="${script.credits.script}"/></span></li>
+					<li><span>Images: </span><span><input name="script-credit-image" value="${script.credits.image}"/></span></li>
+					<li><span>Backgrounds: </span><span><input name="script-credit-background" value="${script.credits.background}"/></span></li>
+					<li><span>Actions: </span><span><input name="script-credit-action" value="${script.credits.action}"/></span></li>
+				</ul>
+			</li>`;
 
 			if(script.panels && script.panels.length){
 				script.panels.forEach((panel, idx) => {
@@ -97,6 +116,7 @@ function SaveStrip(saveObj){
     formData.append('id', saveObj.id);
 	formData.append('prompt', saveObj.prompt);
 	formData.append('title', saveObj.title);
+	console.log("adding to form", saveObj.script);
 	formData.append('script', JSON.stringify(saveObj.script));
 	// formData.append('bkg1', saveObj.backgrounds[0]);
 	// formData.append('bkg2', saveObj.backgrounds[1]);
@@ -147,6 +167,12 @@ document.getElementById('download').addEventListener("click", () => {
 
     data.script.title = document.querySelector("[name=script-title]").value;
     data.title = data.script.title;
+
+	if (!data.script.credits) data.script.credits = {};
+	data.script.credits.script = document.querySelector("[name=script-credit-script]").value;
+	data.script.credits.image = document.querySelector("[name=script-credit-image]").value;
+	data.script.credits.background = document.querySelector("[name=script-credit-background]").value;
+	data.script.credits.action = document.querySelector("[name=script-credit-action]").value;
 
     data.script.panels.forEach((panel, idx) => {
         for(let field of panelFieldNames) {
