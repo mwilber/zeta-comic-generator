@@ -122,6 +122,18 @@ if(comicId) {
 			document.getElementById("script").innerHTML = `<li><h2>${script.title}</h2></li>`;
             document.getElementById("strip-title").innerText = script.title;
 
+			if (script.credits && script.credits.script)	{
+				// Add the credits
+				document.getElementById("script").innerHTML += `<li>
+					<ul class="credits">
+						<li><span>Script: </span><span>${script.credits.script}</span></li>
+						<li><span>Images: </span><span>${script.credits.image}</span></li>
+						<li><span>Backgrounds: </span><span>${script.credits.background}</span></li>
+						<li><span>Actions: </span><span>${script.credits.action}</span></li>
+					</ul>
+				</li>`;
+			}
+
 			if(script.panels && script.panels.length){
 				script.panels.forEach((panel, idx) => {
 					// Support older scripts that had character property

@@ -746,7 +746,23 @@ progress[value]::-webkit-progress-value {
     padding: 0;
     width: 100%;
     text-align: center;
-    margin-bottom: 3em;
+    margin-bottom: 1em;
+}
+
+#script .credits {
+	text-align: left;
+	margin-bottom: 4em;
+	padding: 0;
+}
+
+#script .credits span{
+	display: inline-block;
+	width: 48%;
+}
+
+#script .credits li span:first-child{
+	text-align: right;
+	margin-right: 2%;
 }
 
 #script h3 {
