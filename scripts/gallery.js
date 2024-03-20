@@ -17,6 +17,7 @@ function PopGallery(pageNum) {
                         <img src="https://zeta-comic-generator.s3.us-east-2.amazonaws.com/thumbnails/thumb_${strip.id}.png"/>
                         <h3>${strip.title}</h3>
                     </a>
+					<span>${strip.id}</span>
                 `;
                 galleryEl.appendChild(frameEl);
             }

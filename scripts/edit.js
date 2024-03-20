@@ -33,7 +33,7 @@ if(comicId) {
 			}
 			window.stripData = data;
 			const script = data.script;
-            console.log("data", data);
+			console.log("data", data);
 			console.log("response", script);
 
 			if (!script.credits) {
@@ -49,10 +49,11 @@ if(comicId) {
 
 			document.getElementById("query").innerHTML = `${data.prompt}`;
 			document.getElementById("script").innerHTML = `<li><input name="script-title" value="${script.title}"/></li>`;
-            document.getElementById("strip-title").innerText = script.title;
+			document.getElementById("strip-title").innerText = script.title;
 
 			// Add the credits
 			document.getElementById("script").innerHTML += `<li>
+				<button id="quik-fill">Quick Fill</button>
 				<ul class="credits">
 					<li><span>Script: </span><span><input name="script-credit-script" value="${script.credits.script}"/></span></li>
 					<li><span>Images: </span><span><input name="script-credit-image" value="${script.credits.image}"/></span></li>
@@ -72,13 +73,13 @@ if(comicId) {
 						<ul>
 							<li>
 								<table>
-                                    <tr><td>Description</td> <td><textarea name="script-panel-${idx}-scene">${panel.scene}</textarea></td></tr>
-                                    <tr><td>Action</td> <td><input name="script-panel-${idx}-action" value="${panel.action}"/></td></tr>
-                                    <tr><td>Alt Action</td> <td><input name="script-panel-${idx}-altAction" value="${panel.altAction}"/></td></tr>
-                                    <tr><td>Dialog</td> <td><input name="script-panel-${idx}-dialog" value="${panel.dialog}"/></td></tr>
-                                    <tr><td>Background</td> <td><textarea name="script-panel-${idx}-background">${panel.background}</textarea></td></tr>
-                                    <tr><td>Background Url</td> <td><input name="script-panel-${idx}-background_url" value="${panel.background_url}"/></td></tr>
-                                    <tr><td>Stored File</td> <td><a href="/assets/backgrounds/${data.backgrounds[idx]}" target="_blank">${data.backgrounds[idx]}</a></td></tr>
+									<tr><td>Description</td> <td><textarea name="script-panel-${idx}-scene">${panel.scene}</textarea></td></tr>
+									<tr><td>Action</td> <td><input name="script-panel-${idx}-action" value="${panel.action}"/></td></tr>
+									<tr><td>Alt Action</td> <td><input name="script-panel-${idx}-altAction" value="${panel.altAction}"/></td></tr>
+									<tr><td>Dialog</td> <td><input name="script-panel-${idx}-dialog" value="${panel.dialog}"/></td></tr>
+									<tr><td>Background</td> <td><textarea name="script-panel-${idx}-background">${panel.background}</textarea></td></tr>
+									<tr><td>Background Url</td> <td><input name="script-panel-${idx}-background_url" value="${panel.background_url}"/></td></tr>
+									<tr><td>Stored File</td> <td><a href="/assets/backgrounds/${data.backgrounds[idx]}" target="_blank">${data.backgrounds[idx]}</a></td></tr>
 								</table>
 							</li>
 						</ul>
@@ -100,6 +101,20 @@ if(comicId) {
 
 				});
 				SetStatus('');
+
+				document.getElementById('quik-fill').addEventListener("click", () => {
+
+					const values = {
+						script: 'gpt-4-1106-preview',
+						image: 'dall-e-3',
+						background: 'gpt-4-1106-preview',
+						action: 'gpt-4-1106-preview'
+					};
+				
+					Object.keys(values).forEach(key => {
+						document.querySelector("[name=script-credit-" + key + "]").value = values[key];
+					});
+				});
 			}
 		});
 } else {
@@ -113,7 +128,7 @@ function SaveStrip(saveObj){
 	// document.getElementById('permalink').style.display = null;
 
 	const formData = new FormData();
-    formData.append('id', saveObj.id);
+	formData.append('id', saveObj.id);
 	formData.append('prompt', saveObj.prompt);
 	formData.append('title', saveObj.title);
 	console.log("adding to form", saveObj.script);
@@ -142,31 +157,31 @@ function SaveStrip(saveObj){
 			// document.getElementById('save').style.display = null;
 			// document.getElementById('permalink').style.display = 'initial';
 			// document.getElementById('permalink').innerHTML = `
-            //     <a href="/detail/${data.response.permalink}">
+			//     <a href="/detail/${data.response.permalink}">
 			// 		<img class="burst" src="/assets/images/speech_bubble.svg" />
 			// 		<span class="cartoon-font">Permalink</span>
 			// 	</a>
 			// `;
 			console.log('Success:', data);
-            if(!data.error) alert("Success! ("+data.response.values+")");
-            else alert("Error: "+data.error);
+			if(!data.error) alert("Success! ("+data.response.values+")");
+			else alert("Error: "+data.error);
 		})
 		.catch(error => console.error('Error:', error));
 }
 
 document.getElementById('download').addEventListener("click", () => {
-    const panelFieldNames = [
-        "scene",
-        "action",
-        "altAction",
-        "dialog",
-        "background",
-        "background_url"
-    ];
+	const panelFieldNames = [
+		"scene",
+		"action",
+		"altAction",
+		"dialog",
+		"background",
+		"background_url"
+	];
 	let data = window.stripData;
 
-    data.script.title = document.querySelector("[name=script-title]").value;
-    data.title = data.script.title;
+	data.script.title = document.querySelector("[name=script-title]").value;
+	data.title = data.script.title;
 
 	if (!data.script.credits) data.script.credits = {};
 	data.script.credits.script = document.querySelector("[name=script-credit-script]").value;
@@ -174,37 +189,37 @@ document.getElementById('download').addEventListener("click", () => {
 	data.script.credits.background = document.querySelector("[name=script-credit-background]").value;
 	data.script.credits.action = document.querySelector("[name=script-credit-action]").value;
 
-    data.script.panels.forEach((panel, idx) => {
-        for(let field of panelFieldNames) {
-            data.script.panels[idx][field] = document.querySelector("[name=script-panel-" + idx + "-" + field + "]").value;
-        }
-    });
+	data.script.panels.forEach((panel, idx) => {
+		for(let field of panelFieldNames) {
+			data.script.panels[idx][field] = document.querySelector("[name=script-panel-" + idx + "-" + field + "]").value;
+		}
+	});
 
 
-    console.log("to save:", data);
+	console.log("to save:", data);
 
-    SaveStrip(data);
+	SaveStrip(data);
 });
 
 document.getElementById('thumbnail').addEventListener("click", () => {
 
-    let data = window.stripData;
-    console.log("to save:", data);
+	let data = window.stripData;
+	console.log("to save:", data);
 
-    const formData = new FormData();
-    formData.append('id', comicId);
+	const formData = new FormData();
+	formData.append('id', comicId);
 	formData.append('background', data.backgrounds[1]);
 	formData.append('foreground', data.script.panels[1].action.toLowerCase());
 
-    fetch('/api/thumbnail/?c='+(Math.floor(Math.random()*1000000)), {
+	fetch('/api/thumbnail/?c='+(Math.floor(Math.random()*1000000)), {
 		method: 'POST',
 		body: formData
 	})
 		.then(response => response.json())
 		.then(data => {
 			console.log('Success:', data);
-            if(!data.error) alert("Success! ("+data.response.values+")");
-            else alert("Error: "+data.error);
+			if(!data.error) alert("Success! ("+data.response.values+")");
+			else alert("Error: "+data.error);
 		})
 		.catch(error => console.error('Error:', error));
 
