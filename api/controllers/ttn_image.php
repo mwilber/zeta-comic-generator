@@ -53,7 +53,9 @@
 
 		$base64_image_data = $response_body->images[0];
 
-        $output_dir = "../assets/titan";
+		$saveDir = 'backgrounds';
+        $output_dir = '../assets/' . $saveDir . '-full';
+		$absolute_path = '/assets/' . $saveDir . '-full';
 
         if (!file_exists($output_dir)) {
             mkdir($output_dir);
@@ -75,7 +77,9 @@
 
         $responseObj = new stdClass;
 
-        $responseObj->url = "https://zcgdev.greenzeta.com/api/".$image_path;
+        $responseObj->url = "$absolute_path/$modelId" . '_' . "$i.png";;
+		// // Pass the image as a url encoded base64 string.
+        // $responseObj->url = "data:image/png;base64,".$base64_image_data;
 
         $output->data = array($responseObj);
 

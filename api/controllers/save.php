@@ -1,5 +1,4 @@
 <?php
-
 	function downloadImage($url, $saveDir = 'backgrounds') {
 		$savePath = '../assets/' . $saveDir . '/';
 		$backupPath = '../assets/' . $saveDir . '-full/';
@@ -42,6 +41,63 @@
 
 		// Load the image
 		$image = imagecreatefromstring($imageData);
+		if ($image === false) {
+			die('Failed to create image from downloaded data');
+		}
+
+		// Calculate resize dimensions (assuming square resize)
+		$width = imagesx($image);
+		$height = imagesy($image);
+		$minSize = min($width, $height);
+		$resizeTo = 512; // New size for resized image
+
+		// Create a new true color image
+		$resizedImage = imagecreatetruecolor($resizeTo, $resizeTo);
+
+		// Resize and crop image
+		imagecopyresampled($resizedImage, $image, 0, 0, ($width-$minSize)/2, ($height-$minSize)/2, $resizeTo, $resizeTo, $minSize, $minSize);
+
+		// Save the resized image
+		if (!imagepng($resizedImage, $resizedFilePath)) {
+			die('Failed to save resized image');
+		}
+
+		uploadS3($resizedFilePath, $fileName, $saveDir . '/');
+
+		//echo "Original and resized images saved successfully.";
+
+		// Clean up
+		imagedestroy($image);
+		imagedestroy($resizedImage);
+
+		return $fileName;
+	}
+
+	function saveLocalImage($local_path, $saveDir = 'backgrounds') {
+		$savePath = '../assets/' . $saveDir . '/';
+		$backupPath = '../assets/' . $saveDir . '-full/';
+		// Create the directory if it doesn't exist
+		if (!file_exists($savePath)) {
+			mkdir($savePath, 0777, true);
+		}
+		if (!file_exists($backupPath)) {
+			mkdir($backupPath, 0777, true);
+		}
+
+		//$image_data = base64_decode($base64_image_data);
+
+		// Generate a unique file name
+		$fileName = uniqid() . '.png';
+		$resizedFilePath = $savePath . $fileName;
+		$backupFilePath = $backupPath . $fileName;
+
+		// $image_path = "$output_dir/$modelId" . '_' . "$i.png";
+
+		// Save the local image backup to s3
+		uploadS3($local_path, $fileName, $saveDir . '-full/');
+
+		// Load the image
+		$image = imagecreatefrompng($local_path);
 		if ($image === false) {
 			die('Failed to create image from downloaded data');
 		}
@@ -149,7 +205,13 @@
 				$panel = ($idx + 1);
 
 				try {
-					$fileName = downloadImage($bkgUrl);
+					//$fileName = downloadImage($bkgUrl);
+					if (isset($bkgUrl[0]) && $bkgUrl[0] === '/') {
+						$fileName = saveLocalImage('..'.$bkgUrl);
+					} else {
+						// Pass $bkgUrl to downloadImage function
+						$fileName = downloadImage($bkgUrl);
+					}
 					//echo "Image saved as: " . $fileName;
 				} catch (Exception $e) {
 					$output->error = "Error getting background image: " . $e->getMessage();

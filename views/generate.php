@@ -16,6 +16,10 @@
 					<option value="oai" selected>GPT 4</option>
 					<option value="ttn">Titan Text Express v1</option>
 				</select>
+				<select name="image-model" id="image-model">
+					<option value="oai" selected>Dall-E 3</option>
+					<option value="ttn">Titan Image (preview)</option>
+				</select>
 			</label>
 			<br/>
 			<input id="query" type="text" placeholder="ex. An explanation of the distance between the earth and the sun."/>

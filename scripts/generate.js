@@ -174,9 +174,13 @@ async function renderBackground(idx, description, premise) {
 async function fetchBackground(prompt) {
 	let result = {};
 	let retry = 3;
+	const modelSelect = document.getElementById('image-model');
     const formData = new FormData();
 	formData.append('mode', API_MODE);
 	formData.append('query', prompt);
+	formData.append('model', modelSelect.value || 'oai');
+
+
 
 	// Sometimes GPT returns a null, retry up to 2 times to get a usable result.
 	while(retry > 0) {
