@@ -37,6 +37,7 @@
 		"joyous",
 		"running",
 		"santa_claus_costume",
+		"scifi_geek",
 		"sitting",
 		"standing",
 		"teaching",
