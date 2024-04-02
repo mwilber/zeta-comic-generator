@@ -9,25 +9,37 @@
 	<div class="query-wrapper">
 		<h2>Premise</h2>
 		<div id="input">
-			<label style="width: 100%;"> 
-				Script Model
-				<select name="script-model" id="script-model">
-					<option value="gem">Gemini 1.0</option>
-					<option value="oai" selected>GPT 4</option>
-					<option value="ttn">Titan Text Express v1</option>
-				</select>
-				<select name="image-model" id="image-model">
-					<option value="oai" selected>Dall-E 3</option>
-					<option value="ttn">Titan Image (preview)</option>
-				</select>
-			</label>
-			<br/>
-			<input id="query" type="text" placeholder="ex. An explanation of the distance between the earth and the sun."/>
-			<button id="generate" class="cartoon-button" disabled>
-				<img class="burst" src="/assets/images/speech_bubble.svg" />
-				<span class="cartoon-font">Start</span>
-			</button>
-			<span id="character-count">140 characters left</span>
+			<div class="row">
+				<label> 
+					Script Model
+					<div class="select">
+						<select name="script-model" id="script-model">
+							<option value="gem">Gemini 1.0</option>
+							<option value="oai" selected>GPT 4</option>
+							<option value="ttn">Titan Text Express v1</option>
+						</select>
+					</div>
+				</label>
+				<label>
+					Image Model
+					<div class="select">
+						<select name="image-model" id="image-model">
+							<option value="oai" selected>Dall-E 3</option>
+							<option value="ttn">Titan Image (preview)</option>
+						</select>
+					</div>
+				</label>
+			</div>
+			<div class="row">
+				<input id="query" type="text" placeholder="ex. An explanation of the distance between the earth and the sun."/>
+				<button id="generate" class="cartoon-button" disabled>
+					<img class="burst" src="/assets/images/speech_bubble.svg" />
+					<span class="cartoon-font">Start</span>
+				</button>
+			</div>
+			<div class="row">
+				<span id="character-count">140 characters left</span>
+			</div>
 		</div>
 	</div>
 	<div class="strip-wrapper">

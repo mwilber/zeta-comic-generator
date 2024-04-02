@@ -11,6 +11,10 @@ body {
 	background: #f9f5ec;
 
 	--bounce-function: cubic-bezier(0.680, -0.550, 0.265, 1.550);
+
+	--select-border: #777;
+	--select-focus: blue;
+	--select-arrow: var(--select-border);
 }
 
 a,
@@ -32,6 +36,87 @@ textarea,
 	border-radius: 5px;
 }
 
+select {
+	/* A reset of styles, including removing the default dropdown arrow */
+	appearance: none;
+	background-color: transparent;
+	border: none;
+	padding: 0 1em 0 0;
+	margin: 0;
+	width: 100%;
+	font-family: inherit;
+	font-size: inherit;
+	cursor: inherit;
+	line-height: inherit;
+
+	/* Stack above custom arrow */
+	z-index: 1;
+
+	/* Remove focus outline, will add on alternate element */
+	outline: none;
+}
+
+/* Remove dropdown arrow in IE10 & IE11
+@link https://www.filamentgroup.com/lab/select-css.html */
+select::-ms-expand {
+display: none;
+}
+
+.select {
+	display: grid;
+	grid-template-areas: "select";
+	align-items: center;
+	position: relative;
+
+	min-width: 15ch;
+	max-width: 30ch;
+
+	border: 1px solid var(--select-border);
+	border-radius: 0.25em;
+	padding: 0.25em 0.5em;
+
+	font-size: 1.25rem;
+	cursor: pointer;
+	line-height: 1.1;
+
+	/* Optional styles
+	remove for transparency */
+	/* background-color: #fff; */
+	background-image: linear-gradient(to top, rgba(249, 249, 249, 0.5), rgba(255, 255, 255, 0.5) 33%);
+}
+
+select,
+.select::after {
+	grid-area: select;
+}
+
+/* Custom arrow */
+.select:not(.select--multiple)::after {
+	content: "";
+	justify-self: end;
+	width: 0.8em;
+	height: 0.5em;
+	background-color: var(--select-arrow);
+	clip-path: polygon(100% 0%, 0 0%, 50% 100%);
+}
+
+/* Interim solution until :focus-within has better support */
+select:focus + .focus {
+	position: absolute;
+	top: -1px;
+	left: -1px;
+	right: -1px;
+	bottom: -1px;
+	border: 2px solid var(--select-focus);
+	border-radius: inherit;
+}
+
+.select--disabled {
+	cursor: not-allowed;
+	background-color: #eee;
+	background-image: linear-gradient(to top, #ddd, #eee 33%);
+}
+
 .halftone {
 	--dotSize: 0.25rem;
 	--bgSize: 1.5rem;
@@ -48,7 +133,7 @@ textarea,
 	background: white;
   	filter: contrast(50);
 	opacity: 0.08;
-    z-index: -1;
+	z-index: -1;
 }
 
 .halftone::after {
@@ -77,11 +162,11 @@ textarea,
 }
 
 .cartoon-button {
-    position: relative;
-    background: transparent;
-    box-shadow: none;
-    border: none;
-    cursor: pointer;
+	position: relative;
+	background: transparent;
+	box-shadow: none;
+	border: none;
+	cursor: pointer;
 }
 
 .cartoon-button img,
@@ -94,13 +179,13 @@ textarea,
 }
 
 .cartoon-button img {
-    height: 1.75em;
-    opacity: 0.65;
+	height: 1.75em;
+	opacity: 0.65;
 }
 
 .cartoon-button span {
-    font-size: 1em;
-    transform: translate(-50%, -50%) rotate(-10deg);
+	font-size: 1em;
+	transform: translate(-50%, -50%) rotate(-10deg);
 	white-space: nowrap;
 }
 
@@ -120,20 +205,20 @@ textarea,
 }
 
 .cartoon-font {
-    color: red;
+	color: red;
 	fill: red;
 	stroke: #000;
 	stroke-width: 0.5em;
-    font-family: 'Bangers', Arial, Helvetica, sans-serif;
-    /* font-family: 'Luckiest Guy', Arial, Helvetica, sans-serif; */
-    text-shadow:
-                -1px 1px 0 #000,
-                1px 1px 0 #000,
-                1px -1px 0 #000,
-                -1px -1px 0 #000,
-                4px 4px 0 #000;
-    text-transform: uppercase;
-    letter-spacing: 2px;
+	font-family: 'Bangers', Arial, Helvetica, sans-serif;
+	/* font-family: 'Luckiest Guy', Arial, Helvetica, sans-serif; */
+	text-shadow:
+				-1px 1px 0 #000,
+				1px 1px 0 #000,
+				1px -1px 0 #000,
+				-1px -1px 0 #000,
+				4px 4px 0 #000;
+	text-transform: uppercase;
+	letter-spacing: 2px;
 }
 
 .cartoon-font svg {
@@ -155,21 +240,21 @@ textarea,
 
 .dialog {
 	position: fixed;
-    top: calc(40vh - 4em);
-    left: 10%;
-    width: calc(80% - 4em);
-    padding: 1em 2em 1.5em 2em;
-    transform: scale(0);
-    background: #3050cc;
+	top: calc(40vh - 4em);
+	left: 10%;
+	width: calc(80% - 4em);
+	padding: 1em 2em 1.5em 2em;
+	transform: scale(0);
+	background: #3050cc;
 	color: #fff;
 	text-transform: uppercase;
 	text-align: center;
 	font-weight: bold;
 	font-size: 3em;
-    border: solid 3px #000;
-    border-radius: 15px;
+	border: solid 3px #000;
+	border-radius: 15px;
 	box-shadow: 10px 15px 40px rgba(0,0,0,0.75);
-    z-index: -1;
+	z-index: -1;
 	opacity: 0;
 	transition: all 500ms var(--bounce-function);
 }
@@ -190,22 +275,22 @@ textarea,
 	background: transparent;
 	box-shadow: none;
 	position: absolute;
-    top: 0;
-    right: 0;
-    cursor: pointer;
+	top: 0;
+	right: 0;
+	cursor: pointer;
 }
 
 .dialog .close:before {
 	content: '+';
-    display: inline-block;
+	display: inline-block;
 	height: 48px;
-    width: 48px;
+	width: 48px;
 	transform: rotate(45deg);
 	font-size: 48px;
 	font-weight: bold;
 	color: #fff;
-    text-align: center;
-    vertical-align: middle;
+	text-align: center;
+	vertical-align: middle;
 }
 
 header {
@@ -227,7 +312,7 @@ header h1 {
 	top: auto;
 	width: 100%;
 	margin: 0;
-    padding: 0.1em 0;
+	padding: 0.1em 0;
 	background: #3050cc;
 	border: solid 3px #000;
 	border-right: none;
@@ -252,7 +337,7 @@ header nav a {
 	background: transparent;
 	height: 70px;
 	margin-top: 10px;
-    font-size: 3em !important;
+	font-size: 3em !important;
 }
 
 header nav a:hover {
@@ -273,12 +358,12 @@ header nav a:hover {
 }
 
 .content h2 {
-    display: inline-block;
-    width: auto;
-    padding: 0.05em 0.5em;
-    margin: 2em 0 0.5em 0;
+	display: inline-block;
+	width: auto;
+	padding: 0.05em 0.5em;
+	margin: 2em 0 0.5em 0;
 	background: #feff70;
-    border: solid 2px #000;
+	border: solid 2px #000;
 	text-transform: uppercase;
 }
 
@@ -286,16 +371,16 @@ header nav a:hover {
 main header {
 	display: inline-block;
 	position: initial;
-    height: auto;
-    width: 70%;
-    font-size: 2.5em;
-    margin: 1.5em 15% 1em 15%;
-    line-height: 1.5em;
+	height: auto;
+	width: 70%;
+	font-size: 2.5em;
+	margin: 1.5em 15% 1em 15%;
+	line-height: 1.5em;
 }
 
 main header a {
 	text-decoration-thickness: 2px;
-    text-decoration-color: #94989e;
+	text-decoration-color: #94989e;
 }
 
 main p {
@@ -305,10 +390,10 @@ main p {
 
 .action-buttons {
 	font-size: 3em;
-    margin-top: 0.5em;
+	margin-top: 0.5em;
 	margin-bottom: 1em;
-    text-align: center;
-    line-height: 3em;
+	text-align: center;
+	line-height: 3em;
 }
 .action-buttons .cartoon-button {
 	display: inline-block;
@@ -316,46 +401,46 @@ main p {
 }
 
 p.diagram {
-    margin-top: 0.5em;
-    text-align: center;
+	margin-top: 0.5em;
+	text-align: center;
 }
 
 p.diagram img {
-    width: 75%;
+	width: 75%;
 }
 
 p.description {
 	line-height: 1.5em;
-    padding: 1em 0 2em 0;
+	padding: 1em 0 2em 0;
 }
 
 .character-art {
-    margin: 0;
-    padding: 0;
-    list-style: none;
+	margin: 0;
+	padding: 0;
+	list-style: none;
 }
 
 .character-art li {
-    margin: 5px;
-    position: relative;
+	margin: 5px;
+	position: relative;
 }
 
 .character-art h3 {
-    position: absolute;
-    display: inline-block;
-    width: auto;
-    padding: 0.05em 0.5em;
-    margin: 0;
-    top: 0.5em;
-    left: 0.5em;
+	position: absolute;
+	display: inline-block;
+	width: auto;
+	padding: 0.05em 0.5em;
+	margin: 0;
+	top: 0.5em;
+	left: 0.5em;
 	background: #d6dcf5;
-    border: solid 2px #000;
+	border: solid 2px #000;
 	text-transform: uppercase;
 }
 
 .character-art img {
-    width: calc(100% - 4px);
-    border: solid 2px black;
+	width: calc(100% - 4px);
+	border: solid 2px black;
 }
 
 .prompts {
@@ -394,7 +479,7 @@ p.description {
 	display: block;
 	position: relative;
 	/* min-width: 250px;
-    min-height: 250px; */
+	min-height: 250px; */
 	margin: 5px;
 	border: solid 2px black;
 	/* padding-bottom: calc(33.3% - 14px); */
@@ -448,10 +533,10 @@ p.description {
 
 #statusdialog .lds-grid {
 	display: inline-block;
-    position: relative;
-    width: 1em;
-    height: 1.25em;
-    transform: scale(0.75);
+	position: relative;
+	width: 1em;
+	height: 1.25em;
+	transform: scale(0.75);
 }
 
 progress[value] {
@@ -483,7 +568,19 @@ progress[value]::-webkit-progress-value {
 	width:100%;
 	display: flex;
 	flex-wrap: wrap;
+	flex-direction: column;
 	font-size: 18px;
+}
+
+#input .row {
+	display: flex;
+}
+
+#input .row label {
+	display: block;
+	float: left;
+	margin-right: 1em;
+	margin-bottom: 0.5em;
 }
 
 #query {
@@ -492,9 +589,9 @@ progress[value]::-webkit-progress-value {
 
 #character-count {
 	flex: auto;
-    width: 100%;
-    font-size: 0.75em;
-    padding: 0.5em 0 0 1em;
+	width: 100%;
+	font-size: 0.75em;
+	padding: 0.5em 0 0 1em;
 }
 
 .strip-controls button,
@@ -502,8 +599,8 @@ progress[value]::-webkit-progress-value {
 #permalink {
 	flex: 0;
 	margin: 0.12em 2em;
-    font-size: 1.5em;
-    display: inline-block;
+	font-size: 1.5em;
+	display: inline-block;
 }
 
 #generate .cartoon-font,
@@ -523,7 +620,7 @@ progress[value]::-webkit-progress-value {
 
 #shareurl {
 	font-size: 15px;
-    width: 75%;
+	width: 75%;
 	vertical-align: middle;
 }
 
@@ -555,16 +652,16 @@ progress[value]::-webkit-progress-value {
 }
 
 .share-buttons {
-    height: 2.5em;
+	height: 2.5em;
 	margin-top: 1.5em;
-    font-size: 18px;
+	font-size: 18px;
 }
 
 .share-buttons button {
 	height: 1.5em;
 	margin: 0 2em;
-    font-size: 1.25em;
-    display: inline-block;
+	font-size: 1.25em;
+	display: inline-block;
 }
 
 .download-buttons {
@@ -579,10 +676,10 @@ progress[value]::-webkit-progress-value {
 
 .download-buttons button {
 	width: calc(100% - 2em);
-    padding: 1em;
-    background: rgb(0 0 0 / 10%);
-    border-radius: 10px;
-    border-width: 1px;
+	padding: 1em;
+	background: rgb(0 0 0 / 10%);
+	border-radius: 10px;
+	border-width: 1px;
 	margin: 0 1em 1em 1em;
 	cursor: pointer;
 }
@@ -664,9 +761,9 @@ progress[value]::-webkit-progress-value {
 .generate[data-status='generating'] #strip .panel.rendering:before {
 	content: 'Rendering...';
 	position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
 	color: #fff;
 }
 
@@ -675,18 +772,18 @@ progress[value]::-webkit-progress-value {
 }
 
 .strip-controls, #strip-title {
-    flex-grow: 1;
-    flex-shrink: 1;
-    flex-basis: 100%;
-    height: 2.5em;
-    font-size: 18px;
+	flex-grow: 1;
+	flex-shrink: 1;
+	flex-basis: 100%;
+	height: 2.5em;
+	font-size: 18px;
 }
 
 #strip-title {
-    font-size: 1em;
-    height: auto;
-    margin: 0 5px -1em 5px;
-    font-size: 1.25em;
+	font-size: 1em;
+	height: auto;
+	margin: 0 5px -1em 5px;
+	font-size: 1.25em;
 }
 
 #save, #permalink {
@@ -710,11 +807,11 @@ progress[value]::-webkit-progress-value {
 
 #query.premise:after {
 	content: ' ';
-    border-right: solid 1px black;
-    width: 3px;
-    display: inline-block;
-    height: 1.25em;
-    vertical-align: text-bottom;
+	border-right: solid 1px black;
+	width: 3px;
+	display: inline-block;
+	height: 1.25em;
+	vertical-align: text-bottom;
 	animation: blink-animation 1s step-start 0s infinite;;
 }
 
@@ -730,7 +827,7 @@ progress[value]::-webkit-progress-value {
 	margin: 0;
 	padding: 75px 100px 100px 100px;
 	border: solid 1px rgba(203, 170, 56, 1);
-    border-radius: 20px;
+	border-radius: 20px;
 	list-style: none;
 	font-family: 'Courier New', Courier, monospace;
 }
@@ -741,12 +838,12 @@ progress[value]::-webkit-progress-value {
 
 #script h2 {
 	font-size: 1.5em;
-    background: transparent;
-    border: none;
-    padding: 0;
-    width: 100%;
-    text-align: center;
-    margin-bottom: 1em;
+	background: transparent;
+	border: none;
+	padding: 0;
+	width: 100%;
+	text-align: center;
+	margin-bottom: 1em;
 }
 
 #script .credits {
@@ -796,15 +893,15 @@ progress[value]::-webkit-progress-value {
 /* Comic Strip */
 
 #strip {
-    display: flex;
-    flex-wrap: wrap;
+	display: flex;
+	flex-wrap: wrap;
 	width: calc(100% - 18px);
-    max-width: 942px;
-    margin: auto;
+	max-width: 942px;
+	margin: auto;
 	background: #fff;
 	border: solid 1px #999;
-    padding: 8px;
-    box-shadow: 2px 2px 6px rgba(0,0,0,0.5);
+	padding: 8px;
+	box-shadow: 2px 2px 6px rgba(0,0,0,0.5);
 }
 
 #strip.capture {
@@ -851,8 +948,8 @@ progress[value]::-webkit-progress-value {
 	font-family: 'Patrick Hand', 'Courier New', Courier, monospace;
 	font-size: 14px;
 	letter-spacing: 0.5;
-    /* font-weight: bold; */
-    padding: 5px 10px;
+	/* font-weight: bold; */
+	padding: 5px 10px;
 	border: solid 2px black;
 	margin: auto;
 }
@@ -860,30 +957,30 @@ progress[value]::-webkit-progress-value {
 #strip .panel .bubble-container,
 #strip-output .panel .bubble-container {
 	position: absolute;
-    width: calc(100% - 10px);
-    /* height: calc(100% - 10px); */
-    padding: 5px;
+	width: calc(100% - 10px);
+	/* height: calc(100% - 10px); */
+	padding: 5px;
 }
 
 #strip-output {
 	margin: 0;
-    padding: 0;
-    width: fit-content;
+	padding: 0;
+	width: fit-content;
 	position: absolute;
 	left: 150%;
 }
 
 #strip-output > .panel {
 	width: 504px;
-    height: 504px;
-    margin: 0;
-    border-width: 4px;
+	height: 504px;
+	margin: 0;
+	border-width: 4px;
 }
 
 #strip-output > .panel .bubble {
-    font-size: 24px;
-    border-radius: 30px;
-    padding: 10px 20px;
+	font-size: 24px;
+	border-radius: 30px;
+	padding: 10px 20px;
 }
 
 #strip-output > .panel .bubble-container {
@@ -937,15 +1034,15 @@ progress[value]::-webkit-progress-value {
 
 .speech:before {
 	left: 50px;
-    bottom: -24px;
-    border: 11px solid;
+	bottom: -24px;
+	border: 11px solid;
 	border-color: #000 #000 transparent transparent;
 }
 
 .speech:after {
 	left: 50px;
-    bottom: -20px;
-    border: 10px solid;
+	bottom: -20px;
+	border: 10px solid;
 	border-color: #fff #fff transparent transparent;
 }
 
@@ -1016,7 +1113,7 @@ progress[value]::-webkit-progress-value {
 
 	.dialog {
 		padding: 0.5em;
-    	width: calc(92% - 1em);
+		width: calc(92% - 1em);
 		left: 3%;
 		top: 30vh;
 		font-size: 1.5em;
@@ -1026,20 +1123,20 @@ progress[value]::-webkit-progress-value {
 		font-size: 3em;
 	}
 
-    p.diagram img {
-        width: 100%;
-    }
+	p.diagram img {
+		width: 100%;
+	}
 
 	.dialog p {
 		margin-top: 0.4em;
 		margin-bottom: 0.5em;
 	}
 
-    main header {
-        width: 100%;
-        margin: 1.25em 0 0.5em 0;
-        font-size: 2em;
-    }
+	main header {
+		width: 100%;
+		margin: 1.25em 0 0.5em 0;
+		font-size: 2em;
+	}
 
 	#gallery, .character-art {
 		grid-template-columns: 1fr 1fr;
@@ -1085,7 +1182,7 @@ progress[value]::-webkit-progress-value {
 
 	#statusdialog .lds-grid {
 		width: 2em;
-    	height: 2em;
+		height: 2em;
 	}
 
 	#query {
@@ -1219,14 +1316,14 @@ progress[value]::-webkit-progress-value {
 
 /* Script Editor */
 .edit table {
-    width: 100%;
+	width: 100%;
 }
 
 .edit table tr td:first-child {
-    width: 20%;
+	width: 20%;
 }
 
 .edit input,
 .edit textarea {
-    width: 100%;
+	width: 100%;
 }
