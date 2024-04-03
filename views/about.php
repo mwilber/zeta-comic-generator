@@ -8,6 +8,8 @@
 		"explaining",
 		"joyous",
 		"running",
+		"santa_claus_costume",
+		"scifi_costume",
 		"sitting",
 		"standing",
 		"teaching",
@@ -42,7 +44,8 @@
 <ul class="character-art">
     <?php foreach($actions as $action): ?>
     <li>
-        <h3><?php echo $action; ?></h3>
+        <h3><?php echo str_replace('_', ' ', $action); ?></h3>  
+
         <img src="/assets/character_art/<?php echo $action; ?>.png" />
     </li>
     <?php endforeach; ?>

@@ -435,7 +435,7 @@ p.description {
 	left: 0.5em;
 	background: #d6dcf5;
 	border: solid 2px #000;
-	text-transform: uppercase;
+	text-transform: capitalize;
 }
 
 .character-art img {
