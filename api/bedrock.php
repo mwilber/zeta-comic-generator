@@ -15,42 +15,45 @@
 		],
 	]);
 
-	echo "\n\nAmazon Titan Image Generation:\n";
-	$image_prompt = 'Create an image of an intergalactic villain\'s lair filled with advanced technology and multiple screens displaying different landscapes of Earth, including forests, cities, and oceans. Include a large red button on a central console.';
-	$titanSeed = rand(0, 2147483647);
+	echo "\n\nAmazon Stablediffusion Image Generation:\n";
+	//$image_prompt = 'Create an image of an intergalactic villain\'s lair filled with advanced technology and multiple screens displaying different landscapes of Earth, including forests, cities, and oceans. Include a large red button on a central console.';
+	$image_prompt = 'A grassy field with mountains in the distance.';
+    $seed = rand(0, 2147483647);
 	//$base64 = invokeTitanImage($image_prompt, $titanSeed);
+    $style_preset = ['3d-model', 'analog-film', 'anime', 'cinematic', 'comic-book', 'digital-art', 'enhance', 'fantasy-art', 'isometric', 'line-art', 'low-poly', 'modeling-compound', 'neon-punk', 'origami', 'photographic', 'pixel-art', 'tile-texture'];
 	$base64_image_data = "";
 
-	try {
-		$modelId = 'amazon.titan-image-generator-v1';
+    try {
+        $modelId = 'stability.stable-diffusion-xl-v1';
 
-		$request = json_encode([
-			'taskType' => 'TEXT_IMAGE',
-			'textToImageParams' => [
-				'text' => $image_prompt
-			],
-			'imageGenerationConfig' => [
-				'numberOfImages' => 1,
-				'quality' => 'standard',
-				'cfgScale' => 8.0,
-				'height' => 512,
-				'width' => 512,
-				'seed' => $titanSeed
-			]
-		]);
+        // StableDiffusion params doc: https://platform.stability.ai/docs/api-reference#tag/Text-to-Image/operation/textToImage
+        $body = [
+            'text_prompts' => [
+                ['text' => $image_prompt]
+            ],
+            'seed' => $seed,
+            'cfg_scale' => 10,
+            'steps' => 30,
+            'height' => 512,
+            'width' => 512
+        ];
 
-		$result = $bedrockRuntimeClient->invokeModel([
-			'contentType' => 'application/json',
-			'body' => $request,
-			'modelId' => $modelId,
-		]);
+        if ($style_preset) {
+            $body['style_preset'] = $style_preset[4];
+        }
 
-		$response_body = json_decode($result['body']);
+        $result = $bedrockRuntimeClient->invokeModel([
+            'contentType' => 'application/json',
+            'body' => json_encode($body),
+            'modelId' => $modelId,
+        ]);
 
-		$base64_image_data = $response_body->images[0];
-	} catch (Exception $e) {
-		echo "Error: ({$e->getCode()}) - {$e->getMessage()}\n";
-	}
+        $response_body = json_decode($result['body']);
+
+        $base64_image_data = $response_body->artifacts[0]->base64;
+    } catch (Exception $e) {
+        echo "Error: ({$e->getCode()}) - {$e->getMessage()}\n";
+    }
 
 	$output_dir = "../assets/titan";
 
