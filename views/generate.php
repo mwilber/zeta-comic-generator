@@ -7,7 +7,7 @@
 </div>
 <div id="interface">
 	<div class="query-wrapper">
-		<h2>Premise</h2>
+		<h2>Setup</h2>
 		<div id="input">
 			<div class="row">
 				<label> 
@@ -28,6 +28,11 @@
 							<option value="ttn">Titan Image (preview)</option>
 						</select>
 					</div>
+				</label>
+			</div>
+			<div class="row">
+				<label for="query">
+					Enter a story premise. Keep it short and simple. Then press the "Start" button.
 				</label>
 			</div>
 			<div class="row">
