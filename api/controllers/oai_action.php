@@ -38,8 +38,10 @@
 		"running",
 		"santa_claus_costume",
 		"scifi_costume",
+		"selfie",
 		"sitting",
 		"standing",
+		"startled",
 		"teaching",
 		"terrified",
 		"typing"

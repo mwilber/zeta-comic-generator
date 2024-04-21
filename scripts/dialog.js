@@ -89,6 +89,16 @@ const pointerInfo = {
 			y: 215
 		}
 	},
+	selfie: {
+		center: {
+			x: 256,
+			y: 10
+		},
+		pointer: {
+			x: 290,
+			y: 110
+		}
+	},
 	sitting: {
 		center: {
 			x: 256,
@@ -107,6 +117,16 @@ const pointerInfo = {
 		pointer: {
 			x: 310,
 			y: 140
+		}
+	},
+	startled: {
+		center: {
+			x: 256,
+			y: 10
+		},
+		pointer: {
+			x: 190,
+			y: 150
 		}
 	},
 	teaching: {
