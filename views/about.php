@@ -84,7 +84,7 @@
 			<code>
                 You are a talented artist who draws background art for animated cartoons.
                 <br/>
-                Write Dall-E prompts to draw backgrounds for three animation cells. These animation cells depict our main character, Alpha Zeta, in a scene.
+                Write prompts for an image generator, instructing it to draw a images fitting each of three scenes. These scenes depict our main character, Alpha Zeta, in a setting.
                 <br/>
                 Descriptions of the three scenes are as follows:
                 <br/>

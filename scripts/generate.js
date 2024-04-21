@@ -171,13 +171,15 @@ async function renderBackground(idx, description, premise) {
 	return {url: image.data[0].url, model: image.model};
 }
 
-async function fetchBackground(prompt) {
+async function fetchBackground(prompt, style) {
 	let result = {};
 	let retry = 3;
 	const modelSelect = document.getElementById('image-model');
+    const styleSelect = document.getElementById('image-style');
     const formData = new FormData();
 	formData.append('mode', API_MODE);
 	formData.append('query', prompt);
+    if (styleSelect) formData.append('style', styleSelect.value);
 	formData.append('model', modelSelect.value || 'oai');
 
 
@@ -380,4 +382,11 @@ document.getElementById('save').addEventListener("click", () => {
 	if(!query) return;
 
 	SaveStrip();
+});
+
+document.getElementById('image-model').addEventListener("change", (e) => {
+    console.log("target val", e.target.value);
+    const styleSelectGroup = document.getElementById("image-style-label");
+    if (e.target.value === "sdf") styleSelectGroup.style.display = "block";
+    else styleSelectGroup.style.display = "none";
 });

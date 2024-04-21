@@ -30,7 +30,7 @@
     
 	$instructions = array(
         "You are a talented artist who draws background art for animated cartoons. ",
-        "Write Dall-E prompts to draw backgrounds for three animation cells. These animation cells depict our main character, Alpha Zeta, in a scene.",
+        "Write prompts for an image generator, instructing it to draw a images fitting each of three scenes. These scenes depict our main character, Alpha Zeta, in a setting.",
         "Descriptions of the three scenes are as follows:",
 		"- " . add_period($panel1),
         "- " . add_period($panel2),
@@ -38,7 +38,7 @@
         //"Generate a Dall-E prompt that creates an image for each scene in cartoon style. ",
 		//"The main character, Alpha Zeta, will not appear in the background, his image will be overlaid on top of the background.",
 		" ",
-        "Your Dall-E prompts will be written within the following rules: ",
+        "Your image generator prompts will be written within the following rules: ",
 		"- Describe each scene as it would look if the main character, Alpha Zeta, is not present.",
 		"- No characters will speak to each other.",
 		"- Do not include any items that contain readable text.",

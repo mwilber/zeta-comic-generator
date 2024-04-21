@@ -700,10 +700,10 @@ progress[value]::-webkit-progress-value {
 	/* transition: all 1s; */
 }
 
-#interface > div {
+/* #interface > div { */
 	/* flex: 1; */
 	/* transition: all 1s; */
-}
+/* } */
 
 /* .generating #script:before,
 .error #script:before {
@@ -1089,6 +1089,10 @@ progress[value]::-webkit-progress-value {
 	#gallery, .character-art {
 		grid-template-columns: 1fr 1fr 1fr;
 	}
+
+    #input .row.selections {
+        flex-direction: column;
+    }
 }
 
 @media screen and (max-width: 550px) {
@@ -1191,12 +1195,12 @@ progress[value]::-webkit-progress-value {
 
 	#generate {
 		flex: 1;
-		margin-top: 2em;
+		/* margin-top: 2em; */
 	}
 
-	#character-count {
+	/* #character-count {
 		margin-top: -4.5em;
-	}
+	} */
 
 	#strip {
 		flex-direction: column;

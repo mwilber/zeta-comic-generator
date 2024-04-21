@@ -9,7 +9,7 @@
 	<div class="query-wrapper">
 		<h2>Setup</h2>
 		<div id="input">
-			<div class="row">
+			<div class="row selections">
 				<label> 
 					Script Model
 					<div class="select">
@@ -25,22 +25,23 @@
 					<div class="select">
 						<select name="image-model" id="image-model">
 							<option value="oai" selected>Dall-E 3</option>
-                            <option value="sdf">Stable Diffusion</option>
+                            <option value="sdf">Stable Diffusion XL</option>
 							<option value="ttn">Titan Image (preview)</option>
 						</select>
 					</div>
 				</label>
-                <label>
+                <label id="image-style-label" style="display:none;">
 					Image Style
 					<div class="select">
 						<select name="image-style" id="image-style">
-							<option value="" selected>(none)</option>
+							<option value="" selected>(default)</option>
                             <option value="anime">Anime</option>
 							<option value="cinematic">Cinematic</option>
                             <option value="comic-book">Comic Book</option>
                             <option value="fantasy-art">Fantasy</option>
                             <option value="low-poly">Low Poly</option>
                             <option value="neon-punk">Neon Punk</option>
+                            <option value="origami">Origami</option>
                             <option value="photographic">Photographic</option>
 						</select>
 					</div>
