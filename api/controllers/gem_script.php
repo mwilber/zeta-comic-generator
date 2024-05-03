@@ -9,21 +9,7 @@
 	$modelUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=".$GOOGLE_KEY;
 	$modelId = "gemini-pro";
 
-	$instructions = array(
-		"You are a cartoonist and humorist. Write the script for a three panel comic strip.",
-		"In the comic strip our main character, a short green humaniod alien named Alpha Zeta, engages in the following premise: ",
-		add_period($query),
-		"Include a detailed scene description and words spoken by the main character.",
-		//"The description is written as a json object, describing the content that makes up the comic strip.", 
-		"Write your script in the form of a json object. The json object has the following properties: `title` and `panels`.",
-		"The following is a description of each property value:",
-		"`title`: The title of the comic strip. Limit to 50 letters.",
-		"`panels` is an array of objects with the following properties: `scene` and `dialog`",
-		"`scene`: A description of the panel scene including all characters.",
-		"`dialog`: Words spoken by Alpha Zeta. He is the only character that speaks so there is no need to label with a name. This can be an empty string if the character is not speaking.",
-	);
-
-	$prompt = generatePrompt($instructions);
+	$prompt = generatePrompt($prompts->script, array(add_period($query)));
 	//$response = gptComplete($OPENAI_KEY, $prompt);
 
 	$response = new stdClass;

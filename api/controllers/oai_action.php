@@ -46,19 +46,8 @@
 		"terrified",
 		"typing"
 	];
-    
-	$instructions = array(
-        "The following statements describe a three part story.",
-		"- " . add_period($panel1),
-        "- " . add_period($panel2),
-        "- " . add_period($panel3),
-        "For each of the three parts coose one word from the following which most closely describes the action of the main character: ",
-        implode(", ", $actions) . ".",
-		"Write your response as a valid json object with a single property `panels`, which is an array of strings containing each of the chosen words."
-    );
 
-	$prompt = generatePrompt($instructions);
-	// print_r($prompt); die;
+	$prompt = generatePrompt($prompts->action, array(add_period($panel1), add_period($panel2), add_period($panel3), implode(", ", $actions)));
 	$response = gptComplete($OPENAI_KEY, $prompt);
 
 	if(isset($response->data->error)) $output->error = $response->data->error;
