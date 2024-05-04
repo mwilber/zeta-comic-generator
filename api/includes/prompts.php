@@ -1,6 +1,4 @@
 <?php
-$prompts = new stdClass;
-
 $scriptPrompt = <<<SCRIPT
 You are a cartoonist and humorist. Write the script for a three panel comic strip.
 In the comic strip our main character, a short green humaniod alien named Alpha Zeta, engages in the following premise: {p0}
@@ -56,6 +54,7 @@ For each of the three parts choose one word from the following which most closel
 Write your response as a valid json object with a single property `panels`, which is an array of strings containing each of the chosen words.
 ACTION;
 
+$prompts = new stdClass;
 $prompts->script = arrayFromHeredoc($scriptPrompt);
 $prompts->background = arrayFromHeredoc($backgroundPrompt);
 $prompts->action = arrayFromHeredoc($actionPrompt);
