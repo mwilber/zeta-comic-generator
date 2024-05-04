@@ -3,21 +3,21 @@ $scriptPrompt = <<<SCRIPT
 You are a cartoonist and humorist. Write the script for a three panel comic strip.
 In the comic strip our main character, a short green humaniod alien named Alpha Zeta, engages in the following premise: {p0}
 Include a detailed scene description and words spoken by the main character.
-Write your script in the form of a json object in the following format:
+Output your response as a valid json object in the follwing format:
 {
     \"title\": \"\",
     \"panels\": [
         {
             \"scene\": \"\",
-            \"description\": \"\"
+            \"dialog\": \"\"
         },
         {
             \"scene\": \"\",
-            \"description\": \"\"
+            \"dialog\": \"\"
         },
         {
             \"scene\": \"\",
-            \"description\": \"\"
+            \"dialog\": \"\"
         }
     ]
 }
@@ -31,27 +31,44 @@ SCRIPT;
 
 $backgroundPrompt = <<<BACKGROUND
 You are a talented artist who draws background art for animated cartoons.
-Write Dall-E prompts to draw backgrounds for three animation cells. These animation cells depict our main character, Alpha Zeta, in a scene.
-Descriptions of the three scenes are as follows:
+The following describes three scenes in a cartoon featuring the character Alpha Zeta:
 - {p0}
 - {p1}
 - {p2}
  
-Your Dall-E prompts will be written within the following rules: 
+For each scene, write a description of the background behind Alpha Zeta.
+Include enough detail necessary for an AI image generator to render an image of your description.
+Output your response as a valid json object in the follwing format:
+{
+    descriptions: [
+        \"background description 1\",
+        \"background description 2\",
+        \"background description 3\"
+    ]
+}
+Your descriptions will be written within the following rules:
+- Do not exceed 500 characters for each description.
 - Describe each scene as it would look if the main character, Alpha Zeta, is not present.
 - No characters will speak to each other.
 - Do not include any items that contain readable text.
 - Do not reference a comic strip panel.
-Write the prompts as a json object with a single property `descriptions`, which is an array of strings containing each of the prompts.
 BACKGROUND;
 
 $actionPrompt = <<<ACTION
-The following statements describe a three part story.
+You are a talented artist who directs animated cartoons.
+The following describes three scenes in a cartoon featuring the character Alpha Zeta:
 - {p0}
 - {p1}
 - {p2}
-For each of the three parts choose one word from the following which most closely describes the action of the main character:  {p3}.
-Write your response as a valid json object with a single property `panels`, which is an array of strings containing each of the chosen words.
+For each of the three scenes choose one word, from the following list, which best describes the action or appearance of the main character:  {p3}.
+Output your response as a valid json object in the follwing format:
+{
+    panels: [
+        \"word1\",
+        \"word2\",
+        \"word3\"
+    ]
+}
 ACTION;
 
 $prompts = new stdClass;
