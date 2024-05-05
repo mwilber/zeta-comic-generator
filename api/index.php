@@ -1,6 +1,6 @@
 <?php
 	ini_set('display_errors', 1);
-	// ini_set('display_startup_errors', 1);
+	//ini_set('display_startup_errors', 1);
 	error_reporting(E_ERROR);
 
 	$request = $_SERVER['REQUEST_URI'];
@@ -37,6 +37,9 @@
 	require __DIR__ . '/includes/s3.php';
 	require __DIR__ . '/../vendor/autoload.php';
 
+    // AI Models
+    require __DIR__ . '/models/gpt.php';
+
 	switch ($controller) {
 		// App API endpoints
 		case 'comic':
@@ -48,11 +51,12 @@
 			require __DIR__ . '/controllers/'.$controller.'.php';
 			break;
 		// Comic Generation API endpoints
-		case 'image':					
 		case 'script':
-		case 'background':
-		case 'dialog':
-		case 'action':
+        case 'background':
+        case 'action':
+            require __DIR__ . '/controllers/generatetext.php';
+            break;
+        case 'image':					
 			$service = "oai";
 			if (isset($_POST['model'])) $service = $_POST['model'];
 			require __DIR__ . '/controllers/'. $service . "_" . $controller . '.php';

@@ -48,7 +48,7 @@ if($mode == "simulation") {
 
 	$ch = curl_init();
 	$headers = array(
-		'Authorization: Bearer ' . $OPENAI_KEY,
+		'Authorization: Bearer ' . OPENAI_KEY,
 		'Content-Type: application/json',
 	);
 	curl_setopt($ch, CURLOPT_URL, $url);
