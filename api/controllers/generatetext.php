@@ -23,7 +23,12 @@ $characterActions = [
     "terrified",
     "typing"
 ];
-$paramNames = array("query", "panel1", "panel2", "panel3");
+$paramNames = [
+	"query",
+	"panel1",
+	"panel2",
+	"panel3"
+];
 
 $params = array();
 foreach ($paramNames as $paramName) {
