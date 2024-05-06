@@ -31,14 +31,16 @@
 	// Global requires
 	require __DIR__ . '/includes/db.php';
 	require __DIR__ . '/includes/key.php';
-	require __DIR__ . '/includes/utility.php';
-    require __DIR__ . '/includes/prompts.php';
-	require __DIR__ . '/includes/gpt.php';
 	require __DIR__ . '/includes/s3.php';
 	require __DIR__ . '/../vendor/autoload.php';
 
+	// AI Prompts
+	require __DIR__ . '/includes/prompts.php';
+
     // AI Models
     require __DIR__ . '/models/gpt.php';
+	require __DIR__ . '/models/gem.php';
+	require __DIR__ . '/models/ttn.php';
 
 	switch ($controller) {
 		// App API endpoints

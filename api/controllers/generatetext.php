@@ -29,7 +29,7 @@ $params = array();
 foreach ($paramNames as $paramName) {
     $paramVal = POSTval($paramName);
     if ($paramVal) {
-        if ($paramName == "query") $paramVal = add_period($paramVal);
+        if ($paramName == "query") $paramVal = addPeriod($paramVal);
         array_push($params, $paramVal);
     }
 }
@@ -49,6 +49,12 @@ if ($modelId) {
         case "oai":
             $model = new ModelGpt();
             break;
+		case "gem":
+			$model = new ModelGemini();
+			break;
+		case "ttn":
+			$model = new ModelTitan();
+			break;
     }
     // Record the model that was used
     $output->model = $model->modelName;
@@ -81,5 +87,13 @@ if ($modelId) {
 function POSTval($name, $default = "") {
     if (isset($_POST[$name])) return $_POST[$name];
     return $default;
+}
+
+function addPeriod($str) {
+	$last_char = substr($str, -1);
+	if ($last_char !== '.' && $last_char !== '!' && $last_char !== '?') {
+	$str .= '.';
+	}
+	return $str;
 }
 ?>

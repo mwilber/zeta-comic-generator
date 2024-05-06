@@ -32,12 +32,11 @@ class ModelGpt {
     }
 
     function textComplete($key, $prompt) {
+		$url = "https://api.openai.com/v1/chat/completions";
 
 		$response = new stdClass;
 		$response->data = null;
 		$response->script = null;
-
-		$url = "https://api.openai.com/v1/chat/completions";
 	
 		$ch = curl_init();
 		$headers = array(
