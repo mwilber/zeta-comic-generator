@@ -149,26 +149,26 @@ async function renderBackground(idx, description, premise) {
 	panelEl.innerHTML = ``;
 
 	let image = await fetchBackground(description);
-	if(!image || !image.data || !image.data.length || image.error){
+	if(!image || !image.json || !image.json.url || image.error){
 		let errorMsg = 'Image did not return.';
 		if(image.error && image.error.message) errorMsg = image.error.message;
 		return {error: errorMsg};
 	}
 
-	console.log("image data", image);
+	//console.log("image data", image);
 	console.log("attempting panel", idx);
 
 	panelEl.classList.remove('rendering');
 	panelEl.classList.add('rendered');
 
 	panelEl.innerHTML += `
-	<img class="background" src="${image.data[0].url}"/>
+	<img class="background" src="${image.json.url}"/>
 	`;
 	setTimeout(() => {
 		panelEl.classList.remove('rendered');
 	}, 1000);
 
-	return {url: image.data[0].url, model: image.model};
+	return {url: image.json.url, model: image.model};
 }
 
 async function fetchBackground(prompt) {
@@ -186,7 +186,7 @@ async function fetchBackground(prompt) {
 	while(retry > 0) {
 		retry--;
 		let response = await queryApi('/api/image/?c='+(Math.floor(Math.random()*1000)), formData);
-		if(response.data && response.data.length) {
+		if(response.data && response.json) {
 			result = response;
 			break;
 		}
@@ -203,7 +203,7 @@ async function queryApi(apiUrl, formData) {
             body: formData
         });
 		const data = await response.json();
-		console.log("data", data);
+		console.log("API Response", data);
 		return data;
 	} catch (error) {
 		console.error('Error fetching GPT response:', error);

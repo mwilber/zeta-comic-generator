@@ -41,6 +41,7 @@
     require __DIR__ . '/models/gpt.php';
 	require __DIR__ . '/models/gem.php';
 	require __DIR__ . '/models/ttn.php';
+	require __DIR__ . '/models/dall.php';
 
 	switch ($controller) {
 		// App API endpoints
@@ -59,9 +60,7 @@
             require __DIR__ . '/controllers/generatetext.php';
             break;
         case 'image':					
-			$service = "oai";
-			if (isset($_POST['model'])) $service = $_POST['model'];
-			require __DIR__ . '/controllers/'. $service . "_" . $controller . '.php';
+			require __DIR__ . '/controllers/generateimage.php';
 			break;
 		default:
 			$output->error = "Action not avaialble.";
@@ -69,4 +68,9 @@
 	}
 
 	echo json_encode($output);
+
+	function POSTval($name, $default = "") {
+		if (isset($_POST[$name])) return $_POST[$name];
+		return $default;
+	}
 ?>

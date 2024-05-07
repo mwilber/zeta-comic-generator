@@ -88,12 +88,6 @@ if ($modelId) {
     $output->json = $response->json;
 }
 
-
-function POSTval($name, $default = "") {
-    if (isset($_POST[$name])) return $_POST[$name];
-    return $default;
-}
-
 function addPeriod($str) {
 	$last_char = substr($str, -1);
 	if ($last_char !== '.' && $last_char !== '!' && $last_char !== '?') {
