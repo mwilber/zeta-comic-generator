@@ -77,7 +77,7 @@ class ModelTitanImage {
         $this->modelName = "amazon.titan-image-generator-v1";
 		$this->apiKey = AWS_ACCESS_KEY;
 		$this->apiSecret = AWS_SECRET_KEY;
-		$this->imageSize = "1024x1024";
+		$this->imageSize = 512;
     }
 
     function sendPrompt($prompt) {
@@ -146,8 +146,8 @@ class ModelTitanImage {
 				'numberOfImages' => 1,
 				'quality' => 'standard',
 				'cfgScale' => 8.0,
-				'height' => 512,
-				'width' => 512,
+				'height' => $this->imageSize,
+				'width' => $this->imageSize,
 				'seed' => $titanSeed
 			]
 		]);

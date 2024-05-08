@@ -3,6 +3,8 @@
 	//ini_set('display_startup_errors', 1);
 	error_reporting(E_ERROR);
 
+	define("SIMULATION_MODE", true);
+
 	$request = $_SERVER['REQUEST_URI'];
 	$path = explode('/', $request);
 	$controller = "";
@@ -57,10 +59,18 @@
 		case 'script':
         case 'background':
         case 'action':
-            require __DIR__ . '/controllers/generatetext.php';
+			if (SIMULATION_MODE) {
+				require __DIR__ . '/controllers/simulatetext.php';
+			} else {
+				require __DIR__ . '/controllers/generatetext.php';
+			}
             break;
         case 'image':					
-			require __DIR__ . '/controllers/generateimage.php';
+			if (SIMULATION_MODE) {
+				require __DIR__ . '/controllers/simulateimage.php';
+			} else {
+				require __DIR__ . '/controllers/generateimage.php';
+			}
 			break;
 		default:
 			$output->error = "Action not avaialble.";
