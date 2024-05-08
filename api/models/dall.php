@@ -2,6 +2,7 @@
 class ModelDallE {
     function __construct() {
         $this->modelName = "dall-e-3";
+		$this->apiUrl = "https://api.openai.com/v1/images/generations";
         $this->apiKey = OPENAI_KEY;
 		$this->imageSize = "1024x1024";
     }
@@ -24,14 +25,12 @@ class ModelDallE {
 
     function textToImage($prompt) {
 
-		$url = "https://api.openai.com/v1/images/generations";
-
 		$ch = curl_init();
 		$headers = array(
 			'Authorization: Bearer ' . $this->apiKey,
 			'Content-Type: application/json',
 		);
-		curl_setopt($ch, CURLOPT_URL, $url);
+		curl_setopt($ch, CURLOPT_URL, $this->apiUrl);
 		curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 		curl_setopt($ch, CURLOPT_HEADER, 0);
 		$body = '{

@@ -4,6 +4,7 @@ class ModelGpt {
         //define("OAI_MODEL", "gpt-3.5-turbo-16k");
 	    //define("OAI_MODEL", "gpt-4");
         $this->modelName = "gpt-4-1106-preview";
+		$this->apiUrl = "https://api.openai.com/v1/chat/completions";
         $this->apiKey = OPENAI_KEY;
     }
 
@@ -32,7 +33,6 @@ class ModelGpt {
     }
 
     function textComplete($key, $prompt) {
-		$url = "https://api.openai.com/v1/chat/completions";
 
 		$response = new stdClass;
 		$response->data = null;
@@ -43,7 +43,7 @@ class ModelGpt {
 			'Authorization: Bearer ' . $this->apiKey,
 			'Content-Type: application/json',
 		);
-		curl_setopt($ch, CURLOPT_URL, $url);
+		curl_setopt($ch, CURLOPT_URL, $this->apiUrl);
 		curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 		curl_setopt($ch, CURLOPT_HEADER, 0);
 		$body = '{

@@ -2,12 +2,13 @@
 class ModelGemini {
     function __construct() {
         $this->modelName = "gemini-pro";
+		$this->apiUrl = "https://generativelanguage.googleapis.com/v1beta/models/".$this->modelName.":generateContent?key=";
         $this->apiKey = GOOGLE_KEY;
     }
 
 	function sendPrompt($prompt) {
 		$result = new stdClass;
-        $response = $this->textComplete($this->apiKey, $prompt);
+        $response = $this->textComplete($prompt);
         $json = json_decode($response);
 		$result->data = $json;
 
@@ -30,9 +31,9 @@ class ModelGemini {
 		return $result;
 	}
 
-	function textComplete($key, $prompt) {
+	function textComplete($prompt) {
 
-		$modelUrl = "https://generativelanguage.googleapis.com/v1beta/models/".$this->modelName.":generateContent?key=".$key;
+		$modelUrl = $this->apiUrl.$this->apiKey;
 
 		$ch = curl_init();
 		$headers = array(

@@ -159,14 +159,6 @@ class ModelTitanImage {
 		]);
 
 		return $result['body'];
-
-
-
-		//print_r($response->data);
-
-		
-
-		return $response;
 	}
 }
 ?>
