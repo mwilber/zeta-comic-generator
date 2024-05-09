@@ -61,31 +61,36 @@ if ($modelId) {
 			$model = new ModelTitan();
 			break;
     }
-    // Record the model that was used
-    $output->model = $model->modelName;
 
-    $response = $model->sendPrompt($output->prompt);
-    $output->error = $response->error;
+	if (!$model) {
+        $output->error = "Invalid model id";
+    } else {
+		// Record the model that was used
+		$output->model = $model->modelName;
 
-    if(OUTPUT_DEBUG_DATA) {
-        $output->debug = $response->debug;
-        $output->data = $response->data;
-    }
+		$response = $model->sendPrompt($output->prompt);
+		$output->error = $response->error;
 
-    // Ensure a valid character action
-    if ($actionId == "action" && is_array($response->json->panels)) {
-		foreach($response->json->panels as &$value) {
-			$oldVal = $value;
-			$value = new stdClass;
-			$value->action = $oldVal;
-			if(!in_array($value->action, $characterActions)) {
-				$value->altAction = $oldVal;
-				$value->action = "standing";
+		if(OUTPUT_DEBUG_DATA) {
+			$output->debug = $response->debug;
+			$output->data = $response->data;
+		}
+
+		// Ensure a valid character action
+		if ($actionId == "action" && is_array($response->json->panels)) {
+			foreach($response->json->panels as &$value) {
+				$oldVal = $value;
+				$value = new stdClass;
+				$value->action = $oldVal;
+				if(!in_array($value->action, $characterActions)) {
+					$value->altAction = $oldVal;
+					$value->action = "standing";
+				}
 			}
 		}
-	}
 
-    $output->json = $response->json;
+		$output->json = $response->json;
+	}
 }
 
 function addPeriod($str) {

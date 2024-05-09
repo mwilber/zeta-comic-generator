@@ -1,5 +1,5 @@
 <?php
-$modelId = POSTval("model", "oai");
+$modelId = POSTval("model", "sdf");
 
 $query = $_POST["query"];
 if(!$query){
@@ -25,14 +25,21 @@ if ($modelId) {
 		case "ttn":
 			$model = new ModelTitanImage();
 			break;
+		case "sdf":
+			$model = new ModelStableDiffusion();
+			break;
 	}
-	// Record the model that was used
-	$output->model = $model->modelName;
-
-	$response = $model->sendPrompt($output->prompt);
-	$output->error = $response->error;
-
-	$output->data = $response->data;
-	$output->json = $response->json;
+	if (!$model) {
+		$output->error = "Invalid model id";
+	} else {
+		// Record the model that was used
+		$output->model = $model->modelName;
+	
+		$response = $model->sendPrompt($output->prompt);
+		$output->error = $response->error;
+	
+		$output->data = $response->data;
+		$output->json = $response->json;
+	}
 }
 ?>

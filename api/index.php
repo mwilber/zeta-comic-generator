@@ -44,6 +44,7 @@
 	require __DIR__ . '/models/gem.php';
 	require __DIR__ . '/models/ttn.php';
 	require __DIR__ . '/models/dall.php';
+	require __DIR__ . '/models/sdf.php';
 
 	switch ($controller) {
 		// App API endpoints
