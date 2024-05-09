@@ -1,7 +1,9 @@
 <?php
 	ini_set('display_errors', 1);
-	// ini_set('display_startup_errors', 1);
+	//ini_set('display_startup_errors', 1);
 	error_reporting(E_ERROR);
+
+	define("SIMULATION_MODE", false);
 
 	$request = $_SERVER['REQUEST_URI'];
 	$path = explode('/', $request);
@@ -31,10 +33,17 @@
 	// Global requires
 	require __DIR__ . '/includes/db.php';
 	require __DIR__ . '/includes/key.php';
-	require __DIR__ . '/includes/utility.php';
-	require __DIR__ . '/includes/gpt.php';
 	require __DIR__ . '/includes/s3.php';
 	require __DIR__ . '/../vendor/autoload.php';
+
+	// AI Prompts
+	require __DIR__ . '/includes/prompts.php';
+
+    // AI Models
+    require __DIR__ . '/models/gpt.php';
+	require __DIR__ . '/models/gem.php';
+	require __DIR__ . '/models/ttn.php';
+	require __DIR__ . '/models/dall.php';
 
 	switch ($controller) {
 		// App API endpoints
@@ -47,14 +56,21 @@
 			require __DIR__ . '/controllers/'.$controller.'.php';
 			break;
 		// Comic Generation API endpoints
-		case 'image':					
 		case 'script':
-		case 'background':
-		case 'dialog':
-		case 'action':
-			$service = "oai";
-			if (isset($_POST['model'])) $service = $_POST['model'];
-			require __DIR__ . '/controllers/'. $service . "_" . $controller . '.php';
+        case 'background':
+        case 'action':
+			if (SIMULATION_MODE) {
+				require __DIR__ . '/controllers/simulatetext.php';
+			} else {
+				require __DIR__ . '/controllers/generatetext.php';
+			}
+            break;
+        case 'image':					
+			if (SIMULATION_MODE) {
+				require __DIR__ . '/controllers/simulateimage.php';
+			} else {
+				require __DIR__ . '/controllers/generateimage.php';
+			}
 			break;
 		default:
 			$output->error = "Action not avaialble.";
@@ -62,4 +78,9 @@
 	}
 
 	echo json_encode($output);
+
+	function POSTval($name, $default = "") {
+		if (isset($_POST[$name])) return $_POST[$name];
+		return $default;
+	}
 ?>
