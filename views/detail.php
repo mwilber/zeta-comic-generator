@@ -50,10 +50,11 @@
 <div id="query" class="premise"></div>
 <h2>Composite</h2>
 <div id="strip">
-    <div id="panel1" class="panel"></div>
+    <!-- <div id="panel1" class="panel"></div>
 	<div id="panel2" class="panel"></div>
 	<div id="panel3" class="panel"></div>
-    <h3 id="strip-title"></h3>
+    <h3 id="strip-title"></h3> -->
+    <div class="strip-container"></div>
 	<div class="strip-controls">
 		<button id="download" class="cartoon-button">
 			<img class="burst" src="/assets/images/speech_bubble.svg" />
@@ -71,5 +72,4 @@
 <ul id="script"></ul>
 
 <script type="text/javascript" src="/scripts/html2canvas.min.js"></script>
-<script type="text/javascript" src="/scripts/dialog.js?v=<?php echo $version ?>"></script>
-<script type="text/javascript" src="/scripts/detail.js?v=<?php echo $version ?>"></script>
+<script type="module" src="/scripts/detail.js?v=<?php echo $version ?>"></script>

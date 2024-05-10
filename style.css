@@ -911,6 +911,12 @@ progress[value]::-webkit-progress-value {
 	box-shadow: none !important;
 }
 
+#strip .strip-container {
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+}
+
 #strip .panel,
 #strip-output .panel {
 	position: relative;
