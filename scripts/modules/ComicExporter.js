@@ -8,7 +8,6 @@
  * This class requires html2canvas (html2canvas.hertzen.com) available in global scope.
  */
 export class ComicExporter {
-
 	/**
 	 * Renders a comic panel or strip as a data URL for download.
 	 *
@@ -22,37 +21,42 @@ export class ComicExporter {
 
 		const url = "comicgenerator.greenzeta.com";
 		const { script } = renderer;
-		let downloads = [];
+		const { title, panels, prompt } = script;
+		const fileName = title.replaceAll(" ", "_");
 
 		switch (format) {
 			case "panel":
-				for (const [idx, panel] of script.panels.entries()) {
-					let params = {
-						title: idx === 0 ? script.title : "",
-						url: idx === 2 ? url : "",
-					};
-					downloads.push(await this.RenderPanelAsDataUrl(panel.panelEl, params));
+				for (const [idx, panel] of panels.entries()) {
+					let download = await this.RenderPanelAsDataUrl(
+						panel.panelEl, {
+							title: idx === 0 ? title : "",
+							url: idx === 2 ? url : "",
+						});
+					this.DownloadImageData(download, fileName, "_" + idx);
 				}
 				break;
 			case "strip":
-				downloads.push(await this.RenderStripAsDataUrl(renderer.el, {
-					prompt: script.prompt,
-					title: script.title,
-					url
-				}));
+				let download = await this.RenderStripAsDataUrl(renderer.el, {prompt, title, url});
+				this.DownloadImageData(download, fileName, "");
 				break;
 			default:
 				console.error("ComicExporter: Invalid format", format);
 				return;
 		}
+	}
 
-		for (const [idx, download] of downloads.entries()) {
-			let link = document.createElement("a");
-			let suffix = downloads.length ? ("_" + idx) : "";
-			link.download = script.title.replaceAll(" ", "_") + suffix + ".png";
-			link.href = download;
-			link.click();
-		}
+	/**
+	 * Downloads an image using the provided data URL.
+	 *
+	 * @param {string} dataUrl - The data URL of the image to download.
+	 * @param {string} title - The title of the image, used as the file name.
+	 * @param {string} suffix - The file name suffix to append to the title. This is not the file dot suffix, this will go before `.png`.
+	 */
+	static DownloadImageData(dataUrl, title, suffix) {
+		let link = document.createElement("a");
+		link.download = title + suffix + ".png";
+		link.href = dataUrl;
+		link.click();
 	}
 
 	/**
@@ -75,7 +79,6 @@ export class ComicExporter {
 
 		output.innerHTML = panel.outerHTML;
 
-		// TODO: Need to push this part of the function off to the event queue to give the dom time to render the output element.
 		let canvas = await html2canvas(
 			output,
 			{ scale: 1 }

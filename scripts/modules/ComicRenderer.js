@@ -73,6 +73,7 @@ export class ComicRenderer {
 
 	/**
 	 * Validates the provided script object to ensure it has the required properties.
+	 * 
 	 * @param {object} script - The script object to validate.
 	 * @returns {boolean} - True if the script object is valid, false otherwise.
 	 */
@@ -99,6 +100,7 @@ export class ComicRenderer {
 
 	/**
 	 * Adds an image element to the specified panel.
+	 * 
 	 * @param {object} panel - The panel to add the image to.
 	 * @param {HTMLImageElement} image - The image element to add to the panel.
 	 */
@@ -130,6 +132,7 @@ export class ComicRenderer {
 
 	/**
 	 * Adds a panel element to the ComicRenderer.
+	 * 
 	 * @param {object} panel - The panel object corresponding to the panel element.
 	 * @param {string} id - The unique identifier for the panel.
 	 * @returns {HTMLDivElement} - The created panel element.
@@ -147,6 +150,7 @@ export class ComicRenderer {
 
 	/**
 	 * Adds a title element to the ComicRenderer's main element.
+	 * 
 	 * @param {string} title - The title to display.
 	 */
 	AddTitleElement(title) {
