@@ -1216,7 +1216,8 @@ progress[value]::-webkit-progress-value {
 		margin-top: -4.5em;
 	} */
 
-	#strip {
+	#strip,
+    .strip-container {
 		flex-direction: column;
 		max-width: 275px;
 	}

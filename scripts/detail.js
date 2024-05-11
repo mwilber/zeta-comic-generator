@@ -1,9 +1,11 @@
+import { ScriptRenderer } from "./modules/ScriptRenderer.js";
 import { ComicRenderer } from "./modules/ComicRenderer.js";
 import { CharacterAction } from "./modules/CharacterAction.js";
 import { ComicExporter } from "./modules/ComicExporter.js";
 
 document.addEventListener("DOMContentLoaded", () => {
 	const comicRenderer = new ComicRenderer({el: document.querySelector(".strip-container")});
+	const scriptRenderer = new ScriptRenderer({el: document.querySelector("#script")});
 
 	if(comicId) {
 		fetch('/api/detail/'+comicId+'/?c='+(Math.floor(Math.random()*100)))
@@ -43,6 +45,7 @@ document.addEventListener("DOMContentLoaded", () => {
 					panel.images.push(CharacterAction.GetActionImageData(panel.action, "alpha"));
 				}
 	
+				scriptRenderer.LoadScript(script);
 				comicRenderer.LoadScript(script);
 
 				AttachUiEvents();
@@ -82,7 +85,8 @@ function AttachUiEvents() {
 				// First, reload the background images via proxy so html2canvas can use them.
 				const backgrounds = document.querySelectorAll('.background');
 				backgrounds.forEach(background => {
-					background.src = '/api/imgproxy/?url=' + background.src;
+					console.log("changing background to", '/api/imgproxy/?url=' + background.src)
+					//background.src = '/api/imgproxy/?url=' + background.src;
 				});
 				// Open the dialog.
 				const dialog = document.getElementById('downloaddialog');
