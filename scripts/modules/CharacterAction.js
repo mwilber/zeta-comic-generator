@@ -170,6 +170,7 @@ export class CharacterAction {
 		action = this._balloonLocations[action] ? action : "standing";
 		
 		imageData.url = "/assets/character_art/" + action + ".png";
+		imageData.className = "character";
 		imageData.balloon = {
 			character,
 			type: "speech",

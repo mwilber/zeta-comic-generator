@@ -28,7 +28,7 @@ export class ComicRenderer {
 			
 			if (images && images.length){
 				for (const image of images) {
-					this.AddLinkedImageToPanel(panel, image.url);
+					this.AddLinkedImageToPanel(panel, image.url, image.className);
 				}
 			}
 
@@ -84,13 +84,13 @@ export class ComicRenderer {
 		panel.panelEl.appendChild(image);
 	}
 
-	AddLinkedImageToPanel (panel, url) {
+	AddLinkedImageToPanel (panel, url, className) {
 		if (!panel.panelEl) {
 			console.error("Comic Renderer: Panel element unavailable.", panel);
 			return;
 		}
 		panel.panelEl.innerHTML += `
-			<img class="background" src="${url}"/>
+			<img class="${className}" src="${url}"/>
 		`;
 	}
 

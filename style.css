@@ -911,14 +911,15 @@ progress[value]::-webkit-progress-value {
 	box-shadow: none !important;
 }
 
-#strip .strip-container {
+#strip .strip-container,
+.strip-output .strip-container {
     display: flex;
     flex-wrap: wrap;
     width: 100%;
 }
 
 #strip .panel,
-#strip-output .panel {
+.strip-output .panel {
 	position: relative;
 	flex: 1;
 	width: 260px;
@@ -936,14 +937,14 @@ progress[value]::-webkit-progress-value {
 }
 
 #strip .panel img,
-#strip-output .panel img,
+.strip-output .panel img,
 #strip .panel canvas {
 	position: absolute;
 	width: 100%;
 }
 
 #strip .panel .bubble,
-#strip-output .panel .bubble {
+.strip-output .panel .bubble {
 	position: relative;
 	width: fit-content;
 	min-width: 65px;
@@ -961,14 +962,14 @@ progress[value]::-webkit-progress-value {
 }
 
 #strip .panel .bubble-container,
-#strip-output .panel .bubble-container {
+.strip-output .panel .bubble-container {
 	position: absolute;
 	width: calc(100% - 10px);
 	/* height: calc(100% - 10px); */
 	padding: 5px;
 }
 
-#strip-output {
+.strip-output {
 	margin: 0;
 	padding: 0;
 	width: fit-content;
@@ -976,25 +977,26 @@ progress[value]::-webkit-progress-value {
 	left: 150%;
 }
 
-#strip-output > .panel {
+.strip-output > .panel {
 	width: 504px;
 	height: 504px;
 	margin: 0;
 	border-width: 4px;
 }
 
-#strip-output > .panel .bubble {
+.strip-output > .panel .bubble {
 	font-size: 24px;
 	border-radius: 30px;
 	padding: 10px 20px;
 }
 
-#strip-output > .panel .bubble-container {
+.strip-output > .panel .bubble-container {
 	padding: 10px;
 	width: calc(100% - 20px);
 }
 
-#strip-output > #strip {
+.strip-output > #strip,
+.strip-output > .strip-container {
 	width: 1024px;
 	max-width: none;
 	box-shadow: none;
@@ -1002,11 +1004,17 @@ progress[value]::-webkit-progress-value {
 	flex-direction: inherit;
 }
 
-#strip-output > #strip .panel {
+.strip-output > .strip-container {
+	background-color: white;
+    padding: 8px;
+    padding-bottom: calc(16px + 2.5em);
+}
+
+.strip-output > #strip .panel {
 	margin: 5px;
 }
 
-#strip-output > #strip .panel .bubble {
+.strip-output > #strip .panel .bubble {
 	font-size: 15px;
 }
 

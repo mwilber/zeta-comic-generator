@@ -66,10 +66,9 @@
 		</button>
 	</div>
 </div>
-<div id="strip-output"></div>
 <div id="output"></div>
 <h2>Script</h2>
 <ul id="script"></ul>
 
-<script type="text/javascript" src="/scripts/html2canvas.min.js"></script>
-<script type="module" src="/scripts/detail.js?v=<?php echo $version ?>"></script>
+<script async type="text/javascript" src="/scripts/html2canvas.min.js"></script>
+<script defer type="module" src="/scripts/detail.js?v=<?php echo $version ?>"></script>
