@@ -1,7 +1,19 @@
+/**
+ * @file ScriptRenderer.js
+ * @author Matthew Wilber
+ * @license GPL-3.0
+ * @version 1.0.0
+ * 
+ * Renders script from Zeta Comic Generator (comicgenerator.greenzeta.com) as html.
+ *
+ * @param {Object} params - The parameters for rendering the script.
+ * @param {HTMLElement} params.el - The HTML element to render the script in.
+ * @param {Object} params.script - Zeta Comic Generator script object containing the title, panels, and credits.
+ */
 export class ScriptRenderer {
 	constructor (params) {
 
-		const {el, script, size} = params;
+		const {el, script} = params;
 
 		this.el = el;
 		if (script)
@@ -10,32 +22,40 @@ export class ScriptRenderer {
 		console.log("GZ ScriptRenderer created");
 	}
 
-    async render () {
+	
+	/**
+	 * Renders the script content to the container element.
+	 * 
+	 * This method is responsible for generating the HTML markup for the script, including the title, credits, and individual panels with their scene descriptions, actions, dialogs, and backgrounds.
+	 * 
+	 * @returns {void}
+	 */
+	async render() {
 		if (!this.validate()) return;
 
-		const {title, panels, credits} = this.script;
+		const { title, panels, credits } = this.script;
 
-        this.el.innerHTML = `<li><h2>${title}</h2></li>`;
+		this.el.innerHTML = `<li><h2>${title}</h2></li>`;
 
-        if (credits && credits.script)	{
-            // Add the credits
-            this.el.innerHTML += `<li>
-                <ul class="credits">
-                    <li><span>Script: </span><span>${credits.script}</span></li>
-                    <li><span>Images: </span><span>${credits.image}</span></li>
-                    <li><span>Backgrounds: </span><span>${credits.background}</span></li>
-                    <li><span>Actions: </span><span>${credits.action}</span></li>
-                </ul>
-            </li>`;
-        }
+		if (credits && credits.script) {
+			// Add the credits
+			this.el.innerHTML += `<li>
+				<ul class="credits">
+					<li><span>Script: </span><span>${credits.script}</span></li>
+					<li><span>Images: </span><span>${credits.image}</span></li>
+					<li><span>Backgrounds: </span><span>${credits.background}</span></li>
+					<li><span>Actions: </span><span>${credits.action}</span></li>
+				</ul>
+			</li>`;
+		}
 
-        for (const [idx, panel] of panels.entries()) {
-            let dialogHtml = "";
-            for (const [idx, dialog] of panel.dialog.entries()) {
-                dialogHtml += `<strong>${dialog.character}</strong>: ${dialog.text}`;
-            }
+		for (const [idx, panel] of panels.entries()) {
+			let dialogHtml = "";
+			for (const [idx, dialog] of panel.dialog.entries()) {
+				dialogHtml += `<strong>${dialog.character}</strong>: ${dialog.text}`;
+			}
 
-            this.el.innerHTML += `
+			this.el.innerHTML += `
 					<li>
 						<h3>Panel ${idx + 1}</h3>
 						<ul>
@@ -50,10 +70,16 @@ export class ScriptRenderer {
 						</ul>
 					</li>
 					`;
-        }
-    }
+		}
+	}
 
-    validate (script) {
+	/**
+	 * Validates the provided script object to ensure it has the required properties.
+	 * 
+	 * @param {object} script - The script object to validate.
+	 * @returns {boolean} - True if the script object is valid, false otherwise.
+	 */
+	validate(script) {
 		script = script || this.script;
 
 		if (!this.el) {
@@ -74,11 +100,15 @@ export class ScriptRenderer {
 		return true;
 	}
 
-    /**
-	 * 
-	 * @param {object} script 
+	
+	/**
+	 * Loads and renders a script.
+	 *
+	 * @param {Object} script - The script to load and render.
+	 * @param {string} [script.title] - The title of the script. This is optional.
+	 * @returns {void}
 	 */
-	LoadScript (script) {
+	LoadScript(script) {
 		if (!this.validate(script)) return;
 
 		if (!script.title) {

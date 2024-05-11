@@ -1,3 +1,16 @@
+/**
+ * @file CharacterAction.js
+ * @author Matthew Wilber
+ * @license GPL-3.0
+ * @version 1.0.0
+ * 
+ * A static helper class with functions to generate character action metadata for Zeta Comic Generator.
+ * Each action corresponds to a character image in the Zeta Comic Generator. For a list of action images, 
+ * go to https://comicgenerator.greenzeta.com/about.
+ * 
+ * Provides image url and dialog balloon location coordinates for each action. Coordinates are necessary
+ * to position the balloon at the character's position in the image.
+ */
 export class CharacterAction {
 
 	static _balloonLocations = {
@@ -163,12 +176,19 @@ export class CharacterAction {
 		}
 	};
 
+	/**
+	 * Retrieves the image data for a character action.
+	 *
+	 * @param {string} action - The action to retrieve the image data for.
+	 * @param {object} character - The character object associated with the action.
+	 * @returns {object} The image data, including the URL, CSS class, and dialog balloon location information.
+	 */
 	static GetActionImageData(action, character) {
 		let imageData = {};
 
 		action = action.toLowerCase();
 		action = this._balloonLocations[action] ? action : "standing";
-		
+
 		imageData.url = "/assets/character_art/" + action + ".png";
 		imageData.className = "character";
 		imageData.balloon = {
