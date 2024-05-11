@@ -55,63 +55,103 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function AttachUiEvents() {
-	document.getElementById('download-ig').addEventListener('click', () => ComicExporter.DownloadComic(comicRenderer, "panel"));
-	document.getElementById('download-strip').addEventListener('click', () => ComicExporter.DownloadComic(comicRenderer, "strip"));
 
-	document.getElementById('share').addEventListener("click", () => {
-		const dialog = document.getElementById('sharedialog');
-		dialog.classList[dialog.classList.contains('active') ? 'remove' : 'add']('active');
-	});
+	const UIevents = [
+		{
+			selector: "#download-ig",
+			event: "click",
+			handler: () => ComicExporter.DownloadComic(comicRenderer, "panel")
+		},
+		{
+			selector: "#download-strip",
+			event: "click",
+			handler: () => ComicExporter.DownloadComic(comicRenderer, "strip")
+		},
+		{
+			selector: "#share",
+			event: "click",
+			handler: () => {
+				const dialog = document.getElementById('sharedialog');
+				dialog.classList[dialog.classList.contains('active') ? 'remove' : 'add']('active');
+			}
+		},
+		{
+			selector: "#download",
+			event: "click",
+			handler: () => {
+				// First, reload the background images via proxy so html2canvas can use them.
+				const backgrounds = document.querySelectorAll('.background');
+				backgrounds.forEach(background => {
+					background.src = '/api/imgproxy/?url=' + background.src;
+				});
+				// Open the dialog.
+				const dialog = document.getElementById('downloaddialog');
+				dialog.classList[dialog.classList.contains('active') ?'remove' : 'add']('active');
+			}
+		},
+		{
+			selector: ".dialog",
+			event: "click",
+			handler: (e) => e.stopPropagation()
+		},
+		{
+			selector: ".dialog-wrapper",
+			event: "click",
+			handler: (e) => {
+				e.stopPropagation();
+				e.target.classList.remove('active');
+			}
+		},
+		{
+			selector: ".dialog .close",
+			event: "click",
+			handler: (e) => e.target.parentElement.parentElement.classList.remove('active')
+		},
+		{
+			selector: "#shareurl",
+			event: "focus",
+			handler: (e) => e.target.select()
+		},
+		{
+			selector: "#cpshare",
+			event: "click",
+			handler: (e) => {
+				let btnEl = document.getElementById('cpshare');
+				btnEl.setAttribute('disabled', '');
+				navigator.clipboard.writeText(document.getElementById('shareurl').value);
+				setTimeout(() => btnEl.removeAttribute('disabled'), 3000);
+			}
+		},
+		{
+			selector: "#twshare",
+			event: "click",
+			handler: (e) => {
+				event.preventDefault();
+				window.open("https://twitter.com/share?text=" + GetShareMessage() + "&url="+encodeURIComponent(document.getElementById('shareurl').value) + "&hashtags=ai,AIart,generativeart,dalle2,openai");
+			}
+		},
+		{
+			selector: "#fbshare",
+			event: "click",
+			handler: (e) => {
+				event.preventDefault();
+				window.open(
+					"https://www.facebook.com/sharer/sharer.php?u="+encodeURIComponent(document.getElementById('shareurl').value),
+					'Facebook',
+					`scrollbars=no,resizable=no,status=no,location=no,toolbar=no,menubar=no,width=600,height=300,left=100,top=100`
+				);
+			}
+		}
+	];
 
-	document.getElementById('download').addEventListener("click", () => {
-		// First, reload the background images via proxy so html2canvas can use them.
-		const backgrounds = document.querySelectorAll('.background');
-		backgrounds.forEach((background) => {
-			background.src = '/api/imgproxy/?url=' + background.src;
+	for (const event of UIevents) {
+		document.querySelectorAll(event.selector).forEach(el => {
+			el.addEventListener(event.event, event.handler);
 		});
-		// Open the dialog.
-		const dialog = document.getElementById('downloaddialog');
-		dialog.classList[dialog.classList.contains('active') ? 'remove' : 'add']('active');
-	});
+	}
 
-	document.querySelectorAll('.dialog-wrapper').forEach((wrapper) => {
-		wrapper.querySelector('.dialog').addEventListener('click', (e) => e.stopPropagation());
-		
-		const closeDialog = (el) => el.classList.remove('active');
-		wrapper.addEventListener('click', closeDialog.bind(null, wrapper));
-		wrapper.querySelector('.close').addEventListener('click', closeDialog.bind(null, wrapper));
-	});
+}
 
-	document.querySelector('.dialog-wrapper').addEventListener("click", () => {
-		document.getElementById('sharedialog').classList.remove('active');
-	});
-
-	document.querySelector('.dialog').addEventListener("click", (e) => {
-		e.stopPropagation();
-	});
-
-	document.getElementById('cpshare').addEventListener("click", () => {
-		let btnEl = document.getElementById('cpshare');
-		btnEl.setAttribute('disabled', '');
-		navigator.clipboard.writeText(document.getElementById('shareurl').value);
-		setTimeout(() => btnEl.removeAttribute('disabled'), 3000);
-	});
-
-	document.getElementById('twshare').addEventListener('click',function(event){
-		event.preventDefault();
-		window.open("https://twitter.com/share?text=" + GetShareMessage() + "&url="+encodeURIComponent(document.getElementById('shareurl').value) + "&hashtags=ai,AIart,generativeart,dalle2,openai");
-	},false);
-
-	document.getElementById('fbshare').addEventListener('click',function(event){
-		event.preventDefault();
-		window.open(
-			"https://www.facebook.com/sharer/sharer.php?u="+encodeURIComponent(document.getElementById('shareurl').value),
-			'Facebook',
-			`scrollbars=no,resizable=no,status=no,location=no,toolbar=no,menubar=no,width=600,height=300,left=100,top=100`
-		);
-	},false);
-
-	document.getElementById('shareurl').addEventListener('focus', function(event){
-		event.target.select();
-	});
+function GetShareMessage() {
+	return `Check out my comic strip "${comicRenderer.script.title}" from Zeta Comic Generator. Easily create unique comic strips with the help of OpenAI models and hand drawn character art.`;
 }

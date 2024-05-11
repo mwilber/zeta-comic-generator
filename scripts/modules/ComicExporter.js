@@ -11,9 +11,10 @@ export class ComicExporter {
 		switch (format) {
 			case "panel":
 				for (const [idx, panel] of script.panels.entries()) {
-					let params = {};
-					if(idx === 0) params.title = script.title;
-					if(idx === 2) params.url = url;
+					let params = {
+						title: idx === 0 ? script.title : "",
+						url: idx === 2 ? url : "",
+					};
 					downloads.push(await this.RenderPanelAsDataUrl(panel.panelEl, params));
 				}
 				break;
@@ -29,9 +30,10 @@ export class ComicExporter {
 				return;
 		}
 
-		for (const download of downloads) {
+		for (const [idx, download] of downloads.entries()) {
 			let link = document.createElement("a");
-			link.download = script.title.replaceAll(" ", "_") + ".png";
+			let suffix = downloads.length ? ("_" + idx) : "";
+			link.download = script.title.replaceAll(" ", "_") + suffix + ".png";
 			link.href = download;
 			link.click();
 		}
@@ -46,9 +48,10 @@ export class ComicExporter {
 		const output = document.createElement("div");
 		output.className = "strip-output";
 		document.body.appendChild(output);
-
+		
 		output.innerHTML = panel.outerHTML;
-
+		
+		// TODO: Need to push this part of the function off to the event queue to give the dom time to render the output element.
 		let canvas = await html2canvas(
 			output,
 			{scale: 1}
