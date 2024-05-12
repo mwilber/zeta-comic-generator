@@ -1,3 +1,4 @@
+import { CharacterAction } from "./CharacterAction.js";
 import { DialogBalloon } from "./DialogBalloon.js";
 //TODO: this should import CharacterAction and get the dialog pointer locations as part of LoadScript
 
@@ -51,16 +52,18 @@ export class ComicRenderer {
 				}
 			}
 
-			if (dialog) {
+			if (dialog && dialog.length && images && images.length) {
 				for (const line of dialog) {
 					if (!line || !line.text) continue;
-					let characterImage = panel.images.find(image => image.balloon && image.balloon.character === line.character);
-					let { center, pointer } = characterImage.balloon.location || {};
+					let characterImage = panel.images.find(image => image.character === line.character);
+					//let { center, pointer } = characterImage.balloon.location || {};
+					let balloonData = CharacterAction.GetDialogBalloonData(characterImage.action, characterImage.character);
+					console.log("balloonData", balloonData);
 					this.AddImageElementToPanel(
 						panel,
 						await DialogBalloon.RenderImage(
 							line.text,
-							{ size: this.size, center, pointer }
+							balloonData
 						)
 					);
 				}

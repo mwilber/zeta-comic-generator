@@ -3,11 +3,18 @@ import { ComicRenderer } from "./modules/ComicRenderer.js";
 import { CharacterAction } from "./modules/CharacterAction.js";
 import { ComicGenerator } from "./modules/ComicGenerator.js";
 
-const api = new ComicGenerator();
+let api, comicRenderer, scriptRenderer;
 
 document.addEventListener("DOMContentLoaded", () => {
-	const comicRenderer = new ComicRenderer({ el: document.querySelector(".strip-container") });
-	const scriptRenderer = new ScriptRenderer({ el: document.querySelector("#script") });
+	comicRenderer = new ComicRenderer({ el: document.querySelector(".strip-container") });
+	scriptRenderer = new ScriptRenderer({ el: document.querySelector("#script") });
+	api = new ComicGenerator({
+		onUpdate: (script, progress) => {
+			comicRenderer.LoadScript(script);
+			scriptRenderer.LoadScript(script);
+			UpdateProgress(progress || 0);
+		}
+	});
 
 	AttachUiEvents();
 
@@ -28,6 +35,7 @@ async function GenerateStrip(premise) {
 		SetStatus('error');
 		return;
 	}
+	console.log("Script", script);
 }
 
 function AttachUiEvents() {
@@ -59,9 +67,9 @@ function AttachUiEvents() {
 function ClearElements() {
 	[
 		'script',
-		'panel1',
-		'panel2',
-		'panel3',
+		// 'panel1',
+		// 'panel2',
+		// 'panel3',
 		'permalink'
 	].forEach((id) => document.getElementById(id).innerHTML = '');
 

@@ -52,7 +52,12 @@ document.addEventListener("DOMContentLoaded", () => {
 							className: "background"
 						});
 					// TODO this should only push the image with the character name, not call GetActionImageData
-					panel.images.push(CharacterAction.GetActionImageData(panel.action, "alpha"));
+					panel.images.push({
+						url: "/assets/character_art/" + panel.action + ".png",
+						className: "character",
+						character: "alpha",
+						action: panel.action
+					});
 				}
 
 				scriptRenderer.LoadScript(script);

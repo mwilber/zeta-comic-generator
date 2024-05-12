@@ -735,11 +735,6 @@ progress[value]::-webkit-progress-value {
 	display: none;
 }
 
-
-.generate .script-wrapper {
-	display: none;
-}
-
 .generate[data-status='complete'] .strip-wrapper,
 .generate[data-status='complete'] .script-wrapper {
 	display: initial;

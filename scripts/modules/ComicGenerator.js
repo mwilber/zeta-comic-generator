@@ -1,9 +1,8 @@
 export class ComicGenerator {
-	constructor() {
+	constructor(params) {
 		this.defaultTextModel = 'oai';
-		//TODO: add a `comic` property that is the complete current state of the comic
-		//TODO: each `WriteXxx` method will update the `comic` property
-		//TODO: pass updateHandler, a callback function that is called whenever the script is updated. The update handler will be a function that loads the script in the comic/script renderers.
+		this.comic = null;
+		this.onUpdate = params.onUpdate || null;
 		//TODO: Add a ResetComic method
 	}
 
@@ -18,7 +17,42 @@ export class ComicGenerator {
 			return {error: "Script object not returned."};
 		
 		//TODO: Update the dialog properties here with the new array format
-		return result.json;
+		for(const panel of result.json.panels) {
+			if(typeof panel.dialog === "string") {
+				panel.dialog = [{
+					character: "alpha",
+					text: panel.dialog,
+				}];
+			}
+		}
+		this.comic = result.json;
+
+		this.onUpdate(this.comic, this.PercentComplete());
+		return this.comic;
+	}
+
+	async WriteBackground(params) {
+		const { model } = params || {};
+		const result = await this.fetchApi('background', {
+			model: model || this.defaultTextModel,
+		});
+	}
+
+	PercentComplete() {
+		let progress = 0;
+		if(!this.comic || !this.comic.panels || !this.comic.panels.length) return progress;
+
+		progress += 1;
+		// Each panel has a total progress of 33
+		for(const panel of this.comic.panels) {
+			progress += 3;
+			if(panel.images && panel.images.length) progress += 15;
+			if(panel.dialog && panel.dialog.length) progress += 5;
+			if(panel.background) progress += 5;
+			if(panel.action) progress += 5;
+		}
+
+		return progress;
 	}
 
 	async fetchApi(action, data) {

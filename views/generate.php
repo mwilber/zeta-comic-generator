@@ -68,10 +68,11 @@
 	<div class="strip-wrapper">
 		<h2>Composite</h2>
 		<div id="strip">
-			<div id="panel1" class="panel"></div>
+			<!-- <div id="panel1" class="panel"></div>
 			<div id="panel2" class="panel"></div>
 			<div id="panel3" class="panel"></div>
-            <h3 id="strip-title"></h3>
+            <h3 id="strip-title"></h3>-->
+			<div class="strip-container"></div>
 			<div class="strip-controls">
 				<button id="save" class="cartoon-button">
 					<img class="burst" src="/assets/images/speech_bubble.svg" />

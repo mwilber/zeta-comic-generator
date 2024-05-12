@@ -176,27 +176,18 @@ export class CharacterAction {
 		}
 	};
 
+
 	/**
-	 * Retrieves the image data for a character action.
-	 *
-	 * @param {string} action - The action to retrieve the image data for.
-	 * @param {object} character - The character object associated with the action.
-	 * @returns {object} The image data, including the URL, CSS class, and dialog balloon location information.
+	 * Gets the data for the dialog balloon to be displayed for the given character action.
+	 * @param {string} action - The action to get the dialog balloon data for. If the action is not found in the _balloonLocations object, the "standing" action is used.
+	 * @param {object} character - The character object.
+	 * @returns {object} The dialog balloon data for the specified action.
 	 */
-	static GetActionImageData(action, character) {
-		let imageData = {};
+	static GetDialogBalloonData(action, character) {
 
 		action = action.toLowerCase();
 		action = this._balloonLocations[action] ? action : "standing";
 
-		imageData.url = "/assets/character_art/" + action + ".png";
-		imageData.className = "character";
-		imageData.balloon = {
-			character,
-			type: "speech",
-			location: this._balloonLocations[action]
-		};
-
-		return imageData;
+		return this._balloonLocations[action];
 	}
 }

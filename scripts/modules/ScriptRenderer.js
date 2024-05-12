@@ -55,16 +55,20 @@ export class ScriptRenderer {
 				dialogHtml += `<strong>${dialog.character}</strong>: ${dialog.text}`;
 			}
 
+			let scene = panel.scene ? `<tr><td>Description</td> <td>${panel.scene}</td></tr>` : "";
+			let action = panel.action? `<tr><td>Action</td> <td>${panel.action}</td></tr>` : "";
+			let background = panel.background? `<tr><td>Background</td> <td>${panel.background}</td></tr>` : "";
+			let dialog = dialogHtml? `<tr><td>Dialog</td> <td>${dialogHtml}</td></tr>` : "";
 			this.el.innerHTML += `
 					<li>
 						<h3>Panel ${idx + 1}</h3>
 						<ul>
 							<li>
 								<table>
-									<tr><td>Description</td> <td>${panel.scene}</td></tr>
-									<tr><td>Action</td> <td>${panel.action}</td></tr>
-									<tr><td>Dialog</td> <td>${dialogHtml}</td></tr>
-									<tr><td>Background</td> <td>${panel.background}</td></tr>
+									${scene}
+									${action}
+									${dialog}
+									${background}
 								</table>
 							</li>
 						</ul>
