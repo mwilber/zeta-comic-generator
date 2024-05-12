@@ -51,6 +51,7 @@ document.addEventListener("DOMContentLoaded", () => {
 							url: "https://zeta-comic-generator.s3.us-east-2.amazonaws.com/backgrounds/" + backgrounds[idx],
 							className: "background"
 						});
+					// TODO this should only push the image with the character name, not call GetActionImageData
 					panel.images.push(CharacterAction.GetActionImageData(panel.action, "alpha"));
 				}
 

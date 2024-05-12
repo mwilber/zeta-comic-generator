@@ -1,6 +1,10 @@
 export class ComicGenerator {
 	constructor() {
 		this.defaultTextModel = 'oai';
+		//TODO: add a `comic` property that is the complete current state of the comic
+		//TODO: each `WriteXxx` method will update the `comic` property
+		//TODO: pass updateHandler, a callback function that is called whenever the script is updated. The update handler will be a function that loads the script in the comic/script renderers.
+		//TODO: Add a ResetComic method
 	}
 
 	async WriteScript(premise, params) {
@@ -13,6 +17,7 @@ export class ComicGenerator {
 		if(!result || !result.json || !result.json.panels || !result.json.panels.length) 
 			return {error: "Script object not returned."};
 		
+		//TODO: Update the dialog properties here with the new array format
 		return result.json;
 	}
 
