@@ -13,6 +13,7 @@ export class ComicGenerator {
 			model: model || this.defaultTextModel,
 		});
 
+		//TODO: improve error handling, see comment at fetchApi
 		if(!result || !result.json || !result.json.panels || !result.json.panels.length) 
 			return {error: "Script object not returned."};
 		
@@ -33,9 +34,25 @@ export class ComicGenerator {
 
 	async WriteBackground(params) {
 		const { model } = params || {};
-		const result = await this.fetchApi('background', {
+		if (this.PercentComplete < 10) {
+			console.log("ComicGenerator: Scene descriptions not written yet. Call WriteScript first.");
+		}
+
+		let fetchParams = {
 			model: model || this.defaultTextModel,
-		});
+		}
+
+		for(const[idx, panel] of this.comic.panels.entries()) {
+			fetchParams["panel" + (idx+1)] = panel.scene || "";
+		}
+		
+		const result = await this.fetchApi('background', fetchParams);
+		for(const[idx, background] of result.json.descriptions.entries()) {
+			this.comic.panels[idx].background = background;
+		}
+
+		this.onUpdate(this.comic, this.PercentComplete());
+		return this.comic;
 	}
 
 	PercentComplete() {
@@ -45,16 +62,31 @@ export class ComicGenerator {
 		progress += 1;
 		// Each panel has a total progress of 33
 		for(const panel of this.comic.panels) {
-			progress += 3;
+			if(panel.scene) progress += 5;
 			if(panel.images && panel.images.length) progress += 15;
 			if(panel.dialog && panel.dialog.length) progress += 5;
 			if(panel.background) progress += 5;
-			if(panel.action) progress += 5;
+			if(panel.action) progress += 3;
 		}
 
 		return progress;
 	}
 
+	//TODO: Add retry functionality. Look for empty error and populated json
+	// // Sometimes GPT returns a null, retry up to 2 times to get a usable result.
+	// while(retry > 0) {
+	// 	retry--;
+	// 	let response = await queryApi('/api/' + endpoint + '/?c='+(Math.floor(Math.random()*1000)), sceneData);
+	// 	if(response.json && response.json.panels && response.json.panels.length) {
+	// 		result = [...response.json.panels];
+	// 		model = response.model;
+	// 		break;
+	// 	} else if(response.json && response.json.descriptions && response.json.descriptions.length) {
+	// 		result = [...response.json.descriptions];
+	// 		model = response.model;
+	// 		break;
+	// 	}
+	// }
 	async fetchApi(action, data) {
 		let uri = '/api/' + action + '/?c=' + (Math.floor(Math.random() * 100));
 

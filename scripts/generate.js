@@ -36,6 +36,7 @@ async function GenerateStrip(premise) {
 		return;
 	}
 	console.log("Script", script);
+	await api.WriteBackground({model: imageModel});
 }
 
 function AttachUiEvents() {
@@ -94,10 +95,9 @@ function SetStatus(status) {
 }
 
 function UpdateProgress(amount) {
-	if(isNaN(window.progress) || amount === 0) window.progress = amount;
-	else window.progress += amount;
-	console.log("Update:", window.progress);
+	amount = amount || 0;
+	console.log("Update:", amount);
 	const el = document.getElementById("progress");
-	el.setAttribute("value", window.progress);
-	el.innerHTML = window.progress + "%";
+	el.setAttribute("value", amount);
+	el.innerHTML = amount + "%";
 }
