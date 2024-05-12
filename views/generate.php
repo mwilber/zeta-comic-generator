@@ -87,5 +87,4 @@
 	</div>
 </div>
 
-<script type="text/javascript" src="/scripts/dialog.js?v=<?php echo $version ?>"></script>
-<script type="text/javascript" src="/scripts/generate.js?v=<?php echo $version ?>"></script>
+<script defer type="module" src="/scripts/generate.js?v=<?php echo $version ?>"></script>
