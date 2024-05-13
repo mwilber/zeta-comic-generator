@@ -36,6 +36,9 @@ export class ComicRenderer {
 	async render() {
 		if (!this.validate()) return;
 
+		// Clear out the container element
+		this.el.innerHTML = "";
+
 		const { title, panels } = this.script;
 
 		// Render the panels
@@ -56,9 +59,9 @@ export class ComicRenderer {
 				for (const line of dialog) {
 					if (!line || !line.text) continue;
 					let characterImage = panel.images.find(image => image.character === line.character);
-					//let { center, pointer } = characterImage.balloon.location || {};
-					let balloonData = CharacterAction.GetDialogBalloonData(characterImage.action, characterImage.character);
-					console.log("balloonData", balloonData);
+					let balloonData = {};
+					if (characterImage && characterImage.action)
+						balloonData = CharacterAction.GetDialogBalloonData(characterImage.action, characterImage.character);
 					this.AddImageElementToPanel(
 						panel,
 						await DialogBalloon.RenderImage(

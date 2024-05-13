@@ -37,6 +37,7 @@ async function GenerateStrip(premise) {
 	}
 	console.log("Script", script);
 	await api.WriteBackground({model: imageModel});
+	await api.DrawBackground();
 }
 
 function AttachUiEvents() {

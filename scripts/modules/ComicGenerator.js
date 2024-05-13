@@ -17,7 +17,7 @@ export class ComicGenerator {
 		if(!result || !result.json || !result.json.panels || !result.json.panels.length) 
 			return {error: "Script object not returned."};
 		
-		//TODO: Update the dialog properties here with the new array format
+		//TODO: Find out why dialog images aren't rendering in the callback
 		for(const panel of result.json.panels) {
 			if(typeof panel.dialog === "string") {
 				panel.dialog = [{
@@ -52,6 +52,36 @@ export class ComicGenerator {
 		}
 
 		this.onUpdate(this.comic, this.PercentComplete());
+		return this.comic;
+	}
+
+	async DrawBackground(params) {
+		const { model } = params || {};
+		if (this.PercentComplete < 30) {
+			console.log("ComicGenerator: Scene backgrounds not written yet. Call WriteBackground first.");
+		}
+
+		//TODO: maybe this loop should happen in generate.js
+		for(const[idx, panel] of this.comic.panels.entries()) {
+			// If the panel has a background description, go ahead with the AI render
+			if (panel.background){
+				const result = await this.fetchApi('image', {
+					model: model || this.defaultTextModel,
+					query: panel.background
+				});
+				// Ensure there's an images array in the panel
+				if(!this.comic.panels[idx].images || !this.comic.panels[idx].images.length) 
+					this.comic.panels[idx].images = [];
+				// Add the background image to the panel images array
+				this.comic.panels[idx].images.push({
+					className: "background",
+					url: result.json.url
+				});
+			}
+			// Update after each image render so we can see the panels appear as they come in.
+			this.onUpdate(this.comic, this.PercentComplete());
+		}
+
 		return this.comic;
 	}
 
