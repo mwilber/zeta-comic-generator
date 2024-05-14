@@ -176,9 +176,9 @@ export class CharacterAction {
 		}
 	};
 
-
 	/**
 	 * Gets the data for the dialog balloon to be displayed for the given character action.
+	 * 
 	 * @param {string} action - The action to get the dialog balloon data for. If the action is not found in the _balloonLocations object, the "standing" action is used.
 	 * @param {object} character - The character object.
 	 * @returns {object} The dialog balloon data for the specified action.
@@ -189,5 +189,22 @@ export class CharacterAction {
 		action = this._balloonLocations[action] ? action : "standing";
 
 		return this._balloonLocations[action];
+	}
+
+	static GetValidAction(action) {
+		return this._balloonLocations[action] ? action : "standing";
+	}
+
+	/**
+	 * Gets the URL for the image of a character action. This will return an empty string 
+	 * if no action is provided and defualt to "standing" if the action is not a valid value.
+	 * 
+	 * @param {string} action - The name of the character action.
+	 * @returns {string} The URL for the image of the character action.
+	 */
+	static GetImageUrl(action) {
+		if (!action) return "";
+		action = this._balloonLocations[action] ? action : "standing";
+		return "/assets/character_art/" + action + ".png";
 	}
 }

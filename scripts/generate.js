@@ -35,9 +35,15 @@ async function GenerateStrip(premise) {
 		SetStatus('error');
 		return;
 	}
-	console.log("Script", script);
-	await api.WriteBackground({model: imageModel});
-	await api.DrawBackground();
+	// TODO: handle errors for each function response
+	await api.WriteBackground({model: textModel});
+	await api.DrawBackground({model: imageModel});
+	await api.WriteAction({model: textModel});
+
+	//TODO: Check the renderer progress. Handle error if <100 at this point.
+
+	document.getElementById('query').value = '';
+	SetStatus('complete');
 }
 
 function AttachUiEvents() {

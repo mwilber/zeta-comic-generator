@@ -59,16 +59,16 @@ export class ComicRenderer {
 				for (const line of dialog) {
 					if (!line || !line.text) continue;
 					let characterImage = panel.images.find(image => image.character === line.character);
-					let balloonData = {};
-					if (characterImage && characterImage.action)
-						balloonData = CharacterAction.GetDialogBalloonData(characterImage.action, characterImage.character);
-					this.AddImageElementToPanel(
-						panel,
-						await DialogBalloon.RenderImage(
-							line.text,
-							balloonData
-						)
-					);
+					if (characterImage && characterImage.action) {
+						let balloonData = CharacterAction.GetDialogBalloonData(characterImage.action, characterImage.character);
+						this.AddImageElementToPanel(
+							panel,
+							await DialogBalloon.RenderImage(
+								line.text,
+								balloonData
+							)
+						);
+				}
 				}
 			}
 		}

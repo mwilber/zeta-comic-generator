@@ -1,3 +1,5 @@
+import { CharacterAction } from "./CharacterAction.js";
+
 export class ComicGenerator {
 	constructor(params) {
 		this.defaultTextModel = 'oai';
@@ -17,7 +19,6 @@ export class ComicGenerator {
 		if(!result || !result.json || !result.json.panels || !result.json.panels.length) 
 			return {error: "Script object not returned."};
 		
-		//TODO: Find out why dialog images aren't rendering in the callback
 		for(const panel of result.json.panels) {
 			if(typeof panel.dialog === "string") {
 				panel.dialog = [{
@@ -83,6 +84,52 @@ export class ComicGenerator {
 		}
 
 		return this.comic;
+	}
+
+	async WriteAction(params) {
+		const { model } = params || {};
+		if (this.PercentComplete < 10) {
+			console.log("ComicGenerator: Scene descriptions not written yet. Call WriteScript first.");
+		}
+
+		let fetchParams = {
+			model: model || this.defaultTextModel,
+		}
+
+		for(const[idx, panel] of this.comic.panels.entries()) {
+			fetchParams["panel" + (idx+1)] = panel.scene || "";
+		}
+		
+		const result = await this.fetchApi('action', fetchParams);
+		for(const[idx, panel] of result.json.panels.entries()) {
+			this.comic.panels[idx].action = panel.action;
+			this.comic.panels[idx].altAction = panel.altAction;
+		}
+
+		await this.DrawAction();
+
+		this.onUpdate(this.comic, this.PercentComplete());
+		return this.comic;
+	}
+
+	async DrawAction() {
+		if (this.PercentComplete < 95) {
+			console.log("ComicGenerator: Scene actions not written yet. Call WriteAction first.");
+		}
+
+		for(const[idx, panel] of this.comic.panels.entries()) {
+			if (!panel.action) continue;
+			let action = CharacterAction.GetValidAction(panel.action);
+			let actionImage = CharacterAction.GetImageUrl(panel.action);
+			if (actionImage) {
+				panel.images.push({
+					className: "action",
+					action,
+					character: "alpha",
+					url: actionImage
+				});
+			}
+		}
 	}
 
 	PercentComplete() {
