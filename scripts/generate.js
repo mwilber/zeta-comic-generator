@@ -43,6 +43,7 @@ async function GenerateStrip(premise) {
 	//TODO: Check the renderer progress. Handle error if <100 at this point.
 
 	document.getElementById('query').value = '';
+	document.getElementById('save').style.display = 'initial';
 	SetStatus('complete');
 }
 
@@ -61,7 +62,17 @@ function AttachUiEvents() {
 				GenerateStrip(safeQuery);
 			}
 		},
+		{
+			selector: "#save",
+			event: "click",
+			handler: (e) => {
+				const query = document.getElementById('query');
+				if(!query) return;
 
+				document.getElementById('save').setAttribute('disabled', 'true');
+				api.SaveStrip();
+			}
+		}
 	];
 
 	for (const event of UIevents) {

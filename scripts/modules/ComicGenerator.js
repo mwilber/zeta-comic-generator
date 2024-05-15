@@ -4,6 +4,7 @@ export class ComicGenerator {
 	constructor(params) {
 		this.defaultTextModel = 'oai';
 		this.comic = null;
+		this.premise = null;
 		this.onUpdate = params.onUpdate || null;
 		//TODO: Add a ResetComic method
 	}
@@ -27,6 +28,7 @@ export class ComicGenerator {
 				}];
 			}
 		}
+		this.premise = premise;
 		this.comic = result.json;
 
 		this.onUpdate(this.comic, this.PercentComplete());
@@ -130,6 +132,88 @@ export class ComicGenerator {
 				});
 			}
 		}
+	}
+
+	GetPanelImageUrl(panelIdx, type) {
+		if (!this.comic || 
+			!this.comic.panels[panelIdx] || 
+			!this.comic.panels[panelIdx].images
+		) 
+			return "";
+
+		let backgroundImage = 
+			this.comic.panels[panelIdx].images.find(
+				image => image.className === type
+			);
+
+		if (backgroundImage) return backgroundImage.url;
+
+		return "";
+	}
+
+	async SaveStrip(){
+		// if(!saveObj) return;
+	
+		// document.getElementById('save').setAttribute('disabled', 'true');
+		// document.getElementById('permalink').style.display = null;
+	
+		// const formData = new FormData();
+		// formData.append('prompt', saveObj.prompt);
+		// formData.append('title', saveObj.title);
+		// formData.append('script', JSON.stringify(saveObj.script));
+		// formData.append('bkg1', saveObj.backgrounds[0]);
+		// formData.append('bkg2', saveObj.backgrounds[1]);
+		// formData.append('bkg3', saveObj.backgrounds[2]);
+		// formData.append('fg1', saveObj.foregrounds[0]);
+		// formData.append('fg2', saveObj.foregrounds[1]);
+		// formData.append('fg3', saveObj.foregrounds[2]);
+		// //formData.append('thumbnail', saveObj.thumbnail);
+
+		const fetchParams = {
+			prompt: this.premise,
+			title: this.comic.title,
+			script: JSON.stringify(this.comic),
+			bkg1: this.GetPanelImageUrl(0, "background"),
+			bkg2: this.GetPanelImageUrl(1, "background"),
+			bkg3: this.GetPanelImageUrl(2, "background"),
+			//TODO: remove the split/pop and handle the complete path on the server side
+			fg1: this.GetPanelImageUrl(0, "action").split('/').pop(),
+			fg2: this.GetPanelImageUrl(1, "action").split('/').pop(),
+			fg3: this.GetPanelImageUrl(2, "action").split('/').pop(),
+		}
+
+		console.log("Saving comic", fetchParams);
+
+		const result = await this.fetchApi('save', fetchParams);
+		console.log("Result", result);
+		return;
+	
+		fetch('/api/save/?c='+(Math.floor(Math.random()*1000000)), {
+			method: 'POST',
+			body: formData
+		})
+			.then(response => response.json())
+			.then(data => {
+				if(!data || !data.response || !data.response.comicId) {
+					document.getElementById('save').style.display = 'initial';
+					document.getElementById('save').removeAttribute('disabled');
+					document.getElementById('permalink').style.display = 'initial';
+					document.getElementById('permalink').innerHTML = `
+						There was a problem saving.
+					`;
+				}
+				document.getElementById('save').style.display = null;
+				document.getElementById('permalink').style.display = 'initial';
+				document.getElementById('permalink').innerHTML = `
+					<a href="/detail/${data.response.permalink}">
+						<img class="burst" src="/assets/images/speech_bubble.svg" />
+						<span class="cartoon-font">Permalink</span>
+					</a>
+				`;
+				console.log('Success:', data);
+				window.location.replace("/detail/"+data.response.permalink);
+			})
+			.catch(error => console.error('Error:', error));
 	}
 
 	PercentComplete() {

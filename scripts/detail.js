@@ -39,12 +39,9 @@ document.addEventListener("DOMContentLoaded", () => {
 				document.getElementById("query").innerHTML = `${prompt}`;
 
 				for (const [idx, panel] of script.panels.entries()) {
-					let dialog = panel.dialog;
-					panel.dialog = [];
-					panel.dialog.push({
-						character: "alpha",
-						text: dialog,
-					});
+					if (!Array.isArray(panel.dialog)) {
+						panel.dialog = [{ character: "alpha", text: panel.dialog }];
+					}
 					panel.images = [];
 					if (backgrounds[idx])
 						panel.images.push({
