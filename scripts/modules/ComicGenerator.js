@@ -152,22 +152,6 @@ export class ComicGenerator {
 	}
 
 	async SaveStrip(){
-		// if(!saveObj) return;
-	
-		// document.getElementById('save').setAttribute('disabled', 'true');
-		// document.getElementById('permalink').style.display = null;
-	
-		// const formData = new FormData();
-		// formData.append('prompt', saveObj.prompt);
-		// formData.append('title', saveObj.title);
-		// formData.append('script', JSON.stringify(saveObj.script));
-		// formData.append('bkg1', saveObj.backgrounds[0]);
-		// formData.append('bkg2', saveObj.backgrounds[1]);
-		// formData.append('bkg3', saveObj.backgrounds[2]);
-		// formData.append('fg1', saveObj.foregrounds[0]);
-		// formData.append('fg2', saveObj.foregrounds[1]);
-		// formData.append('fg3', saveObj.foregrounds[2]);
-		// //formData.append('thumbnail', saveObj.thumbnail);
 
 		const fetchParams = {
 			prompt: this.premise,
@@ -185,35 +169,8 @@ export class ComicGenerator {
 		console.log("Saving comic", fetchParams);
 
 		const result = await this.fetchApi('save', fetchParams);
-		console.log("Result", result);
-		return;
-	
-		fetch('/api/save/?c='+(Math.floor(Math.random()*1000000)), {
-			method: 'POST',
-			body: formData
-		})
-			.then(response => response.json())
-			.then(data => {
-				if(!data || !data.response || !data.response.comicId) {
-					document.getElementById('save').style.display = 'initial';
-					document.getElementById('save').removeAttribute('disabled');
-					document.getElementById('permalink').style.display = 'initial';
-					document.getElementById('permalink').innerHTML = `
-						There was a problem saving.
-					`;
-				}
-				document.getElementById('save').style.display = null;
-				document.getElementById('permalink').style.display = 'initial';
-				document.getElementById('permalink').innerHTML = `
-					<a href="/detail/${data.response.permalink}">
-						<img class="burst" src="/assets/images/speech_bubble.svg" />
-						<span class="cartoon-font">Permalink</span>
-					</a>
-				`;
-				console.log('Success:', data);
-				window.location.replace("/detail/"+data.response.permalink);
-			})
-			.catch(error => console.error('Error:', error));
+
+		return result;
 	}
 
 	PercentComplete() {

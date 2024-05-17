@@ -65,13 +65,33 @@ function AttachUiEvents() {
 		{
 			selector: "#save",
 			event: "click",
-			handler: (e) => {
-				const query = document.getElementById('query');
-				if(!query) return;
-
+			handler: async (e) => {
 				document.getElementById('save').setAttribute('disabled', 'true');
-				api.SaveStrip();
+				let data = await api.SaveStrip();
+
+				if(!data || !data.response || !data.response.comicId) {
+					document.getElementById('save').style.display = 'initial';
+					document.getElementById('save').removeAttribute('disabled');
+					alert('There was a problem saving.');
+				}
+				console.log('Success:', data);
+				window.location.replace("/detail/"+data.response.permalink);
 			}
+		},
+		{
+			selector: "#query",
+			event: "keyup",
+			handler: SetCharCount
+		},
+		{
+			selector: "#query",
+			event: "change",
+			handler: SetCharCount
+		},
+		{
+			selector: "#query",
+			event: "paste",
+			handler: SetCharCount
 		}
 	];
 
@@ -118,4 +138,27 @@ function UpdateProgress(amount) {
 	const el = document.getElementById("progress");
 	el.setAttribute("value", amount);
 	el.innerHTML = amount + "%";
+}
+
+function SetCharCount() {
+	let el = document.getElementById('character-count');
+    let characterCount = document.getElementById('query').value.length;
+    let characterleft = 140 - characterCount;
+
+    // console.log(characterleft);
+
+	if(characterleft < 0)
+		el.style.color = '#c00';
+	else if(characterleft < 15)
+		el.style.color = '#600';
+	else
+		el.style.color = '';
+
+	if(characterleft < 0)
+		el.innerText = Math.abs(characterleft) + " over limit.";
+	else
+		el.innerText = characterleft + " characters left.";
+
+	return true;
+
 }
