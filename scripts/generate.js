@@ -1,6 +1,5 @@
 import { ScriptRenderer } from "./modules/ScriptRenderer.js";
 import { ComicRenderer } from "./modules/ComicRenderer.js";
-import { CharacterAction } from "./modules/CharacterAction.js";
 import { ComicGenerator } from "./modules/ComicGenerator.js";
 
 let api, comicRenderer, scriptRenderer;
@@ -22,61 +21,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
 });
 
-async function GenerateStrip(premise) {
-	ClearElements();
-	UpdateProgress(0);
-	SetStatus('generating');
-
-	const textModel = document.getElementById('script-model').value;
-	const imageModel = document.getElementById('image-model').value;
-
-	let script = await api.WriteScript(premise, {model: textModel});
-	if(!script || script.error) {
-		SetStatus('error');
-		return;
-	}
-	// TODO: handle errors for each function response
-	await api.WriteBackground({model: textModel});
-	await api.DrawBackground({model: imageModel});
-	await api.WriteAction({model: textModel});
-
-	//TODO: Check the renderer progress. Handle error if <100 at this point.
-
-	document.getElementById('query').value = '';
-	document.getElementById('save').style.display = 'initial';
-	SetStatus('complete');
-}
-
 function AttachUiEvents() {
 
 	const UIevents = [
 		{
 			selector: "#generate",
 			event: "click",
-			handler: () => {
-				const query = document.getElementById('query');
-				//if(!query || !query.value || query.value.length > 140) return;
-			
-				let safeQuery = query.value.replace(/[\\"]/g, '\\$&').replace(/\u0000/g, '\\0');
-			
-				GenerateStrip(safeQuery);
-			}
+			handler: GenerateStrip
 		},
 		{
 			selector: "#save",
 			event: "click",
-			handler: async (e) => {
-				document.getElementById('save').setAttribute('disabled', 'true');
-				let data = await api.SaveStrip();
-
-				if(!data || !data.response || !data.response.comicId) {
-					document.getElementById('save').style.display = 'initial';
-					document.getElementById('save').removeAttribute('disabled');
-					alert('There was a problem saving.');
-				}
-				console.log('Success:', data);
-				window.location.replace("/detail/"+data.response.permalink);
-			}
+			handler: SaveStrip
 		},
 		{
 			selector: "#query",
@@ -101,6 +57,47 @@ function AttachUiEvents() {
 		});
 	}
 
+}
+
+async function GenerateStrip() {
+	ClearElements();
+	UpdateProgress(0);
+	SetStatus('generating');
+
+	const query = document.getElementById('query');
+	//if(!query || !query.value || query.value.length > 140) return;
+	let safeQuery = query.value.replace(/[\\"]/g, '\\$&').replace(/\u0000/g, '\\0');
+	const textModel = document.getElementById('script-model').value;
+	const imageModel = document.getElementById('image-model').value;
+
+	let script = await api.WriteScript(safeQuery, {model: textModel});
+	if(!script || script.error) {
+		SetStatus('error');
+		return;
+	}
+	// TODO: handle errors for each function response
+	await api.WriteBackground({model: textModel});
+	await api.DrawBackground({model: imageModel});
+	await api.WriteAction({model: textModel});
+
+	//TODO: Check the renderer progress. Handle error if <100 at this point.
+
+	document.getElementById('query').value = '';
+	document.getElementById('save').style.display = 'initial';
+	SetStatus('complete');
+}
+
+async function SaveStrip() {
+	document.getElementById('save').setAttribute('disabled', 'true');
+	let data = await api.SaveStrip();
+
+	if(!data || !data.response || !data.response.comicId) {
+		document.getElementById('save').style.display = 'initial';
+		document.getElementById('save').removeAttribute('disabled');
+		alert('There was a problem saving.');
+	}
+	console.log('Success:', data);
+	window.location.replace("/detail/"+data.response.permalink);
 }
 
 function ClearElements() {
