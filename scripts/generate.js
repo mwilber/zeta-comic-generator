@@ -48,6 +48,16 @@ function AttachUiEvents() {
 			selector: "#query",
 			event: "paste",
 			handler: SetCharCount
+		},
+		{
+			selector: "#image-model",
+			event: "change",
+			handler: (e) => {
+				console.log("target val", e.target.value);
+				const styleSelectGroup = document.getElementById("image-style-label");
+				if (e.target.value === "sdf") styleSelectGroup.style.display = "block";
+				else styleSelectGroup.style.display = "none";
+			}
 		}
 	];
 
@@ -75,10 +85,21 @@ async function GenerateStrip() {
 		SetStatus('error');
 		return;
 	}
-	// TODO: handle errors for each function response
-	await api.WriteBackground({model: textModel});
-	await api.DrawBackground({model: imageModel});
-	await api.WriteAction({model: textModel});
+	let background = await api.WriteBackground({model: textModel});
+	if(!background || background.error) {
+		SetStatus('error');
+		return;
+	}
+	let image = await api.DrawBackgrounds({model: imageModel});
+	if(!image || image.error) {
+		SetStatus('error');
+		return;
+	}
+	let action = await api.WriteAction({model: textModel});
+	if(!action || action.error) {
+		SetStatus('error');
+		return;
+	}
 
 	//TODO: Check the renderer progress. Handle error if <100 at this point.
 
@@ -119,6 +140,10 @@ function ClearElements() {
 
 function SetStatus(status) {
 	document.body.dataset.status = status;
+
+	if (status === 'error') {
+		alert('There was a problem generating the strip. Please try again. If the problem persists, try again in a little while.');
+	}
 
 	['generate', 'query'].forEach((id) => {
 		document.getElementById(id)[status === 'generating' ? 'setAttribute' : 'removeAttribute']('disabled', '');

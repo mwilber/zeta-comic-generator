@@ -4,6 +4,7 @@
 	error_reporting(E_ERROR);
 
 	define("SIMULATION_MODE", true);
+	define("SIMULATE_ERRORS", false);
 
 	$request = $_SERVER['REQUEST_URI'];
 	$path = explode('/', $request);
@@ -24,7 +25,6 @@
 			}
 		} 
 	}
-	// print_r($controller);
 
 	// Required headers
 	header("Access-Control-Allow-Origin: *");
@@ -76,6 +76,11 @@
 		default:
 			$output->error = "Action not avaialble.";
 			break;
+	}
+
+	// Randomly insert an error
+	if (SIMULATE_ERRORS && $controller && rand(0, 100) < 100) {
+		$output->error = "Simulated error.";
 	}
 
 	echo json_encode($output);

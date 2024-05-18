@@ -50,6 +50,9 @@ export class ComicGenerator {
 		}
 		
 		const result = await this.fetchApi('background', fetchParams);
+		if(!result || result.error || !result.json || !result.json.descriptions || !result.json.descriptions.length)
+			return {error: "Background object not returned."};
+
 		for(const[idx, background] of result.json.descriptions.entries()) {
 			this.comic.panels[idx].background = background;
 		}
@@ -58,34 +61,44 @@ export class ComicGenerator {
 		return this.comic;
 	}
 
-	async DrawBackground(params) {
-		const { model } = params || {};
-		if (this.PercentComplete < 30) {
-			console.log("ComicGenerator: Scene backgrounds not written yet. Call WriteBackground first.");
-		}
-
-		//TODO: maybe this loop should happen in generate.js
+	async DrawBackgrounds(params){
 		for(const[idx, panel] of this.comic.panels.entries()) {
-			// If the panel has a background description, go ahead with the AI render
-			if (panel.background){
-				const result = await this.fetchApi('image', {
-					model: model || this.defaultTextModel,
-					query: panel.background
-				});
-				// Ensure there's an images array in the panel
-				if(!this.comic.panels[idx].images || !this.comic.panels[idx].images.length) 
-					this.comic.panels[idx].images = [];
-				// Add the background image to the panel images array
-				this.comic.panels[idx].images.push({
-					className: "background",
-					url: result.json.url
-				});
-			}
+			let result = await this.DrawBackground(params, panel, idx);
+			if(result.error) return result;
 			// Update after each image render so we can see the panels appear as they come in.
 			this.onUpdate(this.comic, this.PercentComplete());
 		}
 
 		return this.comic;
+	}
+
+	async DrawBackground(params, panel, idx) {
+		const { model } = params || {};
+		if (this.PercentComplete < 30) {
+			console.log("ComicGenerator: Scene backgrounds not written yet. Call WriteBackground first.");
+		}
+
+		// If the panel has a background description, go ahead with the AI render
+		if (panel.background){
+			const result = await this.fetchApi('image', {
+				model: model || this.defaultTextModel,
+				query: panel.background
+			});
+			if(!result || result.error || !result.json || !result.json.url)
+				return {error: "Background image not returned."};
+
+			// Ensure there's an images array in the panel
+			if(!this.comic.panels[idx].images || !this.comic.panels[idx].images.length) 
+				this.comic.panels[idx].images = [];
+			// Add the background image to the panel images array
+			this.comic.panels[idx].images.push({
+				className: "background",
+				url: result.json.url
+			});
+			return {error: false}
+		}
+
+		
 	}
 
 	async WriteAction(params) {
@@ -103,6 +116,9 @@ export class ComicGenerator {
 		}
 		
 		const result = await this.fetchApi('action', fetchParams);
+		if(!result || result.error || !result.json || !result.json.panels || !result.json.panels.length)
+			return {error: "Action object not returned."};
+
 		for(const[idx, panel] of result.json.panels.entries()) {
 			this.comic.panels[idx].action = panel.action;
 			this.comic.panels[idx].altAction = panel.altAction;
@@ -213,17 +229,27 @@ export class ComicGenerator {
 			formData.append(key, data[key]);
 		});
 
-		try {
-			const response = await fetch(uri, {
-				method: 'POST',
-				body: formData
-			});
-			const data = await response.json();
-			console.log("ComicGenerator: API response", data);
-			return data;
-		} catch (error) {
-			console.error('Error fetching API:', error);
-			return false;
+		let retry = 3;
+		// Sometimes GPT returns a null, retry up to 2 times to get a usable result.
+		while(retry > 0) {
+			retry--;
+			try {
+				const response = await fetch(uri, {
+					method: 'POST',
+					body: formData
+				});
+				const data = await response.json();
+				if(!data || !data.json || data.error) {
+					throw data;
+				} else {
+					console.log("ComicGenerator: API response", data);
+					return data;
+				}
+			} catch (error) {
+				console.error('Error fetching API:', error);
+				return {error}
+			}
 		}
+		return false;
 	}
 }
