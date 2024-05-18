@@ -1,6 +1,5 @@
 import { CharacterAction } from "./CharacterAction.js";
 import { DialogBalloon } from "./DialogBalloon.js";
-//TODO: this should import CharacterAction and get the dialog pointer locations as part of LoadScript
 
 /**
  * @file ComicRenderer.js
