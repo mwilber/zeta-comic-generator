@@ -12,7 +12,7 @@ class ModelStableDiffusion {
     function sendPrompt($prompt) {
         
         $result = new stdClass;
-        $response = $this->textToImage($prompt);
+        $response = $this->textToImage($prompt, $_POST["style"]);
         $json = json_decode($response);
 		$result->data = $json;
 
@@ -53,7 +53,7 @@ class ModelStableDiffusion {
         return $result;
     }
 
-    function textToImage($prompt) {
+    function textToImage($prompt, $params) {
 
 		$titanSeed = rand(0, 2147483647);
 		$bedrockRuntimeClient = new BedrockRuntimeClient([
@@ -77,7 +77,7 @@ class ModelStableDiffusion {
 			'seed' => $titanSeed
         ];
 
-        if ($style_preset) {
+        if ($params) {
             $request['style_preset'] = $style_preset;
         }
 
