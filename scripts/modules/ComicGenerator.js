@@ -3,10 +3,13 @@ import { CharacterAction } from "./CharacterAction.js";
 export class ComicGenerator {
 	constructor(params) {
 		this.defaultTextModel = "oai";
+		this.onUpdate = params.onUpdate || null;
+		this.ClearComicData();
+	}
+
+	ClearComicData() {
 		this.comic = null;
 		this.premise = null;
-		this.onUpdate = params.onUpdate || null;
-		//TODO: Add a ResetComic method
 	}
 
 	async WriteScript(premise, params) {
@@ -16,7 +19,6 @@ export class ComicGenerator {
 			model: model || this.defaultTextModel,
 		});
 
-		//TODO: improve error handling, see comment at fetchApi
 		if (
 			!result ||
 			!result.json ||
@@ -234,21 +236,6 @@ export class ComicGenerator {
 		return progress;
 	}
 
-	//TODO: Add retry functionality. Look for empty error and populated json
-	// // Sometimes GPT returns a null, retry up to 2 times to get a usable result.
-	// while(retry > 0) {
-	// 	retry--;
-	// 	let response = await queryApi('/api/' + endpoint + '/?c='+(Math.floor(Math.random()*1000)), sceneData);
-	// 	if(response.json && response.json.panels && response.json.panels.length) {
-	// 		result = [...response.json.panels];
-	// 		model = response.model;
-	// 		break;
-	// 	} else if(response.json && response.json.descriptions && response.json.descriptions.length) {
-	// 		result = [...response.json.descriptions];
-	// 		model = response.model;
-	// 		break;
-	// 	}
-	// }
 	async fetchApi(action, data) {
 		let uri = "/api/" + action + "/?c=" + Math.floor(Math.random() * 100);
 

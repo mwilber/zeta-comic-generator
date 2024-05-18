@@ -25,6 +25,11 @@ export class ComicRenderer {
 		console.log("GZ ComicRenderer created");
 	}
 
+	clear() {
+		this.el.innerHTML = "";
+		this.script = null;
+	}
+
 	/**
 	 * Renders the comic script by creating panel elements, adding images and dialog to each panel, and rendering the title.
 	 *
@@ -50,32 +55,60 @@ export class ComicRenderer {
 					this.AddLinkedImageToPanel(
 						panel,
 						image.url,
-						image.className
+						image.type
 					);
 				}
-			}
 
-			if (dialog && dialog.length && images && images.length) {
-				for (const line of dialog) {
-					if (!line || !line.text) continue;
-					let characterImage = panel.images.find(
-						(image) => image.character === line.character
+				// Add dialog to characters, where applicable.
+				let characterImages = images.filter(
+					(image) => image.type === "character"
+				);
+				for (const cImage of characterImages) {
+					// Find dialog attached to the character image
+					let {action, character} = cImage;
+
+					let characterDialog = dialog.find (
+						(line) => line.character === character
 					);
-					if (characterImage && characterImage.action) {
+					let {text: line} = characterDialog || {};
+
+					if (action && character && line) {
 						let balloonData = CharacterAction.GetDialogBalloonData(
-							characterImage.action,
-							characterImage.character
+							action,
+							character
 						);
 						this.AddImageElementToPanel(
 							panel,
 							await DialogBalloon.RenderImage(
-								line.text,
+								line,
 								balloonData
 							)
 						);
 					}
 				}
 			}
+
+			// if (dialog && dialog.length && images && images.length) {
+			// 	for (const line of dialog) {
+			// 		if (!line || !line.text) continue;
+			// 		let characterImage = panel.images.find(
+			// 			(image) => image.character === line.character
+			// 		);
+			// 		if (characterImage && characterImage.action) {
+			// 			let balloonData = CharacterAction.GetDialogBalloonData(
+			// 				characterImage.action,
+			// 				characterImage.character
+			// 			);
+			// 			this.AddImageElementToPanel(
+			// 				panel,
+			// 				await DialogBalloon.RenderImage(
+			// 					line.text,
+			// 					balloonData
+			// 				)
+			// 			);
+			// 		}
+			// 	}
+			// }
 		}
 		// Render the title
 		this.AddTitleElement(title);
@@ -135,13 +168,14 @@ export class ComicRenderer {
 	 * @param {string} url - The URL of the image to add.
 	 * @param {string} className - The CSS class name to apply to the image element.
 	 */
-	AddLinkedImageToPanel(panel, url, className) {
+	AddLinkedImageToPanel(panel, url, type) {
+		console.log("type", type);
 		if (!panel.panelEl) {
 			console.error("Comic Renderer: Panel element unavailable.", panel);
 			return;
 		}
 		panel.panelEl.innerHTML += `
-			<img class="${className}" src="${url}"/>
+			<img class="${type}" src="${url}"/>
 		`;
 	}
 

@@ -73,6 +73,8 @@ function AttachUiEvents() {
 }
 
 async function GenerateStrip() {
+	comicRenderer.clear();
+	api.ClearComicData();
 	ClearElements();
 	UpdateProgress(0);
 	SetStatus("generating");
