@@ -1,4 +1,4 @@
-import { ComicGenerator } from "./modules/ComicGenerator.js";
+import { ComicGeneratorApi } from "./modules/ComicGeneratorApi.js";
 import { ComicRenderer } from "./modules/ComicRenderer/ComicRenderer.js";
 import { ScriptRenderer } from "./modules/ScriptRenderer.js";
 
@@ -11,7 +11,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	scriptRenderer = new ScriptRenderer({
 		el: document.querySelector("#script"),
 	});
-	api = new ComicGenerator({
+	api = new ComicGeneratorApi({
 		onUpdate: (script, progress) => {
 			comicRenderer.LoadScript(script);
 			scriptRenderer.LoadScript(script);
@@ -136,6 +136,12 @@ function ClearElements() {
 		// 'panel3',
 		"permalink",
 	].forEach((id) => (document.getElementById(id).innerHTML = ""));
+
+    document.querySelector(".strip-container").innerHTML = `
+    <div id="panel1" class="panel"></div>
+	<div id="panel2" class="panel"></div>
+	<div id="panel3" class="panel"></div>
+    `;
 
 	["save", "permalink"].forEach(
 		(id) => (document.getElementById(id).style.display = null)

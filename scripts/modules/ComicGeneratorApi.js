@@ -1,6 +1,6 @@
 import { CharacterAction } from "./CharacterAction.js";
 
-export class ComicGenerator {
+export class ComicGeneratorApi {
 	constructor(params) {
 		this.defaultTextModel = "oai";
 		this.onUpdate = params.onUpdate || null;
@@ -114,7 +114,7 @@ export class ComicGenerator {
 				this.comic.panels[idx].images = [];
 			// Add the background image to the panel images array
 			this.comic.panels[idx].images.push({
-				className: "background",
+				type: "background",
 				url: result.json.url,
 			});
 			return { error: false };
@@ -171,7 +171,7 @@ export class ComicGenerator {
 			let actionImage = CharacterAction.GetImageUrl(panel.action);
 			if (actionImage) {
 				panel.images.push({
-					className: "action",
+					type: "character",
 					action,
 					character: "alpha",
 					url: actionImage,
@@ -189,7 +189,7 @@ export class ComicGenerator {
 			return "";
 
 		let backgroundImage = this.comic.panels[panelIdx].images.find(
-			(image) => image.className === type
+			(image) => image.type === type
 		);
 
 		if (backgroundImage) return backgroundImage.url;
@@ -198,17 +198,22 @@ export class ComicGenerator {
 	}
 
 	async SaveStrip() {
+        let scriptExport = JSON.parse(JSON.stringify(this.comic));
+        // Clear out images, they'll be saved seperately.
+        for(let panel of scriptExport.panels){
+            panel.images = [];
+        }
 		const fetchParams = {
 			prompt: this.premise,
 			title: this.comic.title,
-			script: JSON.stringify(this.comic),
+			script: JSON.stringify(scriptExport),
 			bkg1: this.GetPanelImageUrl(0, "background"),
 			bkg2: this.GetPanelImageUrl(1, "background"),
 			bkg3: this.GetPanelImageUrl(2, "background"),
 			//TODO: remove the split/pop and handle the complete path on the server side
-			fg1: this.GetPanelImageUrl(0, "action").split("/").pop(),
-			fg2: this.GetPanelImageUrl(1, "action").split("/").pop(),
-			fg3: this.GetPanelImageUrl(2, "action").split("/").pop(),
+			fg1: this.GetPanelImageUrl(0, "character").split("/").pop(),
+			fg2: this.GetPanelImageUrl(1, "character").split("/").pop(),
+			fg3: this.GetPanelImageUrl(2, "character").split("/").pop(),
 		};
 
 		console.log("Saving comic", fetchParams);
@@ -254,7 +259,7 @@ export class ComicGenerator {
 					body: formData,
 				});
 				const data = await response.json();
-				if (!data || !data.json || data.error) {
+				if (!data || (!data.json && !data.response) || data.error) {
 					throw data;
 				} else {
 					console.log("ComicGenerator: API response", data);

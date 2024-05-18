@@ -731,6 +731,7 @@ progress[value]::-webkit-progress-value {
 	transition: transform 500ms;
 }
 
+.generate[data-status='ready'] .script-wrapper,
 .generate[data-status='ready'] .dialog-wrapper{
 	display: none;
 }

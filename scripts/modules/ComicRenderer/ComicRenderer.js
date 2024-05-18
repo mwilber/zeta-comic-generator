@@ -87,28 +87,6 @@ export class ComicRenderer {
 					}
 				}
 			}
-
-			// if (dialog && dialog.length && images && images.length) {
-			// 	for (const line of dialog) {
-			// 		if (!line || !line.text) continue;
-			// 		let characterImage = panel.images.find(
-			// 			(image) => image.character === line.character
-			// 		);
-			// 		if (characterImage && characterImage.action) {
-			// 			let balloonData = CharacterAction.GetDialogBalloonData(
-			// 				characterImage.action,
-			// 				characterImage.character
-			// 			);
-			// 			this.AddImageElementToPanel(
-			// 				panel,
-			// 				await DialogBalloon.RenderImage(
-			// 					line.text,
-			// 					balloonData
-			// 				)
-			// 			);
-			// 		}
-			// 	}
-			// }
 		}
 		// Render the title
 		this.AddTitleElement(title);
@@ -169,7 +147,6 @@ export class ComicRenderer {
 	 * @param {string} className - The CSS class name to apply to the image element.
 	 */
 	AddLinkedImageToPanel(panel, url, type) {
-		console.log("type", type);
 		if (!panel.panelEl) {
 			console.error("Comic Renderer: Panel element unavailable.", panel);
 			return;
