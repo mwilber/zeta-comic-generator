@@ -1,4 +1,4 @@
-import { CharacterAction } from "./CharacterAction.js";
+import { CharacterAction } from "../CharacterAction.js";
 import { DialogBalloon } from "./DialogBalloon.js";
 
 /**

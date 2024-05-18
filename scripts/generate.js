@@ -1,6 +1,6 @@
-import { ScriptRenderer } from "./modules/ScriptRenderer.js";
-import { ComicRenderer } from "./modules/ComicRenderer.js";
 import { ComicGenerator } from "./modules/ComicGenerator.js";
+import { ComicRenderer } from "./modules/ComicRenderer/ComicRenderer.js";
+import { ScriptRenderer } from "./modules/ScriptRenderer.js";
 
 let api, comicRenderer, scriptRenderer;
 
