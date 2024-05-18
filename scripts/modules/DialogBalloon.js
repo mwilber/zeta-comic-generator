@@ -3,12 +3,11 @@
  * @author Matthew Wilber
  * @license GPL-3.0
  * @version 1.0.0
- * 
+ *
  * A static class with functions to render an image containing a cartoon dialog balloon.
  *
  */
 export class DialogBalloon {
-
 	/**
 	 * Renders a dialog balloon image with the provided parameters.
 	 * This method uses a <canvas> element to draw the balloon and outputs the image via the canvas toDataURL method.
@@ -23,7 +22,7 @@ export class DialogBalloon {
 	static async RenderImage(dialog, params) {
 		if (!dialog.split) return;
 		let { size, center, pointer } = params;
-		const balloon = document.createElement('canvas');
+		const balloon = document.createElement("canvas");
 
 		// Set default values if not provided
 		size = size || 512;
@@ -32,11 +31,14 @@ export class DialogBalloon {
 
 		balloon.width = params.size || 512;
 		balloon.height = params.size || 512;
-		const ctx = balloon.getContext('2d');
+		const ctx = balloon.getContext("2d");
 
 		// Load the google font
 		// TODO: Make this customizable
-		var myFont = new FontFace('Patrick Hand', 'url(https://fonts.gstatic.com/s/patrickhand/v23/LDI1apSQOAYtSuYWp8ZhfYe8XsLLubg58w.woff2)');
+		var myFont = new FontFace(
+			"Patrick Hand",
+			"url(https://fonts.gstatic.com/s/patrickhand/v23/LDI1apSQOAYtSuYWp8ZhfYe8XsLLubg58w.woff2)"
+		);
 		const font = await myFont.load();
 		document.fonts.add(font);
 
@@ -50,12 +52,12 @@ export class DialogBalloon {
 		);
 
 		var image = new Image();
-		image.classList.add('balloon');
+		image.classList.add("balloon");
 		image.src = balloon.toDataURL();
 
 		return image;
 	}
-	
+
 	/**
 	 * Draws a dialog balloon with a pointer on a canvas.
 	 *
@@ -122,7 +124,7 @@ export class DialogBalloon {
 		if (py < balloonY + boxHeight + 10) py = balloonY + boxHeight + 50;
 
 		const baseCenterX = cx;
-		const baseCenterY = (cy + boxHeight / 2);
+		const baseCenterY = cy + boxHeight / 2;
 
 		const dx = baseCenterX - px;
 		const dy = baseCenterY - py;
@@ -172,7 +174,12 @@ export class DialogBalloon {
 			balloonY + boxHeight - borderRadius
 		); // Bottom-left corner
 		ctx.lineTo(balloonX, balloonY + borderRadius); // Left side
-		ctx.quadraticCurveTo(balloonX, balloonY, balloonX + borderRadius, balloonY); // Top-left corner
+		ctx.quadraticCurveTo(
+			balloonX,
+			balloonY,
+			balloonX + borderRadius,
+			balloonY
+		); // Top-left corner
 		ctx.closePath();
 		ctx.fill();
 		ctx.stroke();

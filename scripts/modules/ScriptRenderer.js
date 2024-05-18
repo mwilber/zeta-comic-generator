@@ -3,7 +3,7 @@
  * @author Matthew Wilber
  * @license GPL-3.0
  * @version 1.0.0
- * 
+ *
  * Renders script from Zeta Comic Generator (comicgenerator.greenzeta.com) as html.
  *
  * @param {Object} params - The parameters for rendering the script.
@@ -11,23 +11,20 @@
  * @param {Object} params.script - Zeta Comic Generator script object containing the title, panels, and credits.
  */
 export class ScriptRenderer {
-	constructor (params) {
-
-		const {el, script} = params;
+	constructor(params) {
+		const { el, script } = params;
 
 		this.el = el;
-		if (script)
-			this.script = this.LoadScript(params.script)
+		if (script) this.script = this.LoadScript(params.script);
 
 		console.log("GZ ScriptRenderer created");
 	}
 
-	
 	/**
 	 * Renders the script content to the container element.
-	 * 
+	 *
 	 * This method is responsible for generating the HTML markup for the script, including the title, credits, and individual panels with their scene descriptions, actions, dialogs, and backgrounds.
-	 * 
+	 *
 	 * @returns {void}
 	 */
 	async render() {
@@ -55,10 +52,18 @@ export class ScriptRenderer {
 				dialogHtml += `<strong>${dialog.character}</strong>: ${dialog.text}`;
 			}
 
-			let scene = panel.scene ? `<tr><td>Description</td> <td>${panel.scene}</td></tr>` : "";
-			let action = panel.action? `<tr><td>Action</td> <td>${panel.action}</td></tr>` : "";
-			let background = panel.background? `<tr><td>Background</td> <td>${panel.background}</td></tr>` : "";
-			let dialog = dialogHtml? `<tr><td>Dialog</td> <td>${dialogHtml}</td></tr>` : "";
+			let scene = panel.scene
+				? `<tr><td>Description</td> <td>${panel.scene}</td></tr>`
+				: "";
+			let action = panel.action
+				? `<tr><td>Action</td> <td>${panel.action}</td></tr>`
+				: "";
+			let background = panel.background
+				? `<tr><td>Background</td> <td>${panel.background}</td></tr>`
+				: "";
+			let dialog = dialogHtml
+				? `<tr><td>Dialog</td> <td>${dialogHtml}</td></tr>`
+				: "";
 			this.el.innerHTML += `
 					<li>
 						<h3>Panel ${idx + 1}</h3>
@@ -79,7 +84,7 @@ export class ScriptRenderer {
 
 	/**
 	 * Validates the provided script object to ensure it has the required properties.
-	 * 
+	 *
 	 * @param {object} script - The script object to validate.
 	 * @returns {boolean} - True if the script object is valid, false otherwise.
 	 */
@@ -87,7 +92,10 @@ export class ScriptRenderer {
 		script = script || this.script;
 
 		if (!this.el) {
-			console.error("ScriptRenderer: Container element not set.", this.container);
+			console.error(
+				"ScriptRenderer: Container element not set.",
+				this.container
+			);
 			return false;
 		}
 
@@ -97,14 +105,16 @@ export class ScriptRenderer {
 		}
 
 		if (!script.panels || !script.panels.length) {
-			console.error("ScriptRenderer: script.panels missing.", this.script);
+			console.error(
+				"ScriptRenderer: script.panels missing.",
+				this.script
+			);
 			return false;
 		}
 
 		return true;
 	}
 
-	
 	/**
 	 * Loads and renders a script.
 	 *

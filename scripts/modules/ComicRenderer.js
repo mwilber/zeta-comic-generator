@@ -6,23 +6,21 @@ import { DialogBalloon } from "./DialogBalloon.js";
  * @author Matthew Wilber
  * @license GPL-3.0
  * @version 1.0.0
- * 
+ *
  * Renders comic from Zeta Comic Generator (comicgenerator.greenzeta.com) as html.
- * 
+ *
  * @param {Object} params - The parameters for rendering the script.
  * @param {HTMLElement} params.el - The HTML element to render the script in.
  * @param {Object} params.script - Zeta Comic Generator script object containing the title, and panels.
  * @param {number} [params.size=512] - The size of the comic panels.
  */
 export class ComicRenderer {
-	constructor (params) {
-
-		const {el, script, size} = params;
+	constructor(params) {
+		const { el, script, size } = params;
 
 		this.el = el;
 		this.size = size || 512;
-		if (script)
-			this.script = this.LoadScript(params.script)
+		if (script) this.script = this.LoadScript(params.script);
 
 		console.log("GZ ComicRenderer created");
 	}
@@ -42,7 +40,6 @@ export class ComicRenderer {
 
 		// Render the panels
 		for (const [idx, panel] of panels.entries()) {
-
 			const { images, dialog } = panel || {};
 
 			// Create the panel element
@@ -50,16 +47,25 @@ export class ComicRenderer {
 
 			if (images && images.length) {
 				for (const image of images) {
-					this.AddLinkedImageToPanel(panel, image.url, image.className);
+					this.AddLinkedImageToPanel(
+						panel,
+						image.url,
+						image.className
+					);
 				}
 			}
 
 			if (dialog && dialog.length && images && images.length) {
 				for (const line of dialog) {
 					if (!line || !line.text) continue;
-					let characterImage = panel.images.find(image => image.character === line.character);
+					let characterImage = panel.images.find(
+						(image) => image.character === line.character
+					);
 					if (characterImage && characterImage.action) {
-						let balloonData = CharacterAction.GetDialogBalloonData(characterImage.action, characterImage.character);
+						let balloonData = CharacterAction.GetDialogBalloonData(
+							characterImage.action,
+							characterImage.character
+						);
 						this.AddImageElementToPanel(
 							panel,
 							await DialogBalloon.RenderImage(
@@ -67,7 +73,7 @@ export class ComicRenderer {
 								balloonData
 							)
 						);
-				}
+					}
 				}
 			}
 		}
@@ -79,7 +85,7 @@ export class ComicRenderer {
 
 	/**
 	 * Validates the provided script object to ensure it has the required properties.
-	 * 
+	 *
 	 * @param {object} script - The script object to validate.
 	 * @returns {boolean} - True if the script object is valid, false otherwise.
 	 */
@@ -87,7 +93,10 @@ export class ComicRenderer {
 		script = script || this.script;
 
 		if (!this.el) {
-			console.error("ComicRenderer: Container element not set.", this.container);
+			console.error(
+				"ComicRenderer: Container element not set.",
+				this.container
+			);
 			return false;
 		}
 
@@ -106,7 +115,7 @@ export class ComicRenderer {
 
 	/**
 	 * Adds an image element to the specified panel.
-	 * 
+	 *
 	 * @param {object} panel - The panel to add the image to.
 	 * @param {HTMLImageElement} image - The image element to add to the panel.
 	 */
@@ -121,7 +130,7 @@ export class ComicRenderer {
 
 	/**
 	 * Adds a linked image element to the specified panel.
-	 * 
+	 *
 	 * @param {HTMLElement} panel - The panel element to add the image to.
 	 * @param {string} url - The URL of the image to add.
 	 * @param {string} className - The CSS class name to apply to the image element.
@@ -138,7 +147,7 @@ export class ComicRenderer {
 
 	/**
 	 * Adds a panel element to the ComicRenderer.
-	 * 
+	 *
 	 * @param {object} panel - The panel object corresponding to the panel element.
 	 * @param {string} id - The unique identifier for the panel.
 	 * @returns {HTMLDivElement} - The created panel element.
@@ -156,7 +165,7 @@ export class ComicRenderer {
 
 	/**
 	 * Adds a title element to the ComicRenderer's main element.
-	 * 
+	 *
 	 * @param {string} title - The title to display.
 	 */
 	AddTitleElement(title) {

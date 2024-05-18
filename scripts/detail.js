@@ -5,19 +5,25 @@ import { ComicExporter } from "./modules/ComicExporter.js";
 
 /**
  * Initializes the comic rendering and script rendering components, and attaches event handlers to various UI elements in the application.
- * 
+ *
  * This function is called when the DOM content has finished loading. It performs the following tasks:
- * 
+ *
  * 1. Creates a new `ComicRenderer` instance and a new `ScriptRenderer` instance, passing in the appropriate DOM elements.
  * 2. Fetches the comic data from the server using the `comicId` variable.
  * 3. Processes the fetched data, including setting the prompt, loading the script and comic into the respective renderers, and attaching event handlers to various UI elements.
  */
 document.addEventListener("DOMContentLoaded", () => {
-	const comicRenderer = new ComicRenderer({ el: document.querySelector(".strip-container") });
-	const scriptRenderer = new ScriptRenderer({ el: document.querySelector("#script") });
+	const comicRenderer = new ComicRenderer({
+		el: document.querySelector(".strip-container"),
+	});
+	const scriptRenderer = new ScriptRenderer({
+		el: document.querySelector("#script"),
+	});
 
 	if (comicId) {
-		fetch('/api/detail/' + comicId + '/?c=' + (Math.floor(Math.random() * 100)))
+		fetch(
+			"/api/detail/" + comicId + "/?c=" + Math.floor(Math.random() * 100)
+		)
 			.then((response) => response.json())
 			.then((data) => {
 				console.log("Detail fetch result", data);
@@ -40,20 +46,24 @@ document.addEventListener("DOMContentLoaded", () => {
 
 				for (const [idx, panel] of script.panels.entries()) {
 					if (!Array.isArray(panel.dialog)) {
-						panel.dialog = [{ character: "alpha", text: panel.dialog }];
+						panel.dialog = [
+							{ character: "alpha", text: panel.dialog },
+						];
 					}
 					panel.images = [];
 					if (backgrounds[idx])
 						panel.images.push({
-							url: "https://zeta-comic-generator.s3.us-east-2.amazonaws.com/backgrounds/" + backgrounds[idx],
-							className: "background"
+							url:
+								"https://zeta-comic-generator.s3.us-east-2.amazonaws.com/backgrounds/" +
+								backgrounds[idx],
+							className: "background",
 						});
 					// TODO this should only push the image with the character name, not call GetActionImageData
 					panel.images.push({
 						url: "/assets/character_art/" + panel.action + ".png",
 						className: "character",
 						character: "alpha",
-						action: panel.action
+						action: panel.action,
 					});
 				}
 
@@ -78,81 +88,95 @@ document.addEventListener("DOMContentLoaded", () => {
  * and opening social media share windows.
  */
 function AttachUiEvents() {
-
 	const UIevents = [
 		{
 			selector: "#download-ig",
 			event: "click",
-			handler: () => ComicExporter.DownloadComic(comicRenderer, "panel")
+			handler: () => ComicExporter.DownloadComic(comicRenderer, "panel"),
 		},
 		{
 			selector: "#download-strip",
 			event: "click",
-			handler: () => ComicExporter.DownloadComic(comicRenderer, "strip")
+			handler: () => ComicExporter.DownloadComic(comicRenderer, "strip"),
 		},
 		{
 			selector: "#share",
 			event: "click",
 			handler: () => {
-				const dialog = document.getElementById('sharedialog');
-				dialog.classList[dialog.classList.contains('active') ? 'remove' : 'add']('active');
-			}
+				const dialog = document.getElementById("sharedialog");
+				dialog.classList[
+					dialog.classList.contains("active") ? "remove" : "add"
+				]("active");
+			},
 		},
 		{
 			selector: "#download",
 			event: "click",
 			handler: () => {
 				// First, reload the background images via proxy so html2canvas can use them.
-				const backgrounds = document.querySelectorAll('.background');
-				backgrounds.forEach(background => {
+				const backgrounds = document.querySelectorAll(".background");
+				backgrounds.forEach((background) => {
 					// console.log("changing background to", '/api/imgproxy/?url=' + background.src)
-					background.src = '/api/imgproxy/?url=' + background.src;
+					background.src = "/api/imgproxy/?url=" + background.src;
 				});
 				// Open the dialog.
-				const dialog = document.getElementById('downloaddialog');
-				dialog.classList[dialog.classList.contains('active') ? 'remove' : 'add']('active');
-			}
+				const dialog = document.getElementById("downloaddialog");
+				dialog.classList[
+					dialog.classList.contains("active") ? "remove" : "add"
+				]("active");
+			},
 		},
 		{
 			selector: ".dialog",
 			event: "click",
-			handler: (e) => e.stopPropagation()
+			handler: (e) => e.stopPropagation(),
 		},
 		{
 			selector: ".dialog-wrapper",
 			event: "click",
 			handler: (e) => {
 				e.stopPropagation();
-				e.target.classList.remove('active');
-			}
+				e.target.classList.remove("active");
+			},
 		},
 		{
 			selector: ".dialog .close",
 			event: "click",
-			handler: (e) => e.target.parentElement.parentElement.classList.remove('active')
+			handler: (e) =>
+				e.target.parentElement.parentElement.classList.remove("active"),
 		},
 		{
 			selector: "#shareurl",
 			event: "focus",
-			handler: (e) => e.target.select()
+			handler: (e) => e.target.select(),
 		},
 		{
 			selector: "#cpshare",
 			event: "click",
 			handler: (e) => {
-				let btnEl = document.getElementById('cpshare');
-				btnEl.setAttribute('disabled', '');
-				navigator.clipboard.writeText(document.getElementById('shareurl').value);
-				setTimeout(() => btnEl.removeAttribute('disabled'), 3000);
-			}
+				let btnEl = document.getElementById("cpshare");
+				btnEl.setAttribute("disabled", "");
+				navigator.clipboard.writeText(
+					document.getElementById("shareurl").value
+				);
+				setTimeout(() => btnEl.removeAttribute("disabled"), 3000);
+			},
 		},
 		{
 			selector: "#twshare",
 			event: "click",
 			handler: (e) => {
 				event.preventDefault();
-				window.open("https://twitter.com/share?text=" + GetShareMessage() + "&url=" + encodeURIComponent(document.getElementById('shareurl').value) + "&hashtags=ai,AIart,generativeart,dalle2,openai");
-			}
+				window.open(
+					"https://twitter.com/share?text=" +
+						GetShareMessage() +
+						"&url=" +
+						encodeURIComponent(
+							document.getElementById("shareurl").value
+						) +
+						"&hashtags=ai,AIart,generativeart,dalle2,openai"
+				);
+			},
 		},
 		{
 			selector: "#fbshare",
@@ -160,20 +184,22 @@ function AttachUiEvents() {
 			handler: (e) => {
 				event.preventDefault();
 				window.open(
-					"https://www.facebook.com/sharer/sharer.php?u=" + encodeURIComponent(document.getElementById('shareurl').value),
-					'Facebook',
+					"https://www.facebook.com/sharer/sharer.php?u=" +
+						encodeURIComponent(
+							document.getElementById("shareurl").value
+						),
+					"Facebook",
 					`scrollbars=no,resizable=no,status=no,location=no,toolbar=no,menubar=no,width=600,height=300,left=100,top=100`
 				);
-			}
-		}
+			},
+		},
 	];
 
 	for (const event of UIevents) {
-		document.querySelectorAll(event.selector).forEach(el => {
+		document.querySelectorAll(event.selector).forEach((el) => {
 			el.addEventListener(event.event, event.handler);
 		});
 	}
-
 }
 
 /**

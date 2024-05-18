@@ -3,7 +3,7 @@
  * @author Matthew Wilber
  * @license GPL-3.0
  * @version 1.0.0
- * 
+ *
  * A static class with functions to export a rendered Zeta Comic Generator comic as images.
  * This class requires html2canvas (html2canvas.hertzen.com) available in global scope.
  */
@@ -28,15 +28,21 @@ export class ComicExporter {
 			case "panel":
 				for (const [idx, panel] of panels.entries()) {
 					let download = await this.RenderPanelAsDataUrl(
-						panel.panelEl, {
+						panel.panelEl,
+						{
 							title: idx === 0 ? title : "",
 							url: idx === 2 ? url : "",
-						});
+						}
+					);
 					this.DownloadImageData(download, fileName, "_" + idx);
 				}
 				break;
 			case "strip":
-				let download = await this.RenderStripAsDataUrl(renderer.el, {prompt, title, url});
+				let download = await this.RenderStripAsDataUrl(renderer.el, {
+					prompt,
+					title,
+					url,
+				});
 				this.DownloadImageData(download, fileName, "");
 				break;
 			default:
@@ -79,10 +85,7 @@ export class ComicExporter {
 
 		output.innerHTML = panel.outerHTML;
 
-		let canvas = await html2canvas(
-			output,
-			{ scale: 1 }
-		);
+		let canvas = await html2canvas(output, { scale: 1 });
 
 		// Cleanup the output copy
 		setTimeout(() => output.remove(), 1000);
@@ -129,12 +132,11 @@ export class ComicExporter {
 
 		output.innerHTML = strip.outerHTML;
 		output.querySelector("#strip-title").remove();
-		output.querySelectorAll(".strip-controls button").forEach((button) => button.remove());
+		output
+			.querySelectorAll(".strip-controls button")
+			.forEach((button) => button.remove());
 
-		let canvas = await html2canvas(
-			output,
-			{ scale: 1 }
-		);
+		let canvas = await html2canvas(output, { scale: 1 });
 
 		// Cleanup the output copy
 		setTimeout(() => output.remove(), 1000);

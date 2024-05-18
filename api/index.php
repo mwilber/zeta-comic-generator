@@ -39,8 +39,8 @@
 	// AI Prompts
 	require __DIR__ . '/includes/prompts.php';
 
-    // AI Models
-    require __DIR__ . '/models/gpt.php';
+	// AI Models
+	require __DIR__ . '/models/gpt.php';
 	require __DIR__ . '/models/gem.php';
 	require __DIR__ . '/models/ttn.php';
 	require __DIR__ . '/models/dall.php';
@@ -58,15 +58,15 @@
 			break;
 		// Comic Generation API endpoints
 		case 'script':
-        case 'background':
-        case 'action':
+		case 'background':
+		case 'action':
 			if (SIMULATION_MODE) {
 				require __DIR__ . '/controllers/simulatetext.php';
 			} else {
 				require __DIR__ . '/controllers/generatetext.php';
 			}
-            break;
-        case 'image':					
+			break;
+		case 'image':					
 			if (SIMULATION_MODE) {
 				require __DIR__ . '/controllers/simulateimage.php';
 			} else {
