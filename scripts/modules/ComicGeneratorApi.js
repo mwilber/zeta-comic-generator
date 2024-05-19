@@ -140,7 +140,7 @@ export class ComicGeneratorApi {
 	 * @returns {Promise<Object>} - An object with an `error` property indicating whether the background image was successfully drawn.
 	 */
 	async DrawBackground(params, panel, idx) {
-		const { model } = params || {};
+		const { model, style } = params || {};
 		if (this.PercentComplete < 30) {
 			console.log(
 				"ComicGenerator: Scene backgrounds not written yet. Call WriteBackground first."
@@ -152,6 +152,7 @@ export class ComicGeneratorApi {
 			const result = await this.fetchApi("image", {
 				model: model || this.defaultImageModel,
 				query: panel.background,
+				style: style || "",
 			});
 			if (!result || result.error || !result.json || !result.json.url)
 				return { error: "Background image not returned." };

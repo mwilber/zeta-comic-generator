@@ -116,6 +116,7 @@ async function GenerateStrip() {
 		.replace(/\u0000/g, "\\0");
 	const textModel = document.getElementById("script-model").value;
 	const imageModel = document.getElementById("image-model").value;
+	const imageStyle = document.getElementById("image-style").value;
 
 	let script = await api.WriteScript(safeQuery, { model: textModel });
 	if (!script || script.error) {
@@ -127,7 +128,7 @@ async function GenerateStrip() {
 		SetStatus("error");
 		return;
 	}
-	let image = await api.DrawBackgrounds({ model: imageModel });
+	let image = await api.DrawBackgrounds({ model: imageModel, style: imageStyle });
 	if (!image || image.error) {
 		SetStatus("error");
 		return;
