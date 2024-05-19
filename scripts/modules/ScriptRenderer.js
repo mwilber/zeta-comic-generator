@@ -2,7 +2,6 @@
  * @file ScriptRenderer.js
  * @author Matthew Wilber
  * @license GPL-3.0
- * @version 1.0.0
  *
  * Renders script from Zeta Comic Generator (comicgenerator.greenzeta.com) as html.
  *

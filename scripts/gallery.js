@@ -1,3 +1,9 @@
+/**
+ * Fetches and displays a page of comic strip thumbnails in a gallery.
+ *
+ * @param {number} [pageNum=1] - The page number to fetch. Defaults to 1 if not provided.
+ * @returns {void}
+ */
 function PopGallery(pageNum) {
 	pageNum = pageNum || 1;
 	fetch(

@@ -2,7 +2,6 @@
  * @file ComicExporter.js
  * @author Matthew Wilber
  * @license GPL-3.0
- * @version 1.0.0
  *
  * A static class with functions to export a rendered Zeta Comic Generator comic as images.
  * This class requires html2canvas (html2canvas.hertzen.com) available in global scope.

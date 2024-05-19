@@ -2,7 +2,6 @@
  * @file DialogBalloon.js
  * @author Matthew Wilber
  * @license GPL-3.0
- * @version 1.0.0
  *
  * A static class with functions to render an image containing a cartoon dialog balloon.
  *

@@ -5,7 +5,6 @@ import { DialogBalloon } from "./DialogBalloon.js";
  * @file ComicRenderer.js
  * @author Matthew Wilber
  * @license GPL-3.0
- * @version 1.0.0
  *
  * Renders comic from Zeta Comic Generator (comicgenerator.greenzeta.com) as html.
  *

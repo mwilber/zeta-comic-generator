@@ -1,17 +1,44 @@
+/**
+ * @file ComicGeneratorApi.js
+ * @author Matthew Wilber
+ * @license GPL-3.0
+ * 
+ * The ComicGeneratorApi class is responsible for generating comic strips using AI-powered writing and drawing capabilities.
+ * It provides all of the methods necessary to interact with the Zeta Comic Generator php back-end: write the script, 
+ * generate background descriptions, draw the backgrounds, write the character actions, and draw the character actions.
+ * The class also handles saving the generated comic strip to the server.
+ *
+ * @param {object} params - An object containing parameters for the ComicGeneratorApi instance.
+ * @param {string} params.defaultTextModel - The default text model to use when writing the script. Uses "oai" if not provided.
+ * @param {string} params.defaultImageModel - The default image model to use when generating background descriptions. Uses "oai" if not provided.
+ * @param {function} params.onUpdate - A callback function that is called whenever the comic data is updated.
+ */
 import { CharacterAction } from "./CharacterAction.js";
 
 export class ComicGeneratorApi {
 	constructor(params) {
-		this.defaultTextModel = "oai";
+		this.defaultTextModel = params.defaultTextModel || "oai";
+		this.defaultImageModel = params.defaultImageModel || "oai";
 		this.onUpdate = params.onUpdate || null;
 		this.ClearComicData();
 	}
 
+	/**
+	 * Clears the comic and premise data.
+	 */
 	ClearComicData() {
 		this.comic = null;
 		this.premise = null;
 	}
 
+	/**
+	 * Generates a comic script using the api /script endpoint, using the provided premise and model parameters.
+	 *
+	 * @param {string} premise - The premise or topic for the comic script.
+	 * @param {object} params - An object containing the parameters for the comic script generation.
+	 * @param {string} [params.model] - The model to use for the comic script generation. If not provided, the default text model will be used.
+	 * @returns {Promise<Object>} - The generated comic script, or an error object if the script could not be generated.
+	 */
 	async WriteScript(premise, params) {
 		const { model } = params || {};
 		let result = await this.fetchApi("script", {
@@ -44,6 +71,14 @@ export class ComicGeneratorApi {
 		return this.comic;
 	}
 
+	/**
+	 * Generates background descriptions for each panel in the comic, using the /backgrounds api endpoint.
+	 * Background descriptios are passed as the prompt when generating background images.
+	 * 
+	 * @param {Object} params - The parameters for writing the background.
+	 * @param {string} [params.model] - The text model to use for generating the background descriptions.
+	 * @returns {Promise<Object>} - The updated comic object with the background descriptions.
+	 */
 	async WriteBackground(params) {
 		const { model } = params || {};
 		if (this.PercentComplete < 10) {
@@ -78,6 +113,13 @@ export class ComicGeneratorApi {
 		return this.comic;
 	}
 
+	/**
+	 * Helper function to draw the backgrounds for each panel in the comic.
+	 * Asynchronously calls DrawBackground() for each panel.
+	 *
+	 * @param {Object} params - The parameters for drawing the backgrounds.
+	 * @returns {Promise<Object>} The updated comic object.
+	 */
 	async DrawBackgrounds(params) {
 		for (const [idx, panel] of this.comic.panels.entries()) {
 			let result = await this.DrawBackground(params, panel, idx);
@@ -89,6 +131,14 @@ export class ComicGeneratorApi {
 		return this.comic;
 	}
 
+	/**
+	 * Draws the background image for a panel in the comic using the api /image endpoint.
+	 *
+	 * @param {object} params - The parameters for the comic generation.
+	 * @param {object} panel - The panel object containing the background description.
+	 * @param {number} idx - The index of the panel in the comic.
+	 * @returns {Promise<Object>} - An object with an `error` property indicating whether the background image was successfully drawn.
+	 */
 	async DrawBackground(params, panel, idx) {
 		const { model } = params || {};
 		if (this.PercentComplete < 30) {
@@ -100,7 +150,7 @@ export class ComicGeneratorApi {
 		// If the panel has a background description, go ahead with the AI render
 		if (panel.background) {
 			const result = await this.fetchApi("image", {
-				model: model || this.defaultTextModel,
+				model: model || this.defaultImageModel,
 				query: panel.background,
 			});
 			if (!result || result.error || !result.json || !result.json.url)
@@ -121,6 +171,17 @@ export class ComicGeneratorApi {
 		}
 	}
 
+	/**
+	 * Writes the action for each panel in the comic using the api /action endpoint.
+	 * Available actions are single words associated with individual character art images.
+	 * The action word is determined via the api pased on available character art.
+	 * 
+	 * This function calls DrawAction().
+	 *
+	 * @param {Object} params - The parameters for the write action.
+	 * @param {Object} [params.model] - The text model to use for the action.
+	 * @returns {Promise<Object>} - The updated comic object.
+	 */
 	async WriteAction(params) {
 		const { model } = params || {};
 		if (this.PercentComplete < 10) {
@@ -158,6 +219,13 @@ export class ComicGeneratorApi {
 		return this.comic;
 	}
 
+	/**
+	 * Inserts character art image into the comic script based on the action keyword 
+	 * associated with each panel. Defaults to the "standing" action if the panel
+	 * does not condain a valid action.
+	 * 
+	 * This method is called automatically in the `WriteAction()` method.
+	 */
 	async DrawAction() {
 		if (this.PercentComplete < 95) {
 			console.log(
@@ -180,6 +248,13 @@ export class ComicGeneratorApi {
 		}
 	}
 
+	/**
+	 * Gets the URL of the panel image for the specified panel index and image type.
+	 *
+	 * @param {number} panelIdx - The index of the panel.
+	 * @param {string} type - The type of the image (e.g. "background").
+	 * @returns {string} The URL of the panel image, or an empty string if the image is not found.
+	 */
 	GetPanelImageUrl(panelIdx, type) {
 		if (
 			!this.comic ||
@@ -197,10 +272,14 @@ export class ComicGeneratorApi {
 		return "";
 	}
 
+	/**
+	 * Saves the current comic strip to the server using the /save endpoint.
+	 * @returns {Promise<Object>} The result of the save operation.
+	 */
 	async SaveStrip() {
 		let scriptExport = JSON.parse(JSON.stringify(this.comic));
 		// Clear out images, they'll be saved seperately.
-		for(let panel of scriptExport.panels){
+		for (let panel of scriptExport.panels) {
 			panel.images = [];
 		}
 		const fetchParams = {
@@ -223,6 +302,12 @@ export class ComicGeneratorApi {
 		return result;
 	}
 
+	/**
+	 * Calculates the overall progress of the comic generation process based on
+	 * populated properties of the comic object.
+	 * 
+	 * @returns {number} The overall progress as a percentage.
+	 */
 	PercentComplete() {
 		let progress = 0;
 		if (!this.comic || !this.comic.panels || !this.comic.panels.length)
@@ -241,6 +326,13 @@ export class ComicGeneratorApi {
 		return progress;
 	}
 
+	/**
+	 * Fetches data from the API with the given action and data.
+	 *
+	 * @param {string} action - The API action to perform.
+	 * @param {Object} data - The data to send with the API request.
+	 * @returns {Promise<Object>} - The response data from the API, or an error object if the request fails.
+	 */
 	async fetchApi(action, data) {
 		let uri = "/api/" + action + "/?c=" + Math.floor(Math.random() * 100);
 

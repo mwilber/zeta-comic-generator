@@ -2,7 +2,6 @@
  * @file CharacterAction.js
  * @author Matthew Wilber
  * @license GPL-3.0
- * @version 1.0.0
  *
  * A static helper class with functions to generate character action metadata for Zeta Comic Generator.
  * Each action corresponds to a character image in the Zeta Comic Generator. For a list of action images,
