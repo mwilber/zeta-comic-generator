@@ -1,18 +1,18 @@
 <?php
 class ModelGemini {
-    function __construct() {
-        $this->modelName = "gemini-pro";
+	function __construct() {
+		$this->modelName = "gemini-pro";
 		$this->apiUrl = "https://generativelanguage.googleapis.com/v1beta/models/".$this->modelName.":generateContent?key=";
-        $this->apiKey = GOOGLE_KEY;
-    }
+		$this->apiKey = GOOGLE_KEY;
+	}
 
 	function sendPrompt($prompt) {
 		$result = new stdClass;
-        $response = $this->textComplete($prompt);
-        $json = json_decode($response);
+		$response = $this->textComplete($prompt);
+		$json = json_decode($response);
 		$result->data = $json;
 
-        $result->error = $json->error;
+		$result->error = $json->error;
 	
 		if(isset($json->candidates[0]->content->parts[0]->text)) {
 			$script = trim($json->candidates[0]->content->parts[0]->text);

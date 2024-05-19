@@ -138,11 +138,11 @@ function ClearElements() {
 		"permalink",
 	].forEach((id) => (document.getElementById(id).innerHTML = ""));
 
-    document.querySelector(".strip-container").innerHTML = `
-    <div id="panel1" class="panel"></div>
+	document.querySelector(".strip-container").innerHTML = `
+	<div id="panel1" class="panel"></div>
 	<div id="panel2" class="panel"></div>
 	<div id="panel3" class="panel"></div>
-    `;
+	`;
 
 	["save", "permalink"].forEach(
 		(id) => (document.getElementById(id).style.display = null)

@@ -62,10 +62,10 @@
 
 	gtag('config', 'G-3PESRSPTLD');
 	</script>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title><?php echo $meta->siteTitle; ?></title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title><?php echo $meta->siteTitle; ?></title>
 
 	<meta property="og:url" content="<?php echo $meta->url; ?>">
 	<meta property="og:type" content="website">
@@ -85,7 +85,7 @@
 	<meta name="twitter:image" content="<?php echo $meta->image; ?>">
 	<meta name="twitter:image:alt" content="<?php echo $meta->imageDescription; ?>">
 
-    <link rel="stylesheet" href="/style.css?v=<?php echo $version ?>">
+	<link rel="stylesheet" href="/style.css?v=<?php echo $version ?>">
   </head>
   <body class="<?php echo $path[1] ?>" data-status="ready">
 	<div class="halftone"></div>
@@ -100,7 +100,7 @@
 		switch ($path[1]) {
 
 			case 'about':
-            case 'detail':
+			case 'detail':
 			case 'gallery':
 			case 'generate':
 				require __DIR__ . '/views/'.$path[1].'.php';

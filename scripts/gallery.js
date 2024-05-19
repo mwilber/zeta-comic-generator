@@ -17,11 +17,11 @@ function PopGallery(pageNum) {
 				let frameEl = document.createElement("div");
 				frameEl.className = "frame";
 				frameEl.innerHTML += `
-                    <a class="strip" href="/detail/${strip.id}">
-                        <img src="https://zeta-comic-generator.s3.us-east-2.amazonaws.com/thumbnails/thumb_${strip.id}.png"/>
-                        <h3>${strip.title}</h3>
-                    </a>
-                `;
+					<a class="strip" href="/detail/${strip.id}">
+						<img src="https://zeta-comic-generator.s3.us-east-2.amazonaws.com/thumbnails/thumb_${strip.id}.png"/>
+						<h3>${strip.title}</h3>
+					</a>
+				`;
 				galleryEl.appendChild(frameEl);
 			}
 			if (24 * pageNum < listing.count) {
@@ -36,9 +36,9 @@ function PopGallery(pageNum) {
 					PopGallery(pageNum + 1);
 				});
 				moreBtn.innerHTML = `
-                    <img class="burst" src="/assets/images/speech_bubble.svg">
-                    <span class="cartoon-font">More</span>
-                `;
+					<img class="burst" src="/assets/images/speech_bubble.svg">
+					<span class="cartoon-font">More</span>
+				`;
 				actionRow.appendChild(moreBtn);
 				galleryEl.appendChild(actionRow);
 			}

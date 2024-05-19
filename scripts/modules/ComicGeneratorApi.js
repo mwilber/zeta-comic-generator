@@ -198,11 +198,11 @@ export class ComicGeneratorApi {
 	}
 
 	async SaveStrip() {
-        let scriptExport = JSON.parse(JSON.stringify(this.comic));
-        // Clear out images, they'll be saved seperately.
-        for(let panel of scriptExport.panels){
-            panel.images = [];
-        }
+		let scriptExport = JSON.parse(JSON.stringify(this.comic));
+		// Clear out images, they'll be saved seperately.
+		for(let panel of scriptExport.panels){
+			panel.images = [];
+		}
 		const fetchParams = {
 			prompt: this.premise,
 			title: this.comic.title,

@@ -5,23 +5,23 @@ $modelId = POSTval("model", "oai");
 $actionId = $controller;
 
 $characterActions = [
-    "angry",
-    "approval",
-    "creeping",
-    "disguised",
-    "enamored",
-    "explaining",
-    "joyous",
-    "running",
-    "santa_claus_costume",
-    "scifi_costume",
-    "selfie",
-    "sitting",
-    "standing",
-    "startled",
-    "teaching",
-    "terrified",
-    "typing"
+	"angry",
+	"approval",
+	"creeping",
+	"disguised",
+	"enamored",
+	"explaining",
+	"joyous",
+	"running",
+	"santa_claus_costume",
+	"scifi_costume",
+	"selfie",
+	"sitting",
+	"standing",
+	"startled",
+	"teaching",
+	"terrified",
+	"typing"
 ];
 $paramNames = [
 	"query",
@@ -32,39 +32,39 @@ $paramNames = [
 
 $params = array();
 foreach ($paramNames as $paramName) {
-    $paramVal = POSTval($paramName);
-    if ($paramVal) {
-        if ($paramName == "query") $paramVal = addPeriod($paramVal);
-        array_push($params, $paramVal);
-    }
+	$paramVal = POSTval($paramName);
+	if ($paramVal) {
+		if ($paramName == "query") $paramVal = addPeriod($paramVal);
+		array_push($params, $paramVal);
+	}
 }
 if ($actionId == "action") array_push($params, implode(", ", $characterActions));
 
 // Get the prompt
 $prompts = new Prompts();
 if(OUTPUT_DEBUG_DATA) {
-    $output->actionId = $actionId;
-    $output->params = $params;
+	$output->actionId = $actionId;
+	$output->params = $params;
 }
 $output->prompt = $prompts->generatePrompt($actionId, $params);
 
 if ($modelId) {
-    $model = null;
-    switch ($modelId) {
-        case "oai":
-            $model = new ModelGpt();
-            break;
+	$model = null;
+	switch ($modelId) {
+		case "oai":
+			$model = new ModelGpt();
+			break;
 		case "gem":
 			$model = new ModelGemini();
 			break;
 		case "ttn":
 			$model = new ModelTitan();
 			break;
-    }
+	}
 
 	if (!$model) {
-        $output->error = "Invalid model id";
-    } else {
+		$output->error = "Invalid model id";
+	} else {
 		// Record the model that was used
 		$output->model = $model->modelName;
 

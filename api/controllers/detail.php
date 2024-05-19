@@ -1,6 +1,6 @@
 <?php
-    $output->script = null;
-    $output->backgrounds = null;
+	$output->script = null;
+	$output->backgrounds = null;
 
 	$database = new Database();
 	$db = $database->getConnection();
@@ -24,7 +24,7 @@
 		$output->error = "ERROR: Could not execute the query. " . $e->getMessage();
 	}
 
-    if($output->script) $output->backgrounds = [];
+	if($output->script) $output->backgrounds = [];
 
 	try {
 		$stmt = $db->prepare("SELECT * FROM `backgrounds` WHERE comic_id = :id ORDER BY panel ASC");
