@@ -3,7 +3,7 @@
 	//ini_set('display_startup_errors', 1);
 	error_reporting(E_ERROR);
 
-	define("SIMULATION_MODE", true);
+	define("SIMULATION_MODE", false);
 	define("SIMULATE_ERRORS", false);
 
 	$request = $_SERVER['REQUEST_URI'];
@@ -79,7 +79,7 @@
 	}
 
 	// Randomly insert an error
-	if (SIMULATE_ERRORS && $controller && rand(0, 100) < 100) {
+	if (SIMULATE_ERRORS && $controller && rand(0, 100) < 50) {
 		$output->error = "Simulated error.";
 	}
 

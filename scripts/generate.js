@@ -73,14 +73,15 @@ function AttachUiEvents() {
 }
 
 async function GenerateStrip() {
+	const query = document.getElementById("query");
+	if(!query || !query.value || query.value.length > 140) return;
+	
 	comicRenderer.clear();
 	api.ClearComicData();
 	ClearElements();
 	UpdateProgress(0);
 	SetStatus("generating");
 
-	const query = document.getElementById("query");
-	//if(!query || !query.value || query.value.length > 140) return;
 	let safeQuery = query.value
 		.replace(/[\\"]/g, "\\$&")
 		.replace(/\u0000/g, "\\0");
