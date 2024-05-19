@@ -56,11 +56,7 @@ class ModelStableDiffusion {
 		return $result;
 	}
 
-<<<<<<< HEAD
-	function textToImage($prompt) {
-=======
-    function textToImage($prompt, $params) {
->>>>>>> master
+	function textToImage($prompt, $params) {
 
 		$titanSeed = rand(0, 2147483647);
 		$bedrockRuntimeClient = new BedrockRuntimeClient([
@@ -84,15 +80,9 @@ class ModelStableDiffusion {
 			'seed' => $titanSeed
 		];
 
-<<<<<<< HEAD
-		if ($style_preset) {
-			$request['style_preset'] = $style_preset;
+		if ($params) {
+			$request['style_preset'] = $params;
 		}
-=======
-        if ($params) {
-            $request['style_preset'] = $params;
-        }
->>>>>>> master
 
 		$result = $bedrockRuntimeClient->invokeModel([
 			'contentType' => 'application/json',
