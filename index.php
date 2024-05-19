@@ -24,6 +24,7 @@
 			$path[1] = 'home';
 		} else {
 			// Grab share metadata
+            require __DIR__ . '/api/includes/key.php';
 			require __DIR__ . '/api/includes/db.php';
 
 			$database = new Database();

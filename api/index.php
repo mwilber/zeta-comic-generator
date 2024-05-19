@@ -1,5 +1,9 @@
 <?php
 	/**
+     * IMPORTANT NOTE: This API requires the file /includes/key.php, which contains sensitive login
+     * credentials. See the file /includes/key_example.php if attempting to stand this up on
+     * your own server.
+     * 
 	 * This is the main entry point for the API. It handles routing requests to the appropriate 
 	 * controller based on the request URI.
 	 * 
@@ -43,8 +47,8 @@
 	header("Content-Type: application/json; charset=UTF-8");
 
 	// Global requires
-	require __DIR__ . '/includes/db.php';
 	require __DIR__ . '/includes/key.php';
+	require __DIR__ . '/includes/db.php';
 	require __DIR__ . '/includes/s3.php';
 	require __DIR__ . '/../vendor/autoload.php';
 
