@@ -21,7 +21,7 @@
 	<?php foreach ($rows as $row): ?>
 		<div class="frame">
 			<a class="strip" href="/detail/<?php echo $row["permalink"] ?>">
-				<img src="https://zeta-comic-generator.s3.us-east-2.amazonaws.com/thumbnails/thumb_<?php echo $row["permalink"] ?>.png">
+				<img src=<?php echo BUCKET_URL ?>"/thumbnails/thumb_<?php echo $row["permalink"] ?>.png">
 				<h3><?php echo $row["title"] ?></h3>
 			</a>
 		</div>
@@ -40,10 +40,10 @@
 	<p class="description">
 		Zeta Comic Generator starts with a premise, a short description of what the comic should be about. 
 		Large Language Models at <a href="https://openai.com/product" target="_blank" rel="noopener noreferrer">OpenAI</a> 
-        use the premise to write a complete script for a three panel comic strip. 
+		use the premise to write a complete script for a three panel comic strip. 
 		The model then elaborates on a scene description for each panel. 
 		That description is sent to the <a href="https://openai.com/dall-e-2" target="_blank" rel="noopener noreferrer">Dall-E</a> 
-        image generator to render a background image. 
+		image generator to render a background image. 
 		Finally the model selects from a list of <a href="/about#character-art">character actions</a>, each one representing an image of 
 		<a href="https://greenzeta.com/project/illustrations/" target="_blank" rel="noopener noreferrer">Alpha Zeta</a>, 
 		the alien mascot of <a href="https://greenzeta.com" target="_blank" rel="noopener noreferrer">GreenZeta.com</a>. 

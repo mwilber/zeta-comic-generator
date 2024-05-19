@@ -1,4 +1,13 @@
 <?php
+/**
+ * Used only when the global constant SIMULATION_MODE is set to `true`.
+ * 
+ * Simulates a remote API response by pausing execution for 2 seconds, then
+ * populates the $output object with the simulated response data.
+ *
+ * Provides response identical to `generateimage.php`.
+ */
+
 // pause execution for 2 seconds to simulate the remote API response
 sleep(2);
 
@@ -9,7 +18,7 @@ $output->model = "simulation";
 $output->error = "";
 
 $output->data = new stdClass;
-$output->data->url = "https://zeta-comic-generator.s3.us-east-2.amazonaws.com/backgrounds/66397bcbcaab1.png";
+$output->data->url = BUCKET_URL."/backgrounds/66397bcbcaab1.png";
 
 $output->json = $output->data;
 ?>

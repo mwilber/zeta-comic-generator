@@ -1,23 +1,26 @@
 <?php
+/**
+ * Provides functionality for interacting with the OpenAI REST API to generate text completions.
+ */
 class ModelGpt {
-    function __construct() {
-        //define("OAI_MODEL", "gpt-3.5-turbo-16k");
-	    //define("OAI_MODEL", "gpt-4");
-        $this->modelName = "gpt-4-1106-preview";
+	function __construct() {
+		//define("OAI_MODEL", "gpt-3.5-turbo-16k");
+		//define("OAI_MODEL", "gpt-4");
+		$this->modelName = "gpt-4-1106-preview";
 		$this->apiUrl = "https://api.openai.com/v1/chat/completions";
-        $this->apiKey = OPENAI_KEY;
-    }
+		$this->apiKey = OPENAI_KEY;
+	}
 
-    function sendPrompt($prompt) {
-        
-        $result = new stdClass;
-        $response = $this->textComplete($this->apiKey, $prompt);
-        $json = json_decode($response);
+	function sendPrompt($prompt) {
+		
+		$result = new stdClass;
+		$response = $this->textComplete($this->apiKey, $prompt);
+		$json = json_decode($response);
 		$result->data = $json;
 
-        $result->error = $json->error;
+		$result->error = $json->error;
 
-        if(isset($json->choices[0]->message->content)) {
+		if(isset($json->choices[0]->message->content)) {
 			$script = trim($json->choices[0]->message->content);
 			$script = str_replace("\\n", "", $script);
 			$script = str_replace("\\r", "", $script);
@@ -29,10 +32,10 @@ class ModelGpt {
 			$result->debug = $script;
 			if($jscript) $result->json = $jscript;
 		}
-        return $result;
-    }
+		return $result;
+	}
 
-    function textComplete($key, $prompt) {
+	function textComplete($key, $prompt) {
 
 		$response = new stdClass;
 		$response->data = null;
@@ -48,7 +51,7 @@ class ModelGpt {
 		curl_setopt($ch, CURLOPT_HEADER, 0);
 		$body = '{
 			"model": "'.$this->modelName.'",
-            "response_format": { "type": "json_object" },
+			"response_format": { "type": "json_object" },
 			"messages": [
 				{
 					"role": "user",

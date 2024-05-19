@@ -1,29 +1,32 @@
 <?php
+/**
+ * Provides functionality for interacting with the OpenAI REST API to generate images.
+ */
 class ModelDallE {
-    function __construct() {
-        $this->modelName = "dall-e-3";
+	function __construct() {
+		$this->modelName = "dall-e-3";
 		$this->apiUrl = "https://api.openai.com/v1/images/generations";
-        $this->apiKey = OPENAI_KEY;
+		$this->apiKey = OPENAI_KEY;
 		$this->imageSize = "1024x1024";
-    }
+	}
 
-    function sendPrompt($prompt) {
-        
-        $result = new stdClass;
-        $response = $this->textToImage($prompt);
-        $json = json_decode($response);
+	function sendPrompt($prompt) {
+		
+		$result = new stdClass;
+		$response = $this->textToImage($prompt);
+		$json = json_decode($response);
 		$result->data = $json;
 
-        $result->error = $json->error;
+		$result->error = $json->error;
 
 		if (isset($json->data[0])) {
 			$result->json = $json->data[0];
 		}
 
-        return $result;
-    }
+		return $result;
+	}
 
-    function textToImage($prompt) {
+	function textToImage($prompt) {
 
 		$ch = curl_init();
 		$headers = array(

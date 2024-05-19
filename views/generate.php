@@ -26,24 +26,24 @@
 					<div class="select">
 						<select name="image-model" id="image-model">
 							<option value="oai" selected>Dall-E 3</option>
-                            <option value="sdf">Stable Diffusion XL</option>
+							<option value="sdf">Stable Diffusion XL</option>
 							<option value="ttn">Titan Image (preview)</option>
 						</select>
 					</div>
 				</label>
-                <label id="image-style-label" style="display:none;">
+				<label id="image-style-label" style="display:none;">
 					Image Style
 					<div class="select">
 						<select name="image-style" id="image-style">
 							<option value="" selected>(default)</option>
-                            <option value="anime">Anime</option>
+							<option value="anime">Anime</option>
 							<option value="cinematic">Cinematic</option>
-                            <option value="comic-book">Comic Book</option>
-                            <option value="fantasy-art">Fantasy</option>
-                            <option value="low-poly">Low Poly</option>
-                            <option value="neon-punk">Neon Punk</option>
-                            <option value="origami">Origami</option>
-                            <option value="photographic">Photographic</option>
+							<option value="comic-book">Comic Book</option>
+							<option value="fantasy-art">Fantasy</option>
+							<option value="low-poly">Low Poly</option>
+							<option value="neon-punk">Neon Punk</option>
+							<option value="origami">Origami</option>
+							<option value="photographic">Photographic</option>
 						</select>
 					</div>
 				</label>
@@ -68,10 +68,11 @@
 	<div class="strip-wrapper">
 		<h2>Composite</h2>
 		<div id="strip">
-			<div id="panel1" class="panel"></div>
-			<div id="panel2" class="panel"></div>
-			<div id="panel3" class="panel"></div>
-            <h3 id="strip-title"></h3>
+			<div class="strip-container">
+				<div id="panel1" class="panel"></div>
+				<div id="panel2" class="panel"></div>
+				<div id="panel3" class="panel"></div>
+			</div>
 			<div class="strip-controls">
 				<button id="save" class="cartoon-button">
 					<img class="burst" src="/assets/images/speech_bubble.svg" />
@@ -87,5 +88,4 @@
 	</div>
 </div>
 
-<script type="text/javascript" src="/scripts/dialog.js?v=<?php echo $version ?>"></script>
-<script type="text/javascript" src="/scripts/generate.js?v=<?php echo $version ?>"></script>
+<script defer type="module" src="/scripts/generate.js?v=<?php echo $version ?>"></script>

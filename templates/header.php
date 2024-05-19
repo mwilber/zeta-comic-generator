@@ -1,7 +1,7 @@
 <header>
-    <a href="/">
-	    <img class="brand" src="/assets/images/brand.svg" />
-    </a>
+	<a href="/">
+		<img class="brand" src="/assets/images/brand.svg" />
+	</a>
 	<nav>
 		<a href="/generate" class="cartoon-button">
 			<img class="burst" src="/assets/images/burst.svg" />

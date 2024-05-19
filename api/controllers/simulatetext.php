@@ -1,4 +1,13 @@
 <?php
+/**
+ * Used only when the global constant SIMULATION_MODE is set to `true`.
+ * 
+ * Simulates a remote API response by pausing execution for 1 second, and then
+ * generates a simulated response based on the provided action ID.
+ *
+ * Provides response identical to `generatetext.php`.
+ */
+
 // pause execution for 1 second to simulate the remote API response
 sleep(1);
 
@@ -12,9 +21,9 @@ $output->error = "";
 $output->data = new stdClass;
 
 switch ($actionId) {
-    case "script":
-        $output->data = json_decode("{\"title\": \"A Simulated Comic\",\"panels\": [{\"scene\": \"Panel 1 Scene.\",\"dialog\": \"I'm saying something.\"},{\"scene\": \"Panel 2 Scene.\",\"dialog\": \"I'm saying something else.\"},{\"scene\": \"Panel 3 Scene.\",\"dialog\": \"I'm saying a punch line.\"}]}");
-        break;
+	case "script":
+		$output->data = json_decode("{\"title\": \"A Simulated Comic\",\"panels\": [{\"scene\": \"Panel 1 Scene.\",\"dialog\": \"I'm saying something.\"},{\"scene\": \"Panel 2 Scene.\",\"dialog\": \"I'm saying something else.\"},{\"scene\": \"Panel 3 Scene.\",\"dialog\": \"I'm saying a punch line.\"}]}");
+		break;
 	case "background":
 		$output->data->descriptions = ["A simulated background.","A simulated background.","A simulated background."];
 		break;

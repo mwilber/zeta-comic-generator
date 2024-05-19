@@ -174,7 +174,7 @@
 
 
 	//$output = json_decode('{"response": {}, "error": null}');
-    $output->response = new stdClass;
+	$output->response = new stdClass;
 
 	$database = new Database();
 	$db = $database->getConnection();
