@@ -1,4 +1,7 @@
 <?php
+/**
+ * Provides functionality for interacting with the OpenAI REST API to generate text completions.
+ */
 class ModelGpt {
 	function __construct() {
 		//define("OAI_MODEL", "gpt-3.5-turbo-16k");

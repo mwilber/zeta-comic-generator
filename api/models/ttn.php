@@ -1,4 +1,7 @@
 <?php
+/**
+ * Provides functionality for interacting with the Amazon Bedrock Titan API to generate text completions or images.
+ */
 use Aws\BedrockRuntime\BedrockRuntimeClient;
 
 class ModelTitan {

@@ -1,4 +1,7 @@
 <?php
+/**
+ * Provides functionality for interacting with the OpenAI REST API to generate images.
+ */
 class ModelDallE {
 	function __construct() {
 		$this->modelName = "dall-e-3";

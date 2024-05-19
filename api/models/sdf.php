@@ -1,4 +1,7 @@
 <?php
+/**
+ * Provides functionality for interacting with the Amazon Bedrock StableDiffusion API to generate images.
+ */
 use Aws\BedrockRuntime\BedrockRuntimeClient;
 
 class ModelStableDiffusion {

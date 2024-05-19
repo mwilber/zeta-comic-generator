@@ -1,6 +1,3 @@
-import { CharacterAction } from "../CharacterAction.js";
-import { DialogBalloon } from "./DialogBalloon.js";
-
 /**
  * @file ComicRenderer.js
  * @author Matthew Wilber
@@ -13,6 +10,9 @@ import { DialogBalloon } from "./DialogBalloon.js";
  * @param {Object} params.script - Zeta Comic Generator script object containing the title, and panels.
  * @param {number} [params.size=512] - The size of the comic panels.
  */
+import { CharacterAction } from "./CharacterAction.js";
+import { DialogBalloon } from "./DialogBalloon.js";
+
 export class ComicRenderer {
 	constructor(params) {
 		const { el, script, size } = params;
@@ -193,6 +193,8 @@ export class ComicRenderer {
 	 * @returns {void}
 	 */
 	LoadScript(script) {
+		console.log("GZ ComicRenderer loading script");
+		console.log(script);
 		if (!this.validate(script)) return;
 
 		if (!script.title) {

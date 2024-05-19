@@ -1,4 +1,7 @@
 <?php
+/**
+ * Provides functionality for interacting with the Google REST API to generate text completions.
+ */
 class ModelGemini {
 	function __construct() {
 		$this->modelName = "gemini-pro";

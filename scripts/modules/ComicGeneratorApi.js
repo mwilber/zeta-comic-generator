@@ -13,7 +13,7 @@
  * @param {string} params.defaultImageModel - The default image model to use when generating background descriptions. Uses "oai" if not provided.
  * @param {function} params.onUpdate - A callback function that is called whenever the comic data is updated.
  */
-import { CharacterAction } from "./CharacterAction.js";
+import { CharacterAction } from "./ComicRenderer/CharacterAction.js";
 
 export class ComicGeneratorApi {
 	constructor(params) {
