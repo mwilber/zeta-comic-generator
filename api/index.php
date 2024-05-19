@@ -1,4 +1,16 @@
 <?php
+	/**
+	 * This is the main entry point for the API. It handles routing requests to the appropriate 
+	 * controller based on the request URI.
+	 * 
+	 * The script sets up the necessary environment, including error reporting, global constants, 
+	 * and required files. It then validates the request path and dispatches the request to the 
+	 * appropriate controller.
+	 * 
+	 * The script also handles simulating api access if the `SIMULATION_MODE` constant is set to 
+	 * `true` and simulating errors if the `SIMULATE_ERRORS` constant is set to `true`.
+	 */
+
 	ini_set('display_errors', 1);
 	//ini_set('display_startup_errors', 1);
 	error_reporting(E_ERROR);

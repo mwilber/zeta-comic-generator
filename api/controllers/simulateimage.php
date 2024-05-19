@@ -1,4 +1,13 @@
 <?php
+/**
+ * Used only when the global constant SIMULATION_MODE is set to `true`.
+ * 
+ * Simulates a remote API response by pausing execution for 2 seconds, then
+ * populates the $output object with the simulated response data.
+ *
+ * Provides response identical to `generateimage.php`.
+ */
+
 // pause execution for 2 seconds to simulate the remote API response
 sleep(2);
 
