@@ -46,7 +46,6 @@ try {
 	$output->count = $stmt->fetchColumn();
 
 	// Fetch a page of comics
-	
 	$stmt = $db->prepare("SELECT * FROM `comics` WHERE `gallery` = 1 ORDER BY timestamp DESC LIMIT :limit OFFSET :offset");
 	$stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
 	$stmt->bindParam(':offset', $offset, PDO::PARAM_INT);
@@ -57,6 +56,7 @@ try {
 		$strip = new stdClass;
 		$strip->id = $row["permalink"];
 		$strip->title = $row["title"];
+		$strip->thumbnail = BUCKET_URL."/thumbnails/thumb_".$row["permalink"].".png";
 
 		array_push($output->gallery, $strip);
 	}

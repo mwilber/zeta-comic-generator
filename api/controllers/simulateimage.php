@@ -18,7 +18,7 @@ $output->model = "simulation";
 $output->error = "";
 
 $output->data = new stdClass;
-$output->data->url = "https://zeta-comic-generator.s3.us-east-2.amazonaws.com/backgrounds/66397bcbcaab1.png";
+$output->data->url = BUCKET_URL."/backgrounds/66397bcbcaab1.png";
 
 $output->json = $output->data;
 ?>

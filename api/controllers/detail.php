@@ -105,7 +105,7 @@ try {
 
 	if ($result) {
 		foreach ($result as $record) {
-			array_push($output->backgrounds, $record['filename']);
+			array_push($output->backgrounds, BUCKET_URL."/backgrounds/".$record['filename']);
 		}
 	} else {
 		$output->error = "No background image record found with Comic ID: $output->id";

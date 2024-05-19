@@ -52,9 +52,7 @@ document.addEventListener("DOMContentLoaded", () => {
 					panel.images = [];
 					if (backgrounds[idx])
 						panel.images.push({
-							url:
-								"https://zeta-comic-generator.s3.us-east-2.amazonaws.com/backgrounds/" +
-								backgrounds[idx],
+							url: backgrounds[idx],
 							type: "background",
 						});
 					panel.images.push({

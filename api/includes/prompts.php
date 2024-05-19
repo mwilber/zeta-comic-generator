@@ -1,10 +1,19 @@
 <?php
 
+/**
+ * Provides functionality for generating AI prompts for the Zeta Comic Generator.
+ * 
+ * Prompts are stored in the `$prompts` property of the class as HereDoc strings 
+ * for easy editing:
+ * - `$prompts->script`: A heredoc string containing the instructions for generating the comic strip script.
+ * - `$prompts->background`: A heredoc string containing the instructions for generating the background descriptions.
+ * - `$prompts->action`: A heredoc string containing the instructions for generating the action descriptions.
+ */
 class Prompts {
 
-    function __construct() {
-        $this->prompts = new stdClass;
-        $this->prompts->script = <<<SCRIPT
+	function __construct() {
+		$this->prompts = new stdClass;
+		$this->prompts->script = <<<SCRIPT
         You are a cartoonist and humorist. Write the script for a three panel comic strip.
         In the comic strip our main character, a short green humaniod alien named Alpha Zeta, engages in the following premise: {p0}
         Include a detailed scene description and words spoken by the main character.
@@ -34,7 +43,7 @@ class Prompts {
         `dialog`: Words spoken by Alpha Zeta. He is the only character that speaks. Do not label the dialog with a character name. This can be an empty string if the character is not speaking.
         SCRIPT;
 
-        $this->prompts->background = <<<BACKGROUND
+		$this->prompts->background = <<<BACKGROUND
         You are a talented artist who draws background art for animated cartoons.
         The following describes three scenes in a cartoon featuring the character Alpha Zeta:
         - {p0}
@@ -59,7 +68,7 @@ class Prompts {
         - Do not reference a comic strip panel.
         BACKGROUND;
 
-        $this->prompts->action = <<<ACTION
+		$this->prompts->action = <<<ACTION
         You are a talented artist who directs animated cartoons.
         The following describes three scenes in a cartoon featuring the character Alpha Zeta:
         - {p0}
@@ -75,47 +84,67 @@ class Prompts {
             ]
         }
         ACTION;
-    }
+	}
 
-    function generatePrompt($action, $values) {
+	/**
+	 * Generates a prompt based on the provided action and values.
+	 *
+	 * @param string $action The action for which to generate the prompt.
+	 * @param array $values The values to replace placeholders in the prompt.
+	 * @return string The generated prompt, or an empty string if no prompt is defined for the given action.
+	 */
+	function generatePrompt($action, $values) {
 
-        if(!isset($this->prompts->$action)) {
-            return;
-        }
-    
-        $instructions = $this->arrayFromHeredoc($this->prompts->$action);
-        $prompt = "";
-    
-        // Loop through each instruction
-        foreach ($instructions as $instruction) {
-            // Loop through each value in the values array
-            foreach ($values as $index => $value) {
-                // Replace placeholders like {p0}, {p1}, etc., with corresponding values
-                $instruction = str_replace("{p{$index}}", $value, $instruction);
-            }
-            $prompt = $this->writePromptLine($prompt, $instruction);
-        }
-    
-        return $prompt;
-    }
-    
-    function writePromptLine($prompt, $line) {
-        if($line == "") return $prompt;
-        $newLine = "";
-        if($prompt != "") $newLine = "\\n";
-    
-        $newLine .= $line;
-    
-        return $prompt . $newLine;
-    }
-    
-    function arrayFromHeredoc($heredoc) {
-        $result = explode("\n", $heredoc);
-        foreach ($result as $key => $line) {
-            // Remove carriage return and new line characters
-            $result[$key] = str_replace(["\r", "\n"], '', $line);
-        }
-        return $result;
-    }
+		if(!isset($this->prompts->$action)) {
+			return;
+		}
+
+		$instructions = $this->arrayFromHeredoc($this->prompts->$action);
+		$prompt = "";
+
+		// Loop through each instruction
+		foreach ($instructions as $instruction) {
+			// Loop through each value in the values array
+			foreach ($values as $index => $value) {
+				// Replace placeholders like {p0}, {p1}, etc., with corresponding values
+				$instruction = str_replace("{p{$index}}", $value, $instruction);
+			}
+			$prompt = $this->writePromptLine($prompt, $instruction);
+		}
+
+		return $prompt;
+	}
+
+	/**
+	 * Adds a new line to the prompt, adding a new line character if the prompt is not empty.
+	 *
+	 * @param string $prompt The existing prompt text.
+	 * @param string $line The new line to append to the prompt.
+	 * @return string The updated prompt with the new line appended.
+	 */
+	function writePromptLine($prompt, $line) {
+		if($line == "") return $prompt;
+		$newLine = "";
+		if($prompt != "") $newLine = "\\n";
+
+		$newLine .= $line;
+
+		return $prompt . $newLine;
+	}
+
+	/**
+	 * Converts a heredoc string into an array of lines.
+	 *
+	 * @param string $heredoc The heredoc string to convert.
+	 * @return string[] An array of the lines in the heredoc string, with carriage return and newline characters removed.
+	 */
+	function arrayFromHeredoc($heredoc) {
+		$result = explode("\n", $heredoc);
+		foreach ($result as $key => $line) {
+			// Remove carriage return and new line characters
+			$result[$key] = str_replace(["\r", "\n"], '', $line);
+		}
+		return $result;
+	}
 }
 ?>
