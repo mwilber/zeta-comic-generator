@@ -29,6 +29,12 @@ export class ComicGeneratorApi {
 	ClearComicData() {
 		this.comic = null;
 		this.premise = null;
+		this.credits = {
+			script: "",
+			image: "",
+			background: "",
+			action: "",
+		};
 	}
 
 	/**
@@ -66,6 +72,9 @@ export class ComicGeneratorApi {
 		}
 		this.premise = premise;
 		this.comic = result.json;
+		// Add the credits to the script
+		this.comic.credits = this.credits;
+		this.credits.script = result.model;
 
 		this.onUpdate(this.comic, this.PercentComplete());
 		return this.comic;
@@ -108,6 +117,7 @@ export class ComicGeneratorApi {
 		for (const [idx, background] of result.json.descriptions.entries()) {
 			this.comic.panels[idx].background = background;
 		}
+		this.credits.background = result.model;
 
 		this.onUpdate(this.comic, this.PercentComplete());
 		return this.comic;
@@ -168,6 +178,7 @@ export class ComicGeneratorApi {
 				type: "background",
 				url: result.json.url,
 			});
+			this.credits.image = result.model;
 			return { error: false };
 		}
 	}
@@ -215,6 +226,8 @@ export class ComicGeneratorApi {
 		}
 
 		await this.DrawAction();
+
+		this.credits.action = result.model;
 
 		this.onUpdate(this.comic, this.PercentComplete());
 		return this.comic;
@@ -283,6 +296,7 @@ export class ComicGeneratorApi {
 		for (let panel of scriptExport.panels) {
 			panel.images = [];
 		}
+		
 		const fetchParams = {
 			prompt: this.premise,
 			title: this.comic.title,
