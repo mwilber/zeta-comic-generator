@@ -84,6 +84,9 @@ class Prompts {
             ]
         }
         ACTION;
+		$this->prompts->image = <<<IMAGE
+        In the style of an animated cartoon, draw the following: {p0}
+        IMAGE;
 	}
 
 	/**

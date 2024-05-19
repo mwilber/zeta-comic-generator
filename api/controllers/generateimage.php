@@ -25,7 +25,11 @@ if(!$query){
 	$query = "A grassy knoll";
 }
 
-$output->prompt = $query;
+$prompts = new Prompts();
+$params = array();
+array_push($params, $query);
+$output->prompt = $prompts->generatePrompt($controller, $params);
+//$output->prompt = $query;
 
 
 if ($modelId) {
