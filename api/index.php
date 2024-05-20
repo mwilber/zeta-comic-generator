@@ -1,7 +1,26 @@
 <?php
+	/**
+     * IMPORTANT NOTE: This API requires the file /includes/key.php, which contains sensitive login
+     * credentials. See the file /includes/key_example.php if attempting to stand this up on
+     * your own server.
+     * 
+	 * This is the main entry point for the API. It handles routing requests to the appropriate 
+	 * controller based on the request URI.
+	 * 
+	 * The script sets up the necessary environment, including error reporting, global constants, 
+	 * and required files. It then validates the request path and dispatches the request to the 
+	 * appropriate controller.
+	 * 
+	 * The script also handles simulating api access if the `SIMULATION_MODE` constant is set to 
+	 * `true` and simulating errors if the `SIMULATE_ERRORS` constant is set to `true`.
+	 */
+
 	ini_set('display_errors', 1);
-	// ini_set('display_startup_errors', 1);
+	//ini_set('display_startup_errors', 1);
 	error_reporting(E_ERROR);
+
+	define("SIMULATION_MODE", false);
+	define("SIMULATE_ERRORS", false);
 
 	$request = $_SERVER['REQUEST_URI'];
 	$path = explode('/', $request);
@@ -22,19 +41,26 @@
 			}
 		} 
 	}
-	// print_r($controller);
 
 	// Required headers
 	header("Access-Control-Allow-Origin: *");
 	header("Content-Type: application/json; charset=UTF-8");
 
 	// Global requires
-	require __DIR__ . '/includes/db.php';
 	require __DIR__ . '/includes/key.php';
-	require __DIR__ . '/includes/utility.php';
-	require __DIR__ . '/includes/gpt.php';
+	require __DIR__ . '/includes/db.php';
 	require __DIR__ . '/includes/s3.php';
 	require __DIR__ . '/../vendor/autoload.php';
+
+	// AI Prompts
+	require __DIR__ . '/includes/prompts.php';
+
+	// AI Models
+	require __DIR__ . '/models/gpt.php';
+	require __DIR__ . '/models/gem.php';
+	require __DIR__ . '/models/ttn.php';
+	require __DIR__ . '/models/dall.php';
+	require __DIR__ . '/models/sdf.php';
 
 	switch ($controller) {
 		// App API endpoints
@@ -50,19 +76,36 @@
 			require __DIR__ . '/controllers/'.$controller.'.php';
 			break;
 		// Comic Generation API endpoints
-		case 'image':					
 		case 'script':
 		case 'background':
-		case 'dialog':
 		case 'action':
-			$service = "oai";
-			if (isset($_POST['model'])) $service = $_POST['model'];
-			require __DIR__ . '/controllers/'. $service . "_" . $controller . '.php';
+			if (SIMULATION_MODE) {
+				require __DIR__ . '/controllers/simulatetext.php';
+			} else {
+				require __DIR__ . '/controllers/generatetext.php';
+			}
+			break;
+		case 'image':					
+			if (SIMULATION_MODE) {
+				require __DIR__ . '/controllers/simulateimage.php';
+			} else {
+				require __DIR__ . '/controllers/generateimage.php';
+			}
 			break;
 		default:
 			$output->error = "Action not avaialble.";
 			break;
 	}
 
+	// Randomly insert an error
+	if (SIMULATE_ERRORS && $controller && rand(0, 100) < 50) {
+		$output->error = "Simulated error.";
+	}
+
 	echo json_encode($output);
+
+	function POSTval($name, $default = "") {
+		if (isset($_POST[$name])) return $_POST[$name];
+		return $default;
+	}
 ?>

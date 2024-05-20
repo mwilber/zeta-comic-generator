@@ -5,17 +5,6 @@
 	function uploadS3($localPath, $fileName, $folderName) {
 
 		$keyName = basename($fileName); // e.g., 'image.jpg'
-
-		// // Download image
-		// $imageData = file_get_contents($remoteUrl);
-		// if ($imageData === false) {
-		// 	die('Failed to download image');
-		// }
-	
-		// // TODO: Store the image in its original folder
-		// // Temporarily save the file
-		// $tempFilePath = sys_get_temp_dir() . '/' . $keyName;
-		// file_put_contents($tempFilePath, $imageData);
 	
 		// Instantiate the S3 client with your AWS credentials
 		$s3Client = new S3Client([
@@ -49,7 +38,4 @@
 			return true;
 		}
 	}
-
-	//uploadS3('https://softwaretested.com/wp-content/uploads/2021/04/Testing.jpg', 'test.jpg', 'backgrounds/');
-	//https://zeta-comic-generator.s3.us-east-2.amazonaws.com/backgrounds/65d2236b73156.png
 ?>

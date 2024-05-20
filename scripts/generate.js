@@ -1,379 +1,266 @@
-var API_MODE = 'simulation';
-API_MODE = 'production';
+import { ComicGeneratorApi } from "./modules/ComicGeneratorApi.js";
+import { ComicRenderer } from "./modules/ComicRenderer/ComicRenderer.js";
+import { ScriptRenderer } from "./modules/ScriptRenderer.js";
 
-function ClearElements() {
-	[
-		'script',
-		'panel1',
-		'panel2',
-		'panel3',
-		'permalink'
-	].forEach((id) => document.getElementById(id).innerHTML = '');
+/**
+ * The main entry point for the comic generation application. This script sets up 
+ * the necessary components, attaches UI event handlers, and handles the logic for 
+ * generating and saving comic strips.
+ */
+let api, comicRenderer, scriptRenderer;
 
-	[
-		'save',
-		'permalink'
-	].forEach((id) => document.getElementById(id).style.display = null);
+/**
+ * Initializes the comic generation application when the DOM content has finished loading.
+ * This function sets up the ComicRenderer and ScriptRenderer instances, attaches UI event handlers,
+ * and sets the application status to "ready".
+ */
+document.addEventListener("DOMContentLoaded", () => {
+	comicRenderer = new ComicRenderer({
+		el: document.querySelector(".strip-container"),
+	});
+	scriptRenderer = new ScriptRenderer({
+		el: document.querySelector("#script"),
+	});
+	api = new ComicGeneratorApi({
+		onUpdate: (script, progress) => {
+			comicRenderer.LoadScript(script);
+			scriptRenderer.LoadScript(script);
+			UpdateProgress(progress || 0);
+		},
+	});
 
-	document.getElementById('save').removeAttribute('disabled');
+	AttachUiEvents();
+
+	SetStatus("ready");
+});
+
+/**
+ * Attaches event listeners to various UI elements in the application.
+ * This function sets up click, keyup, change, and paste event handlers for
+ * elements like the "generate" button, "save" button, "query" input field,
+ * and the "image-model" dropdown. The event handlers call functions like
+ * `GenerateStrip`, `SaveStrip`, and `SetCharCount` to handle user interactions.
+ */
+function AttachUiEvents() {
+	const UIevents = [
+		{
+			selector: "#generate",
+			event: "click",
+			handler: GenerateStrip,
+		},
+		{
+			selector: "#save",
+			event: "click",
+			handler: SaveStrip,
+		},
+		{
+			selector: "#query",
+			event: "keyup",
+			handler: SetCharCount,
+		},
+		{
+			selector: "#query",
+			event: "change",
+			handler: SetCharCount,
+		},
+		{
+			selector: "#query",
+			event: "paste",
+			handler: SetCharCount,
+		},
+		{
+			selector: "#image-model",
+			event: "change",
+			handler: (e) => {
+				console.log("target val", e.target.value);
+				const styleSelectGroup =
+					document.getElementById("image-style-label");
+				if (e.target.value === "sdf")
+					styleSelectGroup.style.display = "block";
+				else styleSelectGroup.style.display = "none";
+			},
+		},
+	];
+
+	for (const event of UIevents) {
+		document.querySelectorAll(event.selector).forEach((el) => {
+			el.addEventListener(event.event, event.handler);
+		});
+	}
 }
 
+/**
+ * Generates a comic strip based on the user's input query.
+ *
+ * This function is responsible for the entire comic generation process, including:
+ * - Retrieving the user's input query
+ * - Clearing any existing comic data and elements
+ * - Updating the progress and status
+ * - Generating the script, background, image, and action for the comic
+ * - Clearing the input query and displaying the save button
+ *
+ * @returns {Promise<void>} A Promise that resolves when the comic generation is complete.
+ */
+async function GenerateStrip() {
+	const query = document.getElementById("query");
+	if (!query || !query.value || query.value.length > 140) return;
+
+	comicRenderer.clear();
+	api.ClearComicData();
+	ClearElements();
+	UpdateProgress(0);
+	SetStatus("generating");
+
+	let safeQuery = query.value
+		.replace(/[\\"]/g, "\\$&")
+		.replace(/\u0000/g, "\\0");
+	const textModel = document.getElementById("script-model").value;
+	const imageModel = document.getElementById("image-model").value;
+	const imageStyle = document.getElementById("image-style").value;
+
+	let script = await api.WriteScript(safeQuery, { model: textModel });
+	if (!script || script.error) {
+		SetStatus("error");
+		return;
+	}
+	let background = await api.WriteBackground({ model: textModel });
+	if (!background || background.error) {
+		SetStatus("error");
+		return;
+	}
+	let image = await api.DrawBackgrounds({ model: imageModel, style: imageStyle });
+	if (!image || image.error) {
+		SetStatus("error");
+		return;
+	}
+	let action = await api.WriteAction({ model: textModel });
+	if (!action || action.error) {
+		SetStatus("error");
+		return;
+	}
+
+	//TODO: Check the renderer progress. Handle error if <100 at this point.
+
+	document.getElementById("query").value = "";
+	document.getElementById("save").style.display = "initial";
+	SetStatus("complete");
+}
+
+/**
+ * Saves the current comic strip and redirects the user to the detail page for the saved comic.
+ *
+ * This function is responsible for handling the save functionality for the current comic strip.
+ * It disables the save button, calls the `SaveStrip` API to save the strip, and then redirects the
+ * user to the detail page for the saved comic if the save is successful. If there is a problem
+ * saving the strip, it re-enables the save button and displays an alert.
+ */
+async function SaveStrip() {
+	document.getElementById("save").setAttribute("disabled", "true");
+	let data = await api.SaveStrip();
+
+	if (!data || !data.response || !data.response.comicId) {
+		document.getElementById("save").style.display = "initial";
+		document.getElementById("save").removeAttribute("disabled");
+		alert("There was a problem saving.");
+	}
+	console.log("Success:", data);
+	window.location.replace("/detail/" + data.response.permalink);
+}
+
+/**
+ * Clears the content of various elements on the page, including the "script" and 
+ * ".strip-container" elements. It also resets the display of the "save" and 
+ * "permalink" elements, and removes the "disabled" attribute from the "save" element.
+ */
+function ClearElements() {
+	[
+		"script",
+		// 'panel1',
+		// 'panel2',
+		// 'panel3',
+		"permalink",
+	].forEach((id) => (document.getElementById(id).innerHTML = ""));
+
+	document.querySelector(".strip-container").innerHTML = `
+	<div id="panel1" class="panel"></div>
+	<div id="panel2" class="panel"></div>
+	<div id="panel3" class="panel"></div>
+	`;
+
+	["save", "permalink"].forEach(
+		(id) => (document.getElementById(id).style.display = null)
+	);
+
+	document.getElementById("save").removeAttribute("disabled");
+}
+
+/**
+ * Sets the status of the application and updates the UI accordingly.
+ *
+ * @param {string} status - The status to set Currently uses: "ready", "generating" or "error".
+ */
 function SetStatus(status) {
 	document.body.dataset.status = status;
 
-	['generate', 'query'].forEach((id) => {
-		document.getElementById(id)[status === 'generating' ? 'setAttribute' : 'removeAttribute']('disabled', '');
+	if (status === "error") {
+		alert(
+			"There was a problem generating the strip. Please try again. If the problem persists, try again in a little while."
+		);
+	}
+
+	["generate", "query"].forEach((id) => {
+		document
+			.getElementById(id)
+			[status === "generating" ? "setAttribute" : "removeAttribute"](
+				"disabled",
+				""
+			);
 	});
-	document.getElementById('statusdialog').classList[status === 'generating' ? 'add' : 'remove']('active');
+	document
+		.getElementById("statusdialog")
+		.classList[status === "generating" ? "add" : "remove"]("active");
 
 	const el = document.getElementById("status");
 	el.innerHTML = status;
 }
 
+/**
+ * Updates the progress display element with the given amount.
+ *
+ * @param {number} amount - The progress amount to display, as a percentage.
+ */
 function UpdateProgress(amount) {
-	if(isNaN(window.progress) || amount === 0) window.progress = amount;
-	else window.progress += amount;
-	console.log("Update:", window.progress);
+	amount = amount || 0;
+	console.log("Update:", amount);
 	const el = document.getElementById("progress");
-	el.setAttribute("value", window.progress);
-	el.innerHTML = window.progress + "%";
+	el.setAttribute("value", amount);
+	el.innerHTML = amount + "%";
 }
 
-async function fetchComic(prompt, script) {
-	
-	const partNames = ['first', 'second', 'third'];
-	const modelSelect = document.getElementById('script-model');
-    const formData = new FormData();
-	formData.append('query', prompt);
-	formData.append('model', modelSelect.value || 'oai');
-
-	let comic = {};
-
-	if (!script) script = await queryApi('/api/script/?c='+(Math.floor(Math.random()*1000)), formData);
-	let errorMsg = '';
-	if(!script || !script.json || !script.json.panels || !script.json.panels.length) errorMsg = "Script object not returned.";
-	if(script.error) errorMsg = script.error.message;
-
-	if(errorMsg) return {error: errorMsg};
-	else comic.script = script.json;
-
-	// Begin recording script credits
-	comic.script.credits = {
-		script: script.model || "",
-		image: "",
-		background: "",
-		action: "",
-	};
-
-	// //TODO: Remove this when done testing
-	// return {error: JSON.stringify(comic)};
-
-	UpdateProgress(13);
-	
-	// const altDialog = await fetchSceneComponent(comic.script.panels, 'gpt_dialog');
-	// if(!altDialog.length) return {error: "Dialog not received."}
-	// altDialog.forEach((dialog, idx) => {
-	// 	comic.script.panels[idx].altDialog = comic.script.panels[idx].dialog;
-	// 	comic.script.panels[idx].dialog = dialog;
-	// });
-	UpdateProgress(9);
-
-	const altBackground = await fetchSceneComponent(comic.script.panels, 'background');
-	if(!altBackground.result.length) return {error: "Background descriptions not received."}
-	altBackground.result.forEach((bkg, idx) => {
-		comic.script.panels[idx].background = bkg;
-	});
-	comic.script.credits.background = altBackground.model;
-	UpdateProgress(9);
-
-	for(let [idx, panel] of comic.script.panels.entries()) {
-		let backgroundImg = await renderBackground(idx, panel.background, prompt);
-		panel.background_url = backgroundImg.url;
-		if(panel.background_url.error) return {error: panel.background_url.error}
-		comic.script.credits.image = backgroundImg.model;
-		UpdateProgress(20);
-	}
-
-	const altAction = await fetchSceneComponent(comic.script.panels, 'action');
-	if(!altAction.result.length) return {error: "Character action not received."}
-	altAction.result.forEach((action, idx) => {
-		comic.script.panels[idx].action = action.action;
-		comic.script.panels[idx].altAction = action.altAction || "";
-	});
-	comic.script.credits.action = altAction.model;
-	UpdateProgress(9);
-
-	console.log(comic);
-
-    return comic.script;
-}
-
-async function fetchSceneComponent(panels, endpoint) {
-	let result = [];
-	let model = "";
-	if(!panels || !panels.length) return result;
-
-	let retry = 3;
-	let sceneData = new FormData();
-	for(let idx = 0; idx < 3; idx++) {
-		sceneData.append(
-			'panel'+(idx+1), 
-			(panels[idx] && panels[idx].scene) ? panels[idx].scene : ''
-		);
-	}
-
-	// Sometimes GPT returns a null, retry up to 2 times to get a usable result.
-	while(retry > 0) {
-		retry--;
-		let response = await queryApi('/api/' + endpoint + '/?c='+(Math.floor(Math.random()*1000)), sceneData);
-		if(response.json && response.json.panels && response.json.panels.length) {
-			result = [...response.json.panels];
-			model = response.model;
-			break;
-		} else if(response.json && response.json.descriptions && response.json.descriptions.length) {
-			result = [...response.json.descriptions];
-			model = response.model;
-			break;
-		}
-	}
-
-	return {result, model};
-}
-
-async function renderBackground(idx, description, premise) {
-	// Bypass images. For testing prompts
-	// return;
-
-	let panelEl = document.getElementById('panel' + (idx + 1));
-	panelEl.classList.add('rendering');
-	panelEl.innerHTML = ``;
-
-	let image = await fetchBackground(description);
-	if(!image || !image.data || !image.data.length || image.error){
-		let errorMsg = 'Image did not return.';
-		if(image.error && image.error.message) errorMsg = image.error.message;
-		return {error: errorMsg};
-	}
-
-	console.log("image data", image);
-	console.log("attempting panel", idx);
-
-	panelEl.classList.remove('rendering');
-	panelEl.classList.add('rendered');
-
-	panelEl.innerHTML += `
-	<img class="background" src="${image.data[0].url}"/>
-	`;
-	setTimeout(() => {
-		panelEl.classList.remove('rendered');
-	}, 1000);
-
-	return {url: image.data[0].url, model: image.model};
-}
-
-async function fetchBackground(prompt) {
-	let result = {};
-	let retry = 3;
-    const formData = new FormData();
-	formData.append('mode', API_MODE);
-	formData.append('query', prompt);
-
-	// Sometimes GPT returns a null, retry up to 2 times to get a usable result.
-	while(retry > 0) {
-		retry--;
-		let response = await queryApi('/api/image/?c='+(Math.floor(Math.random()*1000)), formData);
-		if(response.data && response.data.length) {
-			result = response;
-			break;
-		}
-	}
-
-	return result;
-}
-
-async function queryApi(apiUrl, formData) {
-
-	try {
-		const response = await fetch(apiUrl, {
-            method: 'POST',
-            body: formData
-        });
-		const data = await response.json();
-		console.log("data", data);
-		return data;
-	} catch (error) {
-		console.error('Error fetching GPT response:', error);
-		return 'Error: Unable to connect to GPT API';
-	}
-}
-
-function SaveStrip(){
-	if(!saveObj) return;
-
-	document.getElementById('save').setAttribute('disabled', 'true');
-	document.getElementById('permalink').style.display = null;
-
-	const formData = new FormData();
-	formData.append('prompt', saveObj.prompt);
-	formData.append('title', saveObj.title);
-	formData.append('script', JSON.stringify(saveObj.script));
-	formData.append('bkg1', saveObj.backgrounds[0]);
-	formData.append('bkg2', saveObj.backgrounds[1]);
-	formData.append('bkg3', saveObj.backgrounds[2]);
-	formData.append('fg1', saveObj.foregrounds[0]);
-	formData.append('fg2', saveObj.foregrounds[1]);
-	formData.append('fg3', saveObj.foregrounds[2]);
-	//formData.append('thumbnail', saveObj.thumbnail);
-
-	fetch('/api/save/?c='+(Math.floor(Math.random()*1000000)), {
-		method: 'POST',
-		body: formData
-	})
-		.then(response => response.json())
-		.then(data => {
-			if(!data || !data.response || !data.response.comicId) {
-				document.getElementById('save').style.display = 'initial';
-				document.getElementById('save').removeAttribute('disabled');
-				document.getElementById('permalink').style.display = 'initial';
-				document.getElementById('permalink').innerHTML = `
-					There was a problem saving.
-				`;
-			}
-			document.getElementById('save').style.display = null;
-			document.getElementById('permalink').style.display = 'initial';
-			document.getElementById('permalink').innerHTML = `
-                <a href="/detail/${data.response.permalink}">
-					<img class="burst" src="/assets/images/speech_bubble.svg" />
-					<span class="cartoon-font">Permalink</span>
-				</a>
-			`;
-			console.log('Success:', data);
-			window.location.replace("/detail/"+data.response.permalink);
-		})
-		.catch(error => console.error('Error:', error));
-}
-
-async function GenerateStrip(query, override) {
-	ClearElements();
-	UpdateProgress(0);
-	SetStatus('generating');
-	fetchComic(query, override).then(async (script) => {
-		if(!script || script.error){
-			SetStatus('error');
-			alert("There was a problem generating the script. There may be a problem with your premise or GPT may just be busy at the moment. Check your premise and remove any special characters and try again. [" + script.error +"]");
-			return;
-		}
-		console.log("response", script);
-
-		window["saveObj"] = {prompt: query, script, backgrounds: [], foregrounds: []};
-
-		document.getElementById("script").innerHTML = `<li><h2>${script.title}</h2></li>`;
-        document.getElementById("strip-title").innerText = script.title;
-
-		// Add the credits
-		document.getElementById("script").innerHTML += `<li>
-			<ul class="credits">
-				<li><span>Script: </span><span>${script.credits.script}</span></li>
-				<li><span>Images: </span><span>${script.credits.image}</span></li>
-				<li><span>Backgrounds: </span><span>${script.credits.background}</span></li>
-				<li><span>Actions: </span><span>${script.credits.action}</span></li>
-			</ul>
-		</li>`;
-
-		if(script.panels && script.panels.length){
-			for(const [idx,panel] of script.panels.entries()){
-				//panel.background = panel.setting;
-				document.getElementById("script").innerHTML += `
-				<li>
-					<h3>Panel ${idx + 1}</h3>
-					<ul>
-						<li>
-							<table>
-								<tr><td>Description</td> <td>${panel.scene}</td></tr>
-								<tr><td>Action</td> <td>${panel.action}</td></tr>
-								<tr><td>Dialog</td> <td>${panel.dialog}</td></tr>
-								<tr><td>Background</td> <td>${panel.background}</td></tr>
-							</table>
-						</li>
-					</ul>
-				</li>
-				`;
-
-				saveObj.backgrounds[idx] = panel.background_url;
-				saveObj.foregrounds[idx] = panel.action.toLowerCase() + '.png';
-				document.getElementById('panel' + (idx + 1)).innerHTML += `
-					<img class="character" src="../assets/character_art/${panel.action.toLowerCase()}.png"/>
-					`;
-				if(panel.dialog){
-					renderDialog(panel.dialog, panel.action.toLowerCase())
-						.then((canvas) => {
-							document.getElementById('panel' + (idx + 1))
-								.appendChild(canvas);
-						});
-				}
-
-				document.getElementById('save').style.display = 'initial';
-			}
-
-			// html2canvas(
-			// 	document.querySelector("#panel1"),
-			// 	{
-			// 		allowTaint: true,
-			// 		useCORS: false
-			// 	}
-			// ).then(canvas => {
-			// 	saveObj.thumbnail = canvas.toDataURL();
-			// 	document.body.appendChild(canvas)
-			// });
-
-			saveObj.title = script.title;
-			document.getElementById('query').value = '';
-			SetStatus('complete');
-		}
-	});
-}
-
+/**
+ * Updates the character count display for the "premise" text input field.
+ *
+ * It calculates the number of characters remaining before a 140 character 
+ * limit is reached, and updates the display in the "character-count" 
+ * element. The display element's color is also updated to indicate
+ * when the character limit has been exceeded.
+ *
+ * @returns {boolean} Always returns true.
+ */
 function SetCharCount() {
-	let el = document.getElementById('character-count');
-    let characterCount = document.getElementById('query').value.length;
-    let characterleft = 140 - characterCount;
+	let el = document.getElementById("character-count");
+	let characterCount = document.getElementById("query").value.length;
+	let characterleft = 140 - characterCount;
 
-    // console.log(characterleft);
+	// console.log(characterleft);
 
-	if(characterleft < 0)
-		el.style.color = '#c00';
-	else if(characterleft < 15)
-		el.style.color = '#600';
-	else
-		el.style.color = '';
+	if (characterleft < 0) el.style.color = "#c00";
+	else if (characterleft < 15) el.style.color = "#600";
+	else el.style.color = "";
 
-	if(characterleft < 0)
+	if (characterleft < 0)
 		el.innerText = Math.abs(characterleft) + " over limit.";
-	else
-		el.innerText = characterleft + " characters left.";
+	else el.innerText = characterleft + " characters left.";
 
 	return true;
-
 }
-
-SetStatus('ready');
-
-document.getElementById('generate').addEventListener("click", () => {
-	const query = document.getElementById('query');
-	if(!query || !query.value || query.value.length > 140) return;
-
-	let safeQuery = query.value.replace(/[\\"]/g, '\\$&').replace(/\u0000/g, '\\0');
-
-	GenerateStrip(safeQuery);
-});
-
-['keyup', 'change', 'paste'].forEach(
-	(evt) => document.getElementById('query').addEventListener('keyup', SetCharCount)
-);
-
-document.getElementById('save').addEventListener("click", () => {
-	const query = document.getElementById('query');
-	if(!query) return;
-
-	SaveStrip();
-});
