@@ -263,7 +263,7 @@ document.getElementById('thumbnail').addEventListener("click", () => {
 		.then(response => response.json())
 		.then(data => {
 			console.log('Success:', data);
-			if(!data.error) InitEditor(); // alert("Success! ("+data.response.values+")");
+			if(!data.error) InitEditor();
 			else alert("Error: "+data.error);
 
 			
