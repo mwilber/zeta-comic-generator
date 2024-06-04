@@ -124,6 +124,9 @@ export class ComicExporter {
 
 		const { title, prompt, url } = params;
 
+		// Replace any double quotes in prompt with single quotes. Because propmt will be rendered with double quotes around it.
+		let displayPrompt = prompt.replaceAll('"', "'");
+
 		// Copy the comic into a fixed width element for consistent sizing
 		const output = document.createElement("div");
 		output.className = "strip-output";
@@ -152,7 +155,7 @@ export class ComicExporter {
 		ctx.fillText(title, 15, 370);
 
 		ctx.font = "normal 14px sans-serif";
-		ctx.fillText("\u201C" + prompt + "\u201D", 15, 390);
+		ctx.fillText("\u201C" + displayPrompt + "\u201D", 15, 390);
 
 		return canvas.toDataURL();
 	}
