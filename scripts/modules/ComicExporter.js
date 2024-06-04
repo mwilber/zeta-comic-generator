@@ -33,7 +33,7 @@ export class ComicExporter {
 							url: idx === 2 ? url : "",
 						}
 					);
-					this.DownloadImageData(download, fileName, "_" + idx);
+					this.DownloadImageData(download, fileName, "_" + (idx+1));
 				}
 				break;
 			case "strip":
