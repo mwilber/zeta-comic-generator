@@ -29,7 +29,7 @@
 	Large Language Models use the premise to write a complete script for a three panel comic strip. 
 	The model then elaborates on a scene description for each panel. 
 	That description is sent to an image generator to render a background image. 
-	Finally the model selects from a list of <a href="/about#character-art">character actions</a>, each one representing an image of 
+	Finally, the model selects from a list of <a href="/about#character-art">character actions</a>. Each action represents an image of 
 	<a href="https://greenzeta.com/project/illustrations/" target="_blank" rel="noopener noreferrer">Alpha Zeta</a>, 
 	the alien mascot of <a href="https://greenzeta.com" target="_blank" rel="noopener noreferrer">GreenZeta.com</a>. 
 	All of the assets are combined here into a single comic strip!
@@ -57,6 +57,8 @@
 		<ul>
 			<li><a href="https://openai.com/product" target="_blank" rel="noopener noreferrer">GPT-4o</a></li>
 			<li><a href="https://gemini.google.com/app" target="_blank" rel="noopener noreferrer">Gemini 1.5</a></li>
+			<li>Coming soon, Llama 3</li>
+			<li>Coming soon, Claude 3.5 Sonnet</li>
 		</ul>
 	</li>
 	<li>
