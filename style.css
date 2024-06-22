@@ -462,6 +462,21 @@ p.description {
 	line-height: 1.5em;
 }
 
+.models {
+	list-style: none;
+	/* margin: 0;
+	padding: 0; */
+}
+
+.models li ul {
+	list-style-type: disc;
+}
+
+.models li ul li {
+	margin-bottom: 10px;
+	font-size: 1.25em;
+}
+
 /* Gallery */
 
 #gallery, .character-art {

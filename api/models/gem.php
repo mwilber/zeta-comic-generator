@@ -4,7 +4,7 @@
  */
 class ModelGemini {
 	function __construct() {
-		$this->modelName = "gemini-pro";
+		$this->modelName = "gemini-1.5-pro";
 		$this->apiUrl = "https://generativelanguage.googleapis.com/v1beta/models/".$this->modelName.":generateContent?key=";
 		$this->apiKey = GOOGLE_KEY;
 	}
