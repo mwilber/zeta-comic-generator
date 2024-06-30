@@ -85,6 +85,9 @@ if ($modelId) {
 		case "ttn":
 			$model = new ModelTitan();
 			break;
+		case "claude":
+			$model = new ModelClaude();
+			break;
 	}
 
 	if (!$model) {
