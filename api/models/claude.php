@@ -1,6 +1,6 @@
 <?php
 /**
- * Provides functionality for interacting with the Amazon Bedrock Titan API to generate text completions or images.
+ * Provides functionality for interacting with the Amazon Bedrock Claude API to generate text completions.
  */
 use Aws\BedrockRuntime\BedrockRuntimeClient;
 
@@ -31,11 +31,6 @@ class ModelClaude {
 			$script = $this->extractJsonFromString($script);
 			$jscript = json_decode($script);
 
-			// Titan is wrapping the script in an object with an array `rows`
-			// { rows: [ {title:...} ] }
-			if (isset($jscript->rows)) {
-				$jscript = $jscript->rows[0];
-			}
 			if (isset($jscript->data)) {
 				$jscript = $jscript->data[0];
 			}
@@ -53,21 +48,9 @@ class ModelClaude {
 		// Perform the regular expression match
 		if (preg_match($pattern, $input, $matches)) {
 			$jsonString = $matches[0];
-
 			return $jsonString;
-			
-			// // Decode the JSON string
-			// $decodedJson = json_decode($jsonString, true);
-	
-			// // Check for JSON errors
-			// if (json_last_error() === JSON_ERROR_NONE) {
-			// 	return $decodedJson;
-			// } else {
-			// 	// throw new Exception("Invalid JSON string found: " . json_last_error_msg());
-			// 	return $input;
-			// }
 		} else {
-			// throw new Exception("No JSON string found in the input.");
+			// Return the original string if no JSON object is found
 			return $input;
 		}
 	}
