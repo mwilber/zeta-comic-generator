@@ -14,6 +14,7 @@
 					Script Model
 					<div class="select">
 						<select name="script-model" id="script-model">
+						<option value="claude">Claude Sonnet 3.5</option>
 							<option value="gem">Gemini 1.5</option>
 							<option value="oai" selected>GPT 4o</option>
 							<!-- Titan Text Express v1 disabled because it can't handle the new prompt format -->

@@ -61,6 +61,7 @@
 	require __DIR__ . '/models/ttn.php';
 	require __DIR__ . '/models/dall.php';
 	require __DIR__ . '/models/sdf.php';
+	require __DIR__ . '/models/claude.php';
 
 	switch ($controller) {
 		// App API endpoints
