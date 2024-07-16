@@ -16,6 +16,7 @@
 	$meta->imageDescription = "Zeta Comic Generator";
 
 	$path = explode('/', $request);
+	$isGemini = false;
 
 	// Validate the path
 	if(isset($path[1])) {
@@ -99,7 +100,12 @@
 	<?php
 		// Render the view
 		switch ($path[1]) {
-
+			// Handle gemini path
+			case 'gemini':
+				// Handle gemini path. Display the gemini demo comic.
+				$isGemini = true;
+				$path[1] = 'detail';
+				$path[2] = '0d7de1aca9299fe63f3e0041f02638a3';
 			case 'about':
 			case 'detail':
 			case 'gallery':
