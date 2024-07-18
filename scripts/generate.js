@@ -30,9 +30,35 @@ document.addEventListener("DOMContentLoaded", () => {
 	});
 
 	AttachUiEvents();
+	SetDefaultSelections();
 
 	SetStatus("ready");
 });
+
+
+/**
+ * Sets the default selections for the script and image models.
+ * The selected values are retrieved from localStorage, if available, or a default value is used.
+ * After setting the values, a 'change' event is dispatched on the corresponding elements to trigger any related functionality.
+ */
+function SetDefaultSelections() {
+	const defaultSelection = "oai";
+	const scriptModelEl = document.getElementById("script-model");
+	const imageModelEl = document.getElementById("image-model");
+
+	let savedScriptModel = localStorage
+		? localStorage.getItem("script-model-select")
+		: null;
+	let savedImageModel = localStorage
+		? localStorage.getItem("image-model-select")
+		: null;
+
+	scriptModelEl.value = savedScriptModel || defaultSelection;
+	imageModelEl.value = savedImageModel || defaultSelection;
+	// Fire a change event on the selections
+	scriptModelEl.dispatchEvent(new Event("change"));
+	imageModelEl.dispatchEvent(new Event("change"));
+}
 
 /**
  * Attaches event listeners to various UI elements in the application.
@@ -69,13 +95,26 @@ function AttachUiEvents() {
 			handler: SetCharCount,
 		},
 		{
+			selector: "#script-model",
+			event: "change",
+			handler: (e) => {
+				let {value} = e.target;
+				// set localStorage value `script-model-select` to the selected value
+				if(localStorage)
+					localStorage.setItem("script-model-select", value);
+			}
+		},
+		{
 			selector: "#image-model",
 			event: "change",
 			handler: (e) => {
-				console.log("target val", e.target.value);
+				let {value} = e.target;
+				// set localStorage value `image-model-select` to the selected value
+				if(localStorage)
+					localStorage.setItem("image-model-select", value);
 				const styleSelectGroup =
 					document.getElementById("image-style-label");
-				if (e.target.value === "sdf")
+				if (value === "sdf")
 					styleSelectGroup.style.display = "block";
 				else styleSelectGroup.style.display = "none";
 			},

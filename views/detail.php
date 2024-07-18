@@ -1,5 +1,6 @@
 <script>
 	const comicId = '<?php echo $path[2] ?>';
+	<?php if($isGemini) echo "if(localStorage) localStorage.setItem('script-model-select', 'gem');"; ?>
 </script>
 <div id="sharedialog" class="dialog-wrapper">
 	<div class="dialog">

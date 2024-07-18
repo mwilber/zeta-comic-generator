@@ -14,9 +14,10 @@
 					Script Model
 					<div class="select">
 						<select name="script-model" id="script-model">
-						<option value="claude">Claude Sonnet 3.5</option>
+							<option value="">(Select a model)</option>
+							<option value="claude">Claude Sonnet 3.5</option>
 							<option value="gem">Gemini 1.5</option>
-							<option value="oai" selected>GPT 4o</option>
+							<option value="oai">GPT 4o</option>
 							<!-- Titan Text Express v1 disabled because it can't handle the new prompt format -->
 							<!-- <option value="ttn">Titan Text Express v1</option> -->
 						</select>
@@ -26,7 +27,8 @@
 					Image Model
 					<div class="select">
 						<select name="image-model" id="image-model">
-							<option value="oai" selected>Dall-E 3</option>
+							<option value="">(Select a model)</option>
+							<option value="oai">Dall-E 3</option>
 							<option value="sdf">Stable Diffusion XL</option>
 							<option value="ttn">Titan Image (preview)</option>
 						</select>
