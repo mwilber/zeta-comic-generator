@@ -35,19 +35,29 @@ document.addEventListener("DOMContentLoaded", () => {
 	SetStatus("ready");
 });
 
+
+/**
+ * Sets the default selections for the script and image models.
+ * The selected values are retrieved from localStorage, if available, or a default value is used.
+ * After setting the values, a 'change' event is dispatched on the corresponding elements to trigger any related functionality.
+ */
 function SetDefaultSelections() {
-	const defaultSelection = "oai"
+	const defaultSelection = "oai";
 	const scriptModelEl = document.getElementById("script-model");
 	const imageModelEl = document.getElementById("image-model");
 
-	let savedScriptModel = localStorage ? localStorage.getItem("script-model-select") : null;
-	let savedImageModel = localStorage ? localStorage.getItem("image-model-select") : null;
+	let savedScriptModel = localStorage
+		? localStorage.getItem("script-model-select")
+		: null;
+	let savedImageModel = localStorage
+		? localStorage.getItem("image-model-select")
+		: null;
 
 	scriptModelEl.value = savedScriptModel || defaultSelection;
 	imageModelEl.value = savedImageModel || defaultSelection;
 	// Fire a change event on the selections
-	scriptModelEl.dispatchEvent(new Event('change'));
-	imageModelEl.dispatchEvent(new Event('change'));
+	scriptModelEl.dispatchEvent(new Event("change"));
+	imageModelEl.dispatchEvent(new Event("change"));
 }
 
 /**
