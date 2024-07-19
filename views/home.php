@@ -11,7 +11,9 @@
 	}
 ?>
 	<header>
-		<a href="/generate">Create</a> unique comic strips with AI models and hand drawn character art.
+		<strong>AI powered stories featuring a little green alien named Alpha.</strong>
+		<br/>
+		<a href="/generate">Create</a> comics from your ideas.
 	</header>
 
 	<h2>Latest Comics</h2>
