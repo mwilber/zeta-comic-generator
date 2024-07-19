@@ -367,6 +367,52 @@ header nav a:hover {
 	text-transform: uppercase;
 }
 
+.badges {
+	display: flex;
+	position: fixed;
+	bottom: 0px;
+	right: 0px;
+	margin: 0px;
+	padding: 0px;
+	height: auto;
+	width: 40%;
+	max-width: 180px;
+	min-width: 120px;
+	z-index: 1000;
+	line-height: 0;
+}
+
+.badges .badge {
+	display: block;
+	width: 25%;
+	padding: 0;
+    margin: 0;
+	background: #656565;
+	aspect-ratio: 1;
+}
+
+.badges .badge svg {
+	width: 60%;
+	margin: 20%;
+}
+
+.badges .instagram {
+	background: #f09433;
+	background-image: linear-gradient(-135deg, #1400c8, #b900b4, #f50000);
+}
+
+.badges .twix {
+	background: #000000;
+}
+
+.badges .github {
+	background: #ffffff;
+}
+
+.badges .greenzeta {
+	background: #7bb951;
+}
+
 /* Home | About */
 main header {
 	display: inline-block;
