@@ -46,7 +46,7 @@
 	<li>
 		<h3><?php echo str_replace('_', ' ', $action); ?></h3>  
 
-		<img src="/assets/character_art/<?php echo $action; ?>.png" />
+		<img src="/assets/character_art/<?php echo $action; ?>.png" alt="Alpha in <?php echo $action; ?> pose." />
 	</li>
 	<?php endforeach; ?>
 </ul>
