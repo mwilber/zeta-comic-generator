@@ -41,6 +41,9 @@ export class ComicRenderer {
 		this.el.innerHTML = "";
 
 		const { title, panels } = this.script;
+		// Set the container aria-label attribute to the comic title
+		this.el.setAttribute("role", "region");
+		this.el.setAttribute("aria-label", "Comic Strip title: " + title);
 
 		// Render the panels
 		for (const [idx, panel] of panels.entries()) {
@@ -48,13 +51,16 @@ export class ComicRenderer {
 
 			// Create the panel element
 			const panelEl = this.AddPanelElement(panel, "panel" + (idx + 1));
+			panelEl.setAttribute("role", "region");
+			panelEl.setAttribute("aria-label", "Panel " + (idx + 1));
 
 			if (images && images.length) {
 				for (const image of images) {
 					this.AddLinkedImageToPanel(
 						panel,
 						image.url,
-						image.type
+						image.type,
+						image.alt
 					);
 				}
 
@@ -144,14 +150,15 @@ export class ComicRenderer {
 	 * @param {HTMLElement} panel - The panel element to add the image to.
 	 * @param {string} url - The URL of the image to add.
 	 * @param {string} className - The CSS class name to apply to the image element.
+	 * @param {string} [alt] - The alternative text to use for the image element.
 	 */
-	AddLinkedImageToPanel(panel, url, type) {
+	AddLinkedImageToPanel(panel, url, type, alt) {
 		if (!panel.panelEl) {
 			console.error("Comic Renderer: Panel element unavailable.", panel);
 			return;
 		}
 		panel.panelEl.innerHTML += `
-			<img class="${type}" src="${url}"/>
+			<img class="${type}" src="${url}" ${alt ? ` alt="${alt}"` : ""} />
 		`;
 	}
 

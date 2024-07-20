@@ -54,12 +54,14 @@ document.addEventListener("DOMContentLoaded", () => {
 						panel.images.push({
 							url: backgrounds[idx],
 							type: "background",
+							alt: "Background image: " + panel.background,
 						});
 					panel.images.push({
 						url: "/assets/character_art/" + panel.action + ".png",
 						type: "character",
 						character: "alpha",
 						action: panel.action,
+						alt: "Character image: " + "alpha " + "in a " + panel.action + " pose"
 					});
 				}
 
