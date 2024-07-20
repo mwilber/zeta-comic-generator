@@ -255,9 +255,16 @@ function SetStatus(status) {
 				""
 			);
 	});
-	document
-		.getElementById("statusdialog")
-		.classList[status === "generating" ? "add" : "remove"]("active");
+
+	const statusDlg = document.getElementById("statusdialog");
+	
+	statusDlg.classList[status === "generating" ? "add" : "remove"]("active");
+
+	if(status === "generating") {
+		statusDlg.focus();
+	} else if(status === "complete") {
+		document.getElementById("strip").focus();
+	}
 
 	const el = document.getElementById("status");
 	el.innerHTML = status;
@@ -274,6 +281,10 @@ function UpdateProgress(amount) {
 	const el = document.getElementById("progress");
 	el.setAttribute("value", amount);
 	el.innerHTML = amount + "%";
+	el.setAttribute("aria-valuetext", `${amount}% complete.`);
+
+	// const elStatus = document.getElementById("status");
+	// elStatus.setAttribute("aria-label", `Generating: ${amount}% complete.`);
 }
 
 /**

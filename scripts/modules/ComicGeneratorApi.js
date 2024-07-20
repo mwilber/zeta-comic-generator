@@ -177,6 +177,7 @@ export class ComicGeneratorApi {
 			this.comic.panels[idx].images.push({
 				type: "background",
 				url: result.json.url,
+				alt: "Background image: " + panel.background,
 			});
 			this.credits.image = result.model;
 			return { error: false };
@@ -257,6 +258,7 @@ export class ComicGeneratorApi {
 					action,
 					character: "alpha",
 					url: actionImage,
+					alt: "Character image: " + "alpha " + "in a " + panel.action + " pose"
 				});
 			}
 		}

@@ -1,4 +1,4 @@
-<div id="statusdialog" class="dialog-wrapper">
+<div id="statusdialog" class="dialog-wrapper" role="alert" aria-labeledby="progress" tabindex="-1">
 	<div class="dialog">
 		<div id="status"></div>
 		<div class="lds-grid"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
@@ -59,7 +59,7 @@
 			<div class="row">
 				<input id="query" type="text" placeholder="ex. An explanation of the distance between the earth and the sun."/>
 				<button id="generate" class="cartoon-button" disabled>
-					<img class="burst" src="/assets/images/speech_bubble.svg" />
+					<img class="burst" src="/assets/images/speech_bubble.svg" alt="Cartoon speech bubble icon" />
 					<span class="cartoon-font">Start</span>
 				</button>
 			</div>
@@ -70,7 +70,7 @@
 	</div>
 	<div class="strip-wrapper">
 		<h2>Composite</h2>
-		<div id="strip">
+		<div id="strip" role="region" aria-label="Comic Strip Composite" tabindex="-1">
 			<div class="strip-container">
 				<div id="panel1" class="panel"></div>
 				<div id="panel2" class="panel"></div>
