@@ -31,11 +31,13 @@ export class ScriptRenderer {
 
 		const { title, panels, credits } = this.script;
 
-		this.el.innerHTML = `<li><h2>${title}</h2></li>`;
+		this.el.setAttribute("aria-label", "Script");
+
+		this.el.innerHTML = `<li aria-label="Title"><h2>${title}</h2></li>`;
 
 		if (credits && credits.script) {
 			// Add the credits
-			this.el.innerHTML += `<li>
+			this.el.innerHTML += `<li aria-label="Credits">
 				<ul class="credits">
 					<li><span>Script: </span><span>${credits.script}</span></li>
 					<li><span>Images: </span><span>${credits.image}</span></li>
@@ -64,7 +66,7 @@ export class ScriptRenderer {
 				? `<tr><td>Dialog</td> <td>${dialogHtml}</td></tr>`
 				: "";
 			this.el.innerHTML += `
-					<li>
+					<li aria-label="Panel">
 						<h3>Panel ${idx + 1}</h3>
 						<ul>
 							<li>

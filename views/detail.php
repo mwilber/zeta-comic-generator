@@ -2,8 +2,8 @@
 	const comicId = '<?php echo $path[2] ?>';
 	<?php if($isGemini) echo "if(localStorage) localStorage.setItem('script-model-select', 'gem');"; ?>
 </script>
-<div id="sharedialog" class="dialog-wrapper">
-	<div class="dialog" aria-modal="true" role="dialog" aria-hidden="true" aria-labelledby="sharedialog">
+<div id="sharedialog" class="dialog-wrapper" aria-modal="true" role="dialog" aria-hidden="true" aria-labelledby="sharedialog">
+	<div class="dialog">
 		<button id="closedialog" class="close" aria-label="Close"></button>
 		<p>Share</p>
 		<input id="shareurl" value="<?php echo $meta->url ?>"/>
@@ -27,8 +27,8 @@
 		</div>
 	</div>
 </div>
-<div id="downloaddialog" class="dialog-wrapper">
-	<div class="dialog" aria-modal="true" role="dialog" aria-hidden="true" aria-labelledby="downloaddialog">
+<div id="downloaddialog" class="dialog-wrapper" aria-modal="true" role="dialog" aria-hidden="true" aria-labelledby="downloaddialog">
+	<div class="dialog">
 		<button id="closedialog" class="close" aria-label="Close"></button>
 		<p>Download</p>
 		<div class="download-buttons">
