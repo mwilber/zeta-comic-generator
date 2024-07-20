@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset
+      xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
+            http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
+<!-- created with Free Online Sitemap Generator www.xml-sitemaps.com -->
+
+
+<url>
+  <loc>https://comicgenerator.greenzeta.com/</loc>
+  <lastmod>2024-07-19T23:59:25+00:00</lastmod>
+  <priority>1.00</priority>
+</url>
+<url>
+  <loc>https://comicgenerator.greenzeta.com/generate</loc>
+  <lastmod>2024-07-19T23:59:25+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://comicgenerator.greenzeta.com/gallery</loc>
+  <lastmod>2024-07-19T23:59:25+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://comicgenerator.greenzeta.com/about</loc>
+  <lastmod>2024-07-19T23:59:25+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://comicgenerator.greenzeta.com/detail/ca9c267dad0305d1a6308d2a0cf1c39c</loc>
+  <lastmod>2024-07-19T23:59:25+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://comicgenerator.greenzeta.com/detail/71a3cb155f8dc89bf3d0365288219936</loc>
+  <lastmod>2024-07-19T23:59:25+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://comicgenerator.greenzeta.com/detail/0d7de1aca9299fe63f3e0041f02638a3</loc>
+  <lastmod>2024-07-19T23:59:25+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://comicgenerator.greenzeta.com/detail/5dd9db5e033da9c6fb5ba83c7a7ebea9</loc>
+  <lastmod>2024-07-19T23:59:25+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+
+
+</urlset>
