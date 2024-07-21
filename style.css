@@ -380,6 +380,10 @@ header nav a:hover {
 	min-width: 120px;
 	z-index: 1000;
 	line-height: 0;
+	border: solid 0px rgba(255, 255, 255, 0.85);
+	border-radius: 2px;
+	border-left-width: 2px;
+	border-top-width: 2px;
 }
 
 .badges .badge {
