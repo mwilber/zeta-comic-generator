@@ -52,7 +52,11 @@ class ModelGemini {
 						"text": "'.$prompt.'"
 					}
 				]
-			}]
+			}],
+			"generationConfig": {
+				"response_mime_type": "application/json",
+				"temperature": 0.99
+			}
 		}';
 
 		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST"); 
