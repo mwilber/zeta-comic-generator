@@ -99,6 +99,8 @@ if ($modelId) {
 		$response = $model->sendPrompt($output->prompt);
 		$output->error = $response->error;
 
+		countHit($actionId, $params[0]);
+
 		if(OUTPUT_DEBUG_DATA) {
 			$output->debug = $response->debug;
 			$output->data = $response->data;
@@ -127,5 +129,16 @@ function addPeriod($str) {
 	$str .= '.';
 	}
 	return $str;
+}
+
+function countHit($action, $premise) {
+	if ($action != "script") return;
+	// Store a record in metrics table
+	$database = new Database();
+	$db = $database->getConnection();
+
+	$stmt = $db->prepare("INSERT INTO `metrics` (`premise`) VALUES (".$db->quote($_POST["premise"]).");");
+	// execute query
+	$stmt->execute();
 }
 ?>

@@ -29,6 +29,8 @@ document.addEventListener("DOMContentLoaded", () => {
 		},
 	});
 
+	window['api'] = api;
+
 	AttachUiEvents();
 	SetDefaultSelections();
 
