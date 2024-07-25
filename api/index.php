@@ -71,6 +71,7 @@
 		case 'save':
 		case 'imgproxy':
 		case 'bedrock':
+		case 'metrics':
 			require __DIR__ . '/controllers/'.$controller.'.php';
 			break;
 		// Comic Generation API endpoints

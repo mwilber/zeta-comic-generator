@@ -161,22 +161,22 @@ async function GenerateStrip() {
 
 	let script = await api.WriteScript(safeQuery, { model: textModel });
 	if (!script || script.error) {
-		SetStatus("error");
+		SetStatus(script.error == "ratelimit" ? script.error : "error");
 		return;
 	}
 	let background = await api.WriteBackground({ model: textModel });
 	if (!background || background.error) {
-		SetStatus("error");
+		SetStatus(script.error == "ratelimit" ? script.error : "error");
 		return;
 	}
 	let image = await api.DrawBackgrounds({ model: imageModel, style: imageStyle });
 	if (!image || image.error) {
-		SetStatus("error");
+		SetStatus(script.error == "ratelimit" ? script.error : "error");
 		return;
 	}
 	let action = await api.WriteAction({ model: textModel });
 	if (!action || action.error) {
-		SetStatus("error");
+		SetStatus(script.error == "ratelimit" ? script.error : "error");
 		return;
 	}
 
@@ -241,13 +241,16 @@ function ClearElements() {
  * @param {string} status - The status to set Currently uses: "ready", "generating" or "error".
  */
 function SetStatus(status) {
-	document.body.dataset.status = status;
-
 	if (status === "error") {
 		alert(
 			"There was a problem generating the strip. Please try again. If the problem persists, try again in a little while."
 		);
+	} else if (status === "ratelimit") {
+		alert("The daily limit for generating comics has been reached. Please try again tomorrow.");
+		status = "error";
 	}
+
+	document.body.dataset.status = status;
 
 	["generate", "query"].forEach((id) => {
 		document
