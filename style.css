@@ -1234,6 +1234,24 @@ progress[value]::-webkit-progress-value {
 		grid-template-columns: 1fr 1fr;
 	}
 
+	#input .row {
+		display: block;
+	}
+
+	#input .row label {
+		width: 100%;
+	}
+
+	input#query {
+		width: calc(100% - 2em);
+	}
+
+	button#generate {
+		margin-top: 1em;
+		float: right;
+		margin-bottom: -1em;
+	}
+
 	#script {
 		padding: 50px 10px;
 	}
