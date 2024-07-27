@@ -148,7 +148,7 @@ function countHit($action, $premise) {
 	$database = new Database();
 	$db = $database->getConnection();
 
-	$stmt = $db->prepare("INSERT INTO `metrics` (`premise`) VALUES (".$db->quote($_POST["premise"]).");");
+	$stmt = $db->prepare("INSERT INTO `metrics` (`premise`) VALUES (".$db->quote($_POST["query"]).");");
 	// execute query
 	$stmt->execute();
 }

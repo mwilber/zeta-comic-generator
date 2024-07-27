@@ -38,7 +38,6 @@ document.addEventListener("DOMContentLoaded", () => {
 		if(metrics && metrics.limitreached === true){
 			//alert("The daily limit for generating comics has been reached. Please try again tomorrow.");
 			const dialog = document.getElementById("errordialog");
-			console.log(dialog);
 			dialog.classList[
 				dialog.classList.contains("active") ? "remove" : "add"
 			]("active");
