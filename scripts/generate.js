@@ -34,6 +34,23 @@ document.addEventListener("DOMContentLoaded", () => {
 	AttachUiEvents();
 	SetDefaultSelections();
 
+	api.GetMetrics().then((metrics)=>{
+		if(metrics && metrics.limitreached === true){
+			//alert("The daily limit for generating comics has been reached. Please try again tomorrow.");
+			const dialog = document.getElementById("errordialog");
+			console.log(dialog);
+			dialog.classList[
+				dialog.classList.contains("active") ? "remove" : "add"
+			]("active");
+			dialog.setAttribute("aria-hidden", "false");
+			// Focus the first child of dialog element
+			const closeBtn = dialog.querySelector(".close");
+			if (closeBtn) {
+				closeBtn.focus();
+			}
+		}
+	});
+
 	SetStatus("ready");
 });
 
@@ -121,6 +138,15 @@ function AttachUiEvents() {
 				else styleSelectGroup.style.display = "none";
 			},
 		},
+		{
+			selector: ".dialog .close",
+			event: "click",
+			handler: (e) => {
+				e.target.parentElement.parentElement.classList.remove("active");
+				e.target.parentElement.parentElement.setAttribute("aria-hidden", "true");
+				document.querySelector("#query").focus();
+			},
+		},
 	];
 
 	for (const event of UIevents) {
@@ -166,17 +192,17 @@ async function GenerateStrip() {
 	}
 	let background = await api.WriteBackground({ model: textModel });
 	if (!background || background.error) {
-		SetStatus(script.error == "ratelimit" ? script.error : "error");
+		SetStatus("error");
 		return;
 	}
 	let image = await api.DrawBackgrounds({ model: imageModel, style: imageStyle });
 	if (!image || image.error) {
-		SetStatus(script.error == "ratelimit" ? script.error : "error");
+		SetStatus("error");
 		return;
 	}
 	let action = await api.WriteAction({ model: textModel });
 	if (!action || action.error) {
-		SetStatus(script.error == "ratelimit" ? script.error : "error");
+		SetStatus("error");
 		return;
 	}
 
@@ -247,7 +273,6 @@ function SetStatus(status) {
 		);
 	} else if (status === "ratelimit") {
 		alert("The daily limit for generating comics has been reached. Please try again tomorrow.");
-		status = "error";
 	}
 
 	document.body.dataset.status = status;

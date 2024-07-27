@@ -37,6 +37,11 @@ export class ComicGeneratorApi {
 		};
 	}
 
+	async GetMetrics() {
+		const result = await this.fetchApi("metrics", {});
+		return result ? result.json : {};
+	}
+
 	/**
 	 * Generates a comic script using the api /script endpoint, using the provided premise and model parameters.
 	 *
@@ -107,8 +112,6 @@ export class ComicGeneratorApi {
 		}
 
 		const result = await this.fetchApi("background", fetchParams);
-		if (result && result.error == "ratelimit")
-			return { error: "ratelimit" };
 		if (
 			!result ||
 			result.error ||
@@ -168,8 +171,6 @@ export class ComicGeneratorApi {
 				query: panel.background,
 				style: style || "",
 			});
-			if (result && result.error == "ratelimit")
-				return { error: "ratelimit" };
 			if (!result || result.error || !result.json || !result.json.url)
 				return { error: "Background image not returned." };
 
@@ -218,9 +219,6 @@ export class ComicGeneratorApi {
 		}
 
 		const result = await this.fetchApi("action", fetchParams);
-
-		if (result && result.error == "ratelimit")
-			return { error: "ratelimit" };
 		if (
 			!result ||
 			result.error ||

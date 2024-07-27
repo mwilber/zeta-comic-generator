@@ -6,6 +6,9 @@
 	$stmt = $db->prepare("SELECT COUNT(*) FROM `metrics` WHERE DATE(timestamp) = CURDATE()");
 	$stmt->execute();
 
-	$output->scriptgeneration = $stmt->fetchColumn();
-	$output->limitreached = $output->scriptgeneration < RATE_LIMIT;
+	$output->json = new stdClass();
+	
+	$output->json->count = $stmt->fetchColumn();
+	$output->json->limit = RATE_LIMIT;
+	$output->json->limitreached = $output->json->count >= RATE_LIMIT;
 ?>
