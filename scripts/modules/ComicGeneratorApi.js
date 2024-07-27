@@ -37,6 +37,11 @@ export class ComicGeneratorApi {
 		};
 	}
 
+	async GetMetrics() {
+		const result = await this.fetchApi("metrics", {});
+		return result ? result.json : {};
+	}
+
 	/**
 	 * Generates a comic script using the api /script endpoint, using the provided premise and model parameters.
 	 *
@@ -52,6 +57,8 @@ export class ComicGeneratorApi {
 			model: model || this.defaultTextModel,
 		});
 
+		if (result && result.error == "ratelimit")
+			return { error: "ratelimit" };
 		if (
 			!result ||
 			!result.json ||
@@ -376,7 +383,10 @@ export class ComicGeneratorApi {
 				}
 			} catch (error) {
 				console.error("Error fetching API:", error);
-				return { error };
+				if (error && error.error == "ratelimit")
+					return { error: "ratelimit" };
+				else
+					return { error };
 			}
 		}
 		return false;

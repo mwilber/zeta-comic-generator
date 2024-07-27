@@ -5,6 +5,23 @@
 		<progress id="progress" value="0" max="100"></progress>
 	</div>
 </div>
+<div id="errordialog" class="dialog-wrapper" role="alert" tabindex="-1">
+	<div class="dialog">
+		<button id="closedialog" class="close" aria-label="Close"></button>
+		<p>
+			The daily limit for generating comics has been reached. 
+			<br/>
+			Please try again tomorrow.
+			<br/>
+			In the meantime, check out the gallery to see Alpha in action.
+		</p>
+		<br style="float:clear;"/>
+		<a href="/gallery" class="cartoon-button">
+			<img class="burst" src="/assets/images/speech_bubble.svg" alt="Cartoon speech bubble icon" />
+			<span class="cartoon-font">View Gallery</span>
+		</a>
+	</div>
+</div>
 <div id="interface">
 	<div class="query-wrapper">
 		<h2>Setup</h2>

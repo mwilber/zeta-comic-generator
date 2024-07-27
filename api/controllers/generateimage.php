@@ -31,8 +31,19 @@ array_push($params, $query);
 $output->prompt = $prompts->generatePrompt($controller, $params);
 //$output->prompt = $query;
 
+// Determine if the daily generation limit has been reached
+$database = new Database();
+$db = $database->getConnection();
 
-if ($modelId) {
+// Fetch the number of records in the table for the current date
+$stmt = $db->prepare("SELECT COUNT(*) FROM `metrics` WHERE DATE(timestamp) = CURDATE()");
+$stmt->execute();
+$hitCount = $stmt->fetchColumn();
+
+
+if ($hitCount >= RATE_LIMIT) {
+    $output->error = "ratelimit";
+} elseif ($modelId) {
 	$model = null;
 	switch ($modelId) {
 		case "oai":

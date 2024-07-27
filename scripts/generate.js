@@ -32,6 +32,22 @@ document.addEventListener("DOMContentLoaded", () => {
 	AttachUiEvents();
 	SetDefaultSelections();
 
+	api.GetMetrics().then((metrics)=>{
+		if(metrics && metrics.limitreached === true){
+			//alert("The daily limit for generating comics has been reached. Please try again tomorrow.");
+			const dialog = document.getElementById("errordialog");
+			dialog.classList[
+				dialog.classList.contains("active") ? "remove" : "add"
+			]("active");
+			dialog.setAttribute("aria-hidden", "false");
+			// Focus the first child of dialog element
+			const closeBtn = dialog.querySelector(".close");
+			if (closeBtn) {
+				closeBtn.focus();
+			}
+		}
+	});
+
 	SetStatus("ready");
 });
 
@@ -119,6 +135,15 @@ function AttachUiEvents() {
 				else styleSelectGroup.style.display = "none";
 			},
 		},
+		{
+			selector: ".dialog .close",
+			event: "click",
+			handler: (e) => {
+				e.target.parentElement.parentElement.classList.remove("active");
+				e.target.parentElement.parentElement.setAttribute("aria-hidden", "true");
+				document.querySelector("#query").focus();
+			},
+		},
 	];
 
 	for (const event of UIevents) {
@@ -159,7 +184,7 @@ async function GenerateStrip() {
 
 	let script = await api.WriteScript(safeQuery, { model: textModel });
 	if (!script || script.error) {
-		SetStatus("error");
+		SetStatus(script.error == "ratelimit" ? script.error : "error");
 		return;
 	}
 	let background = await api.WriteBackground({ model: textModel });
@@ -239,13 +264,15 @@ function ClearElements() {
  * @param {string} status - The status to set Currently uses: "ready", "generating" or "error".
  */
 function SetStatus(status) {
-	document.body.dataset.status = status;
-
 	if (status === "error") {
 		alert(
 			"There was a problem generating the strip. Please try again. If the problem persists, try again in a little while."
 		);
+	} else if (status === "ratelimit") {
+		alert("The daily limit for generating comics has been reached. Please try again tomorrow.");
 	}
+
+	document.body.dataset.status = status;
 
 	["generate", "query"].forEach((id) => {
 		document

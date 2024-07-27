@@ -635,6 +635,12 @@ progress[value]::-webkit-progress-value {
 	/* border: solid 1px #000; */
 }
 
+#errordialog p {
+	font-size: 1rem;
+	margin: 1.5em 2em;
+	line-height: 1.5em;
+}
+
 #input {
 	width:100%;
 	display: flex;
@@ -808,7 +814,8 @@ progress[value]::-webkit-progress-value {
 }
 
 .generate[data-status='complete'] .strip-wrapper,
-.generate[data-status='complete'] .script-wrapper {
+.generate[data-status='complete'] .script-wrapper,
+.generate[data-status='ready'] .dialog-wrapper.active {
 	display: initial;
 }
 
@@ -1225,6 +1232,24 @@ progress[value]::-webkit-progress-value {
 
 	#gallery, .character-art {
 		grid-template-columns: 1fr 1fr;
+	}
+
+	#input .row {
+		display: block;
+	}
+
+	#input .row label {
+		width: 100%;
+	}
+
+	input#query {
+		width: calc(100% - 2em);
+	}
+
+	button#generate {
+		margin-top: 1em;
+		float: right;
+		margin-bottom: -1em;
 	}
 
 	#script {
