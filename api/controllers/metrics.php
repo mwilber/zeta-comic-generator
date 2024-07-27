@@ -9,6 +9,5 @@
 	$output->json = new stdClass();
 	
 	$output->json->count = $stmt->fetchColumn();
-	$output->json->limit = RATE_LIMIT;
 	$output->json->limitreached = $output->json->count >= RATE_LIMIT;
 ?>
