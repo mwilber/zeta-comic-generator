@@ -425,7 +425,7 @@ main header {
 	width: 70%;
 	font-size: 2em;
 	margin: 1.5em 15% 1em 15%;
-	line-height: 2.5em;
+	line-height: 1.5em;
 	text-align: center;
 }
 
@@ -635,10 +635,15 @@ progress[value]::-webkit-progress-value {
 	/* border: solid 1px #000; */
 }
 
+#alertdialog p,
 #errordialog p {
 	font-size: 1rem;
-	margin: 1.5em 2em;
+	margin: 1em 2em;
 	line-height: 1.5em;
+}
+
+#alertdialog p {
+	font-size: 2rem;
 }
 
 #input {
@@ -1184,6 +1189,15 @@ progress[value]::-webkit-progress-value {
 }
 
 @media screen and (max-width: 550px) {
+	#alertdialog p {
+		font-size: 1rem;
+		margin: 2em;
+	}
+	#alertdialog .cartoon-button{
+		margin-top: -1em;
+		display: block;
+		margin-bottom: 1em;
+	}
 	header .brand {
 		display: none;
 	}
