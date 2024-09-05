@@ -17,7 +17,7 @@
 			Vote for Zeta Comic Generator in the Gemini App Contest!
 		</p>
 		<br style="float:clear;"/>
-		<a href="https://ai.google.dev/competition" class="cartoon-button" target="_blank" rel="noopener noreferrer">
+		<a href="https://ai.google.dev/competition/projects/zeta-comic-generator" class="cartoon-button" target="_blank" rel="noopener noreferrer">
 			<img class="burst" src="/assets/images/speech_bubble.svg" alt="Cartoon speech bubble icon" />
 			<span class="cartoon-font">Contest Page</span>
 		</a>
