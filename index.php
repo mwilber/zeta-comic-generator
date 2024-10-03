@@ -5,7 +5,7 @@
 	$request = $_SERVER['REQUEST_URI'];
 	//echo $request;
 
-	$version = "2.0.1";
+	$version = "2.0.2";
 	$meta = new stdClass();
 	$meta->siteTitle = "Zeta Comic Generator";
 	$meta->title = "Zeta Comic Generator";

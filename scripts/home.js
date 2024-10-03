@@ -1,19 +1,19 @@
 document.addEventListener("DOMContentLoaded", () => {
 	AttachUiEvents();
 
-	setTimeout(() => {
-		const dialog = document.getElementById("alertdialog");
-		dialog.classList[
-			dialog.classList.contains("active") ? "remove" : "add"
-		]("active");
-		dialog.setAttribute("aria-hidden", "false");
-		// Focus the first child of dialog element
-		const closeBtn = dialog.querySelector(".close");
-		if (closeBtn) {
-			closeBtn.focus();
-		}
-	}, 1000);
-	
+// 	setTimeout(() => {
+// 		const dialog = document.getElementById("alertdialog");
+// 		dialog.classList[
+// 			dialog.classList.contains("active") ? "remove" : "add"
+// 		]("active");
+// 		dialog.setAttribute("aria-hidden", "false");
+// 		// Focus the first child of dialog element
+// 		const closeBtn = dialog.querySelector(".close");
+// 		if (closeBtn) {
+// 			closeBtn.focus();
+// 		}
+// 	}, 1000);
+// 	
 
 });
 
