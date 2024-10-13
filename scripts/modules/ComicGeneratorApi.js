@@ -37,6 +37,11 @@ export class ComicGeneratorApi {
 		};
 	}
 
+	async GetMetrics() {
+		const result = await this.fetchApi("metrics", {});
+		return result ? result.json : {};
+	}
+
 	/**
 	 * Generates a comic script using the api /script endpoint, using the provided premise and model parameters.
 	 *
@@ -52,6 +57,8 @@ export class ComicGeneratorApi {
 			model: model || this.defaultTextModel,
 		});
 
+		if (result && result.error == "ratelimit")
+			return { error: "ratelimit" };
 		if (
 			!result ||
 			!result.json ||
@@ -177,6 +184,7 @@ export class ComicGeneratorApi {
 			this.comic.panels[idx].images.push({
 				type: "background",
 				url: result.json.url,
+				alt: "Background image: " + panel.background,
 			});
 			this.credits.image = result.model;
 			return { error: false };
@@ -257,6 +265,7 @@ export class ComicGeneratorApi {
 					action,
 					character: "alpha",
 					url: actionImage,
+					alt: "Character image: " + "alpha " + "in a " + panel.action + " pose"
 				});
 			}
 		}
@@ -374,7 +383,10 @@ export class ComicGeneratorApi {
 				}
 			} catch (error) {
 				console.error("Error fetching API:", error);
-				return { error };
+				if (error && error.error == "ratelimit")
+					return { error: "ratelimit" };
+				else
+					return { error };
 			}
 		}
 		return false;

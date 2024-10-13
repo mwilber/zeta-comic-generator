@@ -84,7 +84,7 @@ try {
 
 	if ($result && isset($result->json)) {
 		$output->id = $result->id;
-		$output->prompt = $result->prompt;
+		$output->prompt = stripslashes($result->prompt);
 		$output->script = json_decode($result->json);
 	} else {
 		$output->error = "No record found with ID: $id";

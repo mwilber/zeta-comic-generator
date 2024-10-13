@@ -54,12 +54,14 @@ document.addEventListener("DOMContentLoaded", () => {
 						panel.images.push({
 							url: backgrounds[idx],
 							type: "background",
+							alt: "Background image: " + panel.background,
 						});
 					panel.images.push({
 						url: "/assets/character_art/" + panel.action + ".png",
 						type: "character",
 						character: "alpha",
 						action: panel.action,
+						alt: "Character image: " + "alpha " + "in a " + panel.action + " pose"
 					});
 				}
 
@@ -103,6 +105,12 @@ function AttachUiEvents() {
 				dialog.classList[
 					dialog.classList.contains("active") ? "remove" : "add"
 				]("active");
+				dialog.setAttribute("aria-hidden", "false");
+				// Focus the first child of dialog element
+				const closeBtn = dialog.querySelector(".close");
+				if (closeBtn) {
+					closeBtn.focus();
+				}
 			},
 		},
 		{
@@ -120,6 +128,12 @@ function AttachUiEvents() {
 				dialog.classList[
 					dialog.classList.contains("active") ? "remove" : "add"
 				]("active");
+				dialog.setAttribute("aria-hidden", "false");
+				// Focus the first child of dialog element
+				const closeBtn = dialog.querySelector(".close");
+				if (closeBtn) {
+					closeBtn.focus();
+				}
 			},
 		},
 		{
@@ -133,13 +147,18 @@ function AttachUiEvents() {
 			handler: (e) => {
 				e.stopPropagation();
 				e.target.classList.remove("active");
+				e.target.setAttribute("aria-hidden", "true");
+				document.querySelector("#download").focus();
 			},
 		},
 		{
 			selector: ".dialog .close",
 			event: "click",
-			handler: (e) =>
-				e.target.parentElement.parentElement.classList.remove("active"),
+			handler: (e) => {
+				e.target.parentElement.parentElement.classList.remove("active");
+				e.target.parentElement.parentElement.setAttribute("aria-hidden", "true");
+				document.querySelector("#download").focus();
+			},
 		},
 		{
 			selector: "#shareurl",

@@ -53,6 +53,7 @@ export class DialogBalloon {
 		var image = new Image();
 		image.classList.add("balloon");
 		image.src = balloon.toDataURL();
+		image.alt = "Dialog Balloon: " + dialog;
 
 		return image;
 	}

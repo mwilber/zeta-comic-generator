@@ -23,8 +23,8 @@ function PopGallery(pageNum) {
 				let frameEl = document.createElement("div");
 				frameEl.className = "frame";
 				frameEl.innerHTML += `
-					<a class="strip" href="/detail/${strip.id}">
-						<img src="${strip.thumbnail}"/>
+					<a class="strip" href="/detail/${strip.id}" aria-label="Comic Title: ${strip.title}">
+						<img src="${strip.thumbnail}" alt="comic thumbnail"/>
 						<h3>${strip.title}</h3>
 					</a>
 				`;
@@ -42,7 +42,7 @@ function PopGallery(pageNum) {
 					PopGallery(pageNum + 1);
 				});
 				moreBtn.innerHTML = `
-					<img class="burst" src="/assets/images/speech_bubble.svg">
+					<img class="burst" src="/assets/images/speech_bubble.svg" alt="Cartoon speech bubble icon">
 					<span class="cartoon-font">More</span>
 				`;
 				actionRow.appendChild(moreBtn);

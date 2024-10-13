@@ -1,8 +1,25 @@
-<div id="statusdialog" class="dialog-wrapper">
+<div id="statusdialog" class="dialog-wrapper" role="alert" aria-labeledby="progress" tabindex="-1">
 	<div class="dialog">
 		<div id="status"></div>
 		<div class="lds-grid"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
 		<progress id="progress" value="0" max="100"></progress>
+	</div>
+</div>
+<div id="errordialog" class="dialog-wrapper" role="alert" tabindex="-1">
+	<div class="dialog">
+		<button id="closedialog" class="close" aria-label="Close"></button>
+		<p>
+			The daily limit for generating comics has been reached. 
+			<br/>
+			Please try again tomorrow.
+			<br/>
+			In the meantime, check out the gallery to see Alpha in action.
+		</p>
+		<br style="float:clear;"/>
+		<a href="/gallery" class="cartoon-button">
+			<img class="burst" src="/assets/images/speech_bubble.svg" alt="Cartoon speech bubble icon" />
+			<span class="cartoon-font">View Gallery</span>
+		</a>
 	</div>
 </div>
 <div id="interface">
@@ -14,8 +31,10 @@
 					Script Model
 					<div class="select">
 						<select name="script-model" id="script-model">
-							<option value="gem">Gemini 1.0</option>
-							<option value="oai" selected>GPT 4</option>
+							<option value="">(Select a model)</option>
+							<option value="claude">Claude Sonnet 3.5</option>
+							<option value="gem">Gemini 1.5</option>
+							<option value="oai">GPT 4o</option>
 							<!-- Titan Text Express v1 disabled because it can't handle the new prompt format -->
 							<!-- <option value="ttn">Titan Text Express v1</option> -->
 						</select>
@@ -25,7 +44,8 @@
 					Image Model
 					<div class="select">
 						<select name="image-model" id="image-model">
-							<option value="oai" selected>Dall-E 3</option>
+							<option value="">(Select a model)</option>
+							<option value="oai">Dall-E 3</option>
 							<option value="sdf">Stable Diffusion XL</option>
 							<option value="ttn">Titan Image (preview)</option>
 						</select>
@@ -56,7 +76,7 @@
 			<div class="row">
 				<input id="query" type="text" placeholder="ex. An explanation of the distance between the earth and the sun."/>
 				<button id="generate" class="cartoon-button" disabled>
-					<img class="burst" src="/assets/images/speech_bubble.svg" />
+					<img class="burst" src="/assets/images/speech_bubble.svg" alt="Cartoon speech bubble icon" />
 					<span class="cartoon-font">Start</span>
 				</button>
 			</div>
@@ -67,7 +87,7 @@
 	</div>
 	<div class="strip-wrapper">
 		<h2>Composite</h2>
-		<div id="strip">
+		<div id="strip" role="region" aria-label="Comic Strip Composite" tabindex="-1">
 			<div class="strip-container">
 				<div id="panel1" class="panel"></div>
 				<div id="panel2" class="panel"></div>

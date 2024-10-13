@@ -46,6 +46,7 @@ $characterActions = [
 	"startled",
 	"teaching",
 	"terrified",
+	"trick_or_treat",
 	"typing"
 ];
 $paramNames = [
@@ -73,7 +74,18 @@ if(OUTPUT_DEBUG_DATA) {
 }
 $output->prompt = $prompts->generatePrompt($actionId, $params);
 
-if ($modelId) {
+// Determine if the daily generation limit has been reached
+$database = new Database();
+$db = $database->getConnection();
+
+// Fetch the number of records in the table for the current date
+$stmt = $db->prepare("SELECT COUNT(*) FROM `metrics` WHERE DATE(timestamp) = CURDATE()");
+$stmt->execute();
+$hitCount = $stmt->fetchColumn();
+
+if ($hitCount >= RATE_LIMIT) {
+    $output->error = "ratelimit";
+} elseif ($modelId) {
 	$model = null;
 	switch ($modelId) {
 		case "oai":
@@ -85,6 +97,9 @@ if ($modelId) {
 		case "ttn":
 			$model = new ModelTitan();
 			break;
+		case "claude":
+			$model = new ModelClaude();
+			break;
 	}
 
 	if (!$model) {
@@ -95,6 +110,8 @@ if ($modelId) {
 
 		$response = $model->sendPrompt($output->prompt);
 		$output->error = $response->error;
+
+		countHit($actionId, $params[0]);
 
 		if(OUTPUT_DEBUG_DATA) {
 			$output->debug = $response->debug;
@@ -124,5 +141,16 @@ function addPeriod($str) {
 	$str .= '.';
 	}
 	return $str;
+}
+
+function countHit($action, $premise) {
+	if ($action != "script") return;
+	// Store a record in metrics table
+	$database = new Database();
+	$db = $database->getConnection();
+
+	$stmt = $db->prepare("INSERT INTO `metrics` (`premise`) VALUES (".$db->quote($_POST["query"]).");");
+	// execute query
+	$stmt->execute();
 }
 ?>

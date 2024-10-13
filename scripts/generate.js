@@ -30,9 +30,51 @@ document.addEventListener("DOMContentLoaded", () => {
 	});
 
 	AttachUiEvents();
+	SetDefaultSelections();
+
+	api.GetMetrics().then((metrics)=>{
+		if(metrics && metrics.limitreached === true){
+			//alert("The daily limit for generating comics has been reached. Please try again tomorrow.");
+			const dialog = document.getElementById("errordialog");
+			dialog.classList[
+				dialog.classList.contains("active") ? "remove" : "add"
+			]("active");
+			dialog.setAttribute("aria-hidden", "false");
+			// Focus the first child of dialog element
+			const closeBtn = dialog.querySelector(".close");
+			if (closeBtn) {
+				closeBtn.focus();
+			}
+		}
+	});
 
 	SetStatus("ready");
 });
+
+
+/**
+ * Sets the default selections for the script and image models.
+ * The selected values are retrieved from localStorage, if available, or a default value is used.
+ * After setting the values, a 'change' event is dispatched on the corresponding elements to trigger any related functionality.
+ */
+function SetDefaultSelections() {
+	const defaultSelection = "oai";
+	const scriptModelEl = document.getElementById("script-model");
+	const imageModelEl = document.getElementById("image-model");
+
+	let savedScriptModel = localStorage
+		? localStorage.getItem("script-model-select")
+		: null;
+	let savedImageModel = localStorage
+		? localStorage.getItem("image-model-select")
+		: null;
+
+	scriptModelEl.value = savedScriptModel || defaultSelection;
+	imageModelEl.value = savedImageModel || defaultSelection;
+	// Fire a change event on the selections
+	scriptModelEl.dispatchEvent(new Event("change"));
+	imageModelEl.dispatchEvent(new Event("change"));
+}
 
 /**
  * Attaches event listeners to various UI elements in the application.
@@ -69,15 +111,37 @@ function AttachUiEvents() {
 			handler: SetCharCount,
 		},
 		{
+			selector: "#script-model",
+			event: "change",
+			handler: (e) => {
+				let {value} = e.target;
+				// set localStorage value `script-model-select` to the selected value
+				if(localStorage)
+					localStorage.setItem("script-model-select", value);
+			}
+		},
+		{
 			selector: "#image-model",
 			event: "change",
 			handler: (e) => {
-				console.log("target val", e.target.value);
+				let {value} = e.target;
+				// set localStorage value `image-model-select` to the selected value
+				if(localStorage)
+					localStorage.setItem("image-model-select", value);
 				const styleSelectGroup =
 					document.getElementById("image-style-label");
-				if (e.target.value === "sdf")
+				if (value === "sdf")
 					styleSelectGroup.style.display = "block";
 				else styleSelectGroup.style.display = "none";
+			},
+		},
+		{
+			selector: ".dialog .close",
+			event: "click",
+			handler: (e) => {
+				e.target.parentElement.parentElement.classList.remove("active");
+				e.target.parentElement.parentElement.setAttribute("aria-hidden", "true");
+				document.querySelector("#query").focus();
 			},
 		},
 	];
@@ -120,7 +184,7 @@ async function GenerateStrip() {
 
 	let script = await api.WriteScript(safeQuery, { model: textModel });
 	if (!script || script.error) {
-		SetStatus("error");
+		SetStatus(script.error == "ratelimit" ? script.error : "error");
 		return;
 	}
 	let background = await api.WriteBackground({ model: textModel });
@@ -200,13 +264,15 @@ function ClearElements() {
  * @param {string} status - The status to set Currently uses: "ready", "generating" or "error".
  */
 function SetStatus(status) {
-	document.body.dataset.status = status;
-
 	if (status === "error") {
 		alert(
 			"There was a problem generating the strip. Please try again. If the problem persists, try again in a little while."
 		);
+	} else if (status === "ratelimit") {
+		alert("The daily limit for generating comics has been reached. Please try again tomorrow.");
 	}
+
+	document.body.dataset.status = status;
 
 	["generate", "query"].forEach((id) => {
 		document
@@ -216,9 +282,16 @@ function SetStatus(status) {
 				""
 			);
 	});
-	document
-		.getElementById("statusdialog")
-		.classList[status === "generating" ? "add" : "remove"]("active");
+
+	const statusDlg = document.getElementById("statusdialog");
+	
+	statusDlg.classList[status === "generating" ? "add" : "remove"]("active");
+
+	if(status === "generating") {
+		statusDlg.focus();
+	} else if(status === "complete") {
+		document.getElementById("strip").focus();
+	}
 
 	const el = document.getElementById("status");
 	el.innerHTML = status;
@@ -235,6 +308,10 @@ function UpdateProgress(amount) {
 	const el = document.getElementById("progress");
 	el.setAttribute("value", amount);
 	el.innerHTML = amount + "%";
+	el.setAttribute("aria-valuetext", `${amount}% complete.`);
+
+	// const elStatus = document.getElementById("status");
+	// elStatus.setAttribute("aria-label", `Generating: ${amount}% complete.`);
 }
 
 /**

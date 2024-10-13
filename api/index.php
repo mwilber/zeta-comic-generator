@@ -61,6 +61,7 @@
 	require __DIR__ . '/models/ttn.php';
 	require __DIR__ . '/models/dall.php';
 	require __DIR__ . '/models/sdf.php';
+	require __DIR__ . '/models/claude.php';
 
 	switch ($controller) {
 		// App API endpoints
@@ -73,6 +74,7 @@
 		case 'save':
 		case 'update':
 		case 'thumbnail':
+		case 'metrics':
 			require __DIR__ . '/controllers/'.$controller.'.php';
 			break;
 		// Comic Generation API endpoints

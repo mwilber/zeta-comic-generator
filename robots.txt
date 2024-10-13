@@ -1,0 +1,6 @@
+User-agent: *
+Disallow: /api/
+Disallow: /assets/
+
+
+Sitemap: https://zcgdev.greenzeta.com/sitemap.xml
