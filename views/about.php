@@ -16,6 +16,7 @@
 		"startled",
 		"teaching",
 		"terrified",
+		"trick_or_treat",
 		"typing"
 	];
 ?>

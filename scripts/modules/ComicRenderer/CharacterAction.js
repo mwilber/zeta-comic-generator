@@ -102,6 +102,16 @@ export class CharacterAction {
 				y: 215,
 			},
 		},
+		scifi_costume: {
+			center: {
+				x: 256,
+				y: 10,
+			},
+			pointer: {
+				x: 310,
+				y: 140,
+			},
+		},
 		selfie: {
 			center: {
 				x: 256,
@@ -160,6 +170,16 @@ export class CharacterAction {
 			pointer: {
 				x: 265,
 				y: 105,
+			},
+		},
+		trick_or_treat: {
+			center: {
+				x: 256,
+				y: 10,
+			},
+			pointer: {
+				x: 290,
+				y: 150,
 			},
 		},
 		typing: {
