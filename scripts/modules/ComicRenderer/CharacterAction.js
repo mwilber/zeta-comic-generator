@@ -78,7 +78,7 @@ export class CharacterAction {
 				y: 10,
 			},
 			pointer: {
-				x: 280,
+				x: 300,
 				y: 70,
 			},
 		},
@@ -178,8 +178,8 @@ export class CharacterAction {
 				y: 10,
 			},
 			pointer: {
-				x: 290,
-				y: 150,
+				x: 360,
+				y: 170,
 			},
 		},
 		typing: {
