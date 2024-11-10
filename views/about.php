@@ -1,5 +1,6 @@
 <?php 
 	$actions = [
+		"analysis",
 		"angry",
 		"approval",
 		"creeping",
@@ -17,7 +18,8 @@
 		"teaching",
 		"terrified",
 		"trick_or_treat",
-		"typing"
+		"typing",
+		"writing"
 	];
 ?>
 
