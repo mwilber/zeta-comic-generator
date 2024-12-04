@@ -92,6 +92,16 @@ export class CharacterAction {
 				y: 70,
 			},
 		},
+		reporting: {
+			center: {
+				x: 256,
+				y: 10,
+			},
+			pointer: {
+				x: 200,
+				y: 160,
+			},
+		},
 		running: {
 			center: {
 				x: 256,

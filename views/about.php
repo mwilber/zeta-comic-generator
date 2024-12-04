@@ -8,6 +8,7 @@
 		"enamored",
 		"explaining",
 		"joyous",
+		"reporting",
 		"running",
 		"santa_claus_costume",
 		"scifi_costume",
