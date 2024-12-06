@@ -12,6 +12,16 @@
  */
 export class CharacterAction {
 	static _balloonLocations = {
+		analysis: {
+			center: {
+				x: 256,
+				y: 10,
+			},
+			pointer: {
+				x: 190,
+				y: 130,
+			},
+		},
 		angry: {
 			center: {
 				x: 256,
@@ -80,6 +90,16 @@ export class CharacterAction {
 			pointer: {
 				x: 280,
 				y: 70,
+			},
+		},
+		reporting: {
+			center: {
+				x: 256,
+				y: 10,
+			},
+			pointer: {
+				x: 200,
+				y: 160,
 			},
 		},
 		running: {
@@ -189,6 +209,16 @@ export class CharacterAction {
 			},
 			pointer: {
 				x: 335,
+				y: 235,
+			},
+		},
+		writing: {
+			center: {
+				x: 256,
+				y: 10,
+			},
+			pointer: {
+				x: 200,
 				y: 235,
 			},
 		},

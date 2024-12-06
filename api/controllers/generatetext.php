@@ -30,6 +30,7 @@ $modelId = POSTval("model", "oai");
 $actionId = $controller;
 
 $characterActions = [
+	"analysis",
 	"angry",
 	"approval",
 	"creeping",
@@ -37,6 +38,7 @@ $characterActions = [
 	"enamored",
 	"explaining",
 	"joyous",
+	"reporting",
 	"running",
 	"santa_claus_costume",
 	"scifi_costume",
@@ -47,7 +49,8 @@ $characterActions = [
 	"teaching",
 	"terrified",
 	"trick_or_treat",
-	"typing"
+	"typing",
+	"writing"
 ];
 $paramNames = [
 	"query",
