@@ -6,3 +6,5 @@ assets/thumbnails
 admin.php
 composer.phar
 vendor/
+.env
+.dh-diag
