@@ -117,6 +117,8 @@ function InitEditor() {
 					script.panels.forEach((panel, idx) => {
 						// Support older scripts that had character property
 						if(!panel.action && panel.character) panel.action = panel.character;
+						let bkgId = data.backgrounds[idx].match(/backgrounds\/([a-zA-Z0-9]+)\.png/);
+						bkgId = (bkgId && bkgId[1]) ? "~/process_image.sh " + bkgId[1] : "null";
 
 						document.getElementById("script").innerHTML += `
 						<li>
@@ -131,6 +133,7 @@ function InitEditor() {
 										<tr><td>Background</td> <td><textarea name="script-panel-${idx}-background">${panel.background}</textarea></td></tr>
 										<tr><td>Background Url</td> <td><input name="script-panel-${idx}-background_url" value="${panel.background_url}"/></td></tr>
 										<tr><td>Stored File</td> <td><a href="${data.backgrounds[idx]}" target="_blank">${data.backgrounds[idx]}</a></td></tr>
+										<tr><td>Edit Command</td> <td>${bkgId} <button onclick="navigator.clipboard.writeText('${bkgId}')">copy</button></td></tr>
 									</table>
 								</li>
 							</ul>
