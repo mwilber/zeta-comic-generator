@@ -38,6 +38,7 @@ $characterActions = [
 	"enamored",
 	"explaining",
 	"joyous",
+	"laughing",
 	"reporting",
 	"running",
 	"santa_claus_costume",

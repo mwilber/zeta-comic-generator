@@ -92,6 +92,16 @@ export class CharacterAction {
 				y: 70,
 			},
 		},
+		laughing: {
+			center: {
+				x: 256,
+				y: 10,
+			},
+			pointer: {
+				x: 190,
+				y: 140,
+			},
+		},
 		reporting: {
 			center: {
 				x: 256,
