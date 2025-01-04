@@ -54,7 +54,7 @@ class Prompts {
         Include enough detail necessary for an AI image generator to render an image of your description.
         Output your response as a valid json object in the follwing format:
         {
-            descriptions: [
+            \"descriptions\": [
                 \"background description 1\",
                 \"background description 2\",
                 \"background description 3\"
@@ -77,7 +77,7 @@ class Prompts {
         For each of the three scenes choose one word, from the following list, which best describes the action or appearance of the main character:  {p3}.
         Output your response as a valid json object in the follwing format:
         {
-            panels: [
+            \"panels\": [
                 \"word1\",
                 \"word2\",
                 \"word3\"

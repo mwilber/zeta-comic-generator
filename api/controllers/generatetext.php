@@ -104,6 +104,9 @@ if ($hitCount >= RATE_LIMIT) {
 		case "claude":
 			$model = new ModelClaude();
 			break;
+		case "llama":
+			$model = new ModelLlama();
+			break;	
 	}
 
 	if (!$model) {
