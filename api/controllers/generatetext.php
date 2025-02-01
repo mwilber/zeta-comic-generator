@@ -70,18 +70,44 @@ foreach ($paramNames as $paramName) {
 }
 if ($actionId == "action") array_push($params, implode(", ", $characterActions));
 
+$database = new Database();
+$db = $database->getConnection();
+
+$continuity = "";
+// Get continuity records from the database
+$stmt = $db->prepare("SELECT `id`, `category`, `description` FROM `continuity`");
+// execute the query and loop through the results
+$stmt->execute();
+while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+	switch ($row['category']) {
+		case 1:
+			// A personality trait
+			$continuity .= "".$row['id'].". Alpha is ".$row['description'].". ";
+			break;
+		case 2:
+			// A personal preference
+			$continuity .= "".$row['id'].". Alpha prefers ".$row['description'].". ";
+			break;
+		case 3:
+			// A place visited
+			$continuity .= "".$row['id'].". Alpha has visited ".$row['description'].". ";
+			break;
+		case 4:
+			// A person or animal encountered
+			$continuity .= "".$row['id'].". Alpha has encountered ".$row['description'].". ";
+			break;
+	}
+}
+
 // Get the prompt
 $prompts = new Prompts();
 if(OUTPUT_DEBUG_DATA) {
 	$output->actionId = $actionId;
 	$output->params = $params;
 }
-$output->prompt = $prompts->generatePrompt($actionId, $params);
+$output->prompt = $prompts->generatePrompt($actionId, $params, array($continuity));
 
 // Determine if the daily generation limit has been reached
-$database = new Database();
-$db = $database->getConnection();
-
 // Fetch the number of records in the table for the current date
 $stmt = $db->prepare("SELECT COUNT(*) FROM `metrics` WHERE DATE(timestamp) = CURDATE()");
 $stmt->execute();
@@ -104,6 +130,9 @@ if ($hitCount >= RATE_LIMIT) {
 		case "claude":
 			$model = new ModelClaude();
 			break;
+		case "llama":
+			$model = new ModelLlama();
+			break;	
 	}
 
 	if (!$model) {
