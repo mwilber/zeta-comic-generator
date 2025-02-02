@@ -46,7 +46,8 @@ class Prompts {
                     \"dialog\": \"\"
                 }
             ],
-            \"memory\" : []
+            \"memory\" : [],
+            \"newmemory\" : []
         }
 
         The following is a description of each property value for the json object:
@@ -128,10 +129,10 @@ class Prompts {
 				// Replace placeholders like {p0}, {p1}, etc., with corresponding values
 				$instruction = str_replace("{p{$index}}", $value, $instruction);
 			}
-            foreach ($system as $index => $value) {
-                // Replace placeholders like {s0}, {s1}, etc., with corresponding values
-                $instruction = str_replace("{s{$index}}", $value, $instruction);
-            }
+			foreach ($system as $index => $value) {
+				// Replace placeholders like {s0}, {s1}, etc., with corresponding values
+				$instruction = str_replace("{s{$index}}", $value, $instruction);
+			}
 			$prompt = $this->writePromptLine($prompt, $instruction);
 		}
 
