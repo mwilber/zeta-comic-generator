@@ -228,7 +228,7 @@ async function SaveStrip() {
 		alert("There was a problem saving.");
 	}
 	console.log("Success:", data);
-	//window.location.replace("/detail/" + data.response.permalink);
+	window.location.replace("/detail/" + data.response.permalink);
 }
 
 /**
