@@ -310,6 +310,8 @@ export class ComicGeneratorApi {
 			prompt: this.premise,
 			title: this.comic.title,
 			script: JSON.stringify(scriptExport),
+			memory: JSON.stringify(scriptExport.memory),
+			newmemory: JSON.stringify(scriptExport.newmemory),
 			bkg1: this.GetPanelImageUrl(0, "background"),
 			bkg2: this.GetPanelImageUrl(1, "background"),
 			bkg3: this.GetPanelImageUrl(2, "background"),
