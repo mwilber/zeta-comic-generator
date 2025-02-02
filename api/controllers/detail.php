@@ -126,6 +126,20 @@ try {
 	$result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 	if ($result) {
 		foreach ($result as $record) {
+			switch ($record['category']) {
+				case '1':
+					$record['prefix'] = "Alpha's personality:";
+					break;
+				case '2':
+					$record['prefix'] = "Alpha's likes:";
+					break;
+				case '3':
+					$record['prefix'] = "Alpha has visited:";
+					break;
+				case '4':
+					$record['prefix'] = "Alpha has encountered:";
+					break;
+			}
 			array_push($output->continuity, $record);
 		}
 	} else {

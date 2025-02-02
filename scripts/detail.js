@@ -68,6 +68,17 @@ document.addEventListener("DOMContentLoaded", () => {
 				scriptRenderer.LoadScript(script);
 				comicRenderer.LoadScript(script);
 
+				if (data.continuity) {
+					let continuityEl = document.getElementById("continuity");
+					for (const item of data.continuity) {
+						continuityEl.innerHTML += `
+							<li>
+								${item.prefix} <a href="/continuity/${item.permalink}">${item.description}</a>
+							</li>
+						`;
+					}
+				}
+
 				AttachUiEvents();
 			});
 	}

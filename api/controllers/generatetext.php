@@ -82,19 +82,19 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
 	switch ($row['category']) {
 		case 1:
 			// A personality trait
-			$continuity .= "".$row['id'].". Alpha is ".$row['description'].". ";
+			$continuity .= "".$row['id'].". Alpha's personality: ".$row['description'].". ";
 			break;
 		case 2:
 			// A personal preference
-			$continuity .= "".$row['id'].". Alpha prefers ".$row['description'].". ";
+			$continuity .= "".$row['id'].". Alpha's likes: ".$row['description'].". ";
 			break;
 		case 3:
 			// A place visited
-			$continuity .= "".$row['id'].". Alpha has visited ".$row['description'].". ";
+			$continuity .= "".$row['id'].". Alpha has visited: ".$row['description'].". ";
 			break;
 		case 4:
 			// A person or animal encountered
-			$continuity .= "".$row['id'].". Alpha has encountered ".$row['description'].". ";
+			$continuity .= "".$row['id'].". Alpha has encountered: ".$row['description'].". ";
 			break;
 	}
 }
