@@ -17,7 +17,7 @@ class Prompts {
         You are a cartoonist and humorist. Write the script for a three panel comic strip.
         In the comic strip our main character, a short green humanoid alien named Alpha Zeta, engages in the following premise: {p0}
         Include a detailed scene description and words spoken by the main character.
-        The following is a list of story elements that have been used in previous comics. These are called \"elements of significance\". You may use these elements of significance in writing the comic strip. Using an element of significance is not required. Each element of significance is preceded by an identifying number.
+        The following is a list of story elements that have been used in previous comics. These are called \"elements of significance\". Each element of significance is preceded by an identifying number. You may use these elements of significance in writing the comic strip. Using an element of significance is not required. Only use an element of significance if it is pertinent to the comic story.
 
         Elements of Significance
         {s0}

@@ -119,7 +119,7 @@ if($output->script) $output->continuity = [];
 try {
 	$stmt = $db->prepare("SELECT `category`, `description`, `permalink` FROM `continuity` 
 	JOIN `comic_continuity` ON comic_continuity.continuityId = continuity.id 
-	WHERE comic_continuity.comicId = :comicId AND continuity.active = true");  
+	WHERE comic_continuity.comicId = :comicId"); // AND continuity.active = true");  
 	$stmt->bindParam(':comicId', $output->id, PDO::PARAM_INT);
 	$stmt->execute();
 
@@ -128,16 +128,16 @@ try {
 		foreach ($result as $record) {
 			switch ($record['category']) {
 				case '1':
-					$record['prefix'] = "Alpha's personality:";
+					$record['prefix'] = "Personality trait:";
 					break;
 				case '2':
-					$record['prefix'] = "Alpha's likes:";
+					$record['prefix'] = "Likes:";
 					break;
 				case '3':
-					$record['prefix'] = "Alpha has visited:";
+					$record['prefix'] = "Visited:";
 					break;
 				case '4':
-					$record['prefix'] = "Alpha has encountered:";
+					$record['prefix'] = "Encountered:";
 					break;
 			}
 			array_push($output->continuity, $record);

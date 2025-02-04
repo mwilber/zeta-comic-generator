@@ -73,7 +73,7 @@ document.addEventListener("DOMContentLoaded", () => {
 					for (const item of data.continuity) {
 						continuityEl.innerHTML += `
 							<li>
-								${item.prefix} <a href="/continuity/${item.permalink}">${item.description}</a>
+								${item.prefix} <a href="/gallery/${item.permalink}">${item.description}</a>
 							</li>
 						`;
 					}
