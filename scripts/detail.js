@@ -70,13 +70,30 @@ document.addEventListener("DOMContentLoaded", () => {
 
 				if (data.continuity) {
 					let continuityEl = document.getElementById("continuity");
+					let lastCategory = 0;
+					let continuityHTML = "";
 					for (const item of data.continuity) {
-						continuityEl.innerHTML += `
+						if (item.categoryId !== lastCategory) {
+							if (lastCategory !== 0) {
+								continuityHTML += `</ul></li>`;
+							}
+							continuityHTML += `
+								<li>
+								<h3>${item.prefix}</h3>
+								<ul>
+							`;
+							lastCategory = item.categoryId;
+						}
+						continuityHTML += `
 							<li>
-								${item.prefix} <a href="/gallery/${item.permalink}">${item.description}</a>
+								<a href="/gallery/${item.permalink}">${item.description}</a>
 							</li>
 						`;
 					}
+
+					continuityHTML += `</ul></li>`;
+
+					continuityEl.innerHTML  = continuityHTML;
 				}
 
 				AttachUiEvents();

@@ -247,12 +247,13 @@
 						$memoryId = $existingRecord['id'];
 					} else {
 						// prepare query statement
-						$stmt = $db->prepare("INSERT INTO `continuity` (`category`, `description`) VALUES (".$db->quote($memory->type).", ".$db->quote($memory->description).");");
+						$stmt = $db->prepare("INSERT INTO `continuity` (`categoryId`, `description`) VALUES (".$db->quote($memory->type).", ".$db->quote($memory->description).");");
 						// execute query
 						$stmt->execute();
 						$memoryId = $db->lastInsertId();
 						// Update the `permalink` field with an md5 hash of the new ID
 						$stmt = $db->prepare("UPDATE `continuity` SET `permalink`=".$db->quote(md5($memoryId))." WHERE `id`=".$memoryId.";");
+						$stmt->execute();
 					}
 					// Insert a record into the table `comic_continuity`. The table has two fields: `comicId` and `continuityId`
 					$stmt = $db->prepare("INSERT INTO `comic_continuity` (`comicId`, `continuityId`) VALUES ('".$output->response->comicId."', '".$memoryId."');");

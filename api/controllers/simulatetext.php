@@ -19,33 +19,31 @@ $db = $database->getConnection();
 
 
 $continuity = "";
-// Get continuity records from the database
-$stmt = $db->prepare("SELECT `id`, `category`, `description` FROM `continuity`");
-// execute the query and loop through the results
-$stmt->execute();
-while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-	switch ($row['category']) {
-		case 1:
-			// A personality trait
-			$continuity .= "\n".$row['id'].". Alpha is ".$row['description'].".";
-			break;
-		case 2:
-			// A personal preference
-			$continuity .= "\n".$row['id'].". Alpha prefers ".$row['description'].".";
-			break;
-		case 3:
-			// A place visited
-			$continuity .= "\n".$row['id'].". Alpha has visited ".$row['description'].".";
-			break;
-		case 4:
-			// A person or animal encountered
-			$continuity .= "\n".$row['id'].". Alpha has encountered ".$row['description'].".";
-			break;
+$categories = "";
+
+if ($actionId == "script") {
+	// Get continuity records from the database
+	$stmt = $db->prepare("SELECT `continuity`.`id`, `continuity`.`description`, `categories`.`heading` 
+						FROM `continuity` 
+						JOIN `categories` ON `continuity`.`categoryId` = `categories`.`id`
+						WHERE `continuity`.`active` = true");
+	// execute the query and loop through the results
+	$stmt->execute();
+	while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+		$continuity .= "".$row['id'].". ".$row['heading'].": ".$row['description'].". ";
+	}
+
+	// Get category records from the database
+	$stmt = $db->prepare("SELECT * FROM `categories`");
+	// execute the query and loop through the results
+	$stmt->execute();
+	while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+		$categories .= $row['id']." - ".$row['description'];
 	}
 }
 
 $prompts = new Prompts();
-$output->prompt = $prompts->generatePrompt($actionId, array($params), array($continuity));
+$output->prompt = $prompts->generatePrompt($actionId, array($params), array($continuity, $categories));
 
 // Record the model that was used
 $output->model = "simulation";

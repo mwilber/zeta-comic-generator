@@ -29,6 +29,8 @@ class Prompts {
         3 - Specific location Alpha Zeta visited.
         4 - Specific person or animal Alpha Zeta encountered.
 
+        {s1}
+
         Output your response as a valid json object in the follwing format:
         {
             \"title\": \"\",

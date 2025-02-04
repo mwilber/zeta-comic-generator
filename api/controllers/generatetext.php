@@ -75,29 +75,25 @@ $db = $database->getConnection();
 
 $continuity = "";
 // Get continuity records from the database
-$stmt = $db->prepare("SELECT `id`, `category`, `description` FROM `continuity`");
+$stmt = $db->prepare("SELECT `continuity`.`id`, `continuity`.`description`, `categories`.`heading` 
+					  FROM `continuity` 
+					  JOIN `categories` ON `continuity`.`categoryId` = `categories`.`id`
+					  WHERE `continuity`.`active` = true");
 // execute the query and loop through the results
 $stmt->execute();
 while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-	switch ($row['category']) {
-		case 1:
-			// A personality trait
-			$continuity .= "".$row['id'].". Alpha's personality: ".$row['description'].". ";
-			break;
-		case 2:
-			// A personal preference
-			$continuity .= "".$row['id'].". Alpha's likes: ".$row['description'].". ";
-			break;
-		case 3:
-			// A place visited
-			$continuity .= "".$row['id'].". Alpha has visited: ".$row['description'].". ";
-			break;
-		case 4:
-			// A person or animal encountered
-			$continuity .= "".$row['id'].". Alpha has encountered: ".$row['description'].". ";
-			break;
-	}
+	$continuity .= "".$row['id'].". ".$row['heading'].": ".$row['description'].". ";
 }
+
+// Get category records from the database
+$categories = "";
+$stmt = $db->prepare("SELECT * FROM `categories`");
+// execute the query and loop through the results
+$stmt->execute();
+while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+	$categories .= $row['id']." - ".$row['description'].". ";
+}
+
 
 // Get the prompt
 $prompts = new Prompts();
@@ -105,7 +101,7 @@ if(OUTPUT_DEBUG_DATA) {
 	$output->actionId = $actionId;
 	$output->params = $params;
 }
-$output->prompt = $prompts->generatePrompt($actionId, $params, array($continuity));
+$output->prompt = $prompts->generatePrompt($actionId, $params, array($continuity, $categories));
 
 // Determine if the daily generation limit has been reached
 // Fetch the number of records in the table for the current date

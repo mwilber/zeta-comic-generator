@@ -117,29 +117,17 @@ try {
 if($output->script) $output->continuity = [];
 
 try {
-	$stmt = $db->prepare("SELECT `category`, `description`, `permalink` FROM `continuity` 
-	JOIN `comic_continuity` ON comic_continuity.continuityId = continuity.id 
-	WHERE comic_continuity.comicId = :comicId"); // AND continuity.active = true");  
+	$stmt = $db->prepare("SELECT `categories`.`prefix`, `continuity`.`categoryId`, `continuity`.`description`, `continuity`.`permalink` FROM `continuity`
+	JOIN `categories` ON `continuity`.`categoryId` = `categories`.`id`
+	JOIN `comic_continuity` ON comic_continuity.continuityId = continuity.id  
+	WHERE comic_continuity.comicId = :comicId 
+	ORDER BY `continuity`.`categoryId`"); // AND continuity.active = true");  
 	$stmt->bindParam(':comicId', $output->id, PDO::PARAM_INT);
 	$stmt->execute();
 
 	$result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 	if ($result) {
 		foreach ($result as $record) {
-			switch ($record['category']) {
-				case '1':
-					$record['prefix'] = "Personality trait:";
-					break;
-				case '2':
-					$record['prefix'] = "Likes:";
-					break;
-				case '3':
-					$record['prefix'] = "Visited:";
-					break;
-				case '4':
-					$record['prefix'] = "Encountered:";
-					break;
-			}
 			array_push($output->continuity, $record);
 		}
 	} else {
