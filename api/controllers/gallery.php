@@ -39,14 +39,39 @@ $output->gallery = array();
 
 try {
 
-	$stmt = $db->prepare("SELECT COUNT(*) FROM `comics` WHERE `gallery` = 1");
+	if (isset($hash)) {
+  		$stmt = $db->prepare("SELECT COUNT(*) FROM `comics` c 
+  			JOIN `comic_continuity` cc ON c.id = cc.comicId 
+  			JOIN `continuity` con ON con.id = cc.continuityId 
+  			WHERE con.permalink = :hash");
+
+		// TODO: Add a WHERE clause to filter by `gallery` = 1
+
+  		$stmt->bindParam(':hash', $hash, PDO::PARAM_STR);
+	} else {
+		$stmt = $db->prepare("SELECT COUNT(*) FROM `comics` WHERE `gallery` = 1");
+	}
 	$stmt->execute();
 
 	// Fetch the number of records in the table
 	$output->count = $stmt->fetchColumn();
 
 	// Fetch a page of comics
-	$stmt = $db->prepare("SELECT * FROM `comics` WHERE `gallery` = 1 ORDER BY timestamp DESC LIMIT :limit OFFSET :offset");
+	if (isset($hash)) {
+		$stmt = $db->prepare("SELECT c.* FROM `comics` c 
+			JOIN `comic_continuity` cc ON c.id = cc.comicId 
+			JOIN `continuity` con ON con.id = cc.continuityId 
+			WHERE con.permalink = :hash 
+			ORDER BY c.timestamp DESC LIMIT :limit OFFSET :offset");
+
+	  // TODO: Add a WHERE clause to filter by `gallery` = 1
+
+		$stmt->bindParam(':hash', $hash, PDO::PARAM_STR);
+		$stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
+		$stmt->bindParam(':offset', $offset, PDO::PARAM_INT);  
+  	} else {
+		$stmt = $db->prepare("SELECT * FROM `comics` WHERE `gallery` = 1 ORDER BY timestamp DESC LIMIT :limit OFFSET :offset");
+	}
 	$stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
 	$stmt->bindParam(':offset', $offset, PDO::PARAM_INT);
 	$stmt->execute();

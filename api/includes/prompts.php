@@ -15,8 +15,22 @@ class Prompts {
 		$this->prompts = new stdClass;
 		$this->prompts->script = <<<SCRIPT
         You are a cartoonist and humorist. Write the script for a three panel comic strip.
-        In the comic strip our main character, a short green humaniod alien named Alpha Zeta, engages in the following premise: {p0}
+        In the comic strip our main character, a short green humanoid alien named Alpha Zeta, engages in the following premise: {p0}
         Include a detailed scene description and words spoken by the main character.
+        The following is a list of story elements that have been used in previous comics. These are called \"elements of significance\". Each element of significance is preceded by an identifying number. You may use these elements of significance in writing the comic strip. Using an element of significance is not required. Only use an element of significance if it is pertinent to the comic story.
+
+        Elements of Significance
+        {s0}
+
+        From the completed comic, identify any part of the story that could be expanded upon in future stories. These will be new elements of significance. The story may not have any new elements of significance.
+        A new element of significance will fit one of the following classifications:
+        1 - Alpha Zeta personality trait.
+        2 - Alpha Zeta personal preference.
+        3 - Specific location Alpha Zeta visited.
+        4 - Specific person or animal Alpha Zeta encountered.
+
+        {s1}
+
         Output your response as a valid json object in the follwing format:
         {
             \"title\": \"\",
@@ -33,14 +47,18 @@ class Prompts {
                     \"scene\": \"\",
                     \"dialog\": \"\"
                 }
-            ]
+            ],
+            \"memory\" : [],
+            \"newmemory\" : []
         }
-        
+
         The following is a description of each property value for the json object:
         `title`: The title of the comic strip. Limit to 50 letters.
         `panels` is a 3 element array of objects defining each of the 3 panels in the comic strip.
         `scene`: A description of the panel scene, including all characters present.
         `dialog`: Words spoken by Alpha Zeta. He is the only character that speaks. Do not label the dialog with a character name. This can be an empty string if the character is not speaking.
+        `memory`: An array of elements of significance, from the list above, used in the comic. The array will contain only the identifying number for the element of significance.
+        `newmemory`: An array of identified new elements of significance. Output each new element of significance as an object with properties `type`, which is the number of classification from the list above, and `description`, a short description of the element of significance no more than 5 words.
         SCRIPT;
 
 		$this->prompts->background = <<<BACKGROUND
@@ -94,9 +112,10 @@ class Prompts {
 	 *
 	 * @param string $action The action for which to generate the prompt.
 	 * @param array $values The values to replace placeholders in the prompt.
+     * @param array $system The system values to replace placeholders in the prompt.
 	 * @return string The generated prompt, or an empty string if no prompt is defined for the given action.
 	 */
-	function generatePrompt($action, $values) {
+	function generatePrompt($action, $values, $system = null) {
 
 		if(!isset($this->prompts->$action)) {
 			return;
@@ -111,6 +130,10 @@ class Prompts {
 			foreach ($values as $index => $value) {
 				// Replace placeholders like {p0}, {p1}, etc., with corresponding values
 				$instruction = str_replace("{p{$index}}", $value, $instruction);
+			}
+			foreach ($system as $index => $value) {
+				// Replace placeholders like {s0}, {s1}, etc., with corresponding values
+				$instruction = str_replace("{s{$index}}", $value, $instruction);
 			}
 			$prompt = $this->writePromptLine($prompt, $instruction);
 		}
