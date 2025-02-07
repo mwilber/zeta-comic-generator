@@ -33,7 +33,7 @@
 	// Validate the path
 	if(isset($path[2])) {
 		$controller = $path[2];
-		if($controller == 'detail') {
+		if($controller == 'detail' || $controller == 'gallery') {
 			if(isset($path[3]) && $path[3]) {
 				$hash = $path[3];
 			} else {
@@ -62,6 +62,7 @@
 	require __DIR__ . '/models/dall.php';
 	require __DIR__ . '/models/sdf.php';
 	require __DIR__ . '/models/claude.php';
+	require __DIR__ . '/models/deepseek.php';
 
 	switch ($controller) {
 		// App API endpoints
