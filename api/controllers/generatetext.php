@@ -135,9 +135,11 @@ if ($hitCount >= RATE_LIMIT) {
 } elseif ($modelId) {
 	$model = null;
 	switch ($modelId) {
-		case "oaireasoning":
-		case "oai":
-			$model = new ModelGpt($modelId);
+		case "o":
+			$model = new ModelO();
+			break;
+		case "gpt":
+			$model = new ModelGpt();
 			break;
 		case "gem":
 			$model = new ModelGemini();

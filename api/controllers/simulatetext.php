@@ -26,9 +26,11 @@ $modelId = POSTval("model", "oai");
 $model = null;
 if ($modelId) {
 	switch ($modelId) {
-		case "oaireasoning":
-		case "oai":
-			$model = new ModelGpt($modelId);
+		case "o":
+			$model = new ModelO();
+			break;
+		case "gpt":
+			$model = new ModelGpt();
 			break;
 		case "gem":
 			$model = new ModelGemini();
