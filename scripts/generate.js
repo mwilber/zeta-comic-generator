@@ -178,30 +178,42 @@ async function GenerateStrip() {
 	let safeQuery = query.value
 		.replace(/[\\"]/g, "\\$&")
 		.replace(/\u0000/g, "\\0");
-	const textModel = document.getElementById("script-model").value;
+	const textModels = document.getElementById("script-model").value.split("|");
 	const imageModel = document.getElementById("image-model").value;
 	const imageStyle = document.getElementById("image-style").value;
 
-	let script = await api.WriteScript(safeQuery, { model: textModel });
+	let concept = await api.WriteConcept(safeQuery, { model: textModels[0] });
+	// If textModels.length > 1 then we need to remove the first element
+	if (textModels.length > 1) textModels.shift();
+
+	let script = await api.WriteScript(safeQuery, { model: textModels[0] });
 	if (!script || script.error) {
 		SetStatus(script.error == "ratelimit" ? script.error : "error");
 		return;
 	}
-	let background = await api.WriteBackground({ model: textModel });
+	if (textModels.length > 1) textModels.shift();
+	
+	// let action = await api.WriteAction({ model: textModel });
+	// if (!action || action.error) {
+	// 	SetStatus("error");
+	// 	return;
+	// }
+
+	let background = await api.WriteBackground({ model: textModels[0] });
 	if (!background || background.error) {
 		SetStatus("error");
 		return;
 	}
+	if (textModels.length > 1) textModels.shift();
+
 	let image = await api.DrawBackgrounds({ model: imageModel, style: imageStyle });
 	if (!image || image.error) {
 		SetStatus("error");
 		return;
 	}
-	let action = await api.WriteAction({ model: textModel });
-	if (!action || action.error) {
-		SetStatus("error");
-		return;
-	}
+
+	await api.DrawAction();
+	api.onUpdate(api.comic, api.PercentComplete());
 
 	//TODO: Check the renderer progress. Handle error if <100 at this point.
 
@@ -228,7 +240,7 @@ async function SaveStrip() {
 		alert("There was a problem saving.");
 	}
 	console.log("Success:", data);
-	window.location.replace("/detail/" + data.response.permalink);
+	//window.location.replace("/detail/" + data.response.permalink);
 }
 
 /**

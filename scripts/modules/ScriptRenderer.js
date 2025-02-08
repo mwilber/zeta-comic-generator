@@ -29,7 +29,7 @@ export class ScriptRenderer {
 	async render() {
 		if (!this.validate()) return;
 
-		const { title, panels, credits } = this.script;
+		const { title, panels, credits, concept } = this.script;
 
 		this.el.setAttribute("aria-label", "Script");
 
@@ -39,13 +39,20 @@ export class ScriptRenderer {
 			// Add the credits
 			this.el.innerHTML += `<li aria-label="Credits">
 				<ul class="credits">
+					<li><span>Concept: </span><span>${credits.concept}</span></li>
 					<li><span>Script: </span><span>${credits.script}</span></li>
 					<li><span>Images: </span><span>${credits.image}</span></li>
-					<li><span>Backgrounds: </span><span>${credits.background}</span></li>
-					<li><span>Actions: </span><span>${credits.action}</span></li>
+					<!--<li><span>Backgrounds: </span><span>${credits.background}</span></li>
+					<li><span>Actions: </span><span>${credits.action}</span></li>-->
 				</ul>
 			</li>`;
 		}
+
+		this.el.innerHTML += `
+			<li aria-label="Concept">
+				<h3>Story Concept</h3>
+				<ul><li>${concept}</li></ul>
+			</li>`;
 
 		for (const [idx, panel] of panels.entries()) {
 			let dialogHtml = "";

@@ -27,6 +27,13 @@
 define("OUTPUT_DEBUG_DATA", true);
 
 $modelId = POSTval("model", "oai");
+
+$messagesJson = POSTval("messages", "");
+if ($messagesJson) {
+	$messages = json_decode($messagesJson);
+} else {
+	$messages = array();
+}
 $actionId = $controller;
 
 $characterActions = [
@@ -60,6 +67,7 @@ $paramNames = [
 	"panel3"
 ];
 
+// TODO: this might not be needed aanymore
 $params = array();
 foreach ($paramNames as $paramName) {
 	$paramVal = POSTval($paramName);
@@ -101,7 +109,20 @@ if(OUTPUT_DEBUG_DATA) {
 	$output->actionId = $actionId;
 	$output->params = $params;
 }
+// Set up the system prompt if it doesn't already exist
+// If $messages is not an empty array, then it was set in the previous request
+if (!count($messages)) {
+	$messages[] = (object) [
+		"role" => "system",
+		"content" => $prompts->generatePrompt("system", array(implode(", ", $characterActions)))
+	];
+}
+
 $output->prompt = $prompts->generatePrompt($actionId, $params, array($continuity, $categories));
+array_push($messages, (object) [
+	"role" => "user",
+	"content" => $output->prompt
+]);
 
 // Determine if the daily generation limit has been reached
 // Fetch the number of records in the table for the current date
@@ -114,8 +135,9 @@ if ($hitCount >= RATE_LIMIT) {
 } elseif ($modelId) {
 	$model = null;
 	switch ($modelId) {
+		case "oaireasoning":
 		case "oai":
-			$model = new ModelGpt();
+			$model = new ModelGpt($modelId);
 			break;
 		case "gem":
 			$model = new ModelGemini();
@@ -128,7 +150,10 @@ if ($hitCount >= RATE_LIMIT) {
 			break;
 		case "llama":
 			$model = new ModelLlama();
-			break;	
+			break;
+		case "deepseek":
+			$model = new ModelDeepseek();
+			break;
 	}
 
 	if (!$model) {
@@ -137,7 +162,7 @@ if ($hitCount >= RATE_LIMIT) {
 		// Record the model that was used
 		$output->model = $model->modelName;
 
-		$response = $model->sendPrompt($output->prompt);
+		$response = $model->sendPrompt($output->prompt, $messages);
 		$output->error = $response->error;
 
 		countHit($actionId, $params[0]);
@@ -161,7 +186,13 @@ if ($hitCount >= RATE_LIMIT) {
 		}
 
 		$output->json = $response->json;
-	}
+
+		// Put the response in the message array
+		array_push($messages, (object) [
+			"role" => "assistant",
+			"content" => json_encode($output->json)
+		]);
+	}	$output->messages = $messages;
 }
 
 function addPeriod($str) {

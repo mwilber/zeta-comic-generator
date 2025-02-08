@@ -3,20 +3,25 @@
  * Provides functionality for interacting with the OpenAI REST API to generate text completions.
  */
 class ModelGpt {
-	function __construct() {
+	function __construct($modelOverride = null) {
 		// $this->modelName = "gpt-3.5-turbo-16k";
 		// $this->modelName = "gpt-4";
 		// $this->modelName = "gpt-4-1106-preview";
 		// $this->modelName = "gpt-4o-2024-05-13";
-		$this->modelName = "gpt-4o-2024-08-06";
+		//$this->modelName = "gpt-4o-2024-08-06";
+		$this->modelName = "gpt-4o-mini-2024-07-18";
+		if ($modelOverride == "oaireasoning") {
+			// $this->modelName = "o1-2024-12-17";
+			$this->modelName = "o3-mini-2025-01-31";
+		}
 		$this->apiUrl = "https://api.openai.com/v1/chat/completions";
 		$this->apiKey = OPENAI_KEY;
 	}
 
-	function sendPrompt($prompt) {
+	function sendPrompt($prompt, $messages) {
 		
 		$result = new stdClass;
-		$response = $this->textComplete($this->apiKey, $prompt);
+		$response = $this->textComplete($this->apiKey, $messages);
 		$json = json_decode($response);
 		$result->data = $json;
 
@@ -37,7 +42,7 @@ class ModelGpt {
 		return $result;
 	}
 
-	function textComplete($key, $prompt) {
+	function textComplete($key, $messages) {
 
 		$response = new stdClass;
 		$response->data = null;
@@ -51,18 +56,24 @@ class ModelGpt {
 		curl_setopt($ch, CURLOPT_URL, $this->apiUrl);
 		curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 		curl_setopt($ch, CURLOPT_HEADER, 0);
+		$messagesArray = [];
+		foreach ($messages as $message) {
+			// Replace "system" role with "developer"
+			if (isset($message->role) && $message->role === "system") {
+				$message->role = "developer";
+			}
+			$messagesArray[] = [
+				"role" => $message->role,
+				"content" => $message->content
+			];
+		}
 		$body = '{
 			"model": "'.$this->modelName.'",
 			"response_format": { "type": "json_object" },
-			"messages": [
-				{
-					"role": "user",
-					"content": "'.$prompt.'"
-				}
-			]
+			"messages": ' . json_encode($messagesArray) . '
 		}';
 
-		//echo $body; die;
+		// echo $body; die;
 		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST"); 
 		curl_setopt($ch, CURLOPT_POSTFIELDS,$body);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);

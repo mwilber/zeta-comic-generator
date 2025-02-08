@@ -19,7 +19,7 @@
 	//ini_set('display_startup_errors', 1);
 	error_reporting(E_ERROR);
 
-	define("SIMULATION_MODE", false);
+	define("SIMULATION_MODE", true);
 	define("SIMULATE_ERRORS", false);
 
 	$request = $_SERVER['REQUEST_URI'];
@@ -75,6 +75,7 @@
 			require __DIR__ . '/controllers/'.$controller.'.php';
 			break;
 		// Comic Generation API endpoints
+		case 'concept':
 		case 'script':
 		case 'background':
 		case 'action':
