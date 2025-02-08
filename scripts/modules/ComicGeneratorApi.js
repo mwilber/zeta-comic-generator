@@ -366,19 +366,18 @@ export class ComicGeneratorApi {
 	 */
 	PercentComplete() {
 		let progress = 0;
-		if (!this.comic || !this.comic.panels || !this.comic.panels.length)
-			return progress;
 
-		progress += 1;
+		if (this.comic && this.comic.concept) progress += 10;
 
-		if (this.comic.concept) progress += 10;
-		// Each panel has a total progress of 30
-		for (const panel of this.comic.panels) {
-			if (panel.scene) progress += 5;
-			if (panel.images && panel.images.length) progress += 15;
-			if (panel.dialog && panel.dialog.length) progress += 5;
-			if (panel.background) progress += 5;
-			//if (panel.action) progress += 3;
+		if (this.comic.panels) {
+			// Each panel has a total progress of 30
+			for (const panel of this.comic.panels) {
+				if (panel.scene) progress += 5;
+				if (panel.images && panel.images.length) progress += 15;
+				if (panel.dialog && panel.dialog.length) progress += 5;
+				if (panel.background) progress += 5;
+				//if (panel.action) progress += 3;
+			}
 		}
 
 		return progress;

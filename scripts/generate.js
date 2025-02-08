@@ -58,10 +58,15 @@ document.addEventListener("DOMContentLoaded", () => {
  * After setting the values, a 'change' event is dispatched on the corresponding elements to trigger any related functionality.
  */
 function SetDefaultSelections() {
-	const defaultSelection = "oai";
+	const defaultSelection = "gpt";
+	// TODO: Simplify this
+	const storyModelEl = document.getElementById("story-model");
 	const scriptModelEl = document.getElementById("script-model");
 	const imageModelEl = document.getElementById("image-model");
 
+	let savedStoryModel = localStorage
+		? localStorage.getItem("story-model-select")
+		: null;
 	let savedScriptModel = localStorage
 		? localStorage.getItem("script-model-select")
 		: null;
@@ -69,9 +74,11 @@ function SetDefaultSelections() {
 		? localStorage.getItem("image-model-select")
 		: null;
 
+	storyModelEl.value = savedStoryModel || defaultSelection;
 	scriptModelEl.value = savedScriptModel || defaultSelection;
 	imageModelEl.value = savedImageModel || defaultSelection;
 	// Fire a change event on the selections
+	storyModelEl.dispatchEvent(new Event("change"));
 	scriptModelEl.dispatchEvent(new Event("change"));
 	imageModelEl.dispatchEvent(new Event("change"));
 }
@@ -109,6 +116,16 @@ function AttachUiEvents() {
 			selector: "#query",
 			event: "paste",
 			handler: SetCharCount,
+		},
+		{
+			selector: "#story-model",
+			event: "change",
+			handler: (e) => {
+				let {value} = e.target;
+				// set localStorage value `story-model-select` to the selected value
+				if(localStorage)
+					localStorage.setItem("story-model-select", value);
+			}
 		},
 		{
 			selector: "#script-model",
@@ -178,20 +195,19 @@ async function GenerateStrip() {
 	let safeQuery = query.value
 		.replace(/[\\"]/g, "\\$&")
 		.replace(/\u0000/g, "\\0");
-	const textModels = document.getElementById("script-model").value.split("|");
+	const conceptModel = document.getElementById("story-model").value;
+	const textModel = document.getElementById("script-model").value;
 	const imageModel = document.getElementById("image-model").value;
 	const imageStyle = document.getElementById("image-style").value;
 
-	let concept = await api.WriteConcept(safeQuery, { model: textModels[0] });
+	let concept = await api.WriteConcept(safeQuery, { model: conceptModel });
 	// If textModels.length > 1 then we need to remove the first element
-	if (textModels.length > 1) textModels.shift();
 
-	let script = await api.WriteScript(safeQuery, { model: textModels[0] });
+	let script = await api.WriteScript(safeQuery, { model: textModel });
 	if (!script || script.error) {
 		SetStatus(script.error == "ratelimit" ? script.error : "error");
 		return;
 	}
-	if (textModels.length > 1) textModels.shift();
 	
 	// let action = await api.WriteAction({ model: textModel });
 	// if (!action || action.error) {
@@ -199,12 +215,11 @@ async function GenerateStrip() {
 	// 	return;
 	// }
 
-	let background = await api.WriteBackground({ model: textModels[0] });
+	let background = await api.WriteBackground({ model: textModel });
 	if (!background || background.error) {
 		SetStatus("error");
 		return;
 	}
-	if (textModels.length > 1) textModels.shift();
 
 	let image = await api.DrawBackgrounds({ model: imageModel, style: imageStyle });
 	if (!image || image.error) {
