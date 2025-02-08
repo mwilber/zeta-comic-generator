@@ -58,7 +58,9 @@ document.addEventListener("DOMContentLoaded", () => {
  * After setting the values, a 'change' event is dispatched on the corresponding elements to trigger any related functionality.
  */
 function SetDefaultSelections() {
+	const defaultConceptSelection = "o";
 	const defaultSelection = "gpt";
+	const defaultImageSelection = "oai";
 	// TODO: Simplify this
 	const storyModelEl = document.getElementById("story-model");
 	const scriptModelEl = document.getElementById("script-model");
@@ -74,9 +76,9 @@ function SetDefaultSelections() {
 		? localStorage.getItem("image-model-select")
 		: null;
 
-	storyModelEl.value = savedStoryModel || defaultSelection;
+	storyModelEl.value = savedStoryModel || defaultConceptSelection;
 	scriptModelEl.value = savedScriptModel || defaultSelection;
-	imageModelEl.value = savedImageModel || defaultSelection;
+	imageModelEl.value = savedImageModel || defaultImageSelection;
 	// Fire a change event on the selections
 	storyModelEl.dispatchEvent(new Event("change"));
 	scriptModelEl.dispatchEvent(new Event("change"));

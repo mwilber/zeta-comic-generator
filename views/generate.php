@@ -32,7 +32,7 @@
 					<div class="select">
 						<select name="story-model" id="story-model">
 							<option value="">(Select a model)</option>
-							<option value="o">OpenAI o1</option>
+							<option value="o">o1 Mini</option>
 							<option value="gpt">GPT 4o</option>
 							<option value="llama">Llama 3</option>
 							<!-- Titan Text Express v1 disabled because it can't handle the new prompt format -->
