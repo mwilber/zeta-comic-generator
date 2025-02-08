@@ -77,13 +77,10 @@ class Prompts {
         Include enough detail necessary for an AI image generator to render an image of your description.
         Output your response as a valid json object in the follwing format:
         {
-            \"descriptions\": [
-                \"\",
-                \"\",
-                \"\"
-            ]
+            \"descriptions\": []
         }
         Your descriptions will be written within the following rules:
+        - `descriuptions` is an array of strings with 3 elements. Each element is a description of a scene in the comic strip.
         - Do not exceed 500 characters for each description.
         - Describe each scene as it would look if the main character, Alpha Zeta, is not present.
         - No characters will speak to each other.

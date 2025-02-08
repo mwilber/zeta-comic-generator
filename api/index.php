@@ -19,7 +19,7 @@
 	//ini_set('display_startup_errors', 1);
 	error_reporting(E_ERROR);
 
-	define("SIMULATION_MODE", true);
+	define("SIMULATION_MODE", false);
 	define("SIMULATE_ERRORS", false);
 
 	$request = $_SERVER['REQUEST_URI'];

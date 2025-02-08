@@ -8,11 +8,11 @@ class ModelGpt {
 		// $this->modelName = "gpt-4";
 		// $this->modelName = "gpt-4-1106-preview";
 		// $this->modelName = "gpt-4o-2024-05-13";
-		//$this->modelName = "gpt-4o-2024-08-06";
-		$this->modelName = "gpt-4o-mini-2024-07-18";
+		$this->modelName = "gpt-4o-2024-08-06";
+		// $this->modelName = "gpt-4o-mini-2024-07-18";
 		if ($modelOverride == "oaireasoning") {
-			// $this->modelName = "o1-2024-12-17";
-			$this->modelName = "o3-mini-2025-01-31";
+			$this->modelName = "o1-2024-12-17";
+			// $this->modelName = "o3-mini-2025-01-31";
 		}
 		$this->apiUrl = "https://api.openai.com/v1/chat/completions";
 		$this->apiKey = OPENAI_KEY;
