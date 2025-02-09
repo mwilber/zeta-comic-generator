@@ -11,9 +11,9 @@ class ModelClaude {
 		$this->apiSecret = AWS_SECRET_KEY;
 	}
 
-	function sendPrompt($prompt) {
+	function sendPrompt($prompt, $messages) {
 		$result = new stdClass;
-		$response = $this->textComplete($this->apiKey, $prompt);
+		$response = $this->textComplete($this->apiKey, $messages);
 		$json = json_decode($response['body']);
 		$result->data = $json;
 
@@ -55,7 +55,7 @@ class ModelClaude {
 		}
 	}
 
-	function textComplete($key, $prompt) {
+	function textComplete($key, $messages) {
 
 		$bedrockRuntimeClient = new BedrockRuntimeClient([
 			'region' => 'us-east-1',
@@ -67,21 +67,38 @@ class ModelClaude {
 			],
 		]);
 
-		$request = json_encode([
-			'anthropic_version' => 'bedrock-2023-05-31',
-			'max_tokens' => 1000,
-			'messages' => [
-				[
-					'role' => 'user',
+		$messagesArray = [];
+		$system = "";
+		foreach ($messages as $message) {
+			// Replace "system" role with "developer"
+			if (
+				isset($message->role) &&
+				(
+					$message->role === "system" ||
+					$message->role === "developer") &&
+				$system === ""
+			) {
+				$system = $message->content;
+			} else {
+				$messagesArray[] = [
+					'role' => $message->role,
 					'content' => [
 					[
 						'type' => 'text',
-						'text' => $prompt
+						'text' => $message->content
 					]
 					]
-				]
-			]
+				];
+			}
+		}
+		$request = json_encode([
+			'anthropic_version' => 'bedrock-2023-05-31',
+			'max_tokens' => 1000,
+			'system' => $system,
+			'messages' => $messagesArray,
 		]);
+
+		// print_r($request); die;
 
 		$response = $bedrockRuntimeClient->invokeModel([
 			'contentType' => 'application/json',
