@@ -57,12 +57,13 @@
 
 	// AI Models
 	require __DIR__ . '/models/gpt.php';
-	require __DIR__ . '/models/o.php';
 	require __DIR__ . '/models/gem.php';
 	require __DIR__ . '/models/ttn.php';
 	require __DIR__ . '/models/dall.php';
 	require __DIR__ . '/models/sdf.php';
 	require __DIR__ . '/models/claude.php';
+	require __DIR__ . '/models/deepseek.php';
+	require __DIR__ . '/models/llama.php';
 
 	switch ($controller) {
 		// App API endpoints
@@ -76,7 +77,6 @@
 			require __DIR__ . '/controllers/'.$controller.'.php';
 			break;
 		// Comic Generation API endpoints
-		case 'concept':
 		case 'script':
 		case 'background':
 		case 'action':
