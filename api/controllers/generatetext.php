@@ -70,40 +70,17 @@ foreach ($paramNames as $paramName) {
 }
 if ($actionId == "action") array_push($params, implode(", ", $characterActions));
 
-$database = new Database();
-$db = $database->getConnection();
-
-$continuity = "";
-// Get continuity records from the database
-$stmt = $db->prepare("SELECT `continuity`.`id`, `continuity`.`description`, `categories`.`heading` 
-					  FROM `continuity` 
-					  JOIN `categories` ON `continuity`.`categoryId` = `categories`.`id`
-					  WHERE `continuity`.`active` = true");
-// execute the query and loop through the results
-$stmt->execute();
-while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-	$continuity .= "".$row['id'].". ".$row['heading'].": ".$row['description'].". ";
-}
-
-// Get category records from the database
-$categories = "";
-$stmt = $db->prepare("SELECT * FROM `categories`");
-// execute the query and loop through the results
-$stmt->execute();
-while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-	$categories .= $row['id']." - ".$row['description'].". ";
-}
-
-
 // Get the prompt
 $prompts = new Prompts();
 if(OUTPUT_DEBUG_DATA) {
 	$output->actionId = $actionId;
 	$output->params = $params;
 }
-$output->prompt = $prompts->generatePrompt($actionId, $params, array($continuity, $categories));
+$output->prompt = $prompts->generatePrompt($actionId, $params);
 
 // Determine if the daily generation limit has been reached
+$database = new Database();
+$db = $database->getConnection();
 // Fetch the number of records in the table for the current date
 $stmt = $db->prepare("SELECT COUNT(*) FROM `metrics` WHERE DATE(timestamp) = CURDATE()");
 $stmt->execute();
