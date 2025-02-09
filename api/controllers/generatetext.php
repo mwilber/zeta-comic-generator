@@ -152,7 +152,10 @@ if ($hitCount >= RATE_LIMIT) {
 			break;
 		case "llama":
 			$model = new ModelLlama();
-			break;	
+			break;
+		case "deepseek":
+			$model = new ModelDeepseek();
+			break;
 	}
 
 	if (!$model) {
