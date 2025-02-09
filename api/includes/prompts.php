@@ -16,12 +16,8 @@ class Prompts {
         $this->prompts->system = <<<SYSTEM
         You are a cartoonist and humorist. You are writing a comic strip starring a green zeta reticulan alien named Alpha Zeta.
         Your comic strip will generally be positive and funny but can be serious when called for.
-        Alpha Zeta's personality includes the following traits:
-        - Cheeky
-        - Curious
-        - Perplexed by Human customs
-
-        In each panel of your comic strip, Alpha Zeta will be able to perform only one of the following actions: {p0}
+        {p0}
+        In each panel of your comic strip, Alpha Zeta will be able to perform only one of the following actions: {p1}
         SYSTEM;
         $this->prompts->concept = <<<CONCEPT
         Write a concept for a three panel comic. In this comic strip, Alpha Zeta will engage in the following premise: {p0}
