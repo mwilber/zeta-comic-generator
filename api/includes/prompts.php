@@ -26,7 +26,7 @@ class Prompts {
         $this->prompts->concept = <<<CONCEPT
         Write a concept for a three panel comic. In this comic strip, Alpha Zeta will engage in the following premise: {p0}
         Your concept should be written as a single paragraph. Your concept should include description of the overall story. 
-        Your concept should include a breakdown of each panel.
+        Your concept should include a breakdown of each panel. You concept should be no more than 100 words in length.
         Output your response as a valid json object in the follwing format:
         {
             \"concept\": \"\",
