@@ -156,6 +156,9 @@ if ($hitCount >= RATE_LIMIT) {
 		case "deepseek":
 			$model = new ModelDeepseek();
 			break;
+		case "deepseekr":
+			$model = new ModelDeepSeekR();
+			break;	
 	}
 
 	if (!$model) {

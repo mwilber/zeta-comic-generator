@@ -203,6 +203,10 @@ async function GenerateStrip() {
 	const imageStyle = document.getElementById("image-style").value;
 
 	let concept = await api.WriteConcept(safeQuery, { model: conceptModel });
+	if (!concept || concept.error) {
+		SetStatus(concept.error == "ratelimit" ? concept.error : "error");
+		return;
+	}
 	// If textModels.length > 1 then we need to remove the first element
 
 	let script = await api.WriteScript(safeQuery, { model: textModel });

@@ -47,6 +47,9 @@ if ($modelId) {
 		case "deepseek":
 			$model = new ModelDeepseek();
 			break;
+		case "deepseekr":
+			$model = new ModelDeepSeekR();
+			break;	
 	}
 	// Record the model that was used
 	$output->model = "SIMULATION (".$model->modelName.")";
