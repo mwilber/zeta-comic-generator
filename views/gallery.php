@@ -13,7 +13,10 @@
 		// Should only be one record
 		$result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 		// Fetch the single record as an object
-		$record = $result[0];
+		// If there is one record
+		if ($result && count($result) > 0) {
+			$record = $result[0];
+		}
 
 		// if ($record && isset($record['category'])) {
 		// 	switch ($record['category']) {

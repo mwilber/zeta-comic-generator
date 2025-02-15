@@ -57,7 +57,7 @@ try {
 	$output->count = $stmt->fetchColumn();
 
 	// Fetch a page of comics
-	if (isset($hash)) {
+	if (isset($hash) && $hash != '' && strpos($hash, '?') === false) {
 		$stmt = $db->prepare("SELECT c.* FROM `comics` c 
 			JOIN `comic_continuity` cc ON c.id = cc.comicId 
 			JOIN `continuity` con ON con.id = cc.continuityId 
@@ -68,8 +68,8 @@ try {
 
 		$stmt->bindParam(':hash', $hash, PDO::PARAM_STR);
 		$stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
-		$stmt->bindParam(':offset', $offset, PDO::PARAM_INT);  
-  	} else {
+		$stmt->bindParam(':offset', $offset, PDO::PARAM_INT);
+	} else {
 		$stmt = $db->prepare("SELECT * FROM `comics` WHERE `gallery` = 1 ORDER BY timestamp DESC LIMIT :limit OFFSET :offset");
 	}
 	$stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
