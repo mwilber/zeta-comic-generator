@@ -1,30 +1,3 @@
-<?php 
-	$actions = [
-		"analysis",
-		"angry",
-		"approval",
-		"creeping",
-		"disguised",
-		"enamored",
-		"explaining",
-		"joyous",
-		"laughing",
-		"reporting",
-		"running",
-		"santa_claus_costume",
-		"scifi_costume",
-		"selfie",
-		"sitting",
-		"standing",
-		"startled",
-		"teaching",
-		"terrified",
-		"trick_or_treat",
-		"typing",
-		"writing"
-	];
-?>
-
 <h2>How It Works</h2>
 <p class="diagram">
 	<img src="/assets/images/layer_diagram_900c.png" alt="Diagram of comic strip layer composite. An AI generated background image, a hand drawn character image and a dialog baloon image from an AI generated script layered on top of each other.">
@@ -47,7 +20,7 @@
 </div>
 <h2 id="character-art">Character Art...</h2>
 <ul class="character-art">
-	<?php foreach($actions as $action): ?>
+	<?php foreach(array_keys($GLOBALS['characterActions']) as $action): ?>
 	<li>
 		<h3><?php echo str_replace('_', ' ', $action); ?></h3>  
 

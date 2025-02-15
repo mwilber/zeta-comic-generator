@@ -25,30 +25,6 @@
 	}
  */
 define("OUTPUT_DEBUG_DATA", true);
-$characterActions = [
-	"analysis",
-	"angry",
-	"approval",
-	"creeping",
-	"disguised",
-	"enamored",
-	"explaining",
-	"joyous",
-	"laughing",
-	"reporting",
-	"running",
-	"santa_claus_costume",
-	"scifi_costume",
-	"selfie",
-	"sitting",
-	"standing",
-	"startled",
-	"teaching",
-	"terrified",
-	"trick_or_treat",
-	"typing",
-	"writing"
-];
 
 $prompts = new Prompts();
 $modelId = POSTval("model", "oai");
@@ -70,7 +46,7 @@ switch ($actionId) {
 // If $messages is not an empty array, then it was set in the previous request
 if (!count($messages)) {
 	// Get the system prompt params
-	$systemParams = GetSystemPromptParams($characterActions);
+	$systemParams = GetSystemPromptParams();
 	$messages[] = (object) [
 		"role" => "system",
 		"content" => $prompts->generatePrompt("system", $systemParams)
@@ -113,7 +89,7 @@ if ($hitCount >= RATE_LIMIT) {
 				$oldVal = $value;
 				$value = new stdClass;
 				$value->action = $oldVal;
-				if(!in_array($value->action, $characterActions)) {
+				if(!in_array($value->action, array_keys($GLOBALS['characterActions']))) {
 					$value->altAction = $oldVal;
 					$value->action = "standing";
 				}
@@ -238,10 +214,9 @@ function GetModel($modelAlias) {
 /**
  * Retrieves the system prompt parameters based on the provided character actions.
  *
- * @param array $characterActions The actions associated with the character.
  * @return array The system prompt parameters.
  */
-function GetSystemPromptParams($characterActions) {
+function GetSystemPromptParams() {
 	$params = [];
 	$characterCategory = GetCharacterCategory();
 	$characterContinuity = [];
@@ -254,7 +229,8 @@ function GetSystemPromptParams($characterActions) {
 
 	// Set up the parameters for the prompt
 	$params[] = "\n" . $characterCategory['prompt'] . "\n - " . implode("\n - ", $characterContinuity) . "\n";
-	$params[] = implode(", ", $characterActions);
+	// Add the character actions, use the $GLOBALS array and convert each key name to a comma-separated string
+	$params[] = implode(", ", array_keys($GLOBALS['characterActions']));
 
 	return $params;
 }

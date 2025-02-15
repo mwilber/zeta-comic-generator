@@ -1,3 +1,6 @@
+<script>
+	const characterActions = <?php echo json_encode($GLOBALS['characterActions']); ?>;
+</script>
 <div id="statusdialog" class="dialog-wrapper" role="alert" aria-labeledby="progress" tabindex="-1">
 	<div class="dialog">
 		<div id="status"></div>
