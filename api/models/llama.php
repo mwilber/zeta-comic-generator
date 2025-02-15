@@ -11,9 +11,9 @@ class ModelLlama {
 		$this->apiSecret = AWS_SECRET_KEY;
 	}
 
-	function sendPrompt($prompt) {
+	function sendPrompt($prompt, $messages) {
 		$result = new stdClass;
-		$response = $this->textComplete($this->apiKey, $prompt);
+		$response = $this->textComplete($this->apiKey, $messages);
 		$json = json_decode($response['body']);
 		$result->data = $json;
 
@@ -55,7 +55,7 @@ class ModelLlama {
 		}
 	}
 
-	function textComplete($key, $prompt) {
+	function textComplete($key, $messages) {
 
 		$bedrockRuntimeClient = new BedrockRuntimeClient([
 			'region' => 'us-east-1',
@@ -67,8 +67,14 @@ class ModelLlama {
 			],
 		]);
 
+		$messagesStr = "<|begin_of_text|>";
+		foreach ($messages as $message) {
+			$messagesStr .= "<|start_header_id|>".$message->role."<|end_header_id|>".$message->content."<|eot_id|>";
+		}
+		$messagesStr .= "<|start_header_id|>assistant<|end_header_id|>";
+
 		$request = json_encode([
-			'prompt' => '<|begin_of_text|><|start_header_id|>user<|end_header_id|>'.$prompt.'<|eot_id|><|start_header_id|>assistant<|end_header_id|>',
+			'prompt' => $messagesStr,
 			'max_gen_len' => 1024,
 			'temperature' => 0.5,
 			'top_p' => 0.9

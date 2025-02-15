@@ -1,30 +1,3 @@
-<?php 
-	$actions = [
-		"analysis",
-		"angry",
-		"approval",
-		"creeping",
-		"disguised",
-		"enamored",
-		"explaining",
-		"joyous",
-		"laughing",
-		"reporting",
-		"running",
-		"santa_claus_costume",
-		"scifi_costume",
-		"selfie",
-		"sitting",
-		"standing",
-		"startled",
-		"teaching",
-		"terrified",
-		"trick_or_treat",
-		"typing",
-		"writing"
-	];
-?>
-
 <h2>How It Works</h2>
 <p class="diagram">
 	<img src="/assets/images/layer_diagram_900c.png" alt="Diagram of comic strip layer composite. An AI generated background image, a hand drawn character image and a dialog baloon image from an AI generated script layered on top of each other.">
@@ -47,7 +20,7 @@
 </div>
 <h2 id="character-art">Character Art...</h2>
 <ul class="character-art">
-	<?php foreach($actions as $action): ?>
+	<?php foreach(array_keys($GLOBALS['characterActions']) as $action): ?>
 	<li>
 		<h3><?php echo str_replace('_', ' ', $action); ?></h3>  
 
@@ -62,8 +35,9 @@
 		<ul>
 			<li><a href="https://openai.com/product" target="_blank" rel="noopener noreferrer">GPT-4o</a></li>
 			<li><a href="https://gemini.google.com/app" target="_blank" rel="noopener noreferrer">Gemini 1.5</a></li>
-			<li>Coming soon, Llama 3</li>
-			<li>Coming soon, Claude 3.5 Sonnet</li>
+			<li><a href="https://www.llama.com/" target="_blank" rel="noopener noreferrer">Llama 3.2</a></li>
+			<li><a href="https://www.anthropic.com/claude/sonnet" target="_blank" rel="noopener noreferrer">Claude 3.5 Sonnet</a></li>
+			<li><a href="https://github.com/deepseek-ai/DeepSeek-V3" target="_blank" rel="noopener noreferrer">DeepSeek V3</a></li>
 		</ul>
 	</li>
 	<li>

@@ -58,10 +58,17 @@ document.addEventListener("DOMContentLoaded", () => {
  * After setting the values, a 'change' event is dispatched on the corresponding elements to trigger any related functionality.
  */
 function SetDefaultSelections() {
-	const defaultSelection = "oai";
+	const defaultConceptSelection = "o";
+	const defaultSelection = "gpt";
+	const defaultImageSelection = "oai";
+	// TODO: Simplify this
+	const storyModelEl = document.getElementById("story-model");
 	const scriptModelEl = document.getElementById("script-model");
 	const imageModelEl = document.getElementById("image-model");
 
+	let savedStoryModel = localStorage
+		? localStorage.getItem("story-model-select")
+		: null;
 	let savedScriptModel = localStorage
 		? localStorage.getItem("script-model-select")
 		: null;
@@ -69,9 +76,11 @@ function SetDefaultSelections() {
 		? localStorage.getItem("image-model-select")
 		: null;
 
+	storyModelEl.value = savedStoryModel || defaultConceptSelection;
 	scriptModelEl.value = savedScriptModel || defaultSelection;
-	imageModelEl.value = savedImageModel || defaultSelection;
+	imageModelEl.value = savedImageModel || defaultImageSelection;
 	// Fire a change event on the selections
+	storyModelEl.dispatchEvent(new Event("change"));
 	scriptModelEl.dispatchEvent(new Event("change"));
 	imageModelEl.dispatchEvent(new Event("change"));
 }
@@ -109,6 +118,16 @@ function AttachUiEvents() {
 			selector: "#query",
 			event: "paste",
 			handler: SetCharCount,
+		},
+		{
+			selector: "#story-model",
+			event: "change",
+			handler: (e) => {
+				let {value} = e.target;
+				// set localStorage value `story-model-select` to the selected value
+				if(localStorage)
+					localStorage.setItem("story-model-select", value);
+			}
 		},
 		{
 			selector: "#script-model",
@@ -178,30 +197,44 @@ async function GenerateStrip() {
 	let safeQuery = query.value
 		.replace(/[\\"]/g, "\\$&")
 		.replace(/\u0000/g, "\\0");
+	const conceptModel = document.getElementById("story-model").value;
 	const textModel = document.getElementById("script-model").value;
 	const imageModel = document.getElementById("image-model").value;
 	const imageStyle = document.getElementById("image-style").value;
+
+	let concept = await api.WriteConcept(safeQuery, { model: conceptModel });
+	if (!concept || concept.error) {
+		SetStatus(concept.error == "ratelimit" ? concept.error : "error");
+		return;
+	}
+	// If textModels.length > 1 then we need to remove the first element
 
 	let script = await api.WriteScript(safeQuery, { model: textModel });
 	if (!script || script.error) {
 		SetStatus(script.error == "ratelimit" ? script.error : "error");
 		return;
 	}
+	
+	// let action = await api.WriteAction({ model: textModel });
+	// if (!action || action.error) {
+	// 	SetStatus("error");
+	// 	return;
+	// }
+
 	let background = await api.WriteBackground({ model: textModel });
 	if (!background || background.error) {
 		SetStatus("error");
 		return;
 	}
+
 	let image = await api.DrawBackgrounds({ model: imageModel, style: imageStyle });
 	if (!image || image.error) {
 		SetStatus("error");
 		return;
 	}
-	let action = await api.WriteAction({ model: textModel });
-	if (!action || action.error) {
-		SetStatus("error");
-		return;
-	}
+
+	await api.DrawAction();
+	api.onUpdate(api.comic, api.PercentComplete());
 
 	//TODO: Check the renderer progress. Handle error if <100 at this point.
 

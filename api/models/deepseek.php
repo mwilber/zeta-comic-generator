@@ -7,12 +7,13 @@ class ModelDeepSeek {
 		$this->modelName = "deepseek-chat";
 		$this->apiUrl = "https://api.deepseek.com/chat/completions";
 		$this->apiKey = DEEPSEEK_KEY;
+		$this->responseFormat = "json_object";
 	}
 
-	function sendPrompt($prompt) {
+	function sendPrompt($prompt, $messages) {
 		
 		$result = new stdClass;
-		$response = $this->textComplete($this->apiKey, $prompt);
+		$response = $this->textComplete($this->apiKey, $messages);
 		$json = json_decode($response);
 		$result->data = $json;
 
@@ -33,7 +34,7 @@ class ModelDeepSeek {
 		return $result;
 	}
 
-	function textComplete($key, $prompt) {
+	function textComplete($key, $messages) {
 
 		$response = new stdClass;
 		$response->data = null;
@@ -47,15 +48,18 @@ class ModelDeepSeek {
 		curl_setopt($ch, CURLOPT_URL, $this->apiUrl);
 		curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 		curl_setopt($ch, CURLOPT_HEADER, 0);
+		$messagesArray = [];
+		foreach ($messages as $message) {
+			$messagesArray[] = [
+				"role" => $message->role,
+				"content" => $message->content
+			];
+		}
 		$body = '{
 			"model": "'.$this->modelName.'",
-			"response_format": { "type": "json_object" },
-			"messages": [
-				{
-					"role": "user",
-					"content": "'.$prompt.'"
-				}
-			]
+			"response_format": { "type": "'.$this->responseFormat.'" },
+			"stream": false,
+			"messages": ' . json_encode($messagesArray) . '
 		}';
 
 		//echo $body; die;
