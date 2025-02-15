@@ -35,8 +35,9 @@
 		<ul>
 			<li><a href="https://openai.com/product" target="_blank" rel="noopener noreferrer">GPT-4o</a></li>
 			<li><a href="https://gemini.google.com/app" target="_blank" rel="noopener noreferrer">Gemini 1.5</a></li>
-			<li>Coming soon, Llama 3</li>
-			<li>Coming soon, Claude 3.5 Sonnet</li>
+			<li><a href="https://www.llama.com/" target="_blank" rel="noopener noreferrer">Llama 3.2</a></li>
+			<li><a href="https://www.anthropic.com/claude/sonnet" target="_blank" rel="noopener noreferrer">Claude 3.5 Sonnet</a></li>
+			<li><a href="https://github.com/deepseek-ai/DeepSeek-V3" target="_blank" rel="noopener noreferrer">DeepSeek V3</a></li>
 		</ul>
 	</li>
 	<li>
