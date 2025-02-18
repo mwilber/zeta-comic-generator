@@ -39,7 +39,7 @@ $output->gallery = array();
 
 try {
 
-	if (isset($hash)) {
+	if (isset($hash) && $hash != '' && strpos($hash, '?') === false) {
   		$stmt = $db->prepare("SELECT COUNT(*) FROM `comics` c 
   			JOIN `comic_continuity` cc ON c.id = cc.comicId 
   			JOIN `continuity` con ON con.id = cc.continuityId 
