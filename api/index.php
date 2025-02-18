@@ -19,7 +19,7 @@
 	//ini_set('display_startup_errors', 1);
 	error_reporting(E_ERROR);
 
-	define("SIMULATION_MODE", false);
+	define("SIMULATION_MODE", "none"); // all, text, image, none
 	define("SIMULATE_ERRORS", false);
 
 	$request = $_SERVER['REQUEST_URI'];
@@ -84,14 +84,14 @@
 		case 'script':
 		case 'background':
 		case 'action':
-			if (SIMULATION_MODE) {
+			if (SIMULATION_MODE == "all" || SIMULATION_MODE == "text") {
 				require __DIR__ . '/controllers/simulatetext.php';
 			} else {
 				require __DIR__ . '/controllers/generatetext.php';
 			}
 			break;
 		case 'image':					
-			if (SIMULATION_MODE) {
+			if (SIMULATION_MODE == "all" || SIMULATION_MODE == "image") {
 				require __DIR__ . '/controllers/simulateimage.php';
 			} else {
 				require __DIR__ . '/controllers/generateimage.php';

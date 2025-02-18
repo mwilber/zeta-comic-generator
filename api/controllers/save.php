@@ -233,7 +233,7 @@
 
 		$memoriesRaw = $_POST["newmemory"];
 		$output->response->newmemories = $memoriesRaw;
-		if(!empty($memoriesRaw)) {
+		if(isset($memoriesRaw) && !empty($memoriesRaw)) {
 			$memories = json_decode($memoriesRaw);
 			// Verify that $memories is an array
 			if (is_array($memories)) {
@@ -261,13 +261,13 @@
 					$stmt->execute();
 				}
 			} else {
-				$output->error = "Invalid memories format";
+				//$output->error = "Invalid memories format";
 			}
 		}
 
 		$memoriesRaw = $_POST["memory"];
 		$output->response->memories = $memoriesRaw;
-		if(!empty($memoriesRaw)) {
+		if(isset($memoriesRaw) && !empty($memoriesRaw)) {
 			$memories = json_decode($memoriesRaw);
 			// Verify that $memories is an array
 			if (is_array($memories)) {
@@ -286,7 +286,7 @@
 					$stmt->execute();
 				}
 			} else {
-				$output->error = "Invalid memories format";
+				//$output->error = "Invalid memories format";
 			}
 		}
 	}

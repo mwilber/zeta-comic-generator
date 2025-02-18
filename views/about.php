@@ -51,6 +51,29 @@
 </ul>
 <h2 id="ai-prompts">AI Prompts</h2>
 <ul class="prompts">
+<?php 
+    $prompts = new Prompts();
+    foreach($prompts->prompts as $action => $prompt):
+		$params = [];
+		switch ($action) {
+			case "system":
+				$params[] = "Alpha Zeta's character profile includes the following: \n\n<strong>{ a bullet list of Alpha Zeta's character traits }</strong>";
+				$params[] = implode(", ", array_keys($GLOBALS['characterActions']));
+			case "concept":
+				$params[] = "<strong>{ The story premise }</strong>";
+				break;
+		}
+        $promptDisplay = $prompts->generatePrompt($action, $params, true);
+?>
+	<li>
+		<h3><?php echo ucfirst($action) ?></h3>
+        <div class="codeblock">
+            <pre><?php echo $promptDisplay ?></pre>
+        </div>
+	</li>
+	<?php endforeach; ?>
+</ul>
+<ul class="prompts">
 	<li>
 		<h3>Script</h3>
 		<div class="codeblock">

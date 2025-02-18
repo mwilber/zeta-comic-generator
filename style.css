@@ -518,6 +518,10 @@ p.description {
 	line-height: 1.5em;
 }
 
+.prompts .codeblock pre {
+    white-space: pre-wrap;
+}
+
 .models {
 	list-style: none;
 	/* margin: 0;
