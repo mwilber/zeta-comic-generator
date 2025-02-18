@@ -522,6 +522,10 @@ p.description {
     white-space: pre-wrap;
 }
 
+.prompts .codeblock pre strong {
+    color: #55ff55;
+}
+
 .models {
 	list-style: none;
 	/* margin: 0;

@@ -33,6 +33,7 @@ class Prompts {
 
 		{p0}
 		SYSTEM;
+
 		$this->prompts->concept = <<<CONCEPT
 		Write a concept for a three panel comic strip. In this comic strip, Alpha Zeta will engage in the following premise: {p0}
 		Your concept will be written as a single paragraph. 
@@ -46,6 +47,7 @@ class Prompts {
 			\"concept\": \"\",
 		}
 		CONCEPT;
+
 		//The following is a list of story elements that have been used in previous comics. These are called \"elements of significance\". Each element of significance is preceded by an identifying number. You may use these elements of significance in writing the comic strip. Using an element of significance is not required. Only use an element of significance if it is pertinent to the comic story.
 		$this->prompts->script = <<<SCRIPT
 		Write a script for the three panel comic strip as described in your concept.
@@ -100,22 +102,22 @@ class Prompts {
 		The property “descriptions” is an array containing 3 elements. Each element is a string value containing your description of the panel. Do not exceed 1000 characters for each description.
 		BACKGROUND;
 
-		$this->prompts->action = <<<ACTION
-		You are a talented artist who directs animated cartoons.
-		The following describes three scenes in a cartoon featuring the character Alpha Zeta:
-		- {p0}
-		- {p1}
-		- {p2}
-		For each of the three scenes choose one word, from the following list, which best describes the action or appearance of the main character:  {p3}.
-		Output your response as a valid json object in the follwing format:
-		{
-			\"panels\": [
-				\"word1\",
-				\"word2\",
-				\"word3\"
-			]
-		}
-		ACTION;
+		// $this->prompts->action = <<<ACTION
+		// You are a talented artist who directs animated cartoons.
+		// The following describes three scenes in a cartoon featuring the character Alpha Zeta:
+		// - {p0}
+		// - {p1}
+		// - {p2}
+		// For each of the three scenes choose one word, from the following list, which best describes the action or appearance of the main character:  {p3}.
+		// Output your response as a valid json object in the follwing format:
+		// {
+		// 	\"panels\": [
+		// 		\"word1\",
+		// 		\"word2\",
+		// 		\"word3\"
+		// 	]
+		// }
+		// ACTION;
 
 		$this->prompts->image = <<<IMAGE
 		In the style of an animated cartoon, draw the following: {p0}
