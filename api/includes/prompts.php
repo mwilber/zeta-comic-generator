@@ -80,7 +80,7 @@ class Prompts {
 		`panels` is a 3 element array of objects defining each of the 3 panels in the comic strip.
 		`scene`: A description of the panel scene, including all characters present.
 		`dialog`: Words spoken by Alpha Zeta. He is the only character that speaks. Do not label the dialog with a character name. This can be an empty string if the character is not speaking.
-		`action`: A word, chosen from the list above, describing the action Alpha Zeta is performing in the panel.
+		`action`: A word, chosen from the following list, that best describes the action or appearance of Alpha Zeta in the panel: {p0}
 		SCRIPT;
 
 		$this->prompts->background = <<<BACKGROUND
@@ -89,6 +89,8 @@ class Prompts {
 		Your description of each panel will not reference any element of the other panels. Any description of a character, prop or environment that persists across panels must be repeated in each description. Ensure that your descriptions are detailed enough to maintain visual consistency across all panels of the comic strip.
 
 		Omit all references to Alpha Zeta in your description. 
+
+		Omit any description of Alpha Zeta from your description.
 
 		Do not reference a comic strip “panel”, or any other comic strip formatting in your description.
 		Include enough detail necessary for an AI image generator to render an image of your description.

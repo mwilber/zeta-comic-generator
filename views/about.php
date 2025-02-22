@@ -65,6 +65,9 @@
 			case "image":
 				$params[] = "<strong>{ The scene description generated from the \"background\" prompt }</strong>";
 				break;
+			case "script":
+				$params[] = implode(", ", array_keys($GLOBALS['characterActions']));
+				break;
 		}
         $promptDisplay = $prompts->generatePrompt($action, $params, true);
 ?>

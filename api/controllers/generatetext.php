@@ -40,6 +40,10 @@ switch ($actionId) {
 			$params[] = addPeriod($paramVal);
 		}
 		break;
+	case "script":
+		// Add the character actions, use the $GLOBALS array and convert each key name to a comma-separated string
+		$params[] = implode(", ", array_keys($GLOBALS['characterActions']));
+		break;
 }
 
 // Set up the system prompt if it doesn't already exist
