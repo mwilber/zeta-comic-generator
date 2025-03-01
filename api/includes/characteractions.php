@@ -54,6 +54,12 @@ $GLOBALS['characterActions'] = [
 			'y' => 140,
 		],
 	],
+	'regret' => [
+		'pointer' => [
+			'x' => 350,
+			'y' => 160,
+		],
+	],
 	'reporting' => [
 		'pointer' => [
 			'x' => 200,
