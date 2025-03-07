@@ -129,6 +129,28 @@ class Prompts {
 		In the style of an animated cartoon, draw the following: {p0}
 		Limit the use of the color green in your drawing to no more than 33 percent of the total pixels.
 		IMAGE;
+
+		$this->prompts->continuity = <<<CONTINUITY
+		You are an experienced psychologist. You are also an experienced reporter who chronicles world events.
+		
+		Using the script for the story, identify the following:
+		
+		Identify any character traits that are portryed in Alpha Zeta.
+		- Do not include anything listed in the character profile outlined at the beginning of this conversation.
+		- It is okay if no new traits are portreyed.
+		- Limit to no more than 3 traits. If there are more than 3, list the most prominant.
+
+		Itentify any significant events in the life of Alpha Zeta portreyed in the story.
+		- Do not include anything listed in the historical events outlined at the beginning of this conversation.
+		- It is okay if no new events are portreyed.
+		- Limit to no more than 3 events. If there are more than 3, list the most prominant.
+
+		Output your response in the following format:
+		{
+			\"traits\": []
+			\"events\": []
+		}
+		CONTINUITY;
 	}
 
 	/**
