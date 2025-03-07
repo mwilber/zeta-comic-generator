@@ -9,7 +9,7 @@
  */
 
 // pause execution for 1 second to simulate the remote API response
-sleep(1);
+sleep(SIMULATE_DELAY);
 
 $actionId = $controller;
 $output->actionId = $actionId;
@@ -84,7 +84,7 @@ if ($actionId == "script") {
 }
 
 $prompts = new Prompts();
-$output->prompt = $prompts->generatePrompt($actionId, array($params), array($continuity, $categories));
+$output->prompt = $prompts->generatePrompt($actionId, array($params));
 
 
 $output->error = "";
