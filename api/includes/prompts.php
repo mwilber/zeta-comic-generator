@@ -49,7 +49,15 @@ class Prompts {
 
 		{
 			\"concept\": \"\",
+			\"memory\": [
+				{ "id": 0, "description": "" },
+			]
 		}
+		
+		The value of the property \"memory\" is an array of objects. This array will contain a list of items used from the character profile or past events listed above in writing the story concept.
+		Each object in the array contains the following properties:
+		\"id\": The number prefixing the item from the lists.
+		\"description\": The item from the lists.
 		CONCEPT;
 
 		//The following is a list of story elements that have been used in previous comics. These are called \"elements of significance\". Each element of significance is preceded by an identifying number. You may use these elements of significance in writing the comic strip. Using an element of significance is not required. Only use an element of significance if it is pertinent to the comic story.

@@ -68,33 +68,33 @@ document.addEventListener("DOMContentLoaded", () => {
 				scriptRenderer.LoadScript(script);
 				comicRenderer.LoadScript(script);
 
-				// if (data.continuity) {
-				// 	let continuityEl = document.getElementById("continuity");
-				// 	let lastCategory = 0;
-				// 	let continuityHTML = "";
-				// 	for (const item of data.continuity) {
-				// 		if (item.categoryId !== lastCategory) {
-				// 			if (lastCategory !== 0) {
-				// 				continuityHTML += `</ul></li>`;
-				// 			}
-				// 			continuityHTML += `
-				// 				<li>
-				// 				<h3>${item.prefix}</h3>
-				// 				<ul>
-				// 			`;
-				// 			lastCategory = item.categoryId;
-				// 		}
-				// 		continuityHTML += `
-				// 			<li>
-				// 				<a href="/gallery/${item.permalink}">${item.description}</a>
-				// 			</li>
-				// 		`;
-				// 	}
+				if (data.continuity) {
+					let continuityEl = document.getElementById("continuity");
+					let lastCategory = 0;
+					let continuityHTML = "";
+					for (const item of data.continuity) {
+						if (item.categoryId !== lastCategory) {
+							if (lastCategory !== 0) {
+								continuityHTML += `</ul></li>`;
+							}
+							continuityHTML += `
+								<li>
+								<h3>${item.prefix}</h3>
+								<ul>
+							`;
+							lastCategory = item.categoryId;
+						}
+						continuityHTML += `
+							<li>
+								<a href="/gallery/${item.permalink}">${item.description}</a>
+							</li>
+						`;
+					}
 
-				// 	continuityHTML += `</ul></li>`;
+					continuityHTML += `</ul></li>`;
 
-				// 	continuityEl.innerHTML  = continuityHTML;
-				// }
+					continuityEl.innerHTML  = continuityHTML;
+				}
 
 				AttachUiEvents();
 			});

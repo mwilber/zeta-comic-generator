@@ -63,6 +63,7 @@ export class ComicGeneratorApi {
 		this.premise = premise;
 		if (!this.comic) this.comic = {};
 		this.comic.concept = result.json.concept;
+		this.comic.memory = result.json.memory || [];
 		// Add the credits to the script
 		this.comic.credits = this.credits;
 		this.credits.concept = result.model;
@@ -358,6 +359,7 @@ export class ComicGeneratorApi {
 			title: this.comic.title,
 			script: JSON.stringify(scriptExport),
 			continuity: JSON.stringify(scriptExport.continuity),
+			memory: JSON.stringify(scriptExport.memory),
 			bkg1: this.GetPanelImageUrl(0, "background"),
 			bkg2: this.GetPanelImageUrl(1, "background"),
 			bkg3: this.GetPanelImageUrl(2, "background"),

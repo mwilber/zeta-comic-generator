@@ -269,30 +269,30 @@
 			}
 		}
 
-		// $memoriesRaw = $_POST["memory"];
-		// $output->response->memories = $memoriesRaw;
-		// if(isset($memoriesRaw) && !empty($memoriesRaw)) {
-		// 	$memories = json_decode($memoriesRaw);
-		// 	// Verify that $memories is an array
-		// 	if (is_array($memories)) {
-		// 		foreach ($memories as $memory) {
-		// 			// Check for existing record
-		// 			$stmt = $db->prepare("SELECT `id` FROM `continuity` WHERE `id` = ".$memory.";");
-		// 			$stmt->execute();
-		// 			$existingRecord = $stmt->fetch(PDO::FETCH_ASSOC);
+		$memoriesRaw = $_POST["memory"];
+		$output->response->memories = $memoriesRaw;
+		if(isset($memoriesRaw) && !empty($memoriesRaw)) {
+			$memories = json_decode($memoriesRaw);
+			// Verify that $memories is an array
+			if (is_array($memories)) {
+				foreach ($memories as $memory) {
+					// Check for existing record
+					$stmt = $db->prepare("SELECT `id` FROM `continuity` WHERE `id` = ".$memory->id.";");
+					$stmt->execute();
+					$existingRecord = $stmt->fetch(PDO::FETCH_ASSOC);
 
-		// 			if ($existingRecord) {
-		// 				$memoryId = $existingRecord['id'];
-		// 			}
-		// 			// Insert a record into the table `comic_continuity`. The table has two fields: `comicId` and `continuityId`
-		// 			$stmt = $db->prepare("INSERT INTO `comic_continuity` (`comicId`, `continuityId`) VALUES ('".$output->response->comicId."', '".$memoryId."');");
-		// 			// execute query
-		// 			$stmt->execute();
-		// 		}
-		// 	} else {
-		// 		//$output->error = "Invalid memories format";
-		// 	}
-		// }
+					if ($existingRecord) {
+						$memoryId = $existingRecord['id'];
+					}
+					// Insert a record into the table `comic_continuity`. The table has two fields: `comicId` and `continuityId`
+					$stmt = $db->prepare("INSERT INTO `comic_continuity` (`comicId`, `continuityId`) VALUES ('".$output->response->comicId."', '".$memoryId."');");
+					// execute query
+					$stmt->execute();
+				}
+			} else {
+				//$output->error = "Invalid memories format";
+			}
+		}
 	}
 
 ?>
