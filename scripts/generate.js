@@ -29,6 +29,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		},
 	});
 
+	// TODO: Remove this when the API is ready
 	window.crender = comicRenderer;
 
 	AttachUiEvents();
@@ -264,7 +265,8 @@ async function SaveStrip() {
 		alert("There was a problem saving.");
 	}
 	console.log("Success:", data);
-	window.location.replace("/detail/" + data.response.permalink);
+	document.getElementById("save").removeAttribute("disabled");
+	//window.location.replace("/detail/" + data.response.permalink);
 }
 
 /**

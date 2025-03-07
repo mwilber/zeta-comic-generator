@@ -146,7 +146,7 @@ switch ($actionId) {
 			"role" => "user",
 			"content" => $output->prompt
 		]);
-		$response = "{\"traits\": [\"cheeky\", \"curious\"], \"events\": [\"Went to empire state building\",\"Went to the zoo\",\"Went to the beach\"]}";
+		$response = "{\"alpha\": [\"Simulated Trait 1\", \"Simulated Trait 2\"], \"event\": [\"Simulated Event 1\",\"Simulated Event 2\",\"Simulated Event 3\"]}";
 		array_push($messages, (object) [
 			"role" => "assistant",
 			"content" => $response

@@ -19,8 +19,8 @@
 	//ini_set('display_startup_errors', 1);
 	error_reporting(E_ERROR);
 
-	define("SIMULATION_MODE", "image"); // all, text, image, none
-	define("SIMULATE_DELAY", 1);
+	define("SIMULATION_MODE", "none"); // all, text, image, none
+	define("SIMULATE_DELAY", 0);
 	define("SIMULATE_ERRORS", false);
 
 	$request = $_SERVER['REQUEST_URI'];

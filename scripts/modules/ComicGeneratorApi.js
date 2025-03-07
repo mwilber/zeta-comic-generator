@@ -308,26 +308,10 @@ export class ComicGeneratorApi {
 		};
 
 		const result = await this.fetchApi("continuity", fetchParams);
-		// if (
-		// 	!result ||
-		// 	result.error ||
-		// 	!result.json ||
-		// 	!result.json.traits ||
-		// 	!result.json.traits.length ||
-		// 	!result.json.events ||
-		// 	!result.json.events.length
-		// )
-		// 	return { traits: [], events: [] };
-
-		// for (const [idx, background] of result.json.descriptions.entries()) {
-		// 	this.comic.panels[idx].background = background;
-		// }
-
-		console.log("writing continuity", result);
 
 		this.comic.continuity = {
-			traits: [...(this.comic.continuity?.traits || []), ...(result?.json?.traits || [])],
-			events: [...(this.comic.continuity?.events || []), ...(result?.json?.events || [])],
+			alpha: [...(this.comic.continuity?.alpha || []), ...(result?.json?.alpha || [])],
+			event: [...(this.comic.continuity?.event || []), ...(result?.json?.event || [])],
 		};
 		this.onUpdate(this.comic, this.PercentComplete());
 		return this.comic;
@@ -373,8 +357,7 @@ export class ComicGeneratorApi {
 			prompt: this.premise,
 			title: this.comic.title,
 			script: JSON.stringify(scriptExport),
-			memory: JSON.stringify(scriptExport.memory),
-			newmemory: JSON.stringify(scriptExport.newmemory),
+			continuity: JSON.stringify(scriptExport.continuity),
 			bkg1: this.GetPanelImageUrl(0, "background"),
 			bkg2: this.GetPanelImageUrl(1, "background"),
 			bkg3: this.GetPanelImageUrl(2, "background"),

@@ -147,8 +147,8 @@ class Prompts {
 
 		Output your response in the following format:
 		{
-			\"traits\": []
-			\"events\": []
+			\"alpha\": []
+			\"event\": []
 		}
 		CONTINUITY;
 	}
