@@ -300,6 +300,39 @@ export class ComicGeneratorApi {
 		}
 	}
 
+	async WriteContinuity(params) {
+		const { model } = params || {};
+
+		let fetchParams = {
+			model: model || this.defaultTextModel,
+		};
+
+		const result = await this.fetchApi("continuity", fetchParams);
+		// if (
+		// 	!result ||
+		// 	result.error ||
+		// 	!result.json ||
+		// 	!result.json.traits ||
+		// 	!result.json.traits.length ||
+		// 	!result.json.events ||
+		// 	!result.json.events.length
+		// )
+		// 	return { traits: [], events: [] };
+
+		// for (const [idx, background] of result.json.descriptions.entries()) {
+		// 	this.comic.panels[idx].background = background;
+		// }
+
+		console.log("writing continuity", result);
+
+		this.comic.continuity = {
+			traits: [...(this.comic.continuity?.traits || []), ...(result?.json?.traits || [])],
+			events: [...(this.comic.continuity?.events || []), ...(result?.json?.events || [])],
+		};
+		this.onUpdate(this.comic, this.PercentComplete());
+		return this.comic;
+	}
+
 	/**
 	 * Gets the URL of the panel image for the specified panel index and image type.
 	 *
@@ -366,19 +399,22 @@ export class ComicGeneratorApi {
 	 */
 	PercentComplete() {
 		let progress = 0;
+		if (!this.comic) return progress;
 
-		if (this.comic && this.comic.concept) progress += 10;
+		if (this.comic.concept) progress += 15;
 
 		if (this.comic.panels) {
-			// Each panel has a total progress of 30
+			// Each panel has a total progress of 25
 			for (const panel of this.comic.panels) {
 				if (panel.scene) progress += 5;
-				if (panel.images && panel.images.length) progress += 15;
+				if (panel.images && panel.images.length) progress += 10;
 				if (panel.dialog && panel.dialog.length) progress += 5;
 				if (panel.background) progress += 5;
 				//if (panel.action) progress += 3;
 			}
 		}
+
+		if (this.comic.continuity) progress += 10;
 
 		return progress;
 	}
@@ -416,7 +452,7 @@ export class ComicGeneratorApi {
 					console.log("ComicGenerator: API response", data);
 
 					// Store the messages for the next request
-					this.messages = data.messages;
+					if (data.messages) this.messages = data.messages;
 					return data;
 				}
 			} catch (error) {

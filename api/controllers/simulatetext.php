@@ -140,6 +140,19 @@ switch ($actionId) {
 	case "action":
 		$output->data->panels = json_decode("[{\"action\": \"standing\"},{\"action\": \"typing\",\"altAction\": \"hopeful\"},{\"action\": \"joyous\"}]");
 		break;
+	case "continuity":
+		$output->prompt = "Continuity prompt here.";
+		array_push($messages, (object) [
+			"role" => "user",
+			"content" => $output->prompt
+		]);
+		$response = "{\"traits\": [\"cheeky\", \"curious\"], \"events\": [\"Went to empire state building\",\"Went to the zoo\",\"Went to the beach\"]}";
+		array_push($messages, (object) [
+			"role" => "assistant",
+			"content" => $response
+		]);
+		$output->data = json_decode($response);
+		break;
 }
 
 $output->messages = $messages;
