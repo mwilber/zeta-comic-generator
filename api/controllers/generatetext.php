@@ -40,10 +40,6 @@ switch ($actionId) {
 			$params[] = addPeriod($paramVal);
 		}
 		break;
-	case "script":
-		// Add the character actions, use the $GLOBALS array and convert each key name to a comma-separated string
-		$params[] = implode(", ", array_keys($GLOBALS['characterActions']));
-		break;
 }
 
 // Set up the system prompt if it doesn't already exist
@@ -121,10 +117,11 @@ if(OUTPUT_DEBUG_DATA) {
  *
  * @return array The row from the `categories` table.
  */
-function GetCharacterCategory() {
+function GetCategoryByAlias($alias) {
 	$database = new Database();
 	$db = $database->getConnection();
-	$stmt = $db->prepare("SELECT * FROM `categories` WHERE `alias` = 'alpha'");
+	$stmt = $db->prepare("SELECT * FROM `categories` WHERE `alias` = :alias");
+	$stmt->bindParam(":alias", $alias, PDO::PARAM_STR);
 	$stmt->execute();
 	$row = $stmt->fetch(PDO::FETCH_ASSOC);
 	return $row;
@@ -193,9 +190,6 @@ function GetModel($modelAlias) {
 		case "gpt":
 			$model = new ModelGpt();
 			break;
-		case "gpt45":
-			$model = new ModelGpt45();
-			break;
 		case "gem":
 			$model = new ModelGemini();
 			break;
@@ -225,7 +219,8 @@ function GetModel($modelAlias) {
  */
 function GetSystemPromptParams() {
 	$params = [];
-	$characterCategory = GetCharacterCategory();
+
+	$characterCategory = GetCategoryByAlias("alpha");
 	$characterContinuity = [];
 	if (isset($characterCategory['id'])) {
 		$continuityData = GetContinuityByCategoryId($characterCategory['id']);
@@ -233,11 +228,21 @@ function GetSystemPromptParams() {
 			$characterContinuity[] = $record['description'];
 		}
 	}
+	$eventCategory = GetCategoryByAlias("event");
+	$eventContinuity = [];
+	if (isset($eventCategory['id'])) {
+		$continuityData = GetContinuityByCategoryId($eventCategory['id']);
+		foreach ($continuityData as $record) {
+			$eventContinuity[] = $record['description'];
+		}
+	}
 
-	// Set up the parameters for the prompt
-	$params[] = "\n" . $characterCategory['prompt'] . "\n - " . implode("\n - ", $characterContinuity) . "\n";
 	// Add the character actions, use the $GLOBALS array and convert each key name to a comma-separated string
 	$params[] = implode(", ", array_keys($GLOBALS['characterActions']));
+	// Set up the character profile
+	$params[] = "\n" . $characterCategory['prompt'] . "\n - " . implode("\n - ", $characterContinuity) . "\n";
+	// Set up the world events history
+	$params[] = "\n" . $eventCategory['prompt'] . "\n - " . implode("\n - ", $eventContinuity) . "\n";
 
 	return $params;
 }
