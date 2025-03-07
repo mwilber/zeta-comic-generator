@@ -85,6 +85,7 @@
 		case 'concept':
 		case 'script':
 		case 'background':
+		case 'continuity':
 		case 'action':
 			if (SIMULATION_MODE == "all" || SIMULATION_MODE == "text") {
 				require __DIR__ . '/controllers/simulatetext.php';
