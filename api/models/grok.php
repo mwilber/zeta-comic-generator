@@ -20,12 +20,7 @@
  */
 class ModelGrok {
 	function __construct() {
-		// $this->modelName = "gpt-3.5-turbo-16k";
-		// $this->modelName = "gpt-4";
-		// $this->modelName = "gpt-4-1106-preview";
-		// $this->modelName = "gpt-4o-2024-05-13";
 		$this->modelName = "grok-2-latest";
-		// $this->modelName = "gpt-4o-mini-2024-07-18";
 
 		$this->apiUrl = "https://api.x.ai/v1/chat/completions";
 		$this->apiKey = GROK_KEY;
@@ -71,10 +66,6 @@ class ModelGrok {
 		curl_setopt($ch, CURLOPT_HEADER, 0);
 		$messagesArray = [];
 		foreach ($messages as $message) {
-			// Replace "system" role with "developer"
-			// if (isset($message->role) && $message->role === "system") {
-			// 	$message->role = "developer";
-			// }
 			$messagesArray[] = [
 				"role" => $message->role,
 				"content" => $message->content
