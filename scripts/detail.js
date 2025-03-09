@@ -38,7 +38,7 @@ document.addEventListener("DOMContentLoaded", () => {
 					return;
 				}
 
-				const { id, prompt, script, backgrounds } = data;
+				const { id, prompt, script, backgrounds, continuity } = data;
 
 				script.prompt = prompt;
 				document.getElementById("query").innerHTML = `${prompt}`;
@@ -68,32 +68,37 @@ document.addEventListener("DOMContentLoaded", () => {
 				scriptRenderer.LoadScript(script);
 				comicRenderer.LoadScript(script);
 
-				if (data.continuity) {
-					let continuityEl = document.getElementById("continuity");
-					let lastCategory = 0;
-					let continuityHTML = "";
-					for (const item of data.continuity) {
-						if (item.categoryId !== lastCategory) {
-							if (lastCategory !== 0) {
-								continuityHTML += `</ul></li>`;
-							}
-							continuityHTML += `
-								<li>
-								<h3>${item.prefix}</h3>
-								<ul>
-							`;
-							lastCategory = item.categoryId;
+				let continuityEl = document.getElementById("continuity");
+				if (continuity?.length) {
+					let continuitySorted = {categories: []};
+					for (const item of continuity) {
+						if (!continuitySorted[item.alias]) {
+							continuitySorted[item.alias] = {
+								heading: item.heading,
+								items: [],
+							};
 						}
-						continuityHTML += `
-							<li>
-								<a href="/gallery/${item.permalink}">${item.description}</a>
-							</li>
-						`;
+						continuitySorted[item.alias].items.push(item);
 					}
 
-					continuityHTML += `</ul></li>`;
+					if (continuitySorted.alpha) {
+						let alphaEl = document.createElement("div");
+						alphaEl.classList.add("character");
+						alphaEl.innerHTML = `<h3>${continuitySorted.alpha.heading}:</h3> ${continuitySorted.alpha.items.map(item => item.description).join(", ")}`;
+						continuityEl.appendChild(alphaEl);
+					}
+					if (continuitySorted.event) {
+						let eventEl = document.createElement("div");
+						eventEl.classList.add("event");
+						eventEl.innerHTML = `<h3>${continuitySorted.event.heading}:</h3> ${continuitySorted.event.items.map(item => {
+							return `<a href="/gallery/${item.permalink}">${item.description}</a>`
+						}).join(", ")}`;
+						continuityEl.appendChild(eventEl);
+					}
 
-					continuityEl.innerHTML  = continuityHTML;
+					continuityEl.insertAdjacentHTML("afterbegin", `<h2 class="continuity-title">Notes</h2>`);
+				} else {
+					continuityEl.style.display = "none";
 				}
 
 				AttachUiEvents();

@@ -117,7 +117,7 @@ try {
 if($output->script) $output->continuity = [];
 
 try {
-	$stmt = $db->prepare("SELECT `categories`.`prefix`, `continuity`.`categoryId`, `continuity`.`description`, `continuity`.`permalink`, `continuity`.`active` FROM `continuity`
+	$stmt = $db->prepare("SELECT `categories`.`heading`, `categories`.`alias`, `continuity`.`categoryId`, `continuity`.`description`, `continuity`.`permalink`, `continuity`.`active` FROM `continuity`
 	JOIN `categories` ON `continuity`.`categoryId` = `categories`.`id`
 	JOIN `comic_continuity` ON comic_continuity.continuityId = continuity.id  
 	WHERE comic_continuity.comicId = :comicId AND `continuity`.`active` = true 
