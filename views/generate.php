@@ -42,6 +42,7 @@
 							<option value="gpt45">GPT 4.5 Preview</option>
 							<option value="gem">Gemini 1.5</option>
 							<option value="llama">Llama 3</option>
+							<option value="grok">Grok 2</option>
 							<!-- Titan Text Express v1 disabled because it can't handle the new prompt format -->
 							<!-- <option value="ttn">Titan Text Express v1</option> -->
 						</select>
@@ -57,6 +58,7 @@
 							<option value="gpt">GPT 4o</option>
 							<option value="deepseek">DeepSeek V3</option>
 							<option value="llama">Llama 3</option>
+							<option value="grok">Grok 2</option>
 							<!-- Titan Text Express v1 disabled because it can't handle the new prompt format -->
 							<!-- <option value="ttn">Titan Text Express v1</option> -->
 						</select>

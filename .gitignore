@@ -5,6 +5,7 @@ assets/backgrounds-full
 assets/thumbnails
 backup/
 admin.php
+admin-continuity.php
 composer.phar
 vendor/
 .env

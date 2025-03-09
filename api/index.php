@@ -20,6 +20,7 @@
 	error_reporting(E_ERROR);
 
 	define("SIMULATION_MODE", "none"); // all, text, image, none
+	define("SIMULATE_DELAY", 0);
 	define("SIMULATE_ERRORS", false);
 
 	$request = $_SERVER['REQUEST_URI'];
@@ -68,6 +69,7 @@
 	require __DIR__ . '/models/deepseek.php';
 	require __DIR__ . '/models/deepseekr.php';
 	require __DIR__ . '/models/llama.php';
+	require __DIR__ . '/models/grok.php';
 
 	switch ($controller) {
 		// App API endpoints
@@ -84,6 +86,7 @@
 		case 'concept':
 		case 'script':
 		case 'background':
+		case 'continuity':
 		case 'action':
 			if (SIMULATION_MODE == "all" || SIMULATION_MODE == "text") {
 				require __DIR__ . '/controllers/simulatetext.php';
