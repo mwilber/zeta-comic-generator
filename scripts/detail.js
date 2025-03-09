@@ -104,10 +104,6 @@ document.addEventListener("DOMContentLoaded", () => {
 				AttachUiEvents();
 			});
 	}
-
-	// TODO: remove this
-	window.comicRenderer = comicRenderer;
-	window.comicExporter = ComicExporter;
 });
 
 /**

@@ -29,9 +29,6 @@ document.addEventListener("DOMContentLoaded", () => {
 		},
 	});
 
-	// TODO: Remove this when the API is ready
-	window.crender = comicRenderer;
-
 	AttachUiEvents();
 	SetDefaultSelections();
 
