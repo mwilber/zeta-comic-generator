@@ -121,11 +121,10 @@ if(OUTPUT_DEBUG_DATA) {
  *
  * @return array The row from the `categories` table.
  */
-function GetCategoryByAlias($alias) {
+function GetCharacterCategory() {
 	$database = new Database();
 	$db = $database->getConnection();
-	$stmt = $db->prepare("SELECT * FROM `categories` WHERE `alias` = :alias");
-	$stmt->bindParam(":alias", $alias, PDO::PARAM_STR);
+	$stmt = $db->prepare("SELECT * FROM `categories` WHERE `alias` = 'alpha'");
 	$stmt->execute();
 	$row = $stmt->fetch(PDO::FETCH_ASSOC);
 	return $row;
@@ -229,30 +228,19 @@ function GetModel($modelAlias) {
  */
 function GetSystemPromptParams() {
 	$params = [];
-
-	$characterCategory = GetCategoryByAlias("alpha");
+	$characterCategory = GetCharacterCategory();
 	$characterContinuity = [];
 	if (isset($characterCategory['id'])) {
 		$continuityData = GetContinuityByCategoryId($characterCategory['id']);
 		foreach ($continuityData as $record) {
-			$characterContinuity[] = $record['id'] . ". " . $record['description'];
-		}
-	}
-	$eventCategory = GetCategoryByAlias("event");
-	$eventContinuity = [];
-	if (isset($eventCategory['id'])) {
-		$continuityData = GetContinuityByCategoryId($eventCategory['id']);
-		foreach ($continuityData as $record) {
-			$eventContinuity[] = $record['id'] . ". " . $record['description'];
+			$characterContinuity[] = $record['description'];
 		}
 	}
 
+	// Set up the parameters for the prompt
+	$params[] = "\n" . $characterCategory['prompt'] . "\n - " . implode("\n - ", $characterContinuity) . "\n";
 	// Add the character actions, use the $GLOBALS array and convert each key name to a comma-separated string
 	$params[] = implode(", ", array_keys($GLOBALS['characterActions']));
-	// Set up the character profile
-	$params[] = "\n" . $characterCategory['prompt'] . "\n - " . implode("\n ", $characterContinuity) . "\n";
-	// Set up the world events history
-	$params[] = "\n" . $eventCategory['prompt'] . "\n - " . implode("\n ", $eventContinuity) . "\n";
 
 	return $params;
 }
