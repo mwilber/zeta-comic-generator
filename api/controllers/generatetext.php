@@ -77,7 +77,7 @@ if ($hitCount >= RATE_LIMIT) {
 		// Record the model that was used
 		$output->model = $model->modelName;
 
-		$response = $model->sendPrompt($output->prompt, $messages);
+		$response = $model->sendPayload($messages);
 		$output->error = $response->error;
 
 		countHit($actionId, $params[0]);
@@ -213,7 +213,10 @@ function GetModel($modelAlias) {
 			break;
 		case "deepseekr":
 			$model = new ModelDeepSeekR();
-			break;	
+			break;
+		case "grok":
+			$model = new ModelGrok();
+			break;
 	}
 	return $model;
 }
