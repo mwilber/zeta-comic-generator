@@ -52,6 +52,7 @@
 	require __DIR__ . '/includes/db.php';
 	require __DIR__ . '/includes/s3.php';
 	require __DIR__ . '/../vendor/autoload.php';
+	require __DIR__ . '/includes/api_logger.php';
 
 	// AI Prompts
 	require __DIR__ . '/includes/prompts.php';
@@ -81,6 +82,7 @@
 			require __DIR__ . '/controllers/'.$controller.'.php';
 			break;
 		// Comic Generation API endpoints
+		case 'test':
 		case 'concept':
 		case 'script':
 		case 'background':
@@ -97,6 +99,9 @@
 			} else {
 				require __DIR__ . '/controllers/generateimage.php';
 			}
+			break;
+		case 'log':
+			require __DIR__ . '/controllers/log.php';
 			break;
 		default:
 			$output->error = "Action not avaialble.";

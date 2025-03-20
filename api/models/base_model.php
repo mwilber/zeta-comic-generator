@@ -13,14 +13,39 @@ class BaseModel {
 	 * The payload is the messages array in the format of the OpenAI API.
 	 * 
 	 * @param array $payload The payload to send to the model.
+	 * @param string $id Unique identifier for the request.
+	 * @param string $action action type for the request.
+	 * @param string $title title for the request.
 	 * @return stdClass The result of the model's response.
 	 */
-	function sendPayload($payload) {
-		$payload = $this->processPayload($payload);
-		$headers = $this->buildRequestHeaders();
-		$body = $this->buildRequestBody($payload);
-		$response = $this->sendRequest($headers, $body);
-		$result = $this->processResponse($response);
+	function sendPayload($payload, $id, $action, $title) {
+		$processedPayload = null;
+		$headers = null;
+		$body = null;
+		$response = null;
+		$result = null;
+
+		try {
+			$processedPayload = $this->processPayload($payload);
+			$headers = $this->buildRequestHeaders();
+			$body = $this->buildRequestBody($processedPayload);
+			$response = $this->sendRequest($headers, $body);
+			$result = $this->processResponse($response);
+		} catch (Exception $e) {
+			$result = new stdClass();
+			$result->error = $e->getMessage();
+		} finally {
+			ApiLogger::logRequest(
+				$id ?? 'unknown',
+				$action ?? 'unknown', 
+				$title ?? 'unknown',
+				$processedPayload ?? $payload ?? [],
+				$body ?? '',
+				$response ?? '',
+				$result ?? new stdClass()
+			);
+		}
+
 		return $result;
 	}
 
