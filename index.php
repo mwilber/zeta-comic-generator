@@ -8,7 +8,7 @@
 	$request = $_SERVER['REQUEST_URI'];
 	//echo $request;
 
-	$version = "3.0.0";
+	$version = "3.5.0";
 	$meta = new stdClass();
 	$meta->siteTitle = "Zeta Comic Generator";
 	$meta->title = "Zeta Comic Generator";
@@ -115,6 +115,7 @@
 			case 'detail':
 			case 'gallery':
 			case 'generate':
+			case 'debugger':
 				require __DIR__ . '/views/'.$path[1].'.php';
 				break;
 		

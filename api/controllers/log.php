@@ -9,7 +9,7 @@ $database = new Database();
 $db = $database->getConnection();
 
 // Prepare query to get all records from requestlog
-$query = "SELECT * FROM requestlog ORDER BY timestamp DESC";
+$query = "SELECT * FROM requestlog ORDER BY timestamp DESC LIMIT 100";
 $stmt = $db->prepare($query);
 $stmt->execute();
 
