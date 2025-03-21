@@ -134,6 +134,11 @@ class Prompts {
 			\"response\": \"\"
 		}
 		TEST;
+
+		$this->prompts->testimage = <<<TESTIMAGE
+		In the style of an animated cartoon, draw the following: a grassy knoll with a tree and a house in the distance.
+		Limit the use of the color green in your drawing to no more than 33 percent of the total pixels.
+		TESTIMAGE;
 	}
 
 	/**

@@ -18,7 +18,9 @@
 		}
 	}
  */
-$modelId = POSTval("model", "sdf");
+$modelId = POSTval("model", "oai");
+$workflowId = POSTval("workflowId", "");
+$actionId = $controller;
 
 $query = $_POST["query"];
 if(!$query){
@@ -62,7 +64,7 @@ if ($hitCount >= RATE_LIMIT) {
 		// Record the model that was used
 		$output->model = $model->modelName;
 	
-		$response = $model->sendPrompt($output->prompt);
+		$response = $model->sendPayload($output->prompt, $workflowId, $actionId, $output->prompt);
 		$output->error = $response->error;
 	
 		$output->data = $response->data;

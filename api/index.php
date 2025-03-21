@@ -93,7 +93,8 @@
 				require __DIR__ . '/controllers/generatetext.php';
 			}
 			break;
-		case 'image':					
+		case 'testimage':
+		case 'image':				
 			if (SIMULATION_MODE == "all" || SIMULATION_MODE == "image") {
 				require __DIR__ . '/controllers/simulateimage.php';
 			} else {
