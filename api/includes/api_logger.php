@@ -19,6 +19,10 @@ class ApiLogger {
 		$db = $database->getConnection();
         
         // prepare query statement
+        // TODO: response and body are being stringified twice before being inserted into the database
+        // this is happening in the openai calls. Not sure why it works. But aws is throwing it up.
+        // Need to figure out the proper state. JSON objects should NOT be encapsulated in double quotes in the database.
+        // IMPORTANT: USE THE TEXT REQUEST AND SWAP OUT THE MODELS RATHER THAN GENERATING COMICS
         $stmt = $db->prepare("INSERT INTO `requestlog` 
             (`workflowId`, `action`, `title`, `payload`, `body`, `response`, `result`) 
             VALUES (
@@ -27,7 +31,7 @@ class ApiLogger {
                 ".$db->quote($title).",
                 ".$db->quote(json_encode($payload)).",
                 ".$db->quote(json_encode($body)).",
-                ".$db->quote(json_encode($response)).",
+                ".$db->quote($response).",
                 ".$db->quote(json_encode($result))."
             );");
         // execute query

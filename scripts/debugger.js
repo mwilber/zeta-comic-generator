@@ -142,6 +142,7 @@ function PopApi(workflowId) {
 }
 
 function PopDetail(log) {
+	console.log(log);
 	const containerEl = document.getElementById("debugger-detail");
 	containerEl.innerHTML = "<h3>Details: " + log.action + "<span class='timestamp'>" + log.timestamp + "</span></h3>";
 	const detailEl = document.createElement("div");

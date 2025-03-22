@@ -76,12 +76,5 @@ class ModelTitanImage extends BaseAwsModel {
 
 		return $request;
 	}
-
-	protected function sendRequest($headers, $body) {
-
-		$response = parent::sendRequest($headers, $body);
-
-		return $response['body'];
-	}
 }
 ?>

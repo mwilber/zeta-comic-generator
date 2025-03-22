@@ -75,18 +75,5 @@ class ModelStableDiffusion extends BaseAwsModel {
 
 		return $result;
 	}
-
-	protected function sendRequest($headers, $body) {
-
-		$bedrockRuntimeClient = new BedrockRuntimeClient($headers);
-
-		$response = $bedrockRuntimeClient->invokeModel([
-			'contentType' => 'application/json',
-			'body' => json_encode($body),
-			'modelId' => $this->modelName,
-		]);
-
-		return $response['body'];
-	}
 }
 ?>

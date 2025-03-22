@@ -29,7 +29,7 @@ class ModelLlama extends BaseAwsModel {
 
 	function processResponse($response) {
 		$result = new stdClass;
-		$json = json_decode($response['body']);
+		$json = json_decode($response);
 		$result->data = $json;
 
 		$result->error = $json->error;

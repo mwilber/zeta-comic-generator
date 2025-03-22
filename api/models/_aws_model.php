@@ -33,7 +33,7 @@ class BaseAwsModel extends BaseModel {
 			'modelId' => $this->modelName,
 		]);
 
-		return $response;
+		return $response['body'];
 	}
 
 }
