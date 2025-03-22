@@ -3,6 +3,7 @@
 <div id="debugger">
 	<div id="debugger-header">
 		<h2>Debugger</h2>
+		<div class="version">v <?php echo $version ?></div>
 	</div>
 	<div id="debugger-listing">
 		<div id="debugger-listing-header">
