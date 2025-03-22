@@ -1,5 +1,5 @@
 <?php
-require_once('base_model.php');
+require_once('_base_model.php');
 /**
  * Provides functionality for interacting with the OpenAI REST API to generate images.
  */
@@ -12,17 +12,6 @@ class ModelDallE extends BaseModel {
 	}
 
 	protected function buildRequestBody($prompt) {
-		$messagesArray = [];
-		foreach ($messages as $message) {
-			// Replace "system" role with "developer"
-			if (isset($message->role) && $message->role === "system") {
-				$message->role = "developer";
-			}
-			$messagesArray[] = [
-				"role" => $message->role,
-				"content" => $message->content
-			];
-		}
 		$body = '{
 			"model": "'.$this->modelName.'",
 			"prompt": "'.$prompt.'",

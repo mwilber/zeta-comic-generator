@@ -1,5 +1,5 @@
 <?php
-require_once('base_model.php');
+require_once('_base_model.php');
 
 /**
  * Provides functionality for interacting with the OpenAI REST API to generate text completions.
