@@ -63,6 +63,7 @@ export class ComicGeneratorApi {
 		this.premise = premise;
 		if (!this.comic) this.comic = {};
 		this.comic.concept = result.json.concept;
+		this.comic.memory = result.json.memory || [];
 		// Add the credits to the script
 		this.comic.credits = this.credits;
 		this.credits.concept = result.model;
@@ -300,6 +301,23 @@ export class ComicGeneratorApi {
 		}
 	}
 
+	async WriteContinuity(params) {
+		const { model } = params || {};
+
+		let fetchParams = {
+			model: model || this.defaultTextModel,
+		};
+
+		const result = await this.fetchApi("continuity", fetchParams);
+
+		this.comic.continuity = {
+			alpha: [...(this.comic.continuity?.alpha || []), ...(result?.json?.alpha || [])],
+			event: [...(this.comic.continuity?.event || []), ...(result?.json?.event || [])],
+		};
+		this.onUpdate(this.comic, this.PercentComplete());
+		return this.comic;
+	}
+
 	/**
 	 * Gets the URL of the panel image for the specified panel index and image type.
 	 *
@@ -340,8 +358,8 @@ export class ComicGeneratorApi {
 			prompt: this.premise,
 			title: this.comic.title,
 			script: JSON.stringify(scriptExport),
+			continuity: JSON.stringify(scriptExport.continuity),
 			memory: JSON.stringify(scriptExport.memory),
-			newmemory: JSON.stringify(scriptExport.newmemory),
 			bkg1: this.GetPanelImageUrl(0, "background"),
 			bkg2: this.GetPanelImageUrl(1, "background"),
 			bkg3: this.GetPanelImageUrl(2, "background"),
@@ -366,19 +384,22 @@ export class ComicGeneratorApi {
 	 */
 	PercentComplete() {
 		let progress = 0;
+		if (!this.comic) return progress;
 
-		if (this.comic && this.comic.concept) progress += 10;
+		if (this.comic.concept) progress += 15;
 
 		if (this.comic.panels) {
-			// Each panel has a total progress of 30
+			// Each panel has a total progress of 25
 			for (const panel of this.comic.panels) {
 				if (panel.scene) progress += 5;
-				if (panel.images && panel.images.length) progress += 15;
+				if (panel.images && panel.images.length) progress += 10;
 				if (panel.dialog && panel.dialog.length) progress += 5;
 				if (panel.background) progress += 5;
 				//if (panel.action) progress += 3;
 			}
 		}
+
+		if (this.comic.continuity) progress += 10;
 
 		return progress;
 	}
@@ -416,7 +437,7 @@ export class ComicGeneratorApi {
 					console.log("ComicGenerator: API response", data);
 
 					// Store the messages for the next request
-					this.messages = data.messages;
+					if (data.messages) this.messages = data.messages;
 					return data;
 				}
 			} catch (error) {

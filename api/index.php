@@ -20,6 +20,7 @@
 	error_reporting(E_ERROR);
 
 	define("SIMULATION_MODE", "none"); // all, text, image, none
+	define("SIMULATE_DELAY", 0);
 	define("SIMULATE_ERRORS", false);
 
 	$request = $_SERVER['REQUEST_URI'];
@@ -84,6 +85,7 @@
 		case 'concept':
 		case 'script':
 		case 'background':
+		case 'continuity':
 		case 'action':
 			if (SIMULATION_MODE == "all" || SIMULATION_MODE == "text") {
 				require __DIR__ . '/controllers/simulatetext.php';
