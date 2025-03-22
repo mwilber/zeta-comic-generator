@@ -18,7 +18,7 @@
 		}
 	}
  */
-$modelId = POSTval("model", "oai");
+$modelId = POSTval("model", "sdf");
 $workflowId = POSTval("workflowId", "");
 $actionId = $controller;
 

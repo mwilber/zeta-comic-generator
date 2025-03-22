@@ -1,10 +1,11 @@
 <?php
+require_once('_aws_model.php');
 /**
  * Provides functionality for interacting with the Amazon Bedrock StableDiffusion API to generate images.
  */
 use Aws\BedrockRuntime\BedrockRuntimeClient;
 
-class ModelStableDiffusion {
+class ModelStableDiffusion extends BaseAwsModel {
 	function __construct() {
 		$this->modelName = "stability.stable-diffusion-xl-v1";
 		$this->apiKey = AWS_ACCESS_KEY;
@@ -12,11 +13,9 @@ class ModelStableDiffusion {
 		$this->imageSize = 512;
 	}
 
-    function sendPrompt($prompt) {
-        
-        $result = new stdClass;
-        $response = $this->textToImage($prompt, $_POST["style"]);
-        $json = json_decode($response);
+	protected function processResponse($response) {
+		$result = new stdClass;
+		$json = json_decode($response);
 		$result->data = $json;
 
 		$result->error = $json->error;
@@ -56,18 +55,9 @@ class ModelStableDiffusion {
 		return $result;
 	}
 
-	function textToImage($prompt, $params) {
+	protected function buildRequestBody($prompt) {
 
 		$titanSeed = rand(0, 2147483647);
-		$bedrockRuntimeClient = new BedrockRuntimeClient([
-			'region' => 'us-east-1',
-			'version' => 'latest',
-			//'profile' => $profile,
-			'credentials' => [
-				'key'    => $this->apiKey,
-				'secret' => $this->apiSecret,
-			],
-		]);
 
 		$request = [
 			'text_prompts' => [
@@ -84,13 +74,20 @@ class ModelStableDiffusion {
 			$request['style_preset'] = $params;
 		}
 
-		$result = $bedrockRuntimeClient->invokeModel([
+		return $request;
+	}
+
+	protected function sendRequest($headers, $body) {
+
+		$bedrockRuntimeClient = new BedrockRuntimeClient($headers);
+
+		$response = $bedrockRuntimeClient->invokeModel([
 			'contentType' => 'application/json',
-			'body' => json_encode($request),
+			'body' => json_encode($body),
 			'modelId' => $this->modelName,
 		]);
 
-		return $result['body'];
+		return $response['body'];
 	}
 }
 ?>
