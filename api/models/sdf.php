@@ -7,10 +7,31 @@ use Aws\BedrockRuntime\BedrockRuntimeClient;
 
 class ModelStableDiffusion extends BaseAwsModel {
 	function __construct() {
+		parent::__construct();
 		$this->modelName = "stability.stable-diffusion-xl-v1";
-		$this->apiKey = AWS_ACCESS_KEY;
-		$this->apiSecret = AWS_SECRET_KEY;
 		$this->imageSize = 512;
+	}
+
+	protected function buildRequestBody($prompt) {
+
+		$titanSeed = rand(0, 2147483647);
+
+		$request = [
+			'text_prompts' => [
+				['text' => $prompt]
+			],
+			'cfg_scale' => 10,
+			'steps' => 30,
+			'height' => $this->imageSize,
+			'width' => $this->imageSize,
+			'seed' => $titanSeed
+		];
+
+		if ($params) {
+			$request['style_preset'] = $params;
+		}
+
+		return $request;
 	}
 
 	protected function processResponse($response) {
@@ -53,28 +74,6 @@ class ModelStableDiffusion extends BaseAwsModel {
 		$result->json = $responseObj;
 
 		return $result;
-	}
-
-	protected function buildRequestBody($prompt) {
-
-		$titanSeed = rand(0, 2147483647);
-
-		$request = [
-			'text_prompts' => [
-				['text' => $prompt]
-			],
-			'cfg_scale' => 10,
-			'steps' => 30,
-			'height' => $this->imageSize,
-			'width' => $this->imageSize,
-			'seed' => $titanSeed
-		];
-
-		if ($params) {
-			$request['style_preset'] = $params;
-		}
-
-		return $request;
 	}
 
 	protected function sendRequest($headers, $body) {
