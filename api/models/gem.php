@@ -1,50 +1,22 @@
 <?php
+require_once('_base_model.php');
 /**
  * Provides functionality for interacting with the Google REST API to generate text completions.
  */
-class ModelGemini {
+class ModelGemini extends BaseModel {
 	function __construct() {
 		$this->modelName = "gemini-1.5-pro";
-		$this->apiUrl = "https://generativelanguage.googleapis.com/v1beta/models/".$this->modelName.":generateContent?key=";
 		$this->apiKey = GOOGLE_KEY;
+		$this->apiUrl = "https://generativelanguage.googleapis.com/v1beta/models/".$this->modelName.":generateContent?key=".$this->apiKey;
 	}
 
-	function sendPrompt($prompt, $messages) {
-		$result = new stdClass;
-		$response = $this->textComplete($messages);
-		$json = json_decode($response);
-		$result->data = $json;
-
-		$result->error = $json->error;
-	
-		if(isset($json->candidates[0]->content->parts[0]->text)) {
-			$script = trim($json->candidates[0]->content->parts[0]->text);
-			$script = str_replace("\\n", "", $script);
-			$script = str_replace("\\r", "", $script);
-			$script = str_replace("\\t", "", $script);
-			$script = str_replace("```json", "", $script);
-			$script = str_replace("json", "", $script);
-			$script = str_replace("JSON", "", $script);
-			$script = str_replace("`", "", $script);
-			$jscript = json_decode($script);
-	
-			$result->debug = $script;
-			if($jscript) $result->json = $jscript;
-		}
-		return $result;
-	}
-
-	function textComplete($messages) {
-
-		$modelUrl = $this->apiUrl.$this->apiKey;
-
-		$ch = curl_init();
-		$headers = array(
+	protected function buildRequestHeaders() {
+		return [
 			'Content-Type: application/json',
-		);
-		curl_setopt($ch, CURLOPT_URL, $modelUrl);
-		curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-		curl_setopt($ch, CURLOPT_HEADER, 0);
+		];
+	}
+
+	protected function buildRequestBody($messages) {
 		$messagesArray = [];
 		$system = "{}";
 		foreach ($messages as $message) {
@@ -75,16 +47,31 @@ class ModelGemini {
 			"contents": '.json_encode($messagesArray).',
 		}';
 
-		// echo $body; die;
-		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST"); 
-		curl_setopt($ch, CURLOPT_POSTFIELDS,$body);
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		return $body;
+	}
 
-		// Timeout in seconds
-		curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+	protected function processResponse($response) {
+		$result = new stdClass;
+		$json = json_decode($response);
+		$result->data = $json;
 
-		$response = curl_exec($ch);
-		return $response;
+		$result->error = $json->error;
+	
+		if(isset($json->candidates[0]->content->parts[0]->text)) {
+			$script = trim($json->candidates[0]->content->parts[0]->text);
+			$script = str_replace("\\n", "", $script);
+			$script = str_replace("\\r", "", $script);
+			$script = str_replace("\\t", "", $script);
+			$script = str_replace("```json", "", $script);
+			$script = str_replace("json", "", $script);
+			$script = str_replace("JSON", "", $script);
+			$script = str_replace("`", "", $script);
+			$jscript = json_decode($script);
+	
+			$result->debug = $script;
+			if($jscript) $result->json = $jscript;
+		}
+		return $result;
 	}
 }
 ?>
