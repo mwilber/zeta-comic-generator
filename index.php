@@ -1,11 +1,14 @@
 <?php
-	// error_reporting(E_ALL);
-	// ini_set('display_errors', 1);
+	error_reporting(E_ALL);
+	ini_set('display_errors', 1);
+
+    require __DIR__ . '/api/includes/prompts.php';
+	require __DIR__ . '/api/includes/characteractions.php';
 
 	$request = $_SERVER['REQUEST_URI'];
 	//echo $request;
 
-	$version = "2.0.2";
+	$version = "3.0.0";
 	$meta = new stdClass();
 	$meta->siteTitle = "Zeta Comic Generator";
 	$meta->title = "Zeta Comic Generator";

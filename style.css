@@ -518,6 +518,14 @@ p.description {
 	line-height: 1.5em;
 }
 
+.prompts .codeblock pre {
+    white-space: pre-wrap;
+}
+
+.prompts .codeblock pre strong {
+    color: #55ff55;
+}
+
 .models {
 	list-style: none;
 	/* margin: 0;

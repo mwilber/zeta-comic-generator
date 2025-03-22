@@ -11,228 +11,6 @@
  * to position the balloon at the character's position in the image.
  */
 export class CharacterAction {
-	static _balloonLocations = {
-		analysis: {
-			center: {
-				x: 256,
-				y: 10,
-			},
-			pointer: {
-				x: 190,
-				y: 130,
-			},
-		},
-		angry: {
-			center: {
-				x: 256,
-				y: 10,
-			},
-			pointer: {
-				x: 260,
-				y: 120,
-			},
-		},
-		approval: {
-			center: {
-				x: 256,
-				y: 10,
-			},
-			pointer: {
-				x: 305,
-				y: 205,
-			},
-		},
-		creeping: {
-			center: {
-				x: 256,
-				y: 10,
-			},
-			pointer: {
-				x: 290,
-				y: 175,
-			},
-		},
-		disguised: {
-			center: {
-				x: 256,
-				y: 10,
-			},
-			pointer: {
-				x: 230,
-				y: 125,
-			},
-		},
-		enamored: {
-			center: {
-				x: 256,
-				y: 10,
-			},
-			pointer: {
-				x: 300,
-				y: 140,
-			},
-		},
-		explaining: {
-			center: {
-				x: 256,
-				y: 10,
-			},
-			pointer: {
-				x: 280,
-				y: 130,
-			},
-		},
-		joyous: {
-			center: {
-				x: 256,
-				y: 10,
-			},
-			pointer: {
-				x: 280,
-				y: 70,
-			},
-		},
-		laughing: {
-			center: {
-				x: 256,
-				y: 10,
-			},
-			pointer: {
-				x: 190,
-				y: 140,
-			},
-		},
-		reporting: {
-			center: {
-				x: 256,
-				y: 10,
-			},
-			pointer: {
-				x: 200,
-				y: 160,
-			},
-		},
-		running: {
-			center: {
-				x: 256,
-				y: 10,
-			},
-			pointer: {
-				x: 280,
-				y: 165,
-			},
-		},
-		santa_claus_costume: {
-			center: {
-				x: 256,
-				y: 10,
-			},
-			pointer: {
-				x: 240,
-				y: 215,
-			},
-		},
-		scifi_costume: {
-			center: {
-				x: 256,
-				y: 10,
-			},
-			pointer: {
-				x: 310,
-				y: 140,
-			},
-		},
-		selfie: {
-			center: {
-				x: 256,
-				y: 10,
-			},
-			pointer: {
-				x: 290,
-				y: 110,
-			},
-		},
-		sitting: {
-			center: {
-				x: 256,
-				y: 10,
-			},
-			pointer: {
-				x: 190,
-				y: 190,
-			},
-		},
-		standing: {
-			center: {
-				x: 256,
-				y: 10,
-			},
-			pointer: {
-				x: 310,
-				y: 140,
-			},
-		},
-		startled: {
-			center: {
-				x: 256,
-				y: 10,
-			},
-			pointer: {
-				x: 190,
-				y: 150,
-			},
-		},
-		teaching: {
-			center: {
-				x: 256,
-				y: 10,
-			},
-			pointer: {
-				x: 360,
-				y: 220,
-			},
-		},
-		terrified: {
-			center: {
-				x: 256,
-				y: 10,
-			},
-			pointer: {
-				x: 265,
-				y: 105,
-			},
-		},
-		trick_or_treat: {
-			center: {
-				x: 256,
-				y: 10,
-			},
-			pointer: {
-				x: 290,
-				y: 150,
-			},
-		},
-		typing: {
-			center: {
-				x: 256,
-				y: 10,
-			},
-			pointer: {
-				x: 335,
-				y: 235,
-			},
-		},
-		writing: {
-			center: {
-				x: 256,
-				y: 10,
-			},
-			pointer: {
-				x: 200,
-				y: 235,
-			},
-		},
-	};
 
 	/**
 	 * Gets the data for the dialog balloon to be displayed for the given character action.
@@ -243,13 +21,19 @@ export class CharacterAction {
 	 */
 	static GetDialogBalloonData(action, character) {
 		action = action.toLowerCase();
-		action = this._balloonLocations[action] ? action : "standing";
+		action = characterActions[action] ? action : "standing";
 
-		return this._balloonLocations[action];
+		return {
+			center: {
+				x: 256,
+				y: 10
+			},
+			...characterActions[action]
+		};
 	}
 
 	static GetValidAction(action) {
-		return this._balloonLocations[action] ? action : "standing";
+		return characterActions[action] ? action : "standing";
 	}
 
 	/**
@@ -261,7 +45,7 @@ export class CharacterAction {
 	 */
 	static GetImageUrl(action) {
 		if (!action) return "";
-		action = this._balloonLocations[action] ? action : "standing";
+		action = characterActions[action] ? action : "standing";
 		return "/assets/character_art/" + action + ".png";
 	}
 }

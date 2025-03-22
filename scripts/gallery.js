@@ -5,12 +5,13 @@
  * @returns {void}
  */
 function PopGallery(pageNum) {
+	const apiEndpoint = continuityId ? "/api/gallery/" + continuityId + "/?page=" : "/api/gallery/?page=";
 	pageNum = pageNum || 1;
 	fetch(
-		"/api/gallery/?page=" +
-			pageNum +
-			"c=" +
-			Math.floor(Math.random() * 1000000)
+		apiEndpoint +
+		pageNum +
+		"c=" +
+		Math.floor(Math.random() * 1000000)
 	)
 		.then((response) => response.json())
 		.then((listing) => {

@@ -3,6 +3,7 @@ testimg/
 assets/backgrounds
 assets/backgrounds-full
 assets/thumbnails
+backup/
 admin.php
 composer.phar
 vendor/

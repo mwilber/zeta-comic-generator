@@ -1,30 +1,3 @@
-<?php 
-	$actions = [
-		"analysis",
-		"angry",
-		"approval",
-		"creeping",
-		"disguised",
-		"enamored",
-		"explaining",
-		"joyous",
-		"laughing",
-		"reporting",
-		"running",
-		"santa_claus_costume",
-		"scifi_costume",
-		"selfie",
-		"sitting",
-		"standing",
-		"startled",
-		"teaching",
-		"terrified",
-		"trick_or_treat",
-		"typing",
-		"writing"
-	];
-?>
-
 <h2>How It Works</h2>
 <p class="diagram">
 	<img src="/assets/images/layer_diagram_900c.png" alt="Diagram of comic strip layer composite. An AI generated background image, a hand drawn character image and a dialog baloon image from an AI generated script layered on top of each other.">
@@ -47,7 +20,7 @@
 </div>
 <h2 id="character-art">Character Art...</h2>
 <ul class="character-art">
-	<?php foreach($actions as $action): ?>
+	<?php foreach(array_keys($GLOBALS['characterActions']) as $action): ?>
 	<li>
 		<h3><?php echo str_replace('_', ' ', $action); ?></h3>  
 
@@ -62,8 +35,9 @@
 		<ul>
 			<li><a href="https://openai.com/product" target="_blank" rel="noopener noreferrer">GPT-4o</a></li>
 			<li><a href="https://gemini.google.com/app" target="_blank" rel="noopener noreferrer">Gemini 1.5</a></li>
-			<li>Coming soon, Llama 3</li>
-			<li>Coming soon, Claude 3.5 Sonnet</li>
+			<li><a href="https://www.llama.com/" target="_blank" rel="noopener noreferrer">Llama 3.2</a></li>
+			<li><a href="https://www.anthropic.com/claude/sonnet" target="_blank" rel="noopener noreferrer">Claude 3.5 Sonnet</a></li>
+			<li><a href="https://github.com/deepseek-ai/DeepSeek-V3" target="_blank" rel="noopener noreferrer">DeepSeek V3</a></li>
 		</ul>
 	</li>
 	<li>
@@ -77,89 +51,31 @@
 </ul>
 <h2 id="ai-prompts">AI Prompts</h2>
 <ul class="prompts">
+<?php 
+    $prompts = new Prompts();
+    foreach($prompts->prompts as $action => $prompt):
+		$params = [];
+		switch ($action) {
+			case "system":
+				$params[] = "Alpha Zeta's character profile includes the following: \n\n<strong>{ a bullet list of Alpha Zeta's character traits }</strong>";
+				$params[] = implode(", ", array_keys($GLOBALS['characterActions']));
+			case "concept":
+				$params[] = "<strong>{ The story premise }</strong>";
+				break;
+			case "image":
+				$params[] = "<strong>{ The scene description generated from the \"background\" prompt }</strong>";
+				break;
+			case "script":
+				$params[] = implode(", ", array_keys($GLOBALS['characterActions']));
+				break;
+		}
+        $promptDisplay = $prompts->generatePrompt($action, $params, true);
+?>
 	<li>
-		<h3>Script</h3>
-		<div class="codeblock">
-			<code>
-				You are a cartoonist and humorist. Write the script for a three panel comic strip.<br/>
-				In the comic strip our main character, a short green humaniod alien named Alpha Zeta, engages in the following premise: {p0}<br/>
-				Include a detailed scene description and words spoken by the main character.<br/>
-				Output your response as a valid json object in the follwing format:<br/>
-				{<br/>
-				&nbsp;&nbsp;"title": "",<br/>
-				&nbsp;&nbsp;"panels": [<br/>
-				&nbsp;&nbsp;&nbsp;&nbsp;{<br/>
-				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"scene": "",<br/>
-				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"dialog": ""<br/>
-				&nbsp;&nbsp;&nbsp;&nbsp;},<br/>
-				&nbsp;&nbsp;&nbsp;&nbsp;{<br/>
-				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"scene": "",<br/>
-				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"dialog": ""<br/>
-				&nbsp;&nbsp;&nbsp;&nbsp;},<br/>
-				&nbsp;&nbsp;&nbsp;&nbsp;{<br/>
-				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"scene": "",<br/>
-				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"dialog": ""<br/>
-				&nbsp;&nbsp;&nbsp;&nbsp;},<br/>
-				&nbsp;&nbsp;]<br/>
-				}<br/>
-				<br/>
-				The following is a description of each property value for the json object:<br/>
-				`title`: The title of the comic strip. Limit to 50 letters.<br/>
-				`panels` is a 3 element array of objects defining each of the 3 panels in the comic strip.<br/>
-				`scene`: A description of the panel scene, including all characters present.<br/>
-				`dialog`: Words spoken by Alpha Zeta. He is the only character that speaks. Do not label the dialog with a character name. This can be an empty string if the character is not speaking.
-			</code>
-		</div>
+		<h3><?php echo ucfirst($action) ?></h3>
+        <div class="codeblock">
+            <pre><?php echo $promptDisplay ?></pre>
+        </div>
 	</li>
-	<li>
-		<h3>Backgrounds</h3>
-		<div class="codeblock">
-			<code>
-			You are a talented artist who draws background art for animated cartoons.<br/>
-			The following describes three scenes in a cartoon featuring the character Alpha Zeta:<br/>
-			- {scene description 1}<br/>
-			- {scene description 2}<br/>
-			- {scene description 3}<br/>
-			<br/>
-			For each scene, write a description of the background behind Alpha Zeta.<br/>
-			Include enough detail necessary for an AI image generator to render an image of your description.<br/>
-			Output your response as a valid json object in the follwing format:<br/>
-			{<br/>
-			&nbsp;&nbsp;descriptions: [<br/>
-			&nbsp;&nbsp;&nbsp;&nbsp;"background description 1",<br/>
-			&nbsp;&nbsp;&nbsp;&nbsp;"background description 2",<br/>
-			&nbsp;&nbsp;&nbsp;&nbsp;"background description 3"<br/>
-			&nbsp;&nbsp;]<br/>
-			}<br/>
-			Your descriptions will be written within the following rules:<br/>
-			- Do not exceed 500 characters for each description.<br/>
-			- Describe each scene as it would look if the main character, Alpha Zeta, is not present.<br/>
-			- No characters will speak to each other.<br/>
-			- Do not include any items that contain readable text.<br/>
-			- Do not reference a comic strip panel.<br/>
-			</code>
-		</div>
-	</li>
-	<li>
-		<h3>Character Actions</h3>
-		<div class="codeblock">
-			<code>
-			You are a talented artist who directs animated cartoons.<br/>
-			The following describes three scenes in a cartoon featuring the character Alpha Zeta:<br/>
-			- {scene description 1}<br/>
-			- {scene description 2}<br/>
-			- {scene description 3}<br/>
-			<br/>
-			For each of the three scenes choose one word, from the following list, which best describes the action or appearance of the main character:  <?php echo implode(", ", $actions); ?>.<br/>
-			Output your response as a valid json object in the follwing format:<br/>
-			{<br/>
-				&nbsp;&nbsp;panels: [<br/>
-					&nbsp;&nbsp;"word1",<br/>
-					&nbsp;&nbsp;"word2",<br/>
-					&nbsp;&nbsp;"word3"<br/>
-				&nbsp;&nbsp;]<br/>
-			}<br/>
-			</code>
-		</div>
-	</li>
+	<?php endforeach; ?>
 </ul>

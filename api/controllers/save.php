@@ -230,6 +230,65 @@
 				}
 			}
 		}
+
+		$memoriesRaw = $_POST["newmemory"];
+		$output->response->newmemories = $memoriesRaw;
+		if(isset($memoriesRaw) && !empty($memoriesRaw)) {
+			$memories = json_decode($memoriesRaw);
+			// Verify that $memories is an array
+			if (is_array($memories)) {
+				foreach ($memories as $memory) {
+					// Check for existing record
+					$stmt = $db->prepare("SELECT `id` FROM `continuity` WHERE `description` = ".$db->quote($memory->description).";");
+					$stmt->execute();
+					$existingRecord = $stmt->fetch(PDO::FETCH_ASSOC);
+	
+					if ($existingRecord) {
+						$memoryId = $existingRecord['id'];
+					} else {
+						// prepare query statement
+						$stmt = $db->prepare("INSERT INTO `continuity` (`categoryId`, `description`) VALUES (".$db->quote($memory->type).", ".$db->quote($memory->description).");");
+						// execute query
+						$stmt->execute();
+						$memoryId = $db->lastInsertId();
+						// Update the `permalink` field with an md5 hash of the new ID
+						$stmt = $db->prepare("UPDATE `continuity` SET `permalink`=".$db->quote(md5($memoryId))." WHERE `id`=".$memoryId.";");
+						$stmt->execute();
+					}
+					// Insert a record into the table `comic_continuity`. The table has two fields: `comicId` and `continuityId`
+					$stmt = $db->prepare("INSERT INTO `comic_continuity` (`comicId`, `continuityId`) VALUES ('".$output->response->comicId."', '".$memoryId."');");
+					// execute query
+					$stmt->execute();
+				}
+			} else {
+				//$output->error = "Invalid memories format";
+			}
+		}
+
+		$memoriesRaw = $_POST["memory"];
+		$output->response->memories = $memoriesRaw;
+		if(isset($memoriesRaw) && !empty($memoriesRaw)) {
+			$memories = json_decode($memoriesRaw);
+			// Verify that $memories is an array
+			if (is_array($memories)) {
+				foreach ($memories as $memory) {
+					// Check for existing record
+					$stmt = $db->prepare("SELECT `id` FROM `continuity` WHERE `id` = ".$memory.";");
+					$stmt->execute();
+					$existingRecord = $stmt->fetch(PDO::FETCH_ASSOC);
+
+					if ($existingRecord) {
+						$memoryId = $existingRecord['id'];
+					}
+					// Insert a record into the table `comic_continuity`. The table has two fields: `comicId` and `continuityId`
+					$stmt = $db->prepare("INSERT INTO `comic_continuity` (`comicId`, `continuityId`) VALUES ('".$output->response->comicId."', '".$memoryId."');");
+					// execute query
+					$stmt->execute();
+				}
+			} else {
+				//$output->error = "Invalid memories format";
+			}
+		}
 	}
 
 ?>

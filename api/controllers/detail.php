@@ -113,4 +113,28 @@ try {
 } catch(PDOException $e) {
 	$output->error = "ERROR: Could not execute the query. " . $e->getMessage();
 }
+
+if($output->script) $output->continuity = [];
+
+try {
+	$stmt = $db->prepare("SELECT `categories`.`prefix`, `continuity`.`categoryId`, `continuity`.`description`, `continuity`.`permalink` FROM `continuity`
+	JOIN `categories` ON `continuity`.`categoryId` = `categories`.`id`
+	JOIN `comic_continuity` ON comic_continuity.continuityId = continuity.id  
+	WHERE comic_continuity.comicId = :comicId 
+	ORDER BY `continuity`.`categoryId`"); // AND continuity.active = true");  
+	$stmt->bindParam(':comicId', $output->id, PDO::PARAM_INT);
+	$stmt->execute();
+
+	$result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+	if ($result) {
+		foreach ($result as $record) {
+			array_push($output->continuity, $record);
+		}
+	} else {
+		$output->error = "No continuity record found with Comic ID: $output->id";
+	}
+} catch(PDOException $e) {
+	$output->error = "ERROR: Could not execute the query. " . $e->getMessage();
+}
+
 ?>

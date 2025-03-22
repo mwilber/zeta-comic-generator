@@ -1,3 +1,6 @@
+<script>
+	const characterActions = <?php echo json_encode($GLOBALS['characterActions']); ?>;
+</script>
 <div id="statusdialog" class="dialog-wrapper" role="alert" aria-labeledby="progress" tabindex="-1">
 	<div class="dialog">
 		<div id="status"></div>
@@ -28,13 +31,30 @@
 		<div id="input">
 			<div class="row selections">
 				<label> 
+					Story Model
+					<div class="select">
+						<select name="story-model" id="story-model">
+							<option value="">(Select a model)</option>
+							<option value="deepseekr">DeepSeek R1</option>
+							<option value="o">o1 Mini</option>
+							<option value="deepseek">DeepSeek V3</option>
+							<option value="gpt">GPT 4o</option>
+							<option value="gpt45">GPT 4.5 Preview</option>
+							<option value="gem">Gemini 1.5</option>
+							<option value="llama">Llama 3</option>
+							<!-- Titan Text Express v1 disabled because it can't handle the new prompt format -->
+							<!-- <option value="ttn">Titan Text Express v1</option> -->
+						</select>
+					</div>
+				</label>
+				<label> 
 					Script Model
 					<div class="select">
 						<select name="script-model" id="script-model">
 							<option value="">(Select a model)</option>
 							<option value="claude">Claude Sonnet 3.5</option>
 							<option value="gem">Gemini 1.5</option>
-							<option value="oai">GPT 4o</option>
+							<option value="gpt">GPT 4o</option>
 							<option value="deepseek">DeepSeek V3</option>
 							<option value="llama">Llama 3</option>
 							<!-- Titan Text Express v1 disabled because it can't handle the new prompt format -->
