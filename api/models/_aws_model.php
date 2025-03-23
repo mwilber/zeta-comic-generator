@@ -29,11 +29,12 @@ class BaseAwsModel extends BaseModel {
 
 		$response = $bedrockRuntimeClient->invokeModel([
 			'contentType' => 'application/json',
-			'body' => $body,
+			'body' => json_encode($body),
 			'modelId' => $this->modelName,
+			'stream' => false,
 		]);
 
-		return $response['body'];
+		return json_decode($response['body']);
 	}
 
 }

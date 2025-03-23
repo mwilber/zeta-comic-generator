@@ -36,7 +36,7 @@ class ModelStableDiffusion extends BaseAwsModel {
 
 	protected function processResponse($response) {
 		$result = new stdClass;
-		$json = json_decode($response);
+		$json = $response;
 		$result->data = $json;
 
 		$result->error = $json->error;
@@ -72,6 +72,12 @@ class ModelStableDiffusion extends BaseAwsModel {
 		// $responseObj->url = "data:image/png;base64,".$base64_image_data;
 
 		$result->json = $responseObj;
+
+		$response->images = [];
+
+		$result->tokens = [
+			"image" => 1,
+		];
 
 		return $result;
 	}

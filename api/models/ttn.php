@@ -15,7 +15,7 @@ class ModelTitanImage extends BaseAwsModel {
 	protected function processResponse($response) {
 		
 		$result = new stdClass;
-		$json = json_decode($response);
+		$json = $response;
 		$result->data = $json;
 
 		$result->error = $json->error;
@@ -52,6 +52,12 @@ class ModelTitanImage extends BaseAwsModel {
 
 		$result->json = $responseObj;
 
+		$response->images = [];
+
+		$result->tokens = [
+			"image" => 1,
+		];
+
 		return $result;
 	}
 
@@ -59,7 +65,7 @@ class ModelTitanImage extends BaseAwsModel {
 
 		$titanSeed = rand(0, 2147483647);
 
-		$request = json_encode([
+		$request = [
 			'taskType' => 'TEXT_IMAGE',
 			'textToImageParams' => [
 				'text' => $prompt,
@@ -72,7 +78,7 @@ class ModelTitanImage extends BaseAwsModel {
 				'width' => $this->imageSize,
 				'seed' => $titanSeed
 			]
-		]);
+		];
 
 		return $request;
 	}

@@ -18,7 +18,7 @@ class ModelGemini extends BaseModel {
 
 	protected function buildRequestBody($messages) {
 		$messagesArray = [];
-		$system = "{}";
+		$system = "";
 		foreach ($messages as $message) {
 			// Gemini uses "model" for assistant messages
 			if (isset($message->role) && $message->role === "assistant") {
@@ -30,9 +30,9 @@ class ModelGemini extends BaseModel {
 				(
 					$message->role === "system" ||
 					$message->role === "developer") &&
-				$system === "{}"
+				$system === ""
 			) {
-				$system = '{"parts": {"text": "'.$message->content.'"}}';
+				$system = $message->content;
 			} else {
 				$messagesArray[] = [
 					"role" => $message->role,
@@ -42,17 +42,20 @@ class ModelGemini extends BaseModel {
 				];
 			}
 		}
-		$body = '{
-			"system_instruction": ' . $system . ',
-			"contents": '.json_encode($messagesArray).',
-		}';
+		$body = new stdClass;
+		$body->system_instruction = [
+			"parts" => [
+				["text" => $system]
+			]
+		];
+		$body->contents = $messagesArray;
 
 		return $body;
 	}
 
 	protected function processResponse($response) {
 		$result = new stdClass;
-		$json = json_decode($response);
+		$json = $response;
 		$result->data = $json;
 
 		$result->error = $json->error;
@@ -71,6 +74,14 @@ class ModelGemini extends BaseModel {
 			$result->debug = $script;
 			if($jscript) $result->json = $jscript;
 		}
+
+		if(isset($json->usageMetadata)) {
+			$result->tokens = [
+				"prompt_token_count" => $json->usageMetadata->promptTokenCount,
+				"candidates_token_count" => $json->usageMetadata->candidatesTokenCount,
+			];
+		}
+
 		return $result;
 	}
 }

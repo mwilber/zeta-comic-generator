@@ -18,12 +18,12 @@ class ModelDeepSeek extends BaseModel {
 				"content" => $message->content
 			];
 		}
-		$body = '{
-			"model": "'.$this->modelName.'",
-			"response_format": { "type": "'.$this->responseFormat.'" },
-			"stream": false,
-			"messages": ' . json_encode($messagesArray) . '
-		}';
+		$body = [
+			'model' => $this->modelName,
+			'response_format' => ['type' => $this->responseFormat],
+			'stream' => false,
+			'messages' => $messagesArray
+		];
 
 		return $body;
 	}

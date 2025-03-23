@@ -17,19 +17,19 @@ class ModelLlama extends BaseAwsModel {
 		}
 		$messagesStr .= "<|start_header_id|>assistant<|end_header_id|>";
 
-		$request = json_encode([
+		$request = [
 			'prompt' => $messagesStr,
 			'max_gen_len' => 1024,
 			'temperature' => 0.5,
 			'top_p' => 0.9
-		]);
+		];
 
 		return $request;
 	}
 
 	function processResponse($response) {
 		$result = new stdClass;
-		$json = json_decode($response);
+		$json = $response;
 		$result->data = $json;
 
 		$result->error = $json->error;
@@ -53,6 +53,12 @@ class ModelLlama extends BaseAwsModel {
 			$result->debug = $script;
 			if($jscript) $result->json = $jscript;
 		}
+
+		$result->tokens = [
+			"prompt_token_count" => $json->prompt_token_count,
+			"generation_token_count" => $json->generation_token_count,
+		];
+
 		return $result;
 	}
 

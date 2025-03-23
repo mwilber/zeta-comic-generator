@@ -2,16 +2,44 @@ const listing = {};
 
 const priceTable = {
 	"gpt-4.5-preview-2025-02-27": {
-		completion: 150,
-		prompt: 75,
-		multiplier: 1000000,
+		completion_tokens: 150 / 1000000,
+		prompt_tokens: 75 / 1000000,
 	},
 	"gpt-4o-2024-08-06": {
-		completion: 10,
-		prompt: 2.5,
-		multiplier: 1000000,
+		completion_tokens: 10 / 1000000,
+		prompt_tokens: 2.5 / 1000000,
+	},
+	"o1-2024-12-17": {
+		completion_tokens: 60 / 1000000,
+		prompt_tokens: 15 / 1000000,
+	},
+	"gemini-1.5-pro": {
+		candidates_token_count: 10 / 1000000,
+		prompt_token_count: 2.5 / 1000000,
+	},
+	"anthropic.claude-3-5-sonnet-20240620-v1:0": {
+		output_tokens: 10 / 1000000,
+		input_tokens: 2.5 / 1000000,
+	},
+	"meta.llama3-70b-instruct-v1:0": {
+		generation_token_count: 10 / 1000000,
+		prompt_token_count: 2.5 / 1000000,
+	},
+	"deepseek-chat": {
+		completion_tokens: 10 / 1000000,
+		prompt_tokens: 2.5 / 1000000,
+	},
+	"deepseek-reasoner": {
+		completion_tokens: 10 / 1000000,
+		prompt_tokens: 2.5 / 1000000,
 	},
 	"dall-e-3": {
+		image: 0.04,
+	},
+	"stability.stable-diffusion-xl-v1": {
+		image: 0.04,
+	},
+	"amazon.titan-image-generator-v1": {
 		image: 0.04,
 	},
 };
@@ -47,6 +75,7 @@ function PopDebugger(pageNum) {
 				}
 				listing[log.workflowId].unshift(log);
 			});
+			console.log(listing);
 			for (let workflowId in listing) {
 				const workflow = listing[workflowId];
 				const firstLog = workflow[0];
@@ -92,51 +121,50 @@ function PopApi(workflowId) {
 
 	const workflow = listing[workflowId];
 	const tokenCount = {
-		completion: {
-			count: 0,
-			price: 0
-		},
-		prompt: {
-			count: 0,
-			price: 0
-		},
-		total: {
-			count: 0,
-			price: 0
-		},
-		image: {
-			count: 0,
-			price: 0
-		}
 	};
 	for (let log of workflow) {
-		let response = log.response;
-		const model = response.model || log.body.model;
-		if (response && response.usage) {
-			tokenCount.completion.count += response.usage.completion_tokens;
-			tokenCount.completion.price += (response.usage.completion_tokens / priceTable[model].multiplier) * priceTable[model].completion;
-			tokenCount.prompt.count += response.usage.prompt_tokens;
-			tokenCount.prompt.price += (response.usage.prompt_tokens / priceTable[model].multiplier) * priceTable[model].prompt;
-			tokenCount.total.count += response.usage.total_tokens;
-		} else if (log.action === "image") {
-			tokenCount.image.count += 1;
-			tokenCount.image.price += priceTable[model] ? priceTable[model].image : 0;
+		let result = log.result;
+		const model = log.model;
+		console.log(model);
+		console.log(priceTable[model]);
+		if (result && result.tokens) {
+			// Loop through the tokens and add them to the token count
+			for (let token in result.tokens) {
+				if (!tokenCount[token]) {
+					tokenCount[token] = {
+						count: 0,
+						price: 0
+					};
+				}
+				tokenCount[token].count += result.tokens[token];
+				tokenCount[token].price += result.tokens[token] * priceTable[model][token];
+			}
 		}
 	}
-	tokenCount.total.price += tokenCount.completion.price + tokenCount.prompt.price;
 
-	const totalPrice = tokenCount.completion.price + tokenCount.prompt.price + tokenCount.image.price;
+	let totalPrice = Object.values(tokenCount).reduce((acc, token) => acc + token.price, 0);
 
 	const tokenEl = document.createElement("div");
 	tokenEl.className = "token";
+	let priceHtml = "";
+	priceHtml = `<table class="token-table">
+		<tr>
+			<th>Type</th>
+			<th>Count</th>
+			<th>Price (USD)</th>
+		</tr>`;
+	for (let token in tokenCount) {
+		priceHtml += `
+		<tr>
+			<td>${token.split("_")[0]}</td>
+			<td>${tokenCount[token].count}</td>
+			<td>${tokenCount[token].price.toFixed(4)}</td>
+		</tr>`;
+	}
+	priceHtml += `</table>`;
 	tokenEl.innerHTML = `
 		<h4>Total Cost: <span class='price'>${totalPrice.toFixed(4)} USD</span></h4>
-		<h4>Token Usage</h4>
-		<p>Completion: ${tokenCount.completion.count} tokens, ${tokenCount.completion.price.toFixed(4)} USD</p>
-		<p>Prompt: ${tokenCount.prompt.count} tokens, ${tokenCount.prompt.price.toFixed(4)} USD</p>
-		<p>Total: ${tokenCount.total.count} tokens, ${tokenCount.total.price.toFixed(4)} USD</p>
-		<h4>Image Usage</h4>
-		<p>Image: ${tokenCount.image.count} images, ${tokenCount.image.price.toFixed(4)} USD</p>
+		${priceHtml}
 	`;
 	containerEl.appendChild(tokenEl);
 }

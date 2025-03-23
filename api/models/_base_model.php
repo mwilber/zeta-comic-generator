@@ -39,6 +39,7 @@ class BaseModel {
 				$id ?? 'unknown',
 				$action ?? 'unknown', 
 				$title ?? 'unknown',
+				$this->modelName ?? 'unknown',
 				$processedPayload ?? $payload ?? [],
 				$body ?? '',
 				$response ?? '',
@@ -69,7 +70,7 @@ class BaseModel {
 	 * Build the request body for CURL. Default is based on the OpenAI API.
 	 * 
 	 * @param array $messages The messages array.
-	 * @return string The request body.
+	 * @return stdClass The request body.
 	 */
 	protected function buildRequestBody($messages) {
 		$messagesArray = [];
@@ -89,7 +90,7 @@ class BaseModel {
 			"messages": ' . json_encode($messagesArray) . '
 		}';
 
-		return $body;
+		return json_decode($body);
 	}
 
 	/**
@@ -113,8 +114,14 @@ class BaseModel {
 	 * @return stdClass The result of the model's response.
 	 */
 	protected function processResponse($response) {
+
+		// If $response is a string, extract the JSON object from it.
+		if(is_string($response)) {
+			$response = json_decode($response);
+		}
+
 		$result = new stdClass;
-		$json = json_decode($response);
+		$json = $response;
 		$result->data = $json;
 
 		$result->error = $json->error;
@@ -132,6 +139,13 @@ class BaseModel {
 			if($jscript) $result->json = $jscript;
 		}
 
+		if(isset($json->usage)) {
+			$result->tokens = [
+				"prompt_tokens" => $json->usage->prompt_tokens,
+				"completion_tokens" => $json->usage->completion_tokens,
+			];
+		}
+
 		return $result;
 	}
 
@@ -139,8 +153,8 @@ class BaseModel {
 	 * Send a request to the model using CURL.
 	 * 
 	 * @param array $headers The request headers.
-	 * @param string $body The request body.
-	 * @return string The response from the model.
+	 * @param stdClass $body The request body.
+	 * @return stdClass The response from the model.
 	 */
 	protected function sendRequest($headers, $body) {
 		$response = new stdClass;
@@ -152,7 +166,7 @@ class BaseModel {
 		curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 		curl_setopt($ch, CURLOPT_HEADER, 0);
 		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST"); 
-		curl_setopt($ch, CURLOPT_POSTFIELDS,$body);
+		curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($body));
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 	
 		// Timeout in seconds
@@ -160,7 +174,7 @@ class BaseModel {
 	
 		$response = curl_exec($ch);
 
-		return $response;
+		return json_decode($response);
 	}
 
 	/**

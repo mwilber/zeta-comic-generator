@@ -8,13 +8,14 @@ class ApiLogger {
      * 
      * @param string $id Unique identifier for the request
      * @param string $action Action type for the request
+     * @param string $title Title for the request
+     * @param string $model Model used for the request
      * @param array $payload The payload sent to the API
-     * @param array $headers The request headers
-     * @param string $body The request body
-     * @param string $response The raw response from the API
+     * @param stdClass $body The request body
+     * @param stdClass $response The raw response from the API
      * @param stdClass $result The processed result
      */
-    public static function logRequest($id, $action, $title, $payload, $body, $response, $result) {
+    public static function logRequest($id, $action, $title, $model, $payload, $body, $response, $result) {
         $database = new Database();
 		$db = $database->getConnection();
         
@@ -24,14 +25,15 @@ class ApiLogger {
         // Need to figure out the proper state. JSON objects should NOT be encapsulated in double quotes in the database.
         // IMPORTANT: USE THE TEXT REQUEST AND SWAP OUT THE MODELS RATHER THAN GENERATING COMICS
         $stmt = $db->prepare("INSERT INTO `requestlog` 
-            (`workflowId`, `action`, `title`, `payload`, `body`, `response`, `result`) 
+            (`workflowId`, `action`, `title`, `model`, `payload`, `body`, `response`, `result`) 
             VALUES (
                 ".$db->quote($id).",
                 ".$db->quote($action).",
                 ".$db->quote($title).",
+                ".$db->quote($model).",
                 ".$db->quote(json_encode($payload)).",
                 ".$db->quote(json_encode($body)).",
-                ".$db->quote($response).",
+                ".$db->quote(json_encode($response)).",
                 ".$db->quote(json_encode($result))."
             );");
         // execute query

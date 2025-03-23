@@ -27,7 +27,7 @@
 define("OUTPUT_DEBUG_DATA", true);
 
 $prompts = new Prompts();
-$modelId = POSTval("model", "gpt");
+$modelId = isset($_GET['model']) ? $_GET['model'] : POSTval("model", "gpt");
 $workflowId = POSTval("workflowId", "");
 $actionId = $controller;
 $messages = GetMessages();

@@ -35,12 +35,12 @@ class ModelClaude extends BaseAwsModel {
 				];
 			}
 		}
-		$body = json_encode([
+		$body = [
 			'anthropic_version' => 'bedrock-2023-05-31',
 			'max_tokens' => 1000,
 			'system' => $system,
 			'messages' => $messagesArray,
-		]);
+		];
 
 		// print_r($request); die;
 
@@ -49,7 +49,7 @@ class ModelClaude extends BaseAwsModel {
 
 	protected function processResponse($response) {
 		$result = new stdClass;
-		$json = json_decode($response);
+		$json = $response;
 		$result->data = $json;
 
 		$result->error = $json->error;
@@ -73,6 +73,14 @@ class ModelClaude extends BaseAwsModel {
 			$result->debug = $script;
 			if($jscript) $result->json = $jscript;
 		}
+
+		if(isset($json->usage)) {
+			$result->tokens = [
+				"input_tokens" => $json->usage->input_tokens,
+				"output_tokens" => $json->usage->output_tokens,
+			];
+		}
+
 		return $result;
 	}
 }

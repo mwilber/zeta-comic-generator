@@ -18,7 +18,7 @@
 		}
 	}
  */
-$modelId = POSTval("model", "ttn");
+$modelId = isset($_GET['model']) ? $_GET['model'] : POSTval("model", "oai");
 $workflowId = POSTval("workflowId", "");
 $actionId = $controller;
 

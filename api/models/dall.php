@@ -12,19 +12,19 @@ class ModelDallE extends BaseModel {
 	}
 
 	protected function buildRequestBody($prompt) {
-		$body = '{
-			"model": "'.$this->modelName.'",
-			"prompt": "'.$prompt.'",
-			"n": 1,
-			"size": "'.$this->imageSize.'"
-		}';
+		$body = [
+			"model" => $this->modelName,
+			"prompt" => $prompt,
+			"n" => 1,
+			"size" => $this->imageSize
+		];
 
 		return $body;
 	}
 
 	protected function processResponse($response) {
 		$result = new stdClass;
-		$json = json_decode($response);
+		$json = $response;
 		$result->data = $json;
 
 		$result->error = $json->error;
@@ -32,6 +32,10 @@ class ModelDallE extends BaseModel {
 		if (isset($json->data[0])) {
 			$result->json = $json->data[0];
 		}
+
+		$result->tokens = [
+			"image" => 1,
+		];
 
 		return $result;
 	}
