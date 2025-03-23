@@ -40,4 +40,3 @@ class ApiLogger {
         $stmt->execute();
     }
 }
-?> 
