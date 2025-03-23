@@ -74,6 +74,20 @@ main ul li {
 	max-height: 150px;
 }
 
+#debugger-toc button {
+	display: inline-block;
+	width: 100%;
+	text-align: center;
+	font-size: 1.2em;
+}
+
+#debugger-toc button .model {
+	font-size: 0.8em;
+	color: #666;
+}
+
+
+
 #debugger-api .price {
 	font-size: 1.5em;
 }
@@ -107,13 +121,21 @@ main ul li {
 	padding: 15px;
 }
 
-#debugger-details {
+#debugger-detail {
 	grid-area: details;
 	background: #fff;
 	border: 1px solid #ddd;
 	border-radius: 5px;
 	padding: 15px;
 	overflow-y: auto;
+} 
+
+#debugger-detail h3 {
+	margin: 0;
+}
+
+#debugger-detail h5 {
+	margin: 0 0 1em 0;
 }
 
 /* Common styles */
@@ -180,13 +202,3 @@ main ul li {
 	border-bottom: 1px solid #eee;
 	padding-bottom: 5px;
 }
-
-/* Adjust existing styles */
-#debugger-detail {
-	grid-area: details;
-	background: #fff;
-	border: 1px solid #ddd;
-	border-radius: 5px;
-	padding: 15px;
-	overflow-y: auto;
-} 

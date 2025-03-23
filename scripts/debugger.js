@@ -171,31 +171,39 @@ function PopApi(workflowId) {
 		${priceHtml}
 	`;
 	containerEl.appendChild(tokenEl);
+
+	document.getElementById("debugger-detail").innerHTML = "";
 }
 
 function PopDetail(log) {
 	console.log(log);
 	const containerEl = document.getElementById("debugger-detail");
-	containerEl.innerHTML = "<h3>Details: " + log.action + "<span class='timestamp'>" + log.timestamp + "</span></h3>";
+	containerEl.innerHTML = `
+		<h3>Details: ${log.action} <span class='timestamp'>${log.timestamp}</span></h3>
+		<hr/>
+		<h5>Model: ${log.model}</h5>
+	`;
+
 	const detailEl = document.createElement("div");
 	detailEl.className = "detail";
-
 	let keyEl;
 
-	if (log.result.json.url) {
+	if (log.result.json?.url) {
 		keyEl = document.createElement("div");
 		keyEl.className = "key";
 		keyEl.innerHTML = `<h4>Preview</h4><img src="${log.result.json.url}" alt="Preview" width="200" />`;
 		detailEl.appendChild(keyEl);
 	}
 
-	keyEl = document.createElement("div");
+	if (log.result.json) {
+		keyEl = document.createElement("div");
 		keyEl.className = "key";
-	const keyTitle = document.createElement('h4');
+		const keyTitle = document.createElement('h4');
 		keyTitle.textContent = "Result JSON";
 		keyEl.appendChild(keyTitle);
 		keyEl.appendChild(buildTreeView(log.result.json));
 		detailEl.appendChild(keyEl);
+	}
 
 	for (let key in log) {
 		const keyEl = document.createElement("div");

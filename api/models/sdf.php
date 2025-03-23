@@ -73,7 +73,7 @@ class ModelStableDiffusion extends BaseAwsModel {
 
 		$result->json = $responseObj;
 
-		$response->images = [];
+		$response->artifacts = [];
 
 		$result->tokens = [
 			"image" => 1,
