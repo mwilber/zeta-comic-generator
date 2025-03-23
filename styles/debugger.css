@@ -202,3 +202,45 @@ main ul li {
 	border-bottom: 1px solid #eee;
 	padding-bottom: 5px;
 }
+
+/* Mobile layout */
+@media screen and (max-width: 768px) {
+	#debugger {
+		grid-template-areas:
+			"header"
+			"listing"
+			"toc"
+			"details"
+			"api";
+		grid-template-columns: 1fr;
+		grid-template-rows: auto auto auto 1fr auto;
+		gap: 10px;
+		padding: 10px;
+	}
+
+	.sidebar-container {
+		grid-area: unset;
+		display: contents; /* This allows direct placement of children in grid */
+	}
+
+	#debugger-toc {
+		grid-area: toc;
+	}
+
+	#debugger-api {
+		grid-area: api;
+	}
+
+	#debugger-detail {
+		grid-area: details;
+	}
+
+	/* Adjust heights for mobile scrolling */
+	#debugger-listing {
+		max-height: 200px;
+	}
+
+	#debugger-detail {
+		max-height: 400px;
+	}
+}
