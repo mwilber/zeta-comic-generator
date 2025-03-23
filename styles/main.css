@@ -419,10 +419,6 @@ header nav a:hover {
 		font-size: 1.5em;
 	}
 
-	#statusdialog .dialog {
-		font-size: 3em;
-	}
-
 	p.diagram img {
 		width: 100%;
 	}
@@ -437,52 +433,6 @@ header nav a:hover {
 		margin: 1.25em 0 0.5em 0;
 		font-size: 2em;
 	}
-
-	#gallery, .character-art {
-		grid-template-columns: 1fr 1fr;
-	}
-
-	#input .row {
-		display: block;
-	}
-
-	#input .row label {
-		width: 100%;
-	}
-
-	input#query {
-		width: calc(100% - 2em);
-	}
-
-	button#generate {
-		margin-top: 1em;
-		float: right;
-		margin-bottom: -1em;
-	}
-
-	#script {
-		padding: 50px 10px;
-	}
-
-	#script h3 {
-		margin-bottom: 0.5em;
-	}
-
-	#script ul {
-		padding: 0 0 0 5px;
-	}
-
-	#script table tr {
-		display: grid;
-		width: 100%;
-	}
-
-	#script table tr td:first-child {
-		text-align: left;
-		font-weight: bold;
-		border-right: none;
-		padding: 1em 0 0.5em 0;
-	}
 }
 
 @media screen and (max-height: 550px) {
@@ -490,49 +440,6 @@ header nav a:hover {
 		top: 10vh;
 	}
 }
-
-@media screen and (max-width: 700px) {
-
-	#statusdialog #status {
-		margin-bottom: 0;
-		width: 100%;
-	}
-
-	#statusdialog .lds-grid {
-		width: 2em;
-		height: 2em;
-	}
-
-	#query {
-		flex-basis: 100%;
-	}
-
-	#generate {
-		flex: 1;
-		/* margin-top: 2em; */
-	}
-
-	/* #character-count {
-		margin-top: -4.5em;
-	} */
-
-	#strip,
-    .strip-container {
-		flex-direction: column;
-		max-width: 275px;
-	}
-	#strip .panel {
-		margin: 5px auto;
-	}
-	#strip .panel .bubble {
-		font-size: 14px;
-	}
-
-	#strip-title {
-		margin: 0 5px 10px 5px;
-	}
-}
-
 
 @keyframes fade-out {
 	0% {

@@ -196,3 +196,21 @@
 		font-size: 10px;
 	}
 }
+
+@media screen and (max-width: 700px) {
+	#strip,
+    .strip-container {
+		flex-direction: column;
+		max-width: 275px;
+	}
+	#strip .panel {
+		margin: 5px auto;
+	}
+	#strip .panel .bubble {
+		font-size: 14px;
+	}
+
+	#strip-title {
+		margin: 0 5px 10px 5px;
+	}
+}

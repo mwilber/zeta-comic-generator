@@ -278,6 +278,55 @@ progress[value]::-webkit-progress-value {
     }
 }
 
+@media screen and (max-width: 550px) {
+	#statusdialog .dialog {
+		font-size: 3em;
+	}
+
+	#input .row {
+		display: block;
+	}
+
+	#input .row label {
+		width: 100%;
+	}
+
+	input#query {
+		width: calc(100% - 2em);
+	}
+
+	button#generate {
+		margin-top: 1em;
+		float: right;
+		margin-bottom: -1em;
+	}
+}
+
+@media screen and (max-width: 700px) {
+	#statusdialog #status {
+		margin-bottom: 0;
+		width: 100%;
+	}
+
+	#statusdialog .lds-grid {
+		width: 2em;
+		height: 2em;
+	}
+
+	#query {
+		flex-basis: 100%;
+	}
+
+	#generate {
+		flex: 1;
+		/* margin-top: 2em; */
+	}
+
+	/* #character-count {
+		margin-top: -4.5em;
+	} */
+}
+
 
 /* Loading Spinner */
 .lds-grid {

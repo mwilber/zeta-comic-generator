@@ -89,3 +89,29 @@
 #continuity a {
 	font-weight: normal;
 }
+
+@media screen and (max-width: 550px) {
+	#script {
+		padding: 50px 10px;
+	}
+
+	#script h3 {
+		margin-bottom: 0.5em;
+	}
+
+	#script ul {
+		padding: 0 0 0 5px;
+	}
+
+	#script table tr {
+		display: grid;
+		width: 100%;
+	}
+
+	#script table tr td:first-child {
+		text-align: left;
+		font-weight: bold;
+		border-right: none;
+		padding: 1em 0 0.5em 0;
+	}
+}

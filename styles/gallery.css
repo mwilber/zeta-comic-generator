@@ -64,3 +64,9 @@
 		grid-template-columns: 1fr 1fr 1fr;
 	}
 }
+
+@media screen and (max-width: 550px) {
+	#gallery, .character-art {
+		grid-template-columns: 1fr 1fr;
+	}
+}
