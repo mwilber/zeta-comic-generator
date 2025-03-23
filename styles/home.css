@@ -1,0 +1,138 @@
+/* Home | About styles */
+
+main header {
+    display: inline-block;
+    position: initial;
+    height: auto;
+    width: 70%;
+    font-size: 2em;
+    margin: 1.5em 15% 1em 15%;
+    line-height: 1.5em;
+    text-align: center;
+}
+
+main header a {
+    text-decoration-thickness: 2px;
+    text-decoration-color: #94989e;
+}
+
+main header strong {
+    font-size: 1.5em;
+    line-height: 1.25em;
+}
+
+main p {
+    font-size: 1.5em;
+    margin: 0;
+}
+
+.action-buttons {
+    font-size: 3em;
+    margin-top: 0.5em;
+    margin-bottom: 1em;
+    text-align: center;
+    line-height: 3em;
+}
+
+.action-buttons .cartoon-button {
+    display: inline-block;
+    height: 1.5em;
+}
+
+p.diagram {
+    margin-top: 0.5em;
+    text-align: center;
+}
+
+p.diagram img {
+    width: 75%;
+}
+
+p.description {
+    line-height: 1.5em;
+    padding: 1em 0 2em 0;
+}
+
+.character-art {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.character-art li {
+	margin: 5px;
+	position: relative;
+}
+
+.character-art h3 {
+	position: absolute;
+	display: inline-block;
+	width: auto;
+	padding: 0.05em 0.5em;
+	margin: 0;
+	top: 0.5em;
+	left: 0.5em;
+	background: #d6dcf5;
+	border: solid 2px #000;
+	text-transform: capitalize;
+}
+
+.character-art img {
+	width: calc(100% - 4px);
+	border: solid 2px black;
+}
+
+.prompts {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.prompts li {
+	width: 90%;
+	margin-left: 5%;
+	margin-bottom: 2em;
+}
+
+.prompts .codeblock {
+	background: #333e4d;
+	color: #d6dcf5;
+	padding: 1em;
+	line-height: 1.5em;
+}
+
+.prompts .codeblock pre {
+    white-space: pre-wrap;
+}
+
+.prompts .codeblock pre strong {
+    color: #55ff55;
+}
+
+.models {
+	list-style: none;
+	/* margin: 0;
+	padding: 0; */
+}
+
+.models li ul {
+	list-style-type: disc;
+}
+
+.models li ul li {
+	margin-bottom: 10px;
+	font-size: 1.25em;
+}
+
+/* Mobile styles */
+@media screen and (max-width: 550px) {
+    main header {
+        width: 100%;
+        margin: 1.25em 0 0.5em 0;
+        font-size: 2em;
+    }
+
+    p.diagram img {
+        width: 100%;
+    }
+} 

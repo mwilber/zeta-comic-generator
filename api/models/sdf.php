@@ -1,22 +1,42 @@
 <?php
+require_once('_aws_model.php');
 /**
  * Provides functionality for interacting with the Amazon Bedrock StableDiffusion API to generate images.
  */
 use Aws\BedrockRuntime\BedrockRuntimeClient;
 
-class ModelStableDiffusion {
+class ModelStableDiffusion extends BaseAwsModel {
 	function __construct() {
+		parent::__construct();
 		$this->modelName = "stability.stable-diffusion-xl-v1";
-		$this->apiKey = AWS_ACCESS_KEY;
-		$this->apiSecret = AWS_SECRET_KEY;
 		$this->imageSize = 512;
 	}
 
-    function sendPrompt($prompt) {
-        
-        $result = new stdClass;
-        $response = $this->textToImage($prompt, $_POST["style"]);
-        $json = json_decode($response);
+	protected function buildRequestBody($prompt) {
+
+		$titanSeed = rand(0, 2147483647);
+
+		$request = [
+			'text_prompts' => [
+				['text' => $prompt]
+			],
+			'cfg_scale' => 10,
+			'steps' => 30,
+			'height' => $this->imageSize,
+			'width' => $this->imageSize,
+			'seed' => $titanSeed
+		];
+
+		if ($params) {
+			$request['style_preset'] = $params;
+		}
+
+		return $request;
+	}
+
+	protected function processResponse($response) {
+		$result = new stdClass;
+		$json = $response;
 		$result->data = $json;
 
 		$result->error = $json->error;
@@ -53,44 +73,13 @@ class ModelStableDiffusion {
 
 		$result->json = $responseObj;
 
-		return $result;
-	}
+		$response->artifacts = [];
 
-	function textToImage($prompt, $params) {
-
-		$titanSeed = rand(0, 2147483647);
-		$bedrockRuntimeClient = new BedrockRuntimeClient([
-			'region' => 'us-east-1',
-			'version' => 'latest',
-			//'profile' => $profile,
-			'credentials' => [
-				'key'    => $this->apiKey,
-				'secret' => $this->apiSecret,
-			],
-		]);
-
-		$request = [
-			'text_prompts' => [
-				['text' => $prompt]
-			],
-			'cfg_scale' => 10,
-			'steps' => 30,
-			'height' => $this->imageSize,
-			'width' => $this->imageSize,
-			'seed' => $titanSeed
+		$result->tokens = [
+			"image" => 1,
 		];
 
-		if ($params) {
-			$request['style_preset'] = $params;
-		}
-
-		$result = $bedrockRuntimeClient->invokeModel([
-			'contentType' => 'application/json',
-			'body' => json_encode($request),
-			'modelId' => $this->modelName,
-		]);
-
-		return $result['body'];
+		return $result;
 	}
 }
 ?>

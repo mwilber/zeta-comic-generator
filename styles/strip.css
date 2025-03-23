@@ -1,0 +1,216 @@
+/* Comic Strip */
+
+#strip {
+	display: flex;
+	flex-wrap: wrap;
+	width: calc(100% - 18px);
+	max-width: 942px;
+	margin: auto;
+	background: #fff;
+	border: solid 1px #999;
+	padding: 8px;
+	box-shadow: 2px 2px 6px rgba(0,0,0,0.5);
+}
+
+#strip.capture {
+	max-width: none !important;
+	width: 942px !important;
+	flex-direction: row !important;
+	box-shadow: none !important;
+}
+
+#strip .strip-container,
+.strip-output .strip-container {
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+}
+
+#strip .panel,
+.strip-output .panel {
+	position: relative;
+	flex: 1;
+	width: 260px;
+	margin: 5px;
+	border: solid 2px black;
+	/* padding-bottom: calc(33.3% - 14px); */
+	color: #999;
+	background: black;
+	aspect-ratio: 1;
+	transition: background-color 500ms;
+}
+
+#strip.capture .panel {
+	margin: 5px !important;
+}
+
+#strip .panel img,
+.strip-output .panel img,
+#strip .panel canvas {
+	position: absolute;
+	width: 100%;
+}
+
+#strip .panel .bubble,
+.strip-output .panel .bubble {
+	position: relative;
+	width: fit-content;
+	min-width: 65px;
+	/* width: calc(100%); */
+	/* background: #feff70; */
+	background: white;
+	color: black;
+	font-family: 'Patrick Hand', 'Courier New', Courier, monospace;
+	font-size: 14px;
+	letter-spacing: 0.5;
+	/* font-weight: bold; */
+	padding: 5px 10px;
+	border: solid 2px black;
+	margin: auto;
+}
+
+#strip .panel .bubble-container,
+.strip-output .panel .bubble-container {
+	position: absolute;
+	width: calc(100% - 10px);
+	/* height: calc(100% - 10px); */
+	padding: 5px;
+}
+
+.strip-output {
+	margin: 0;
+	padding: 0;
+	width: fit-content;
+	position: absolute;
+	left: 150%;
+}
+
+.strip-output > .panel {
+	width: 504px;
+	height: 504px;
+	margin: 0;
+	border-width: 4px;
+}
+
+.strip-output > .panel .bubble {
+	font-size: 24px;
+	border-radius: 30px;
+	padding: 10px 20px;
+}
+
+.strip-output > .panel .bubble-container {
+	padding: 10px;
+	width: calc(100% - 20px);
+}
+
+.strip-output > #strip,
+.strip-output > .strip-container {
+	width: 1024px;
+	max-width: none;
+	box-shadow: none;
+	padding-bottom: 16px;
+	flex-direction: inherit;
+}
+
+.strip-output > .strip-container {
+	background-color: white;
+    padding: 8px;
+    padding-bottom: calc(16px + 2.5em);
+}
+
+.strip-output > #strip .panel {
+	margin: 5px;
+}
+
+.strip-output > #strip .panel .bubble {
+	font-size: 15px;
+}
+
+.bubble {
+	position: relative;
+	width: auto;
+	/* text-align: center;
+	line-height: 1.4em; */
+	margin: 40px auto;
+	background-color: #fff;
+	border: 2px solid #333;
+	border-radius: 15px;
+	font-family: sans-serif;
+	padding: 20px;
+	font-size: large;
+}
+
+.thought {
+	width: 300px;
+	border-radius: 200px;
+	padding: 30px;	
+}
+
+.bubble:before,
+.bubble:after {
+	content: ' ';
+	position: absolute;
+	width: 0;
+	height: 0;
+}
+
+.speech:before {
+	left: 50px;
+	bottom: -24px;
+	border: 11px solid;
+	border-color: #000 #000 transparent transparent;
+}
+
+.speech:after {
+	left: 50px;
+	bottom: -20px;
+	border: 10px solid;
+	border-color: #fff #fff transparent transparent;
+}
+
+.thought:before,
+.thought:after {
+	left: 10px;
+	bottom: -30px;
+	width: 40px;
+	height: 40px;
+	background-color: #fff;
+	border: 8px solid #333;
+	-webkit-border-radius: 28px;
+	-moz-border-radius: 28px;
+	border-radius: 28px;
+}
+
+.thought:after {
+	width: 20px;
+	height: 20px;
+	left: 5px;
+	bottom: -40px;
+	-webkit-border-radius: 18px;
+	-moz-border-radius: 18px;
+	border-radius: 18px;
+}
+
+@media screen and (max-width: 900px) {
+	#strip .panel .bubble {
+		font-size: 10px;
+	}
+}
+
+@media screen and (max-width: 700px) {
+	#strip,
+    .strip-container {
+		flex-direction: column;
+		max-width: 275px;
+	}
+	#strip .panel {
+		margin: 5px auto;
+	}
+	#strip .panel .bubble {
+		font-size: 14px;
+	}
+
+	#strip-title {
+		margin: 0 5px 10px 5px;
+	}
+}

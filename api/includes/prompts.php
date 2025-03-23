@@ -125,6 +125,20 @@ class Prompts {
 		In the style of an animated cartoon, draw the following: {p0}
 		Limit the use of the color green in your drawing to no more than 33 percent of the total pixels.
 		IMAGE;
+
+		$this->prompts->test = <<<TEST
+		Write the words "Hello, world!" followed by a synonym for the following word: {p0}
+
+		Output your response as a valid json object in the following format:
+		{
+			\"response\": \"\"
+		}
+		TEST;
+
+		$this->prompts->testimage = <<<TESTIMAGE
+		In the style of an animated cartoon, draw the following: a grassy knoll with a tree and a house in the distance.
+		Limit the use of the color green in your drawing to no more than 33 percent of the total pixels.
+		TESTIMAGE;
 	}
 
 	/**

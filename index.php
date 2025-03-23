@@ -8,7 +8,7 @@
 	$request = $_SERVER['REQUEST_URI'];
 	//echo $request;
 
-	$version = "3.0.0";
+	$version = "3.1.0";
 	$meta = new stdClass();
 	$meta->siteTitle = "Zeta Comic Generator";
 	$meta->title = "Zeta Comic Generator";
@@ -92,7 +92,14 @@
 	<meta name="twitter:image" content="<?php echo $meta->image; ?>">
 	<meta name="twitter:image:alt" content="<?php echo $meta->imageDescription; ?>">
 
-	<link rel="stylesheet" href="/style.css?v=<?php echo $version ?>">
+	<link rel="stylesheet" href="/styles/main.css?v=<?php echo $version ?>">
+	<link rel="stylesheet" href="/styles/detail.css?v=<?php echo $version ?>">
+	<link rel="stylesheet" href="/styles/footer.css?v=<?php echo $version ?>">
+	<link rel="stylesheet" href="/styles/gallery.css?v=<?php echo $version ?>">
+	<link rel="stylesheet" href="/styles/generate.css?v=<?php echo $version ?>">
+	<link rel="stylesheet" href="/styles/home.css?v=<?php echo $version ?>">
+	<link rel="stylesheet" href="/styles/script.css?v=<?php echo $version ?>">
+	<link rel="stylesheet" href="/styles/strip.css?v=<?php echo $version ?>">
   </head>
   <body class="<?php echo $path[1] ?>" data-status="ready">
 	<div class="halftone"></div>
@@ -115,6 +122,7 @@
 			case 'detail':
 			case 'gallery':
 			case 'generate':
+			case 'debugger':
 				require __DIR__ . '/views/'.$path[1].'.php';
 				break;
 		

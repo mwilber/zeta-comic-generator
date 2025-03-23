@@ -27,15 +27,21 @@
 define("OUTPUT_DEBUG_DATA", true);
 
 $prompts = new Prompts();
-$modelId = POSTval("model", "oai");
+$modelId = isset($_GET['model']) ? $_GET['model'] : POSTval("model", "gpt");
+$workflowId = POSTval("workflowId", "");
 $actionId = $controller;
 $messages = GetMessages();
+$query = POSTval("query", "");
+if ($query == "" && isset($_GET['query'])) {
+	$query = $_GET['query'];
+}
+
 
 // Get the prompt params for the current action
 $params = [];
 switch ($actionId) {
 	case "concept":
-		$paramVal = POSTval("query");
+		$paramVal = $query;
 		if ($paramVal) {
 			$params[] = addPeriod($paramVal);
 		}
@@ -44,11 +50,14 @@ switch ($actionId) {
 		// Add the character actions, use the $GLOBALS array and convert each key name to a comma-separated string
 		$params[] = implode(", ", array_keys($GLOBALS['characterActions']));
 		break;
+	case "test":
+		$params[] = $query;
+		break;
 }
 
 // Set up the system prompt if it doesn't already exist
 // If $messages is not an empty array, then it was set in the previous request
-if (!count($messages)) {
+if (!count($messages) && $actionId != "test") {
 	// Get the system prompt params
 	$systemParams = GetSystemPromptParams();
 	$messages[] = (object) [
@@ -77,7 +86,7 @@ if ($hitCount >= RATE_LIMIT) {
 		// Record the model that was used
 		$output->model = $model->modelName;
 
-		$response = $model->sendPrompt($output->prompt, $messages);
+		$response = $model->sendPayload($messages, $workflowId, $actionId, $query);
 		$output->error = $response->error;
 
 		countHit($actionId, $params[0]);
@@ -213,7 +222,7 @@ function GetModel($modelAlias) {
 			break;
 		case "deepseekr":
 			$model = new ModelDeepSeekR();
-			break;	
+			break;
 	}
 	return $model;
 }
