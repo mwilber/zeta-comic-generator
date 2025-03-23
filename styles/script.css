@@ -1,0 +1,91 @@
+/* Script */
+#script, #continuity {
+	background: #fefae7;
+	margin: 0;
+	padding: 75px 100px 100px 100px;
+	border: solid 1px rgba(203, 170, 56, 1);
+	border-radius: 20px;
+	list-style: none;
+	font-family: 'Courier New', Courier, monospace;
+}
+
+#script h2, #continuity h2, #script h3, #continuity h3 {
+	margin: 0 0 2em 0;
+}
+
+#script h2, #continuity h2 {
+	font-size: 1.5em;
+	background: transparent;
+	border: none;
+	padding: 0;
+	width: 100%;
+	text-align: center;
+	margin-bottom: 1em;
+}
+
+#script .credits {
+	text-align: left;
+	margin-bottom: 4em;
+	padding: 0;
+}
+
+#script .credits span{
+	display: inline-block;
+	width: 48%;
+}
+
+#script .credits li span:first-child{
+	text-align: right;
+	margin-right: 2%;
+}
+
+#script h3 {
+	font-size: 1em;
+}
+
+#script ul {
+	list-style: none;
+	margin-bottom: 5em;
+}
+
+#script table {
+	font-size: inherit;
+}
+
+#script table tr td {
+	vertical-align: top;
+}
+
+#script table tr td:first-child {
+	text-align: right;
+	font-weight: bold;
+	border-right: solid 3px rgba(0, 0, 0, 0.15);
+	padding-right: 5px;
+}
+
+#script table tr td:last-child {
+	padding-left: 5px;
+}
+
+/* continuity */
+#continuity {
+	background: #fcfcfc; /* Changed to a shade of green */
+	margin-top: 25px;
+	padding: 25px 50px 40px 50px;
+	border-color: #828282; /* Changed to a shade of green */
+	/* font-family: 'Patrick Hand', Arial, sans-serif;   */
+	font-family: Arial, sans-serif; 
+}
+
+#continuity h2, #continuity h3 {
+	margin: 1em 0 0.2em 0;
+}
+
+#continuity h2 {
+	margin: 0;
+	font-size: 1.25em;
+}
+
+#continuity a {
+	font-weight: normal;
+}

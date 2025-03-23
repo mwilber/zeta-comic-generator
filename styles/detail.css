@@ -1,0 +1,29 @@
+/* Detail */
+
+/* #query {
+	width: auto;
+	background: #242442;
+	color: rgba(255,255,255,0.8);
+	padding: 1em;
+} */
+
+#query.premise {
+	padding: 20px 30px;
+	border-radius: 20px;
+}
+
+#query.premise:after {
+	content: ' ';
+	border-right: solid 1px black;
+	width: 3px;
+	display: inline-block;
+	height: 1.25em;
+	vertical-align: text-bottom;
+	animation: blink-animation 1s step-start 0s infinite;;
+}
+
+@keyframes blink-animation {
+	50% {
+		visibility: hidden;
+	}
+}

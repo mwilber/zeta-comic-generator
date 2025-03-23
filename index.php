@@ -92,7 +92,14 @@
 	<meta name="twitter:image" content="<?php echo $meta->image; ?>">
 	<meta name="twitter:image:alt" content="<?php echo $meta->imageDescription; ?>">
 
-	<link rel="stylesheet" href="/style.css?v=<?php echo $version ?>">
+	<link rel="stylesheet" href="/styles/main.css?v=<?php echo $version ?>">
+	<link rel="stylesheet" href="/styles/home.css?v=<?php echo $version ?>">
+	<link rel="stylesheet" href="/styles/detail.css?v=<?php echo $version ?>">
+	<link rel="stylesheet" href="/styles/script.css?v=<?php echo $version ?>">
+	<link rel="stylesheet" href="/styles/strip.css?v=<?php echo $version ?>">
+	<link rel="stylesheet" href="/styles/gallery.css?v=<?php echo $version ?>">
+	<link rel="stylesheet" href="/styles/generate.css?v=<?php echo $version ?>">
+	<link rel="stylesheet" href="/styles/footer.css?v=<?php echo $version ?>">
   </head>
   <body class="<?php echo $path[1] ?>" data-status="ready">
 	<div class="halftone"></div>

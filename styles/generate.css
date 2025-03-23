@@ -1,0 +1,349 @@
+/* Generate */
+
+#statusdialog #status {
+	margin-bottom: 0.5em;
+	display: inline-block;
+}
+
+#statusdialog .lds-grid {
+	display: inline-block;
+	position: relative;
+	width: 1em;
+	height: 1.25em;
+	transform: scale(0.75);
+}
+
+progress[value] {
+	/* Reset the default appearance */
+	-webkit-appearance: none;
+	 appearance: none;
+  
+	width: 100%;
+	height: 0.5em;
+}
+
+progress[value]::-webkit-progress-bar {
+	background-color: #ff9;
+	background-color: rgba(0,0,0,0.5);
+	border-radius: 1em;
+	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25) inset;
+	border: solid 1px #000;
+}
+
+progress[value]::-webkit-progress-value {
+	background-color: #f00;
+	background-color: #fff;
+	border-radius: 1em;
+	/* box-shadow: -2px 2px 5px rgba(255, 255, 255, 0.75) inset; */
+	/* border: solid 1px #000; */
+}
+
+#alertdialog p,
+#errordialog p {
+	font-size: 1rem;
+	margin: 1em 2em;
+	line-height: 1.5em;
+}
+
+#alertdialog p {
+	font-size: 2rem;
+}
+
+#input {
+	width:100%;
+	display: flex;
+	flex-wrap: wrap;
+	flex-direction: column;
+	font-size: 18px;
+}
+
+#input .row {
+	display: flex;
+}
+
+#input .row label {
+	display: block;
+	float: left;
+	margin-right: 1em;
+	margin-bottom: 0.5em;
+}
+
+#query {
+	flex: 1;
+}
+
+#character-count {
+	flex: auto;
+	width: 100%;
+	font-size: 0.75em;
+	padding: 0.5em 0 0 1em;
+}
+
+.strip-controls button,
+#generate,
+#permalink {
+	flex: 0;
+	margin: 0.12em 2em;
+	font-size: 1.5em;
+	display: inline-block;
+}
+
+#generate .cartoon-font,
+#save .cartoon-font {
+	font-size: 1.3em;
+}
+
+#permalink .cartoon-font {
+	font-size: 0.9em;
+}
+
+.strip-controls button,
+#permalink {
+	height: 1.5em;
+	float: right;
+}
+
+#shareurl {
+	font-size: 15px;
+	width: 75%;
+	vertical-align: middle;
+}
+
+#cpshare {
+	background: transparent;
+	border: none;
+	box-shadow: none;
+	color: #fff;
+	height: 34px;
+	width: 34px;
+	vertical-align: middle;
+	cursor: pointer;
+}
+
+#cpshare svg {
+	fill: #fff;
+}
+
+#cpshare #copied-icon {
+	display: none;
+}
+
+#cpshare[disabled] #copy-icon {
+	display: none;
+}
+
+#cpshare[disabled] #copied-icon {
+	display: initial;
+}
+
+.share-buttons {
+	height: 2.5em;
+	margin-top: 1.5em;
+	font-size: 18px;
+}
+
+.share-buttons button {
+	height: 1.5em;
+	margin: 0 2em;
+	font-size: 1.25em;
+	display: inline-block;
+}
+
+.download-buttons {
+	display: flex;
+	width: 100%;
+}
+
+.download-buttons .button-group {
+	flex: 1;
+	margin: 0 1em;
+}
+
+.download-buttons button {
+	width: calc(100% - 2em);
+	padding: 1em;
+	background: rgb(0 0 0 / 10%);
+	border-radius: 10px;
+	border-width: 1px;
+	margin: 0 1em 1em 1em;
+	cursor: pointer;
+}
+
+.download-buttons span {
+	font-size: 1rem;
+}
+
+.dialog p {
+	margin-top: 0;
+}
+
+#interface {
+	display: flex;
+	flex-direction: column;
+	/* min-height: calc(100% - 132px - 5em); */
+	/* justify-content: center; */
+	/* transition: all 1s; */
+}
+
+/* #interface > div { */
+	/* flex: 1; */
+	/* transition: all 1s; */
+/* } */
+
+/* .generating #script:before,
+.error #script:before {
+	content: 'Generating...';
+	font-size: 24px;
+	font-weight: bold;
+	color: #999;
+}
+
+.error #script:before {
+	content: 'Error communicating with API. Try again.';
+	color: #f99;
+}
+
+.init #strip .panel {
+	background: #ccc;
+}
+
+.generating #strip .panel {
+	background: #fff;
+} */
+
+.generate .query-wrapper{
+	transform:none;
+	transition: transform 500ms;
+}
+
+.generate[data-status='ready'] .script-wrapper,
+.generate[data-status='ready'] .dialog-wrapper{
+	display: none;
+}
+
+.generate[data-status='complete'] .strip-wrapper,
+.generate[data-status='complete'] .script-wrapper,
+.generate[data-status='ready'] .dialog-wrapper.active {
+	display: initial;
+}
+
+.generate[data-status='ready'] #strip .panel,
+.generate[data-status='error'] #strip .panel {
+	background: #fff;
+}
+
+.generate[data-status='generating'] #strip .panel {
+	background: #e0e0eb;
+}
+
+.generate[data-status='generating'] #strip .panel.rendering {
+	background: hsl(240, 22%, 20%);
+}
+
+.generate[data-status='generating'] #strip .panel.rendering:before {
+	content: 'Rendering...';
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	color: #fff;
+}
+
+.generate[data-status='generating'] #strip .panel.rendered {
+	background: #000;
+}
+
+.strip-controls, #strip-title {
+	flex-grow: 1;
+	flex-shrink: 1;
+	flex-basis: 100%;
+	height: 2.5em;
+	font-size: 18px;
+}
+
+#strip-title {
+	font-size: 1em;
+	height: auto;
+	margin: 0 5px -1em 5px;
+	font-size: 1.25em;
+}
+
+#save, #permalink {
+	display:none;
+}
+
+@media screen and (max-width: 900px) {
+    #input .row.selections {
+        flex-direction: column;
+    }
+}
+
+
+/* Loading Spinner */
+.lds-grid {
+	display: inline-block;
+	position: relative;
+	width: 80px;
+	height: 80px;
+}
+.lds-grid div {
+	position: absolute;
+	width: 16px;
+	height: 16px;
+	border-radius: 50%;
+	background: #fff;
+	animation: lds-grid 1.2s linear infinite;
+}
+.lds-grid div:nth-child(1) {
+	top: 8px;
+	left: 8px;
+	animation-delay: 0s;
+}
+.lds-grid div:nth-child(2) {
+	top: 8px;
+	left: 32px;
+	animation-delay: -0.4s;
+}
+.lds-grid div:nth-child(3) {
+	top: 8px;
+	left: 56px;
+	animation-delay: -0.8s;
+}
+.lds-grid div:nth-child(4) {
+	top: 32px;
+	left: 8px;
+	animation-delay: -0.4s;
+}
+.lds-grid div:nth-child(5) {
+	top: 32px;
+	left: 32px;
+	animation-delay: -0.8s;
+}
+.lds-grid div:nth-child(6) {
+	top: 32px;
+	left: 56px;
+	animation-delay: -1.2s;
+}
+.lds-grid div:nth-child(7) {
+	top: 56px;
+	left: 8px;
+	animation-delay: -0.8s;
+}
+.lds-grid div:nth-child(8) {
+	top: 56px;
+	left: 32px;
+	animation-delay: -1.2s;
+}
+.lds-grid div:nth-child(9) {
+	top: 56px;
+	left: 56px;
+	animation-delay: -1.6s;
+}
+@keyframes lds-grid {
+	0%, 100% {
+	  opacity: 1;
+	}
+	50% {
+	  opacity: 0.5;
+	}
+}
