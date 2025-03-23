@@ -2,36 +2,36 @@ const listing = {};
 
 const priceTable = {
 	"gpt-4.5-preview-2025-02-27": {
-		completion_tokens: 150 / 1000000,
 		prompt_tokens: 75 / 1000000,
+		completion_tokens: 150 / 1000000,
 	},
 	"gpt-4o-2024-08-06": {
-		completion_tokens: 10 / 1000000,
 		prompt_tokens: 2.5 / 1000000,
+		completion_tokens: 10 / 1000000,
 	},
 	"o1-2024-12-17": {
-		completion_tokens: 60 / 1000000,
 		prompt_tokens: 15 / 1000000,
+		completion_tokens: 60 / 1000000,
 	},
 	"gemini-1.5-pro": {
-		candidates_token_count: 10 / 1000000,
-		prompt_token_count: 2.5 / 1000000,
+		prompt_token_count: 1.25 / 1000000,
+		candidates_token_count: 5 / 1000000,
 	},
 	"anthropic.claude-3-5-sonnet-20240620-v1:0": {
-		output_tokens: 10 / 1000000,
-		input_tokens: 2.5 / 1000000,
+		input_tokens: 0.003 / 1000,
+		output_tokens: 0.015 / 1000,
 	},
 	"meta.llama3-70b-instruct-v1:0": {
-		generation_token_count: 10 / 1000000,
-		prompt_token_count: 2.5 / 1000000,
+		prompt_token_count: 0.00265 / 1000,
+		generation_token_count: 0.0035 / 1000,
 	},
 	"deepseek-chat": {
-		completion_tokens: 10 / 1000000,
-		prompt_tokens: 2.5 / 1000000,
+		prompt_tokens: 0.27 / 1000000,
+		completion_tokens: 1.10 / 1000000,
 	},
 	"deepseek-reasoner": {
-		completion_tokens: 10 / 1000000,
-		prompt_tokens: 2.5 / 1000000,
+		prompt_tokens: 0.55 / 1000000,
+		completion_tokens: 2.19 / 1000000,
 	},
 	"dall-e-3": {
 		image: 0.04,
@@ -40,7 +40,7 @@ const priceTable = {
 		image: 0.04,
 	},
 	"amazon.titan-image-generator-v1": {
-		image: 0.04,
+		image: 0.01,
 	},
 };
 
@@ -104,7 +104,11 @@ function PopToc(workflowId) {
 		const logEl = document.createElement("li");
 		logEl.className = "log";
 		logEl.innerHTML = `
-			<button>${log.action}</button>
+			<button>
+				${log.action}
+				<br/>
+				<span class="model">${log.model.substring(0, 30)}</span>
+			</button>
 		`;
 		tocEl.appendChild(logEl);
 		logEl.addEventListener("click", (e) => {
