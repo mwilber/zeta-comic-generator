@@ -56,7 +56,7 @@
 }
 
 #gallery .action-buttons {
-	grid-column: 1/5;
+	grid-column: 1/-1;
 }
 
 @media screen and (max-width: 900px) {
