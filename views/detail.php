@@ -69,10 +69,9 @@
 	</div>
 </div>
 <div id="output"></div>
-<!--
-<h2>Continuity</h2>
-<ul id="continuity"></ul>
--->
+
+<div id="continuity"></div>
+
 <h2>Script</h2>
 <ul id="script"></ul>
 

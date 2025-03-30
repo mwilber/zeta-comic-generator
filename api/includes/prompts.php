@@ -27,11 +27,15 @@ class Prompts {
 
 		In your comic strips Alpha Zeta exists with, and interacts with, other characters and props in the scene. Alpha never comes into direct physical contact with characters or props in the scene. Alpha speaks to and references other characters in the scene, but those characters never respond verbally.
 
-		In each panel of your comic strips, Alpha Zeta performs only one of the following actions: {p1}
+		In each panel of your comic strips, Alpha Zeta performs only one of the following actions: {p0}
 
 		Alpha Zeta is about 4 feet tall and lanky in build. Alpha has green skin, large black eyes and a large bald head. Alpha has two arms, each with three fingers and a thumb. Alpha has two legs and feet. The feet do not have any digits. Alpha generally does not wear clothing, but will occasionally wear a costume when specified in the list of actions.
 
-		{p0}
+		{p1}
+
+		Additional information about past events that can be drawn from in writing stories. Only include this information if relevent to the story you are writing.
+
+		{p2}
 		SYSTEM;
 
 		$this->prompts->concept = <<<CONCEPT
@@ -45,7 +49,15 @@ class Prompts {
 
 		{
 			\"concept\": \"\",
+			\"memory\": [
+				{ "id": 0, "description": "" },
+			]
 		}
+		
+		The value of the property \"memory\" is an array of objects. This array will contain a list of items used from the character profile or past events listed above in writing the story concept.
+		Each object in the array contains the following properties:
+		\"id\": The number prefixing the item from the lists.
+		\"description\": The item from the lists.
 		CONCEPT;
 
 		//The following is a list of story elements that have been used in previous comics. These are called \"elements of significance\". Each element of significance is preceded by an identifying number. You may use these elements of significance in writing the comic strip. Using an element of significance is not required. Only use an element of significance if it is pertinent to the comic story.
@@ -125,6 +137,28 @@ class Prompts {
 		In the style of an animated cartoon, draw the following: {p0}
 		Limit the use of the color green in your drawing to no more than 33 percent of the total pixels.
 		IMAGE;
+
+		$this->prompts->continuity = <<<CONTINUITY
+		You are an experienced psychologist. You are also an experienced reporter who chronicles world events.
+		
+		Using the script for the story, identify the following:
+		
+		Identify any character traits that are portryed in Alpha Zeta.
+		- Do not include anything listed in the character profile outlined at the beginning of this conversation.
+		- It is okay if no new traits are portreyed.
+		- Limit to no more than 3 traits. If there are more than 3, list the most prominant.
+
+		Itentify any significant events in the life of Alpha Zeta portreyed in the story.
+		- Do not include anything listed in the historical events outlined at the beginning of this conversation.
+		- It is okay if no new events are portreyed.
+		- Limit to no more than 3 events. If there are more than 3, list the most prominant.
+
+		Output your response in the following format:
+		{
+			\"alpha\": []
+			\"event\": []
+		}
+		CONTINUITY;
 	}
 
 	/**

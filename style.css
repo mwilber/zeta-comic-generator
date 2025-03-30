@@ -909,7 +909,7 @@ progress[value]::-webkit-progress-value {
 }
 
 /* Script */
-#script {
+#script, #continuity {
 	background: #fefae7;
 	margin: 0;
 	padding: 75px 100px 100px 100px;
@@ -919,11 +919,11 @@ progress[value]::-webkit-progress-value {
 	font-family: 'Courier New', Courier, monospace;
 }
 
-#script h2, #script h3 {
+#script h2, #continuity h2, #script h3, #continuity h3 {
 	margin: 0 0 2em 0;
 }
 
-#script h2 {
+#script h2, #continuity h2 {
 	font-size: 1.5em;
 	background: transparent;
 	border: none;
@@ -975,6 +975,29 @@ progress[value]::-webkit-progress-value {
 
 #script table tr td:last-child {
 	padding-left: 5px;
+}
+
+/* continuity */
+#continuity {
+	background: #fcfcfc; /* Changed to a shade of green */
+	margin-top: 25px;
+	padding: 25px 50px 40px 50px;
+	border-color: #828282; /* Changed to a shade of green */
+	/* font-family: 'Patrick Hand', Arial, sans-serif;   */
+	font-family: Arial, sans-serif; 
+}
+
+#continuity h2, #continuity h3 {
+	margin: 1em 0 0.2em 0;
+}
+
+#continuity h2 {
+	margin: 0;
+	font-size: 1.25em;
+}
+
+#continuity a {
+	font-weight: normal;
 }
 
 /* Comic Strip */
