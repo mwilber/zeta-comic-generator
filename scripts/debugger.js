@@ -14,8 +14,16 @@ const priceTable = {
 		completion_tokens: 60 / 1000000,
 	},
 	"gemini-1.5-pro": {
-		prompt_token_count: 1.25 / 1000000,
-		candidates_token_count: 5 / 1000000,
+		prompt_token_count: 0.075 / 1000000,
+		candidates_token_count: 0.30 / 1000000,
+	},
+	"gemini-2.0-flash": {
+		prompt_token_count: 0.10 / 1000000,
+		candidates_token_count: 0.40 / 1000000,
+	},
+	"gemini-2.5-pro-exp-03-25": {
+		prompt_token_count: 0.10 / 1000000,
+		candidates_token_count: 0.40 / 1000000,
 	},
 	"anthropic.claude-3-5-sonnet-20240620-v1:0": {
 		input_tokens: 0.003 / 1000,
@@ -41,6 +49,9 @@ const priceTable = {
 	},
 	"amazon.titan-image-generator-v1": {
 		image: 0.01,
+	},
+	"imagen-3.0-generate-002": {
+		image: 0.03,
 	},
 };
 

@@ -196,4 +196,38 @@ class BaseModel {
 			return $input;
 		}
 	}
+
+	/**
+	 * Save an image from a base64 string.
+	 * 
+	 * @param string $base64 The base64 string.
+	 * @return string The path to the saved image.
+	 */
+	protected function saveImageFromBase64($base64, $modelId) {
+		$saveDir = 'backgrounds';
+		$output_dir = '../assets/' . $saveDir . '-full';
+		$absolute_path = '/assets/' . $saveDir . '-full';
+
+		if (!file_exists($output_dir)) {
+			mkdir($output_dir);
+		}
+
+		$i = 1;
+		while (file_exists("$output_dir/$modelId" . '_' . "$i.png")) {
+			$i++;
+		}
+
+		$image_data = base64_decode($base64);
+
+		// TODO: Send image as url encoded base64 and modify the save script to handle.
+		$image_path = "$output_dir/$modelId" . '_' . "$i.png";
+
+		$file = fopen($image_path, 'wb');
+		fwrite($file, $image_data);
+		fclose($file);
+
+		$image_path = "$absolute_path/$modelId" . '_' . "$i.png";
+
+		return $image_path;	
+	}
 }

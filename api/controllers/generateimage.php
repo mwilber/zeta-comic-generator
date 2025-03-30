@@ -57,6 +57,9 @@ if ($hitCount >= RATE_LIMIT) {
 		case "sdf":
 			$model = new ModelStableDiffusion();
 			break;
+		case "imagen":
+			$model = new ModelImagen();
+			break;
 	}
 	if (!$model) {
 		$output->error = "Invalid model id";
