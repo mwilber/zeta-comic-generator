@@ -43,6 +43,8 @@ class ModelImagen extends BaseModel {
 		$responseObj = new stdClass;
 		$responseObj->url = $imagePath;
 		$result->json = $responseObj;
+		// Clear out the base64 image so it's not stored in the database.
+		$response->predictions = [];
 		$result->tokens = [
 			"image" => 1,
 		];
