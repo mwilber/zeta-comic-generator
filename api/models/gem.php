@@ -50,6 +50,10 @@ class ModelGemini extends BaseModel {
 		];
 		$body->contents = $messagesArray;
 
+		$body->generationConfig = [
+			"response_mime_type" => "application/json"
+		];
+
 		return $body;
 	}
 
