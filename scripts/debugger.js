@@ -49,6 +49,10 @@ const priceTable = {
 		prompt_tokens: 2 / 1000000,
 		completion_tokens: 10 / 1000000,
 	},
+	"grok-3": {
+		prompt_tokens: 3 / 1000000,
+		completion_tokens: 15 / 1000000,
+	},
 	"dall-e-3": {
 		image: 0.04,
 	},

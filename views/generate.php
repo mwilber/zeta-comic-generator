@@ -37,6 +37,7 @@
 							<option value="">(Select a model)</option>
 							<option value="gpt">GPT 4o</option>
 							<option value="o">o3 Mini</option>
+							<option value="grok">Grok</option>
 							<option value="claude">Claude Sonnet 3.5</option>
 							<option value="deepseekr">DeepSeek R1</option>
 							<option value="gem">Gemini 1.5</option>
@@ -51,10 +52,10 @@
 						<select name="script-model" id="script-model">
 							<option value="">(Select a model)</option>
 							<option value="gpt">GPT 4o</option>
+							<option value="grok">Grok</option>
 							<option value="gem">Gemini 1.5</option>
 							<option value="deepseek">DeepSeek V3</option>
 							<option value="llama">Llama 3</option>
-							<option value="grok">Grok 2</option>
 							<!-- Titan Text Express v1 disabled because it can't handle the new prompt format -->
 							<!-- <option value="ttn">Titan Text Express v1</option> -->
 						</select>
