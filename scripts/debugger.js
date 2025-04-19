@@ -1,6 +1,10 @@
 const listing = {};
 
 const priceTable = {
+	"gpt-4.1-2025-04-14": {
+		prompt_tokens: 2 / 1000000,
+		completion_tokens: 8 / 1000000,
+	},
 	"gpt-4.5-preview-2025-02-27": {
 		prompt_tokens: 75 / 1000000,
 		completion_tokens: 150 / 1000000,
@@ -8,6 +12,10 @@ const priceTable = {
 	"gpt-4o-2024-08-06": {
 		prompt_tokens: 2.5 / 1000000,
 		completion_tokens: 10 / 1000000,
+	},
+	"o3-2025-04-16": {
+		prompt_tokens: 10 / 1000000,
+		completion_tokens: 40 / 1000000,
 	},
 	"o1-2024-12-17": {
 		prompt_tokens: 15 / 1000000,
