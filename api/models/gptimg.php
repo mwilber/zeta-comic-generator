@@ -14,11 +14,29 @@ class ModelGptImage extends ModelDallE {
 			"prompt" => $prompt,
 			"n" => 1,
 			"size" => $this->imageSize,
-			"quality" => "low"
+			"quality" => "medium"
 		];
 
 		return $body;
 	}
+
+	// protected function processResponse($response) {
+	// 	$result = new stdClass;
+	// 	$json = $response;
+	// 	$result->data = $json;
+
+	// 	$result->error = $json->error;
+
+	// 	if (isset($json->data[0])) {
+	// 		$result->json = $json->data[0];
+	// 	}
+
+	// 	$result->tokens = [
+	// 		"image" => 1,
+	// 	];
+
+	// 	return $result;
+	// }
 
 	protected function processResponse($response) {
 		$result = new stdClass;
@@ -27,10 +45,14 @@ class ModelGptImage extends ModelDallE {
 
 		$result->error = $json->error;
 
-		if (isset($json->data[0])) {
-			$result->json = $json->data[0];
-		}
+		$base64_image_data = $result->data->data[0]->b64_json;
+		$imagePath = $this->saveImageFromBase64($base64_image_data, $this->modelName);
 
+		$responseObj = new stdClass;
+		$responseObj->url = $imagePath;
+		$result->json = $responseObj;
+		// Clear out the base64 image so it's not stored in the database.
+		$response->data = [];
 		$result->tokens = [
 			"image" => 1,
 		];

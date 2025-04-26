@@ -65,6 +65,7 @@
 					<div class="select">
 						<select name="image-model" id="image-model">
 							<option value="">(Select a model)</option>
+							<option value="gpt">GPT Image 1</option>
 							<option value="oai">Dall-E 3</option>
 							<option value="imagen">Imagen 3</option>
 							<option value="sdf">Stable Diffusion XL</option>
