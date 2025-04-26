@@ -53,9 +53,13 @@ class ModelGptImage extends ModelDallE {
 		$result->json = $responseObj;
 		// Clear out the base64 image so it's not stored in the database.
 		$response->data = [];
-		$result->tokens = [
-			"image" => 1,
-		];
+
+		if(isset($json->usage)) {
+			$result->tokens = [
+				"input_tokens" => $json->usage->input_tokens,
+				"output_tokens" => $json->usage->output_tokens,
+			];
+		}
 
 		return $result;
 	}

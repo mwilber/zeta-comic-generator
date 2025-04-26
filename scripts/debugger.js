@@ -53,6 +53,10 @@ const priceTable = {
 	"imagen-3.0-generate-002": {
 		image: 0.03,
 	},
+	"gpt-image-1": {
+		input_tokens: 10 / 1000000,
+		output_tokens: 40 / 1000000,
+	},
 };
 
 function PopDebugger(pageNum) {
