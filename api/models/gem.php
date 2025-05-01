@@ -5,7 +5,7 @@ require_once('_base_model.php');
  */
 class ModelGemini extends BaseModel {
 	function __construct() {
-		$this->modelName = "gemini-1.5-pro";
+		$this->modelName = "gemini-2.0-flash";
 		$this->apiKey = GOOGLE_KEY;
 		$this->apiUrl = "https://generativelanguage.googleapis.com/v1beta/models/".$this->modelName.":generateContent?key=".$this->apiKey;
 	}
@@ -49,6 +49,10 @@ class ModelGemini extends BaseModel {
 			]
 		];
 		$body->contents = $messagesArray;
+
+		$body->generationConfig = [
+			"response_mime_type" => "application/json"
+		];
 
 		return $body;
 	}

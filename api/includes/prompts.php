@@ -98,7 +98,11 @@ class Prompts {
 		Output your response as a valid json object in the following format:
 
 		{
-			\"descriptions\": []
+			\"descriptions\": [
+				\"string\",
+				\"string\",
+				\"string\"
+			]
 		}
 
 		The property “descriptions” is an array containing 3 elements. Each element is a string value containing your description of the panel. Do not exceed 1000 characters for each description.
