@@ -59,7 +59,7 @@
 
 	// AI Models
 	require __DIR__ . '/models/gpt.php';
-	require __DIR__ . '/models/gpt45.php';
+	//require __DIR__ . '/models/gpt45.php';
 	require __DIR__ . '/models/o.php';
 	require __DIR__ . '/models/gem.php';
 	require __DIR__ . '/models/gemthink.php';
@@ -71,6 +71,7 @@
 	require __DIR__ . '/models/deepseekr.php';
 	require __DIR__ . '/models/llama.php';
 	require __DIR__ . '/models/imagen.php';
+	require __DIR__ . '/models/grok.php';
 
 	switch ($controller) {
 		// App API endpoints

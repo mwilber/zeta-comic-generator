@@ -1,6 +1,10 @@
 const listing = {};
 
 const priceTable = {
+	"gpt-4.1-2025-04-14": {
+		prompt_tokens: 2 / 1000000,
+		completion_tokens: 8 / 1000000,
+	},
 	"gpt-4.5-preview-2025-02-27": {
 		prompt_tokens: 75 / 1000000,
 		completion_tokens: 150 / 1000000,
@@ -9,9 +13,17 @@ const priceTable = {
 		prompt_tokens: 2.5 / 1000000,
 		completion_tokens: 10 / 1000000,
 	},
+	"o3-2025-04-16": {
+		prompt_tokens: 10 / 1000000,
+		completion_tokens: 40 / 1000000,
+	},
 	"o1-2024-12-17": {
 		prompt_tokens: 15 / 1000000,
 		completion_tokens: 60 / 1000000,
+	},
+	"o3-mini-2025-01-31": {
+		prompt_tokens: 1.10 / 1000000,
+		completion_tokens: 4.40 / 1000000,
 	},
 	"gemini-1.5-pro": {
 		prompt_token_count: 0.075 / 1000000,
@@ -40,6 +52,14 @@ const priceTable = {
 	"deepseek-reasoner": {
 		prompt_tokens: 0.55 / 1000000,
 		completion_tokens: 2.19 / 1000000,
+	},
+	"grok-2-latest": {
+		prompt_tokens: 2 / 1000000,
+		completion_tokens: 10 / 1000000,
+	},
+	"grok-3": {
+		prompt_tokens: 3 / 1000000,
+		completion_tokens: 15 / 1000000,
 	},
 	"dall-e-3": {
 		image: 0.04,

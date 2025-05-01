@@ -226,6 +226,9 @@ function GetModel($modelAlias) {
 		case "deepseekr":
 			$model = new ModelDeepSeekR();
 			break;
+		case "grok":
+			$model = new ModelGrok();
+			break;
 	}
 	return $model;
 }
