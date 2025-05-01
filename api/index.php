@@ -53,15 +53,17 @@
 	require __DIR__ . '/includes/db.php';
 	require __DIR__ . '/includes/s3.php';
 	require __DIR__ . '/../vendor/autoload.php';
+	require __DIR__ . '/includes/api_logger.php';
 
 	// AI Prompts
 	require __DIR__ . '/includes/prompts.php';
 
 	// AI Models
 	require __DIR__ . '/models/gpt.php';
-	require __DIR__ . '/models/gpt45.php';
+	//require __DIR__ . '/models/gpt45.php';
 	require __DIR__ . '/models/o.php';
 	require __DIR__ . '/models/gem.php';
+	require __DIR__ . '/models/gemthink.php';
 	require __DIR__ . '/models/ttn.php';
 	require __DIR__ . '/models/dall.php';
 	require __DIR__ . '/models/sdf.php';
@@ -69,6 +71,8 @@
 	require __DIR__ . '/models/deepseek.php';
 	require __DIR__ . '/models/deepseekr.php';
 	require __DIR__ . '/models/llama.php';
+	require __DIR__ . '/models/imagen.php';
+	require __DIR__ . '/models/grok.php';
 
 	switch ($controller) {
 		// App API endpoints
@@ -82,6 +86,7 @@
 			require __DIR__ . '/controllers/'.$controller.'.php';
 			break;
 		// Comic Generation API endpoints
+		case 'test':
 		case 'concept':
 		case 'script':
 		case 'background':
@@ -93,12 +98,16 @@
 				require __DIR__ . '/controllers/generatetext.php';
 			}
 			break;
-		case 'image':					
+		case 'testimage':
+		case 'image':				
 			if (SIMULATION_MODE == "all" || SIMULATION_MODE == "image") {
 				require __DIR__ . '/controllers/simulateimage.php';
 			} else {
 				require __DIR__ . '/controllers/generateimage.php';
 			}
+			break;
+		case 'log':
+			require __DIR__ . '/controllers/log.php';
 			break;
 		default:
 			$output->error = "Action not avaialble.";

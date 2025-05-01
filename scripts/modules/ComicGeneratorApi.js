@@ -29,6 +29,7 @@ export class ComicGeneratorApi {
 	ClearComicData() {
 		this.comic = null;
 		this.premise = null;
+		this.workflowId = null;
 		this.messages = [];
 		this.credits = {
 			concept: "",
@@ -419,7 +420,19 @@ export class ComicGeneratorApi {
 			formData.append(key, data[key]);
 		});
 
+		// If the workflowId is not set, generate a new one
+		if (!this.workflowId) {
+			this.workflowId = await crypto.subtle
+				.digest('SHA-256', new TextEncoder().encode(action + Math.random()))
+				.then(hash => 
+					Array.from(new Uint8Array(hash))
+						.map(b => b.toString(16).padStart(2, '0'))
+						.join('')
+				);
+		}
+
 		formData.append("messages", JSON.stringify(this.messages));
+		formData.append("workflowId", this.workflowId);
 
 		let retry = 3;
 		// Sometimes GPT returns a null, retry up to 2 times to get a usable result.

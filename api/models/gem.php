@@ -1,18 +1,65 @@
 <?php
+require_once('_base_model.php');
 /**
  * Provides functionality for interacting with the Google REST API to generate text completions.
  */
-class ModelGemini {
+class ModelGemini extends BaseModel {
 	function __construct() {
-		$this->modelName = "gemini-1.5-pro";
-		$this->apiUrl = "https://generativelanguage.googleapis.com/v1beta/models/".$this->modelName.":generateContent?key=";
+		$this->modelName = "gemini-2.0-flash";
 		$this->apiKey = GOOGLE_KEY;
+		$this->apiUrl = "https://generativelanguage.googleapis.com/v1beta/models/".$this->modelName.":generateContent?key=".$this->apiKey;
 	}
 
-	function sendPrompt($prompt, $messages) {
+	protected function buildRequestHeaders() {
+		return [
+			'Content-Type: application/json',
+		];
+	}
+
+	protected function buildRequestBody($messages) {
+		$messagesArray = [];
+		$system = "";
+		foreach ($messages as $message) {
+			// Gemini uses "model" for assistant messages
+			if (isset($message->role) && $message->role === "assistant") {
+				$message->role = "model";
+			}
+			// Set the system prompt
+			if (
+				isset($message->role) &&
+				(
+					$message->role === "system" ||
+					$message->role === "developer") &&
+				$system === ""
+			) {
+				$system = $message->content;
+			} else {
+				$messagesArray[] = [
+					"role" => $message->role,
+					"parts" => [
+						["text" => $message->content]
+					]
+				];
+			}
+		}
+		$body = new stdClass;
+		$body->system_instruction = [
+			"parts" => [
+				["text" => $system]
+			]
+		];
+		$body->contents = $messagesArray;
+
+		$body->generationConfig = [
+			"response_mime_type" => "application/json"
+		];
+
+		return $body;
+	}
+
+	protected function processResponse($response) {
 		$result = new stdClass;
-		$response = $this->textComplete($messages);
-		$json = json_decode($response);
+		$json = $response;
 		$result->data = $json;
 
 		$result->error = $json->error;
@@ -31,60 +78,15 @@ class ModelGemini {
 			$result->debug = $script;
 			if($jscript) $result->json = $jscript;
 		}
-		return $result;
-	}
 
-	function textComplete($messages) {
-
-		$modelUrl = $this->apiUrl.$this->apiKey;
-
-		$ch = curl_init();
-		$headers = array(
-			'Content-Type: application/json',
-		);
-		curl_setopt($ch, CURLOPT_URL, $modelUrl);
-		curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-		curl_setopt($ch, CURLOPT_HEADER, 0);
-		$messagesArray = [];
-		$system = "{}";
-		foreach ($messages as $message) {
-			// Gemini uses "model" for assistant messages
-			if (isset($message->role) && $message->role === "assistant") {
-				$message->role = "model";
-			}
-			// Set the system prompt
-			if (
-				isset($message->role) &&
-				(
-					$message->role === "system" ||
-					$message->role === "developer") &&
-				$system === "{}"
-			) {
-				$system = '{"parts": {"text": "'.$message->content.'"}}';
-			} else {
-				$messagesArray[] = [
-					"role" => $message->role,
-					"parts" => [
-						["text" => $message->content]
-					]
-				];
-			}
+		if(isset($json->usageMetadata)) {
+			$result->tokens = [
+				"prompt_token_count" => $json->usageMetadata->promptTokenCount,
+				"candidates_token_count" => $json->usageMetadata->candidatesTokenCount,
+			];
 		}
-		$body = '{
-			"system_instruction": ' . $system . ',
-			"contents": '.json_encode($messagesArray).',
-		}';
 
-		// echo $body; die;
-		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST"); 
-		curl_setopt($ch, CURLOPT_POSTFIELDS,$body);
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-
-		// Timeout in seconds
-		curl_setopt($ch, CURLOPT_TIMEOUT, 30);
-
-		$response = curl_exec($ch);
-		return $response;
+		return $result;
 	}
 }
 ?>
