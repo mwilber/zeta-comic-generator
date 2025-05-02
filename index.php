@@ -122,6 +122,7 @@
 			case 'detail':
 			case 'gallery':
 			case 'generate':
+			case 'stories':
 			case 'debugger':
 				require __DIR__ . '/views/'.$path[1].'.php';
 				break;
