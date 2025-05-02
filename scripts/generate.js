@@ -201,9 +201,10 @@ async function GenerateStrip() {
 	const textModel = document.getElementById("script-model").value;
 	const imageModel = document.getElementById("image-model").value;
 	const imageStyle = document.getElementById("image-style").value;
+	const storyId = document.getElementById("story-id").value;
 
 	// Step 1: Generate the story concept
-	let concept = await api.WriteConcept(safeQuery, { model: conceptModel });
+	let concept = await api.WriteConcept(safeQuery, { model: conceptModel, storyId });
 	if (!concept || concept.error) {
 		SetStatus(concept.error == "ratelimit" ? concept.error : "error");
 		return;
@@ -263,7 +264,7 @@ async function SaveStrip() {
 	}
 	console.log("Success:", data);
 	document.getElementById("save").removeAttribute("disabled");
-	window.location.replace("/detail/" + data.response.permalink);
+	// window.location.replace("/detail/" + data.response.permalink);
 }
 
 /**

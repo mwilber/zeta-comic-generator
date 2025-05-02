@@ -30,6 +30,10 @@
 		<h2>Setup</h2>
 		<div id="input">
 			<div class="row selections">
+				<label>
+					Story ID
+					<input id="story-id" type="text" value="1" />
+				</label>
 				<label> 
 					Story Model
 					<div class="select">
@@ -96,7 +100,7 @@
 				</label>
 			</div>
 			<div class="row">
-				<input id="query" type="text" placeholder="ex. An explanation of the distance between the earth and the sun."/>
+				<input id="query" value="test" type="text" placeholder="ex. An explanation of the distance between the earth and the sun."/>
 				<button id="generate" class="cartoon-button" disabled>
 					<img class="burst" src="/assets/images/speech_bubble.svg" alt="Cartoon speech bubble icon" />
 					<span class="cartoon-font">Start</span>

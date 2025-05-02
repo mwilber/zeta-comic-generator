@@ -186,7 +186,7 @@
 		$jsonData = $_POST["script"];
 	
 		// prepare query statement
-		$stmt = $db->prepare("INSERT INTO `comics` (`title`,`prompt`,`json`) VALUES (".$db->quote($_POST["title"]).",".$db->quote($_POST["prompt"]).",".$db->quote($jsonData).");");
+		$stmt = $db->prepare("INSERT INTO `comics` (`title`,`prompt`,`json`,`summary`,`storyId`) VALUES (".$db->quote($_POST["title"]).",".$db->quote($_POST["prompt"]).",".$db->quote($jsonData).",".$db->quote($_POST["summary"]).",".$db->quote($_POST["storyId"]).");");
 		// execute query
 		$stmt->execute();
 		$output->response->comicId = $db->lastInsertId();
@@ -276,6 +276,10 @@
 			// Verify that $memories is an array
 			if (is_array($memories)) {
 				foreach ($memories as $memory) {
+					// If $memory->id is not set, or not a number, skip this iteration
+					if (!isset($memory->id) || !is_numeric($memory->id)) {
+						continue;
+					}
 					// Check for existing record
 					$stmt = $db->prepare("SELECT `id` FROM `continuity` WHERE `id` = ".$memory->id.";");
 					$stmt->execute();

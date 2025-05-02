@@ -32,6 +32,7 @@ $workflowId = POSTval("workflowId", "");
 $actionId = $controller;
 $messages = GetMessages();
 $query = POSTval("query", "");
+$storyId = POSTval("storyId", "");
 if ($query == "" && isset($_GET['query'])) {
 	$query = $_GET['query'];
 }
@@ -44,6 +45,10 @@ switch ($actionId) {
 		$paramVal = $query;
 		if ($paramVal) {
 			$params[] = addPeriod($paramVal);
+		}
+		$storyParam = GetStoryParam($storyId);
+		if ($storyParam) {
+			$params[] = $storyParam;
 		}
 		break;
 	case "script":
@@ -130,11 +135,10 @@ if(OUTPUT_DEBUG_DATA) {
  *
  * @return array The row from the `categories` table.
  */
-function GetCategoryByAlias($alias) {
+function GetCharacterCategory() {
 	$database = new Database();
 	$db = $database->getConnection();
-	$stmt = $db->prepare("SELECT * FROM `categories` WHERE `alias` = :alias");
-	$stmt->bindParam(":alias", $alias, PDO::PARAM_STR);
+	$stmt = $db->prepare("SELECT * FROM `categories` WHERE `alias` = 'alpha'");
 	$stmt->execute();
 	$row = $stmt->fetch(PDO::FETCH_ASSOC);
 	return $row;
@@ -151,6 +155,16 @@ function GetContinuityByCategoryId($categoryId) {
 	$db = $database->getConnection();
 	$stmt = $db->prepare("SELECT * FROM `continuity` WHERE `categoryId` = :categoryId AND `active` = true");
 	$stmt->bindParam(":categoryId", $categoryId, PDO::PARAM_INT);
+	$stmt->execute();
+	$recordSet = $stmt->fetchAll(PDO::FETCH_ASSOC);
+	return $recordSet;
+}
+
+function GetStoriesByStoryId($storyId) {
+	$database = new Database();
+	$db = $database->getConnection();
+	$stmt = $db->prepare("SELECT `summary` FROM `comics` WHERE `storyId` = :storyId AND `archive` = 0 ORDER BY `timestamp` DESC");
+	$stmt->bindParam(":storyId", $storyId, PDO::PARAM_INT);
 	$stmt->execute();
 	$recordSet = $stmt->fetchAll(PDO::FETCH_ASSOC);
 	return $recordSet;
@@ -227,9 +241,6 @@ function GetModel($modelAlias) {
 		case "deepseekr":
 			$model = new ModelDeepSeekR();
 			break;
-		case "grok":
-			$model = new ModelGrok();
-			break;
 	}
 	return $model;
 }
@@ -241,32 +252,42 @@ function GetModel($modelAlias) {
  */
 function GetSystemPromptParams() {
 	$params = [];
-
-	$characterCategory = GetCategoryByAlias("alpha");
+	$characterCategory = GetCharacterCategory();
 	$characterContinuity = [];
 	if (isset($characterCategory['id'])) {
 		$continuityData = GetContinuityByCategoryId($characterCategory['id']);
 		foreach ($continuityData as $record) {
-			$characterContinuity[] = $record['id'] . ". " . $record['description'];
-		}
-	}
-	$eventCategory = GetCategoryByAlias("event");
-	$eventContinuity = [];
-	if (isset($eventCategory['id'])) {
-		$continuityData = GetContinuityByCategoryId($eventCategory['id']);
-		foreach ($continuityData as $record) {
-			$eventContinuity[] = $record['id'] . ". " . $record['description'];
+			$characterContinuity[] = $record['description'];
 		}
 	}
 
+	// Set up the parameters for the prompt
+	$params[] = "\n" . $characterCategory['prompt'] . "\n - " . implode("\n - ", $characterContinuity) . "\n";
 	// Add the character actions, use the $GLOBALS array and convert each key name to a comma-separated string
 	$params[] = implode(", ", array_keys($GLOBALS['characterActions']));
-	// Set up the character profile
-	$params[] = "\n" . $characterCategory['prompt'] . "\n - " . implode("\n ", $characterContinuity) . "\n";
-	// Set up the world events history
-	$params[] = "\n" . $eventCategory['prompt'] . "\n - " . implode("\n ", $eventContinuity) . "\n";
 
 	return $params;
+}
+
+function GetStoryParam($storyId) {
+	$param = "";
+
+	$storiesRs = GetStoriesByStoryId($storyId);
+	$stories = [];
+	foreach ($storiesRs as $story) {
+		$stories[] = " - " . $story['summary'];
+	}
+	// If the length of the stories array is 0, then return an empty string
+	if (count($stories) == 0) {
+		return false;
+	}
+
+	$param .= "\n";
+	$param .= "This comic strip is the continuation of a series of comic strips. A summary of the previous comic strips is: \n";
+	$param .= implode("\n", $stories);
+	$param .= "\n";
+
+	return $param;
 }
 
 function addPeriod($str) {

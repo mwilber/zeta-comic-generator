@@ -39,7 +39,9 @@ class Prompts {
 		SYSTEM;
 
 		$this->prompts->concept = <<<CONCEPT
-		Write a concept for a three panel comic strip. In this comic strip, Alpha Zeta will engage in the following premise: {p0}
+		Write a concept for a three panel comic strip. 
+		{p1}
+		In this comic strip, Alpha Zeta will engage in the following premise: {p0}
 		Your concept will be written as a single paragraph. 
 		Your concept will include a description of the overall story. 
 		Your concept will include a breakdown of each panel. 
@@ -84,7 +86,8 @@ class Prompts {
 					\"action\": \"\",
 					\"dialog\": \"\"
 				}
-			]
+			],
+			\"summary\": \"\"
 		}
 
 		The following is a description of each property value in the json object:
@@ -93,6 +96,7 @@ class Prompts {
 		`scene`: A description of the panel scene, including all characters present.
 		`dialog`: Words spoken by Alpha Zeta. He is the only character that speaks. Do not label the dialog with a character name. This can be an empty string if the character is not speaking.
 		`action`: A word, chosen from the following list, that best describes the action or appearance of Alpha Zeta in the panel: {p0}
+		`summary`: A short and complete summary of the comic strip. Include details about any people, places or things in the story. Limit to 500 letters.
 		SCRIPT;
 
 		$this->prompts->background = <<<BACKGROUND

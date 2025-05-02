@@ -46,10 +46,11 @@ export class ComicGeneratorApi {
 	}
 
 	async WriteConcept(premise, params) {
-		const { model } = params || {};
+		const { model, storyId } = params || {};
 		let result = await this.fetchApi("concept", {
 			query: premise,
 			model: model || this.defaultTextModel,
+			storyId
 		});
 
 		if (result && result.error == "ratelimit")
@@ -62,6 +63,7 @@ export class ComicGeneratorApi {
 			return { error: "Story concept not returned." };
 
 		this.premise = premise;
+		this.storyId = storyId;
 		if (!this.comic) this.comic = {};
 		this.comic.concept = result.json.concept;
 		this.comic.memory = result.json.memory || [];
@@ -108,6 +110,12 @@ export class ComicGeneratorApi {
 				];
 			}
 		}
+
+		if (result.json.summary) {
+			this.summary = result.json.summary;
+			delete result.json.summary;
+		}
+
 		this.premise = premise;
 		this.comic = {...this.comic, ...result.json};
 		// Add the credits to the script
@@ -359,6 +367,8 @@ export class ComicGeneratorApi {
 			prompt: this.premise,
 			title: this.comic.title,
 			script: JSON.stringify(scriptExport),
+			summary: this.summary,
+			storyId: this.storyId,
 			continuity: JSON.stringify(scriptExport.continuity),
 			memory: JSON.stringify(scriptExport.memory),
 			bkg1: this.GetPanelImageUrl(0, "background"),
