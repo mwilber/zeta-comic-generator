@@ -163,7 +163,7 @@ function GetContinuityByCategoryId($categoryId) {
 function GetStoriesByStoryId($storyId) {
 	$database = new Database();
 	$db = $database->getConnection();
-	$stmt = $db->prepare("SELECT `summary` FROM `comics` WHERE `storyId` = :storyId AND `archive` = 0 ORDER BY `timestamp` DESC");
+	$stmt = $db->prepare("SELECT `summary` FROM `comics` WHERE `storyId` = :storyId AND `archive` = 0 ORDER BY `timestamp` ASC");
 	$stmt->bindParam(":storyId", $storyId, PDO::PARAM_INT);
 	$stmt->execute();
 	$recordSet = $stmt->fetchAll(PDO::FETCH_ASSOC);

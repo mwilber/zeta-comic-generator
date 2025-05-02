@@ -34,7 +34,7 @@
 	// Validate the path
 	if(isset($path[2])) {
 		$controller = $path[2];
-		if($controller == 'detail' || $controller == 'gallery') {
+		if($controller == 'detail' || $controller == 'gallery' || $controller == 'stories') {
 			if(isset($path[3]) && $path[3]) {
 				$hash = $path[3];
 			} else {
@@ -79,6 +79,7 @@
 		case 'comic':
 		case 'detail':
 		case 'gallery':
+		case 'stories':
 		case 'save':
 		case 'imgproxy':
 		case 'bedrock':

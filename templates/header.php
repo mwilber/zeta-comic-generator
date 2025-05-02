@@ -11,6 +11,10 @@
 			<img class="burst" src="/assets/images/burst.svg" alt="Cartoon burst icon" />
 			<span class="cartoon-font">Gallery</span>
 		</a>
+		<a href="/stories" class="cartoon-button">
+			<img class="burst" src="/assets/images/burst.svg" alt="Cartoon burst icon" />
+			<span class="cartoon-font">Stories</span>
+		</a>
 		<a href="/about" class="cartoon-button">
 			<img class="burst" src="/assets/images/burst.svg" alt="Cartoon burst icon" />
 			<span class="cartoon-font">About</span>
