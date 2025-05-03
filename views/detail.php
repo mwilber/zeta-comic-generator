@@ -51,6 +51,8 @@
 <h2>Premise</h2>
 <div id="query" class="premise"></div>
 <h2>Composite</h2>
+<div id="story-title"></div>
+<div id="story-nav"></div>
 <div id="strip">
 	<!-- <div id="panel1" class="panel"></div>
 	<div id="panel2" class="panel"></div>

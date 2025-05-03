@@ -43,6 +43,24 @@ document.addEventListener("DOMContentLoaded", () => {
 				script.prompt = prompt;
 				document.getElementById("query").innerHTML = `${prompt}`;
 
+				if (data.story) {
+					document.getElementById("story-title").innerHTML = `<h3>${data.story.title} - Part ${data.story.currentIdx + 1}</h3>`;
+					const storyNav = document.getElementById("story-nav");
+					if (data.story.comics.length > 1) {
+						if (data.story.currentIdx > 0) {
+							storyNav.innerHTML += `<a href="/detail/${data.story.comics[data.story.currentIdx - 1].permalink}">Previous</a>`;
+						} else {
+							storyNav.innerHTML += `Previous`;
+						}
+						storyNav.innerHTML += ` | `;
+						if (data.story.currentIdx < data.story.comics.length - 1) {
+							storyNav.innerHTML += `<a href="/detail/${data.story.comics[data.story.currentIdx + 1].permalink}">Next</a>`;
+						} else {
+							storyNav.innerHTML += `Next`;
+						}
+					}
+				}
+
 				for (const [idx, panel] of script.panels.entries()) {
 					if (!Array.isArray(panel.dialog)) {
 						panel.dialog = [
