@@ -27,12 +27,18 @@
 	flex-direction: row;
 	align-items: center;
 	justify-content: space-between;
-	margin-bottom: 5px;
+	margin: 5px;
 }
 
 .story-controls #story-title {
 	font-size: 1.5em;
 	font-weight: bold;
+}
+
+.story-controls a {
+	text-decoration-thickness: .025em;
+  	text-underline-offset: 1.5px;
+	text-decoration-style: dotted;
 }
 
 .story-controls #story-nav {
@@ -42,6 +48,9 @@
 	justify-content: space-between;
 }
 
+.story-controls #story-nav a {
+	padding: 0 5px;
+}
 
 
 @keyframes blink-animation {

@@ -160,10 +160,21 @@ function GetContinuityByCategoryId($categoryId) {
 	return $recordSet;
 }
 
-function GetStoriesByStoryId($storyId) {
+function GetStory($storyId) {
 	$database = new Database();
 	$db = $database->getConnection();
-	$stmt = $db->prepare("SELECT `summary` FROM `comics` WHERE `storyId` = :storyId AND `archive` = 0 ORDER BY `timestamp` ASC");
+	$stmt = $db->prepare("SELECT * FROM `stories` WHERE `id` = :storyId");
+	$stmt->bindParam(":storyId", $storyId, PDO::PARAM_INT);
+	$stmt->execute();
+	$row = $stmt->fetch(PDO::FETCH_ASSOC);
+	return $row;
+}
+
+
+function GetComicsByStoryId($storyId) {
+	$database = new Database();
+	$db = $database->getConnection();
+	$stmt = $db->prepare("SELECT `summary` FROM `comics` WHERE `storyId` = :storyId AND `gallery` = 1 ORDER BY `timestamp` ASC");
 	$stmt->bindParam(":storyId", $storyId, PDO::PARAM_INT);
 	$stmt->execute();
 	$recordSet = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -272,20 +283,23 @@ function GetSystemPromptParams() {
 function GetStoryParam($storyId) {
 	$param = "";
 
-	$storiesRs = GetStoriesByStoryId($storyId);
-	$stories = [];
-	foreach ($storiesRs as $story) {
-		$stories[] = " - " . $story['summary'];
-	}
-	// If the length of the stories array is 0, then return an empty string
-	if (count($stories) == 0) {
-		return false;
+	$story = GetStory($storyId);
+
+	$comicsRs = GetComicsByStoryId($storyId);
+	$comics = [];
+	foreach ($comicsRs as $comic) {
+		$comics[] = " - " . $comic['summary'];
 	}
 
-	$param .= "\n";
-	$param .= "This comic strip is the continuation of a series of comic strips. A summary of the previous comic strips is: \n";
-	$param .= implode("\n", $stories);
-	$param .= "\n";
+	if ($story) {
+		$param .= "\n";
+		$param .= "This comic strip is the continuation of a series of comic strips titled: \"" . $story["title"] . "\".\n";
+		if (count($comics) > 0) {
+			$param .= "A summary of the previous comic strips is: \n";
+			$param .= implode("\n", $comics);
+			$param .= "\n";
+		}
+	}
 
 	return $param;
 }
