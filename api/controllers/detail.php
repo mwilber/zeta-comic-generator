@@ -102,6 +102,7 @@ if($output->storyId) {
 	$output->story = new stdClass();
 	if($result) {
 		$output->story->title = $result->title;
+		$output->story->permalink = $result->permalink;
 		$output->story->currentIdx = -1;
 		$output->story->comics = [];
 		$stmt = $db->prepare("SELECT `permalink`, `title` FROM `comics` WHERE `storyId` = :id ORDER BY `timestamp` ASC");

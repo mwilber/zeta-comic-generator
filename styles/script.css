@@ -90,6 +90,11 @@
 	font-weight: normal;
 }
 
+#script h2.story-title {
+	font-size: 1.25em;
+	margin-bottom: 0;
+}
+
 @media screen and (max-width: 550px) {
 	#script {
 		padding: 50px 10px;

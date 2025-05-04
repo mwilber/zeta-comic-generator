@@ -41,10 +41,16 @@ document.addEventListener("DOMContentLoaded", () => {
 				const { id, prompt, script, backgrounds, continuity } = data;
 
 				script.prompt = prompt;
+				script.story = data.story;
 				document.getElementById("query").innerHTML = `${prompt}`;
 
 				if (data.story) {
-					document.getElementById("story-title").innerHTML = `<h3>${data.story.title} - Part ${data.story.currentIdx + 1}</h3>`;
+					document.getElementById("story-title")
+						.innerHTML = `
+							<a href="/stories/${data.story.permalink}">
+								${data.story.title}
+							</a> - Part ${data.story.currentIdx + 1}
+						`;
 					const storyNav = document.getElementById("story-nav");
 					if (data.story.comics.length > 1) {
 						if (data.story.currentIdx > 0) {
