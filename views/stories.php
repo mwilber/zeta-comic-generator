@@ -19,7 +19,7 @@
 <?php
 if ($story):
 	try {
-		$stmt = $db->prepare("SELECT * FROM `comics` WHERE `storyId` = :storyId ORDER BY comics.timestamp DESC");
+		$stmt = $db->prepare("SELECT * FROM `comics` WHERE `storyId` = :storyId AND `gallery` = 1 ORDER BY comics.timestamp DESC");
 		$stmt->bindParam(':storyId', $story['id']);
 		$stmt->execute();
 
@@ -54,7 +54,8 @@ else:
 	try {
 		$stmt = $db->prepare("SELECT 
 			stories.*, 
-			comics.permalink AS comicPermalink
+			comics.permalink AS comicPermalink,
+			comics.gallery
 		FROM 
 			stories
 		LEFT JOIN (
@@ -63,11 +64,13 @@ else:
 			INNER JOIN (
 				SELECT storyId, MAX(timestamp) AS max_timestamp
 				FROM comics
+				WHERE gallery = 1
 				GROUP BY storyId
 			) c2 ON c1.storyId = c2.storyId AND c1.timestamp = c2.max_timestamp
 		) comics ON comics.storyId = stories.id
 		WHERE 
 			stories.active = 1
+			AND comics.gallery = 1
 		ORDER BY 
 			stories.timestamp DESC");
 		$stmt->execute();
@@ -81,7 +84,10 @@ else:
 	<h2>Stories</h2>
 	<div id="stories" role="region" aria-label="">
 		<ul class="story-list">
-		<?php foreach($stories as $story): ?>
+		<?php 
+			foreach($stories as $story): 
+				if (!isset($story['comicPermalink'])) continue;
+		?>
 			<li class="story-item">
 				<a href="/stories/<?= htmlspecialchars($story['permalink']) ?>">
 					<img src="<?php echo BUCKET_URL; ?>/thumbnails/thumb_<?= htmlspecialchars($story['comicPermalink']) ?>.png" alt="<?= htmlspecialchars($story['title']) ?>" width="100" />
