@@ -40,9 +40,13 @@ if ($story):
 					<li class="comic-item">
 						<a href="/detail/<?= htmlspecialchars($comic['permalink']) ?>">
 							<img src="<?php echo BUCKET_URL; ?>/thumbnails/thumb_<?= htmlspecialchars($comic['permalink']) ?>.png" alt="<?= htmlspecialchars($comic['title']) ?>" width="100" />
-							Part <?= $totalComics - $index ?>
-							<br/>
-							<?= htmlspecialchars($comic['title']) ?>
+							<span class="comic-title">
+								Part <?= $totalComics - $index ?>
+								<br/>
+								<?= htmlspecialchars($comic['title']) ?>
+								<br/>
+								<span class="comic-summary"><?= htmlspecialchars($comic['summary']) ?></span>
+							</span>
 						</a>
 					</li>
 				<?php endforeach; ?>

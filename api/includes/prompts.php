@@ -96,7 +96,7 @@ class Prompts {
 		`scene`: A description of the panel scene, including all characters present.
 		`dialog`: Words spoken by Alpha Zeta. He is the only character that speaks. Do not label the dialog with a character name. This can be an empty string if the character is not speaking.
 		`action`: A word, chosen from the following list, that best describes the action or appearance of Alpha Zeta in the panel: {p0}
-		`summary`: A short and complete summary of the comic strip. Include details about any people, places or things in the story. Limit to 500 letters.
+		`summary`: A short and complete summary of the comic strip. Include details about any people, places or things in the story. Limit to 200 letters.
 		SCRIPT;
 
 		$this->prompts->background = <<<BACKGROUND

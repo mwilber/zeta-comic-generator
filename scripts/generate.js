@@ -264,7 +264,7 @@ async function SaveStrip() {
 	}
 	console.log("Success:", data);
 	document.getElementById("save").removeAttribute("disabled");
-	// window.location.replace("/detail/" + data.response.permalink);
+	window.location.replace("/detail/" + data.response.permalink);
 }
 
 /**

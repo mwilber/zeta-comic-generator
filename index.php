@@ -96,6 +96,7 @@
 	<link rel="stylesheet" href="/styles/detail.css?v=<?php echo $version ?>">
 	<link rel="stylesheet" href="/styles/footer.css?v=<?php echo $version ?>">
 	<link rel="stylesheet" href="/styles/gallery.css?v=<?php echo $version ?>">
+	<link rel="stylesheet" href="/styles/stories.css?v=<?php echo $version ?>">
 	<link rel="stylesheet" href="/styles/generate.css?v=<?php echo $version ?>">
 	<link rel="stylesheet" href="/styles/home.css?v=<?php echo $version ?>">
 	<link rel="stylesheet" href="/styles/script.css?v=<?php echo $version ?>">

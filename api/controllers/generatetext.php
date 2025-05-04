@@ -294,6 +294,7 @@ function GetStoryParam($storyId) {
 	if ($story) {
 		$param .= "\n";
 		$param .= "This comic strip is the continuation of a series of comic strips titled: \"" . $story["title"] . "\".\n";
+		$param .= "Do not include the series title in the comic title.\n";
 		if (count($comics) > 0) {
 			$param .= "A summary of the previous comic strips is: \n";
 			$param .= implode("\n", $comics);

@@ -105,7 +105,7 @@ if($output->storyId) {
 		$output->story->permalink = $result->permalink;
 		$output->story->currentIdx = -1;
 		$output->story->comics = [];
-		$stmt = $db->prepare("SELECT `permalink`, `title` FROM `comics` WHERE `storyId` = :id ORDER BY `timestamp` ASC");
+		$stmt = $db->prepare("SELECT `permalink`, `title` FROM `comics` WHERE `storyId` = :id AND `gallery` = 1 ORDER BY `timestamp` ASC");
 		$stmt->bindParam(':id', $output->storyId, PDO::PARAM_INT);
 		$stmt->execute();
 		$result = $stmt->fetchAll(PDO::FETCH_ASSOC);
