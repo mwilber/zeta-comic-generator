@@ -144,6 +144,15 @@ function GetCharacterCategory() {
 	return $row;
 }
 
+function GetEventsCategory() {
+	$database = new Database();
+	$db = $database->getConnection();
+	$stmt = $db->prepare("SELECT * FROM `categories` WHERE `alias` = 'event'");
+	$stmt->execute();
+	$row = $stmt->fetch(PDO::FETCH_ASSOC);
+	return $row;
+}
+
 /**
  * Retrieves a set of continuity records from the database based on the provided category ID.
  *
@@ -268,14 +277,29 @@ function GetSystemPromptParams() {
 	if (isset($characterCategory['id'])) {
 		$continuityData = GetContinuityByCategoryId($characterCategory['id']);
 		foreach ($continuityData as $record) {
-			$characterContinuity[] = $record['description'];
+			$characterContinuity[] = $record['id'] . ": " . $record['description'];
+		}
+	}
+
+	$eventsCategory = GetEventsCategory();
+	$eventsContinuity = [];
+	if (isset($eventsCategory['id'])) {
+		$continuityData = GetContinuityByCategoryId($eventsCategory['id']);
+		foreach ($continuityData as $record) {
+			$eventsContinuity[] = $record['id'] . ": " . $record['description'];
 		}
 	}
 
 	// Set up the parameters for the prompt
-	$params[] = "\n" . $characterCategory['prompt'] . "\n - " . implode("\n - ", $characterContinuity) . "\n";
+
 	// Add the character actions, use the $GLOBALS array and convert each key name to a comma-separated string
 	$params[] = implode(", ", array_keys($GLOBALS['characterActions']));
+
+	// Add the character profile
+	$params[] = "\n" . $characterCategory['prompt'] . "\n " . implode("\n - ", $characterContinuity) . "\n";
+
+	// Add the events profile
+	$params[] = "\n" . $eventsCategory['prompt'] . "\n " . implode("\n - ", $eventsContinuity) . "\n";
 
 	return $params;
 }

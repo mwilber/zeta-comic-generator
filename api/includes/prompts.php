@@ -32,9 +32,6 @@ class Prompts {
 		Alpha Zeta is about 4 feet tall and lanky in build. Alpha has green skin, large black eyes and a large bald head. Alpha has two arms, each with three fingers and a thumb. Alpha has two legs and feet. The feet do not have any digits. Alpha generally does not wear clothing, but will occasionally wear a costume when specified in the list of actions.
 
 		{p1}
-
-		Additional information about past events that can be drawn from in writing stories. Only include this information if relevent to the story you are writing.
-
 		{p2}
 		SYSTEM;
 

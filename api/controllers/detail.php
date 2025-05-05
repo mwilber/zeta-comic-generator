@@ -142,11 +142,11 @@ try {
 if($output->script) $output->continuity = [];
 
 try {
-	$stmt = $db->prepare("SELECT `categories`.`prefix`, `continuity`.`categoryId`, `continuity`.`description`, `continuity`.`permalink` FROM `continuity`
+	$stmt = $db->prepare("SELECT `categories`.`prefix`, `categories`.`alias`, `categories`.`heading`, `continuity`.`categoryId`, `continuity`.`description`, `continuity`.`permalink` FROM `continuity`
 	JOIN `categories` ON `continuity`.`categoryId` = `categories`.`id`
 	JOIN `comic_continuity` ON comic_continuity.continuityId = continuity.id  
-	WHERE comic_continuity.comicId = :comicId 
-	ORDER BY `continuity`.`categoryId`"); // AND continuity.active = true");  
+	WHERE comic_continuity.comicId = :comicId AND continuity.active = true
+	ORDER BY `continuity`.`categoryId`"); // );  
 	$stmt->bindParam(':comicId', $output->id, PDO::PARAM_INT);
 	$stmt->execute();
 
