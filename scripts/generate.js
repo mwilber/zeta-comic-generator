@@ -201,40 +201,42 @@ async function GenerateStrip() {
 	const textModel = document.getElementById("script-model").value;
 	const imageModel = document.getElementById("image-model").value;
 	const imageStyle = document.getElementById("image-style").value;
+	const storyId = document.getElementById("story-id").value;
 
-	let concept = await api.WriteConcept(safeQuery, { model: conceptModel });
+	// Step 1: Generate the story concept
+	let concept = await api.WriteConcept(safeQuery, { model: conceptModel, storyId });
 	if (!concept || concept.error) {
 		SetStatus(concept.error == "ratelimit" ? concept.error : "error");
 		return;
 	}
-	// If textModels.length > 1 then we need to remove the first element
 
+	// Step 2: Generate the script
 	let script = await api.WriteScript(safeQuery, { model: textModel });
 	if (!script || script.error) {
 		SetStatus(script.error == "ratelimit" ? script.error : "error");
 		return;
 	}
-	
-	// let action = await api.WriteAction({ model: textModel });
-	// if (!action || action.error) {
-	// 	SetStatus("error");
-	// 	return;
-	// }
 
+	// Step 3: Generate the background descriptions
 	let background = await api.WriteBackground({ model: textModel });
 	if (!background || background.error) {
 		SetStatus("error");
 		return;
 	}
 
+	// Step 4: Render the background images
 	let image = await api.DrawBackgrounds({ model: imageModel, style: imageStyle });
 	if (!image || image.error) {
 		SetStatus("error");
 		return;
 	}
 
+	// Step 5: Add the character images
 	await api.DrawAction();
-	api.onUpdate(api.comic, api.PercentComplete());
+	// Note: drawAction does not call onUpdate, need to call manually if this is the last step. No longer needed because it is covered in continuity step now.
+
+	// Step 6: Generate new story continuity
+	await api.WriteContinuity({ model: textModel });
 
 	//TODO: Check the renderer progress. Handle error if <100 at this point.
 
@@ -261,6 +263,7 @@ async function SaveStrip() {
 		alert("There was a problem saving.");
 	}
 	console.log("Success:", data);
+	document.getElementById("save").removeAttribute("disabled");
 	window.location.replace("/detail/" + data.response.permalink);
 }
 

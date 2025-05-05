@@ -32,6 +32,7 @@ $workflowId = POSTval("workflowId", "");
 $actionId = $controller;
 $messages = GetMessages();
 $query = POSTval("query", "");
+$storyId = POSTval("storyId", "");
 if ($query == "" && isset($_GET['query'])) {
 	$query = $_GET['query'];
 }
@@ -44,6 +45,10 @@ switch ($actionId) {
 		$paramVal = $query;
 		if ($paramVal) {
 			$params[] = addPeriod($paramVal);
+		}
+		$storyParam = GetStoryParam($storyId);
+		if ($storyParam) {
+			$params[] = $storyParam;
 		}
 		break;
 	case "script":
@@ -139,6 +144,15 @@ function GetCharacterCategory() {
 	return $row;
 }
 
+function GetEventsCategory() {
+	$database = new Database();
+	$db = $database->getConnection();
+	$stmt = $db->prepare("SELECT * FROM `categories` WHERE `alias` = 'event'");
+	$stmt->execute();
+	$row = $stmt->fetch(PDO::FETCH_ASSOC);
+	return $row;
+}
+
 /**
  * Retrieves a set of continuity records from the database based on the provided category ID.
  *
@@ -150,6 +164,27 @@ function GetContinuityByCategoryId($categoryId) {
 	$db = $database->getConnection();
 	$stmt = $db->prepare("SELECT * FROM `continuity` WHERE `categoryId` = :categoryId AND `active` = true");
 	$stmt->bindParam(":categoryId", $categoryId, PDO::PARAM_INT);
+	$stmt->execute();
+	$recordSet = $stmt->fetchAll(PDO::FETCH_ASSOC);
+	return $recordSet;
+}
+
+function GetStory($storyId) {
+	$database = new Database();
+	$db = $database->getConnection();
+	$stmt = $db->prepare("SELECT * FROM `stories` WHERE `id` = :storyId");
+	$stmt->bindParam(":storyId", $storyId, PDO::PARAM_INT);
+	$stmt->execute();
+	$row = $stmt->fetch(PDO::FETCH_ASSOC);
+	return $row;
+}
+
+
+function GetComicsByStoryId($storyId) {
+	$database = new Database();
+	$db = $database->getConnection();
+	$stmt = $db->prepare("SELECT `summary` FROM `comics` WHERE `storyId` = :storyId AND `gallery` = 1 ORDER BY `timestamp` ASC");
+	$stmt->bindParam(":storyId", $storyId, PDO::PARAM_INT);
 	$stmt->execute();
 	$recordSet = $stmt->fetchAll(PDO::FETCH_ASSOC);
 	return $recordSet;
@@ -226,9 +261,6 @@ function GetModel($modelAlias) {
 		case "deepseekr":
 			$model = new ModelDeepSeekR();
 			break;
-		case "grok":
-			$model = new ModelGrok();
-			break;
 	}
 	return $model;
 }
@@ -245,16 +277,56 @@ function GetSystemPromptParams() {
 	if (isset($characterCategory['id'])) {
 		$continuityData = GetContinuityByCategoryId($characterCategory['id']);
 		foreach ($continuityData as $record) {
-			$characterContinuity[] = $record['description'];
+			$characterContinuity[] = $record['id'] . ": " . $record['description'];
+		}
+	}
+
+	$eventsCategory = GetEventsCategory();
+	$eventsContinuity = [];
+	if (isset($eventsCategory['id'])) {
+		$continuityData = GetContinuityByCategoryId($eventsCategory['id']);
+		foreach ($continuityData as $record) {
+			$eventsContinuity[] = $record['id'] . ": " . $record['description'];
 		}
 	}
 
 	// Set up the parameters for the prompt
-	$params[] = "\n" . $characterCategory['prompt'] . "\n - " . implode("\n - ", $characterContinuity) . "\n";
+
 	// Add the character actions, use the $GLOBALS array and convert each key name to a comma-separated string
 	$params[] = implode(", ", array_keys($GLOBALS['characterActions']));
 
+	// Add the character profile
+	$params[] = "\n" . $characterCategory['prompt'] . "\n " . implode("\n - ", $characterContinuity) . "\n";
+
+	// Add the events profile
+	$params[] = "\n" . $eventsCategory['prompt'] . "\n " . implode("\n - ", $eventsContinuity) . "\n";
+
 	return $params;
+}
+
+function GetStoryParam($storyId) {
+	$param = "";
+
+	$story = GetStory($storyId);
+
+	$comicsRs = GetComicsByStoryId($storyId);
+	$comics = [];
+	foreach ($comicsRs as $comic) {
+		$comics[] = " - " . $comic['summary'];
+	}
+
+	if ($story) {
+		$param .= "\n";
+		$param .= "This comic strip is the continuation of a series of comic strips titled: \"" . $story["title"] . "\".\n";
+		$param .= "Do not include the series title in the comic title.\n";
+		if (count($comics) > 0) {
+			$param .= "A summary of the previous comic strips is: \n";
+			$param .= implode("\n", $comics);
+			$param .= "\n";
+		}
+	}
+
+	return $param;
 }
 
 function addPeriod($str) {

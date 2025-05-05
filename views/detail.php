@@ -51,6 +51,10 @@
 <h2>Premise</h2>
 <div id="query" class="premise"></div>
 <h2>Composite</h2>
+<div class="story-controls">
+	<div id="story-title"></div>
+	<div id="story-nav"></div>
+</div>
 <div id="strip">
 	<!-- <div id="panel1" class="panel"></div>
 	<div id="panel2" class="panel"></div>
@@ -69,10 +73,9 @@
 	</div>
 </div>
 <div id="output"></div>
-<!--
-<h2>Continuity</h2>
-<ul id="continuity"></ul>
--->
+
+<div id="continuity"></div>
+
 <h2>Script</h2>
 <ul id="script"></ul>
 
