@@ -1,7 +1,13 @@
 <script>
 	const comicId = '<?php echo $path[2] ?>';
 	const characterActions = <?php echo json_encode($GLOBALS['characterActions']); ?>;
-	<?php if($isGemini) echo "if(localStorage) localStorage.setItem('script-model-select', 'gem');"; ?>
+	<?php if($isGemini)
+		echo "if(localStorage) {";
+		echo "localStorage.setItem('story-model-select', 'gemthink');";
+		echo "localStorage.setItem('script-model-select', 'gem');";
+		echo "localStorage.setItem('image-model-select', 'imagen');";
+		echo "}";
+	?>
 </script>
 <div id="sharedialog" class="dialog-wrapper" aria-modal="true" role="dialog" aria-hidden="true" aria-labelledby="sharedialog">
 	<div class="dialog">
@@ -51,6 +57,10 @@
 <h2>Premise</h2>
 <div id="query" class="premise"></div>
 <h2>Composite</h2>
+<div class="story-controls">
+	<div id="story-title"></div>
+	<div id="story-nav"></div>
+</div>
 <div id="strip">
 	<!-- <div id="panel1" class="panel"></div>
 	<div id="panel2" class="panel"></div>
@@ -69,10 +79,9 @@
 	</div>
 </div>
 <div id="output"></div>
-<!--
-<h2>Continuity</h2>
-<ul id="continuity"></ul>
--->
+
+<div id="continuity"></div>
+
 <h2>Script</h2>
 <ul id="script"></ul>
 
