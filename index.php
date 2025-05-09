@@ -117,7 +117,7 @@
 				// Handle gemini path. Display the gemini demo comic.
 				$isGemini = true;
 				$path[1] = 'detail';
-				$path[2] = '0d7de1aca9299fe63f3e0041f02638a3';
+				$path[2] = '36a16a2505369e0c922b6ea7a23a56d2';
 			case 'about':
 			case 'detail':
 			case 'gallery':
