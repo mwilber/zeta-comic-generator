@@ -29,7 +29,10 @@ export class ComicGeneratorApi {
 	ClearComicData() {
 		this.comic = null;
 		this.premise = null;
+		this.workflowId = null;
+		this.messages = [];
 		this.credits = {
+			concept: "",
 			script: "",
 			image: "",
 			background: "",
@@ -40,6 +43,33 @@ export class ComicGeneratorApi {
 	async GetMetrics() {
 		const result = await this.fetchApi("metrics", {});
 		return result ? result.json : {};
+	}
+
+	async WriteConcept(premise, params) {
+		const { model } = params || {};
+		let result = await this.fetchApi("concept", {
+			query: premise,
+			model: model || this.defaultTextModel,
+		});
+
+		if (result && result.error == "ratelimit")
+			return { error: "ratelimit" };
+		if (
+			!result ||
+			!result.json ||
+			!result.json.concept
+		)
+			return { error: "Story concept not returned." };
+
+		this.premise = premise;
+		if (!this.comic) this.comic = {};
+		this.comic.concept = result.json.concept;
+		// Add the credits to the script
+		this.comic.credits = this.credits;
+		this.credits.concept = result.model;
+
+		this.onUpdate(this.comic, this.PercentComplete());
+		return this.comic;
 	}
 
 	/**
@@ -78,7 +108,7 @@ export class ComicGeneratorApi {
 			}
 		}
 		this.premise = premise;
-		this.comic = result.json;
+		this.comic = {...this.comic, ...result.json};
 		// Add the credits to the script
 		this.comic.credits = this.credits;
 		this.credits.script = result.model;
@@ -301,6 +331,7 @@ export class ComicGeneratorApi {
 	 */
 	async SaveStrip() {
 		let scriptExport = JSON.parse(JSON.stringify(this.comic));
+		console.log("🚀 ~ ComicGeneratorApi ~ SaveStrip ~ scriptExport:", scriptExport)
 		// Clear out images, they'll be saved seperately.
 		for (let panel of scriptExport.panels) {
 			panel.images = [];
@@ -310,6 +341,8 @@ export class ComicGeneratorApi {
 			prompt: this.premise,
 			title: this.comic.title,
 			script: JSON.stringify(scriptExport),
+			memory: JSON.stringify(scriptExport.memory),
+			newmemory: JSON.stringify(scriptExport.newmemory),
 			bkg1: this.GetPanelImageUrl(0, "background"),
 			bkg2: this.GetPanelImageUrl(1, "background"),
 			bkg3: this.GetPanelImageUrl(2, "background"),
@@ -334,17 +367,18 @@ export class ComicGeneratorApi {
 	 */
 	PercentComplete() {
 		let progress = 0;
-		if (!this.comic || !this.comic.panels || !this.comic.panels.length)
-			return progress;
 
-		progress += 1;
-		// Each panel has a total progress of 33
-		for (const panel of this.comic.panels) {
-			if (panel.scene) progress += 5;
-			if (panel.images && panel.images.length) progress += 15;
-			if (panel.dialog && panel.dialog.length) progress += 5;
-			if (panel.background) progress += 5;
-			if (panel.action) progress += 3;
+		if (this.comic && this.comic.concept) progress += 10;
+
+		if (this.comic.panels) {
+			// Each panel has a total progress of 30
+			for (const panel of this.comic.panels) {
+				if (panel.scene) progress += 5;
+				if (panel.images && panel.images.length) progress += 15;
+				if (panel.dialog && panel.dialog.length) progress += 5;
+				if (panel.background) progress += 5;
+				//if (panel.action) progress += 3;
+			}
 		}
 
 		return progress;
@@ -365,6 +399,20 @@ export class ComicGeneratorApi {
 			formData.append(key, data[key]);
 		});
 
+		// If the workflowId is not set, generate a new one
+		if (!this.workflowId) {
+			this.workflowId = await crypto.subtle
+				.digest('SHA-256', new TextEncoder().encode(action + Math.random()))
+				.then(hash => 
+					Array.from(new Uint8Array(hash))
+						.map(b => b.toString(16).padStart(2, '0'))
+						.join('')
+				);
+		}
+
+		formData.append("messages", JSON.stringify(this.messages));
+		formData.append("workflowId", this.workflowId);
+
 		let retry = 3;
 		// Sometimes GPT returns a null, retry up to 2 times to get a usable result.
 		while (retry > 0) {
@@ -379,6 +427,9 @@ export class ComicGeneratorApi {
 					throw data;
 				} else {
 					console.log("ComicGenerator: API response", data);
+
+					// Store the messages for the next request
+					this.messages = data.messages;
 					return data;
 				}
 			} catch (error) {

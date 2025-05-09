@@ -122,7 +122,7 @@ export class ComicRenderer {
 		}
 
 		if (!script.panels || !script.panels.length) {
-			console.error("ComicRenderer: script.panels missing.", this.script);
+			console.warn("ComicRenderer: script.panels missing.", this.script);
 			return false;
 		}
 

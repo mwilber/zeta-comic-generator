@@ -1,11 +1,14 @@
 <?php
-	// error_reporting(E_ALL);
-	// ini_set('display_errors', 1);
+	error_reporting(E_ALL);
+	ini_set('display_errors', 1);
+
+    require __DIR__ . '/api/includes/prompts.php';
+	require __DIR__ . '/api/includes/characteractions.php';
 
 	$request = $_SERVER['REQUEST_URI'];
 	//echo $request;
 
-	$version = "2.0.2";
+	$version = "3.1.0";
 	$meta = new stdClass();
 	$meta->siteTitle = "Zeta Comic Generator";
 	$meta->title = "Zeta Comic Generator";
@@ -89,7 +92,14 @@
 	<meta name="twitter:image" content="<?php echo $meta->image; ?>">
 	<meta name="twitter:image:alt" content="<?php echo $meta->imageDescription; ?>">
 
-	<link rel="stylesheet" href="/style.css?v=<?php echo $version ?>">
+	<link rel="stylesheet" href="/styles/main.css?v=<?php echo $version ?>">
+	<link rel="stylesheet" href="/styles/detail.css?v=<?php echo $version ?>">
+	<link rel="stylesheet" href="/styles/footer.css?v=<?php echo $version ?>">
+	<link rel="stylesheet" href="/styles/gallery.css?v=<?php echo $version ?>">
+	<link rel="stylesheet" href="/styles/generate.css?v=<?php echo $version ?>">
+	<link rel="stylesheet" href="/styles/home.css?v=<?php echo $version ?>">
+	<link rel="stylesheet" href="/styles/script.css?v=<?php echo $version ?>">
+	<link rel="stylesheet" href="/styles/strip.css?v=<?php echo $version ?>">
   </head>
   <body class="<?php echo $path[1] ?>" data-status="ready">
 	<div class="halftone"></div>
@@ -107,12 +117,13 @@
 				// Handle gemini path. Display the gemini demo comic.
 				$isGemini = true;
 				$path[1] = 'detail';
-				$path[2] = '0d7de1aca9299fe63f3e0041f02638a3';
+				$path[2] = '36a16a2505369e0c922b6ea7a23a56d2';
 			case 'about':
             case 'detail':
             case 'edit':
 			case 'gallery':
 			case 'generate':
+			case 'debugger':
 				require __DIR__ . '/views/'.$path[1].'.php';
 				break;
 		

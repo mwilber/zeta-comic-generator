@@ -18,7 +18,9 @@
 		}
 	}
  */
-$modelId = POSTval("model", "sdf");
+$modelId = isset($_GET['model']) ? $_GET['model'] : POSTval("model", "oai");
+$workflowId = POSTval("workflowId", "");
+$actionId = $controller;
 
 $query = $_POST["query"];
 if(!$query){
@@ -55,6 +57,9 @@ if ($hitCount >= RATE_LIMIT) {
 		case "sdf":
 			$model = new ModelStableDiffusion();
 			break;
+		case "imagen":
+			$model = new ModelImagen();
+			break;
 	}
 	if (!$model) {
 		$output->error = "Invalid model id";
@@ -62,7 +67,7 @@ if ($hitCount >= RATE_LIMIT) {
 		// Record the model that was used
 		$output->model = $model->modelName;
 	
-		$response = $model->sendPrompt($output->prompt);
+		$response = $model->sendPayload($output->prompt, $workflowId, $actionId, $output->prompt);
 		$output->error = $response->error;
 	
 		$output->data = $response->data;
