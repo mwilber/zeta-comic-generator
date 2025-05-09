@@ -78,13 +78,12 @@
 		case 'comic':
 		case 'detail':
 		case 'gallery':
-        case 'image':
+		case 'save':
 		case 'imgproxy':
 		case 'bedrock':
-		case 'save':
+		case 'metrics':
 		case 'update':
 		case 'thumbnail':
-		case 'metrics':
 			require __DIR__ . '/controllers/'.$controller.'.php';
 			break;
 		// Comic Generation API endpoints

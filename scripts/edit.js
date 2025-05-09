@@ -131,6 +131,10 @@ function InitEditor() {
 										<tr><td>Alt Action</td> <td><input name="script-panel-${idx}-altAction" value="${panel.altAction}"/></td></tr>
 										<tr><td>Dialog</td> <td><input name="script-panel-${idx}-dialog" value="${panel.dialog[0].text}"/></td></tr>
 										<tr><td>Background</td> <td><textarea name="script-panel-${idx}-background">${panel.background}</textarea></td></tr>
+										<tr><td></td><td>
+											<img id="script-panel-${idx}-new-background-image" src="${data.backgrounds[idx]}" style="width: 100%;"/>
+											<button onclick="regenerateBackground(${idx})">Regenerate Background</button>
+										</td></tr>
 										<tr><td>Background Url</td> <td><input name="script-panel-${idx}-background_url" value="${panel.background_url}"/></td></tr>
 										<tr><td>Stored File</td> <td><a href="${data.backgrounds[idx]}" target="_blank">${data.backgrounds[idx]}</a></td></tr>
 										<tr><td>Edit Command</td> <td>${bkgId} <button onclick="navigator.clipboard.writeText('${bkgId}')">copy</button></td></tr>
@@ -162,6 +166,30 @@ function InitEditor() {
 		SetStatus('error');
 	}
 }
+
+function regenerateBackground(idx) {
+	const panelBackgroundDescription = document.querySelector("[name=script-panel-" + idx + "-background]");
+	console.log("🚀 ~ regenerateBackground ~ panelBackgroundDescription:", panelBackgroundDescription.value)
+	const newBackgroundImg = document.querySelector("#script-panel-" + idx + "-new-background-image");
+
+	const formData = new FormData();
+		// Object.keys(data).forEach((key) => {
+		formData.append("model", "oai");
+		formData.append("query", panelBackgroundDescription.value);
+		formData.append("style", "");
+	
+	fetch('/api/image/?c='+(Math.floor(Math.random()*1000000)), {
+		method: 'POST',
+		body: formData
+	})
+		.then(response => response.json())
+		.then(data => {
+			console.log("🚀 ~ regenerateBackground ~ data:", data)
+			newBackgroundImg.src = data.json.url;
+		})
+		.catch(error => console.error('Error:', error));
+}
+window.regenerateBackground = regenerateBackground;
 
 function SaveStrip(saveObj){
 	if(!saveObj) return;
