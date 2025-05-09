@@ -1,7 +1,13 @@
 <script>
 	const comicId = '<?php echo $path[2] ?>';
 	const characterActions = <?php echo json_encode($GLOBALS['characterActions']); ?>;
-	<?php if($isGemini) echo "if(localStorage) localStorage.setItem('script-model-select', 'gem');"; ?>
+	<?php if($isGemini): ?>
+		if(localStorage) {
+			localStorage.setItem('story-model-select', 'gemthink');
+			localStorage.setItem('script-model-select', 'gem');
+			localStorage.setItem('image-model-select', 'imagen');
+		}
+	<?php endif; ?>
 </script>
 <div id="sharedialog" class="dialog-wrapper" aria-modal="true" role="dialog" aria-hidden="true" aria-labelledby="sharedialog">
 	<div class="dialog">
