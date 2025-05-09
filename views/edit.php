@@ -1,5 +1,6 @@
 <script>
 	const comicId = '<?php echo $path[2] ?>';
+	const characterActions = <?php echo json_encode($GLOBALS['characterActions']); ?>;
 </script>
 <div id="sharedialog" class="dialog-wrapper">
 	<div class="dialog">
