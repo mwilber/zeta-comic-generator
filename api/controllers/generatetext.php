@@ -319,8 +319,12 @@ function GetStoryParam($storyId) {
 		$param .= "\n";
 		$param .= "This comic strip is the continuation of a series of comic strips titled: \"" . $story["title"] . "\".\n";
 		$param .= "Do not include the series title in the comic title.\n";
+		// If the story premise field is not empty, add it to the param
+		if ($story['premise']) {
+			$param .= "The premise of the series is: " . $story['premise'] . "\n";
+		}
 		if (count($comics) > 0) {
-			$param .= "A summary of the previous comic strips is: \n";
+			$param .= "The following is a summary of each of the previous comic strips in this series: \n";
 			$param .= implode("\n", $comics);
 			$param .= "\n";
 		}
