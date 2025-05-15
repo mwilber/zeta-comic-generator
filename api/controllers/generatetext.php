@@ -45,11 +45,10 @@ switch ($actionId) {
 		$paramVal = $query;
 		if ($paramVal) {
 			$params[] = addPeriod($paramVal);
+		} else {
+			$params[] = "";
 		}
-		$storyParam = GetStoryParam($storyId);
-		if ($storyParam) {
-			$params[] = $storyParam;
-		}
+		$params[] = GetStoryParam($storyId);
 		break;
 	case "script":
 		// Add the character actions, use the $GLOBALS array and convert each key name to a comma-separated string

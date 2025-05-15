@@ -95,7 +95,11 @@ else:
 			<li class="story-item">
 				<a href="/stories/<?= htmlspecialchars($story['permalink']) ?>">
 					<img src="<?php echo BUCKET_URL; ?>/thumbnails/thumb_<?= htmlspecialchars($story['comicPermalink']) ?>.png" alt="<?= htmlspecialchars($story['title']) ?>" width="100" />
-					<?= htmlspecialchars($story['title']) ?>
+					<span class="comic-title">
+						<?= htmlspecialchars($story['title']) ?>
+						<br/>
+						<span class="comic-summary"><?= htmlspecialchars($story['premise']) ?></span>
+					</span>
 				</a>
 			</li>
 		<?php endforeach; ?>
