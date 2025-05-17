@@ -32,7 +32,7 @@ $workflowId = POSTval("workflowId", "");
 $actionId = $controller;
 $messages = GetMessages();
 $query = POSTval("query", "");
-$storyId = POSTval("storyId", "");
+$seriesId = POSTval("seriesId", "");
 if ($query == "" && isset($_GET['query'])) {
 	$query = $_GET['query'];
 }
@@ -48,7 +48,7 @@ switch ($actionId) {
 		} else {
 			$params[] = "";
 		}
-		$params[] = GetStoryParam($storyId);
+		$params[] = GetSeriesParam($seriesId);
 		break;
 	case "script":
 		// Add the character actions, use the $GLOBALS array and convert each key name to a comma-separated string
@@ -168,22 +168,22 @@ function GetContinuityByCategoryId($categoryId) {
 	return $recordSet;
 }
 
-function GetStory($storyId) {
+function GetSeries($seriesId) {
 	$database = new Database();
 	$db = $database->getConnection();
-	$stmt = $db->prepare("SELECT * FROM `stories` WHERE `id` = :storyId");
-	$stmt->bindParam(":storyId", $storyId, PDO::PARAM_INT);
+	$stmt = $db->prepare("SELECT * FROM `series` WHERE `id` = :seriesId");
+	$stmt->bindParam(":seriesId", $seriesId, PDO::PARAM_INT);
 	$stmt->execute();
 	$row = $stmt->fetch(PDO::FETCH_ASSOC);
 	return $row;
 }
 
 
-function GetComicsByStoryId($storyId) {
+function GetComicsBySeriesId($seriesId) {
 	$database = new Database();
 	$db = $database->getConnection();
-	$stmt = $db->prepare("SELECT `summary` FROM `comics` WHERE `storyId` = :storyId AND `gallery` = 1 ORDER BY `timestamp` ASC");
-	$stmt->bindParam(":storyId", $storyId, PDO::PARAM_INT);
+	$stmt = $db->prepare("SELECT `summary` FROM `comics` WHERE `seriesId` = :seriesId AND `gallery` = 1 ORDER BY `timestamp` ASC");
+	$stmt->bindParam(":seriesId", $seriesId, PDO::PARAM_INT);
 	$stmt->execute();
 	$recordSet = $stmt->fetchAll(PDO::FETCH_ASSOC);
 	return $recordSet;
@@ -303,24 +303,24 @@ function GetSystemPromptParams() {
 	return $params;
 }
 
-function GetStoryParam($storyId) {
+function GetSeriesParam($seriesId) {
 	$param = "";
 
-	$story = GetStory($storyId);
+	$series = GetSeries($seriesId);
 
-	$comicsRs = GetComicsByStoryId($storyId);
+	$comicsRs = GetComicsBySeriesId($seriesId);
 	$comics = [];
 	foreach ($comicsRs as $comic) {
 		$comics[] = " - " . $comic['summary'];
 	}
 
-	if ($story) {
+	if ($series) {
 		$param .= "\n";
-		$param .= "This comic strip is the continuation of a series of comic strips titled: \"" . $story["title"] . "\".\n";
+		$param .= "This comic strip is the continuation of a series of comic strips titled: \"" . $series["title"] . "\".\n";
 		$param .= "Do not include the series title in the comic title.\n";
-		// If the story premise field is not empty, add it to the param
-		if ($story['premise']) {
-			$param .= "The premise of the series is: " . $story['premise'] . "\n";
+		// If the series premise field is not empty, add it to the param
+		if ($series['premise']) {
+			$param .= "The premise of the series is: " . $series['premise'] . "\n";
 		}
 		if (count($comics) > 0) {
 			$param .= "The following is a summary of each of the previous comic strips in this series: \n";

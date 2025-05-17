@@ -41,28 +41,28 @@ document.addEventListener("DOMContentLoaded", () => {
 				const { id, prompt, script, backgrounds, continuity } = data;
 
 				script.prompt = prompt;
-				script.story = data.story;
+				script.series = data.series;
 				document.getElementById("query").innerHTML = `${prompt}`;
 
-				if (data.story) {
+				if (data.series) {
 					document.getElementById("story-title")
 						.innerHTML = `
-							<a href="/stories/${data.story.permalink}">
-								${data.story.title}
-							</a> - Part ${data.story.currentIdx + 1}
+							<a href="/stories/${data.series.permalink}">
+								${data.series.title}
+							</a> - Part ${data.series.currentIdx + 1}
 						`;
-					const storyNav = document.getElementById("story-nav");
-					if (data.story.comics.length > 1) {
-						if (data.story.currentIdx > 0) {
-							storyNav.innerHTML += `<a href="/detail/${data.story.comics[data.story.currentIdx - 1].permalink}">Previous</a>`;
+					const seriesNav = document.getElementById("story-nav");
+					if (data.series.comics.length > 1) {
+						if (data.series.currentIdx > 0) {
+							seriesNav.innerHTML += `<a href="/detail/${data.series.comics[data.series.currentIdx - 1].permalink}">Previous</a>`;
 						} else {
-							storyNav.innerHTML += `Previous`;
+							seriesNav.innerHTML += `Previous`;
 						}
-						storyNav.innerHTML += ` | `;
-						if (data.story.currentIdx < data.story.comics.length - 1) {
-							storyNav.innerHTML += `<a href="/detail/${data.story.comics[data.story.currentIdx + 1].permalink}">Next</a>`;
+						seriesNav.innerHTML += ` | `;
+						if (data.series.currentIdx < data.series.comics.length - 1) {
+							seriesNav.innerHTML += `<a href="/detail/${data.series.comics[data.series.currentIdx + 1].permalink}">Next</a>`;
 						} else {
-							storyNav.innerHTML += `Next`;
+							seriesNav.innerHTML += `Next`;
 						}
 					}
 				}

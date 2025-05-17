@@ -96,7 +96,7 @@
 	<link rel="stylesheet" href="/styles/detail.css?v=<?php echo $version ?>">
 	<link rel="stylesheet" href="/styles/footer.css?v=<?php echo $version ?>">
 	<link rel="stylesheet" href="/styles/gallery.css?v=<?php echo $version ?>">
-	<link rel="stylesheet" href="/styles/stories.css?v=<?php echo $version ?>">
+	<link rel="stylesheet" href="/styles/series.css?v=<?php echo $version ?>">
 	<link rel="stylesheet" href="/styles/generate.css?v=<?php echo $version ?>">
 	<link rel="stylesheet" href="/styles/home.css?v=<?php echo $version ?>">
 	<link rel="stylesheet" href="/styles/script.css?v=<?php echo $version ?>">
@@ -123,7 +123,7 @@
 			case 'detail':
 			case 'gallery':
 			case 'generate':
-			case 'stories':
+			case 'series':
 			case 'debugger':
 				require __DIR__ . '/views/'.$path[1].'.php';
 				break;

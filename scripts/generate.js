@@ -201,10 +201,10 @@ async function GenerateStrip() {
 	const textModel = document.getElementById("script-model").value;
 	const imageModel = document.getElementById("image-model").value;
 	const imageStyle = document.getElementById("image-style").value;
-	const storyId = document.getElementById("story-id").value;
+	const seriesId = document.getElementById("series-id").value;
 
 	// Step 1: Generate the story concept
-	let concept = await api.WriteConcept(safeQuery, { model: conceptModel, storyId });
+	let concept = await api.WriteConcept(safeQuery, { model: conceptModel, seriesId });
 	if (!concept || concept.error) {
 		SetStatus(concept.error == "ratelimit" ? concept.error : "error");
 		return;

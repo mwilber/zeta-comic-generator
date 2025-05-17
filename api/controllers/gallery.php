@@ -70,7 +70,7 @@ try {
 		$stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
 		$stmt->bindParam(':offset', $offset, PDO::PARAM_INT);
 	} else {
-		$stmt = $db->prepare("SELECT * FROM `comics` WHERE `gallery` = 1 AND `storyId` = 0 ORDER BY timestamp DESC LIMIT :limit OFFSET :offset");
+		$stmt = $db->prepare("SELECT * FROM `comics` WHERE `gallery` = 1 AND `seriesId` = 0 ORDER BY timestamp DESC LIMIT :limit OFFSET :offset");
 	}
 	$stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
 	$stmt->bindParam(':offset', $offset, PDO::PARAM_INT);

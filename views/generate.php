@@ -31,8 +31,8 @@
 		<div id="input">
 			<div class="row selections">
 				<label>
-					Story ID
-					<input id="story-id" type="text" value="3" />
+					Series ID
+					<input id="series-id" type="text" value="3" />
 				</label>
 				<label> 
 					Story Model

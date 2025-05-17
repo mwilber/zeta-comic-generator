@@ -1,15 +1,15 @@
 
-#stories ul {
+#series ul {
 	padding: 0;
 }
 
-#stories ul li {
+#series ul li {
 	list-style: none;
 	margin: 0;
 	margin-bottom: 25px;
 }
 
-#stories ul li a{
+#series ul li a{
 	display: flex;
 	flex-direction: row;
 	align-items: end;
@@ -17,16 +17,16 @@
 	text-decoration: none;
 }
 
-#stories ul li a img {
+#series ul li a img {
 	margin-right: 10px;
 }
 
-#stories ul li a span.comic-title {
+#series ul li a span.comic-title {
 	font-size: 1.2em;
 	font-weight: bold;
 }
 
-#stories ul li a span.comic-summary {
+#series ul li a span.comic-summary {
 	font-size: 0.8em;
 	color: #666;
 }

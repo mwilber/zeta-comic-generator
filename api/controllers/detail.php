@@ -86,7 +86,7 @@ try {
 		$output->id = $result->id;
 		$output->prompt = stripslashes($result->prompt);
 		$output->script = json_decode($result->json);
-		$output->storyId = $result->storyId;
+		$output->seriesId = $result->seriesId;
 	} else {
 		$output->error = "No record found with ID: $id";
 	}
@@ -94,25 +94,25 @@ try {
 	$output->error = "ERROR: Could not execute the query. " . $e->getMessage();
 }
 
-if($output->storyId) {
-	$stmt = $db->prepare("SELECT * FROM `stories` WHERE `id` = :id");
-	$stmt->bindParam(':id', $output->storyId, PDO::PARAM_INT);
+if($output->seriesId) {
+	$stmt = $db->prepare("SELECT * FROM `series` WHERE `id` = :id");
+	$stmt->bindParam(':id', $output->seriesId, PDO::PARAM_INT);
 	$stmt->execute();
 	$result = $stmt->fetch(PDO::FETCH_OBJ);
-	$output->story = new stdClass();
+	$output->series = new stdClass();
 	if($result) {
-		$output->story->title = $result->title;
-		$output->story->permalink = $result->permalink;
-		$output->story->currentIdx = -1;
-		$output->story->comics = [];
-		$stmt = $db->prepare("SELECT `permalink`, `title` FROM `comics` WHERE `storyId` = :id AND `gallery` = 1 ORDER BY `timestamp` ASC");
-		$stmt->bindParam(':id', $output->storyId, PDO::PARAM_INT);
+		$output->series->title = $result->title;
+		$output->series->permalink = $result->permalink;
+		$output->series->currentIdx = -1;
+		$output->series->comics = [];
+		$stmt = $db->prepare("SELECT `permalink`, `title` FROM `comics` WHERE `seriesId` = :id AND `gallery` = 1 ORDER BY `timestamp` ASC");
+		$stmt->bindParam(':id', $output->seriesId, PDO::PARAM_INT);
 		$stmt->execute();
 		$result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 		foreach ($result as $record) {
-			array_push($output->story->comics, $record);
+			array_push($output->series->comics, $record);
 			if($record['permalink'] == $hash) {
-				$output->story->currentIdx = count($output->story->comics) - 1;
+				$output->series->currentIdx = count($output->series->comics) - 1;
 			}
 		}
 	}
