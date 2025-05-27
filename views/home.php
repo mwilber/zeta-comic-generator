@@ -3,7 +3,7 @@
 	$db = $database->getConnection();
 
 	try {
-		$stmt = $db->prepare("SELECT * FROM `comics` WHERE `gallery` = 1 AND (`storyId` = 0 OR `storyId` = 5) ORDER BY timestamp DESC LIMIT 4");
+		$stmt = $db->prepare("SELECT * FROM `comics` WHERE `gallery` = 1 AND (seriesId = 0 OR seriesId = 5) ORDER BY timestamp DESC LIMIT 4");
 		$stmt->execute();
 		$rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 	} catch(PDOException $e) {

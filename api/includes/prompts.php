@@ -27,15 +27,18 @@ class Prompts {
 
 		In your comic strips Alpha Zeta exists with, and interacts with, other characters and props in the scene. Alpha never comes into direct physical contact with characters or props in the scene. Alpha speaks to and references other characters in the scene, but those characters never respond verbally.
 
-		In each panel of your comic strips, Alpha Zeta performs only one of the following actions: {p1}
+		In each panel of your comic strips, Alpha Zeta performs only one of the following actions: {p0}
 
 		Alpha Zeta is about 4 feet tall and lanky in build. Alpha has green skin, large black eyes and a large bald head. Alpha has two arms, each with three fingers and a thumb. Alpha has two legs and feet. The feet do not have any digits. Alpha generally does not wear clothing, but will occasionally wear a costume when specified in the list of actions.
 
-		{p0}
+		{p1}
+		{p2}
 		SYSTEM;
 
 		$this->prompts->concept = <<<CONCEPT
-		Write a concept for a three panel comic strip. In this comic strip, Alpha Zeta will engage in the following premise: {p0}
+		Write a concept for a three panel comic strip. 
+		{p1}
+		In this comic strip, Alpha Zeta will engage in the following premise: {p0}
 		Your concept will be written as a single paragraph. 
 		Your concept will include a description of the overall story. 
 		Your concept will include a breakdown of each panel. 
@@ -45,7 +48,15 @@ class Prompts {
 
 		{
 			\"concept\": \"\",
+			\"memory\": [
+				{ "id": 0, "description": "" },
+			]
 		}
+		
+		The value of the property \"memory\" is an array of objects. This array will contain a list of items used from the character profile or past events listed above in writing the story concept.
+		Each object in the array contains the following properties:
+		\"id\": The number prefixing the item from the lists.
+		\"description\": The item from the lists.
 		CONCEPT;
 
 		//The following is a list of story elements that have been used in previous comics. These are called \"elements of significance\". Each element of significance is preceded by an identifying number. You may use these elements of significance in writing the comic strip. Using an element of significance is not required. Only use an element of significance if it is pertinent to the comic story.
@@ -72,7 +83,8 @@ class Prompts {
 					\"action\": \"\",
 					\"dialog\": \"\"
 				}
-			]
+			],
+			\"summary\": \"\"
 		}
 
 		The following is a description of each property value in the json object:
@@ -81,6 +93,7 @@ class Prompts {
 		`scene`: A description of the panel scene, including all characters present.
 		`dialog`: Words spoken by Alpha Zeta. He is the only character that speaks. Do not label the dialog with a character name. This can be an empty string if the character is not speaking.
 		`action`: A word, chosen from the following list, that best describes the action or appearance of Alpha Zeta in the panel: {p0}
+		`summary`: A short and complete summary of the comic strip. Include details about any people, places or things in the story. Limit to 200 letters.
 		SCRIPT;
 
 		$this->prompts->background = <<<BACKGROUND
@@ -130,6 +143,27 @@ class Prompts {
 		Limit the use of the color green in your drawing to no more than 33 percent of the total pixels.
 		IMAGE;
 
+		$this->prompts->continuity = <<<CONTINUITY
+		You are an experienced psychologist. You are also an experienced reporter who chronicles world events.
+		
+		Using the script for the story, identify the following:
+		
+		Identify any character traits that are portryed in Alpha Zeta.
+		- Do not include anything listed in the character profile outlined at the beginning of this conversation.
+		- It is okay if no new traits are portreyed.
+		- Limit to no more than 3 traits. If there are more than 3, list the most prominant.
+
+		Itentify any significant events in the life of Alpha Zeta portreyed in the story.
+		- Do not include anything listed in the historical events outlined at the beginning of this conversation.
+		- It is okay if no new events are portreyed.
+		- Limit to no more than 3 events. If there are more than 3, list the most prominant.
+
+		Output your response in the following format:
+		{
+			\"alpha\": []
+			\"event\": []
+		}
+		CONTINUITY;
 		$this->prompts->test = <<<TEST
 		Write the words "Hello, world!" followed by a synonym for the following word: {p0}
 

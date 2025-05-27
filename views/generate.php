@@ -30,6 +30,10 @@
 		<h2>Setup</h2>
 		<div id="input">
 			<div class="row selections">
+				<label>
+					Series ID
+					<input id="series-id" type="text" value="3" />
+				</label>
 				<label> 
 					Story Model
 					<div class="select">
