@@ -8,7 +8,7 @@
 	$request = $_SERVER['REQUEST_URI'];
 	//echo $request;
 
-	$version = "3.1.0";
+	$version = "3.5.0";
 	$meta = new stdClass();
 	$meta->siteTitle = "Zeta Comic Generator";
 	$meta->title = "Zeta Comic Generator";
@@ -96,6 +96,7 @@
 	<link rel="stylesheet" href="/styles/detail.css?v=<?php echo $version ?>">
 	<link rel="stylesheet" href="/styles/footer.css?v=<?php echo $version ?>">
 	<link rel="stylesheet" href="/styles/gallery.css?v=<?php echo $version ?>">
+	<link rel="stylesheet" href="/styles/series.css?v=<?php echo $version ?>">
 	<link rel="stylesheet" href="/styles/generate.css?v=<?php echo $version ?>">
 	<link rel="stylesheet" href="/styles/home.css?v=<?php echo $version ?>">
 	<link rel="stylesheet" href="/styles/script.css?v=<?php echo $version ?>">
@@ -122,6 +123,7 @@
 			case 'detail':
 			case 'gallery':
 			case 'generate':
+			case 'series':
 			case 'debugger':
 				require __DIR__ . '/views/'.$path[1].'.php';
 				break;
