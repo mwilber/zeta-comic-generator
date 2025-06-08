@@ -3,6 +3,7 @@
  * Checks the premise for vulgarity using the Perspective API.
  *
  * Expects the POST parameter `premise` to be set.
+ * This script assumes $output is initialized in the calling script (e.g., index.php).
  *
  * @example
     // Response JSON
@@ -15,14 +16,15 @@
     }
  */
 
-// Try to include the key file, otherwise define a dummy key for testing
+// Try to include the key file. GOOGLE_KEY is expected to be defined here.
 if (file_exists(__DIR__ . '/../includes/key.php')) {
     include_once __DIR__ . '/../includes/key.php';
 }
 
-// Define a placeholder for the Perspective API key if not already defined
-if (!defined('PERSPECTIVE_API_KEY')) {
-    define('PERSPECTIVE_API_KEY', 'TEST_API_KEY'); // Dummy key for subtask execution
+// Define a placeholder for the Google API key if not already defined
+// This is mainly for isolated testing. In production, GOOGLE_KEY must be in key.php.
+if (!defined('GOOGLE_KEY')) {
+    define('GOOGLE_KEY', 'TEST_GOOGLE_KEY'); // Dummy key for subtask execution/testing
 }
 
 define('OBSCENE_THRESHOLD', 0.5);
@@ -31,7 +33,7 @@ define('OBSCENE_THRESHOLD', 0.5);
  * Calls the Perspective API to analyze text.
  *
  * @param string $text The text to analyze.
- * @param string $apiKey The API key for the Perspective API.
+ * @param string $apiKey The API key for the Perspective API (should be GOOGLE_KEY).
  * @return object|false The decoded JSON response from the API, or false on error.
  */
 function callPerspectiveAPI($text, $apiKey) {
@@ -39,9 +41,8 @@ function callPerspectiveAPI($text, $apiKey) {
 
     $data = [
         "comment" => ["text" => $text],
-        // "languages" => ["en"], // Omitted for auto-detection as per requirement
         "requestedAttributes" => [
-            "OBSCENE" => new stdClass(), // Using stdClass for empty JSON object {}
+            "OBSCENE" => new stdClass(),
             "TOXICITY" => new stdClass(),
             "SEVERE_TOXICITY" => new stdClass()
         ]
@@ -57,7 +58,7 @@ function callPerspectiveAPI($text, $apiKey) {
     $response = curl_exec($ch);
 
     if (curl_errno($ch)) {
-        // Optionally log curl_error($ch)
+        error_log("Curl error in callPerspectiveAPI: " . curl_error($ch));
         curl_close($ch);
         return false;
     }
@@ -67,16 +68,28 @@ function callPerspectiveAPI($text, $apiKey) {
     $decodedResponse = json_decode($response);
 
     if (json_last_error() !== JSON_ERROR_NONE) {
-        // Optionally log json_last_error_msg() and the raw $response
+        error_log("JSON decode error in callPerspectiveAPI: " . json_last_error_msg() . ". Response: " . $response);
         return false;
     }
 
     return $decodedResponse;
 }
 
-// Initialize the output object
-$output = new stdClass();
-$output->json = new stdClass();
+// Ensure $output->json is initialized if this script is ever run standalone
+// (though it's designed to be included from index.php where $output is set up)
+if (!isset($output)) {
+    // This case should ideally not be hit if used as intended.
+    // If $output is not set by index.php, this script won't output correctly.
+    // For robustness in case of direct call for testing, we might init it,
+    // but the primary design is $output comes from index.php.
+    // For now, we'll assume $output is always pre-initialized.
+    // If direct calls become a use case, this needs proper handling for $output.
+}
+if (!isset($output->json)) {
+    $output->json = new stdClass();
+}
+
+
 $output->model = "perspective_api"; // Set model early
 
 // Get the premise from the POST request
@@ -85,40 +98,37 @@ $premise = isset($_POST['premise']) ? $_POST['premise'] : '';
 if (empty($premise)) {
     $output->error = "Premise input is empty.";
     $output->json->vulgarity = null;
-} elseif (!defined('PERSPECTIVE_API_KEY') || PERSPECTIVE_API_KEY === 'YOUR_PERSPECTIVE_API_KEY_HERE' || PERSPECTIVE_API_KEY === 'TEST_API_KEY' || PERSPECTIVE_API_KEY === '') {
-    // Added check for the default placeholder value or an empty string
-    // In a real scenario, 'TEST_API_KEY' would also be an invalid key for actual API calls.
-    // For this subtask, we proceed if it's TEST_API_KEY to allow testing the call structure.
-    // However, if it's the initial placeholder or empty, it's an error.
-    if (PERSPECTIVE_API_KEY === 'YOUR_PERSPECTIVE_API_KEY_HERE' || PERSPECTIVE_API_KEY === '') {
-        $output->error = "API key not configured.";
-        $output->json->vulgarity = null;
-    } else {
-        // Proceed if key is 'TEST_API_KEY' for testing the call structure,
-        // knowing it will likely fail with the actual API but allows testing the path.
-        $apiResponse = callPerspectiveAPI($premise, PERSPECTIVE_API_KEY);
+}
+// Check if GOOGLE_KEY is defined and not empty.
+// Allow 'TEST_GOOGLE_KEY' to proceed for testing the API call path.
+else if (!defined('GOOGLE_KEY') || GOOGLE_KEY === '') {
+    $output->error = "Google API key (GOOGLE_KEY) for Perspective API is not configured or is empty. Please check includes/key.php.";
+    $output->json->vulgarity = null;
+}
+// If key is the specific test key, it's for testing the call path, but it's not a *valid* production key.
+// The API call will proceed and likely fail at the API endpoint, which is expected for 'TEST_GOOGLE_KEY'.
+else if (GOOGLE_KEY === 'TEST_GOOGLE_KEY') {
+    // Intentionally proceed to callPerspectiveAPI with the test key
+    $apiResponse = callPerspectiveAPI($premise, GOOGLE_KEY);
 
-        if ($apiResponse === false) {
-            $output->error = "Error calling moderation API.";
-            $output->json->vulgarity = null;
-        } elseif (isset($apiResponse->attributeScores->OBSCENE->summaryScore->value)) {
-            $output->error = "";
-            $obsceneScore = $apiResponse->attributeScores->OBSCENE->summaryScore->value;
-            $output->json->vulgarity = $obsceneScore > OBSCENE_THRESHOLD;
-            // You could also store the score if needed:
-            // $output->json->scores = $apiResponse->attributeScores;
-        } else {
-            // Log the actual response for debugging if possible
-            // error_log("Invalid response from moderation API: " . json_encode($apiResponse));
-            $output->error = "Invalid response from moderation API.";
-            $output->json->vulgarity = null;
-            if (isset($apiResponse->error->message)) {
-                 $output->error .= " - API Message: " . $apiResponse->error->message;
-            }
+    if ($apiResponse === false) {
+        $output->error = "Error calling moderation API (using TEST_GOOGLE_KEY).";
+        $output->json->vulgarity = null;
+    } elseif (isset($apiResponse->attributeScores->OBSCENE->summaryScore->value)) {
+        $output->error = ""; // Clear error
+        $obsceneScore = $apiResponse->attributeScores->OBSCENE->summaryScore->value;
+        $output->json->vulgarity = $obsceneScore > OBSCENE_THRESHOLD;
+    } else {
+        $output->error = "Invalid response from moderation API (using TEST_GOOGLE_KEY).";
+        if (isset($apiResponse->error->message)) {
+             $output->error .= " - API Message: " . $apiResponse->error->message;
         }
+        $output->json->vulgarity = null;
     }
-} else {
-    $apiResponse = callPerspectiveAPI($premise, PERSPECTIVE_API_KEY);
+}
+// This is the normal operational path if GOOGLE_KEY is defined, not empty, and not the test key.
+else {
+    $apiResponse = callPerspectiveAPI($premise, GOOGLE_KEY);
 
     if ($apiResponse === false) {
         $output->error = "Error calling moderation API.";
@@ -127,24 +137,17 @@ if (empty($premise)) {
         $output->error = ""; // Clear error if API call was successful and response is valid
         $obsceneScore = $apiResponse->attributeScores->OBSCENE->summaryScore->value;
         $output->json->vulgarity = $obsceneScore > OBSCENE_THRESHOLD;
-        // You could also store the full scores if needed for debugging or more complex logic:
-        // $output->json->scores = $apiResponse->attributeScores;
     } else {
-        // Log the actual response for debugging if possible
-        // error_log("Invalid response from moderation API: " . json_encode($apiResponse));
         $output->error = "Invalid response from moderation API.";
-        $output->json->vulgarity = null;
          if (isset($apiResponse->error->message)) {
              $output->error .= " - API Message: " . $apiResponse->error->message;
          }
+        $output->json->vulgarity = null;
     }
 }
 
-
-// Set the content type to application/json
-header('Content-Type: application/json');
-
-// Output the JSON response
-echo json_encode($output);
+// The calling script (index.php) is responsible for:
+// header('Content-Type: application/json');
+// echo json_encode($output);
 
 ?>
