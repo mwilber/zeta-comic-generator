@@ -77,6 +77,9 @@ function callPerspectiveAPI($text, $apiKey) {
 $premise = isset($_POST['premise']) ? $_POST['premise'] : '';
 $output->json = new stdClass();
 
+// Be lenient and allow the premise to be used if the API call fails.
+$output->json->reject = false;
+
 if (empty($premise)) {
     $output->error = "Premise input is empty.";
 } else {
@@ -97,8 +100,6 @@ if (empty($premise)) {
         } else {
             $output->json->error = "Error calling moderation API.";
         }
-        // Be lenient and allow the premise to be used if the API call fails.
-        $output->json->reject = false;
     }
 }
 ?>
