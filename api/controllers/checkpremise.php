@@ -3,14 +3,17 @@
  * Checks the premise for vulgarity using the Perspective API.
  *
  * Expects the POST parameter `premise` to be set.
- * This script assumes $output is initialized in the calling script (e.g., index.php).
- * The script will set $output->error, $output->model, and $output->vulgarity.
+ * This script assumes $output is initialized in the calling script (e.g., index.php)
+ * and that GOOGLE_KEY is available/defined globally, typically via `includes/key.php`
+ * being included in the main `index.php`.
+ *
+ * The script will set $output->error and $output->vulgarity.
  *
  * @example
     // Success Response JSON
     {
         "error": "",
-        "model": "perspective_api",
+        // "model": "perspective_api", // This is no longer set by this controller
         "vulgarity": {
             "score": 0.123,
             "reject": false
@@ -19,23 +22,22 @@
     // Error Response JSON (e.g., empty premise)
     {
         "error": "Premise input is empty.",
-        "model": "perspective_api",
+        // "model": "perspective_api", // This is no longer set by this controller
         "vulgarity": null
     }
  */
 
-// Try to include the key file. GOOGLE_KEY is expected to be defined here.
-if (file_exists(__DIR__ . '/../includes/key.php')) {
-    include_once __DIR__ . '/../includes/key.php';
-}
-
-// Define a placeholder for the Google API key if not already defined
-// This is mainly for isolated testing. In production, GOOGLE_KEY must be in key.php.
+// Define a placeholder for the Google API key if not already defined.
+// This is mainly for isolated testing IF key.php was not included by index.php
+// OR if GOOGLE_KEY was not in key.php.
+// In a standard operational flow, GOOGLE_KEY should be defined by index.php including key.php.
 if (!defined('GOOGLE_KEY')) {
-    define('GOOGLE_KEY', 'TEST_GOOGLE_KEY'); // Dummy key for subtask execution/testing
+    // This fallback makes the controller runnable in isolation for basic tests,
+    // but it's not the primary way GOOGLE_KEY should be provided.
+    define('GOOGLE_KEY', 'TEST_GOOGLE_KEY_ISOLATED');
 }
 
-define('OBSCENE_THRESHOLD', 0.5);
+define('OBSCENE_THRESHOLD', 0.5); // Threshold for 'OBSCENE' attribute
 
 /**
  * Calls the Perspective API to analyze text.
@@ -83,9 +85,6 @@ function callPerspectiveAPI($text, $apiKey) {
     return $decodedResponse;
 }
 
-// Set model early - this controller is specific to perspective_api
-$output->model = "perspective_api";
-
 // Get the premise from the POST request
 $premise = isset($_POST['premise']) ? $_POST['premise'] : '';
 
@@ -94,18 +93,22 @@ if (empty($premise)) {
     $output->vulgarity = null;
 }
 // Check if GOOGLE_KEY is defined and not empty.
-// Allow 'TEST_GOOGLE_KEY' to proceed for testing the API call path.
+// The fallback 'TEST_GOOGLE_KEY_ISOLATED' is allowed to proceed for isolated testing.
 else if (!defined('GOOGLE_KEY') || GOOGLE_KEY === '') {
-    $output->error = "Google API key (GOOGLE_KEY) for Perspective API is not configured or is empty. Please check includes/key.php.";
+    // This case implies GOOGLE_KEY was explicitly defined as empty, or was not defined at all AND
+    // the fallback define('GOOGLE_KEY', 'TEST_GOOGLE_KEY_ISOLATED') was somehow skipped or GOOGLE_KEY became undefined again.
+    // Primarily, this catches an empty string from key.php.
+    $output->error = "Google API key (GOOGLE_KEY) for Perspective API is not configured (empty or not defined). Please check main configuration (includes/key.php).";
     $output->vulgarity = null;
 }
-// If key is the specific test key, it's for testing the call path, but it's not a *valid* production key.
-// The API call will proceed and likely fail at the API endpoint, which is expected for 'TEST_GOOGLE_KEY'.
-else if (GOOGLE_KEY === 'TEST_GOOGLE_KEY') {
+// If key is the specific test key (either from this script's fallback or a test setup),
+// it's for testing the call path, but it's not a *valid* production key.
+// The API call will proceed and likely fail at the API endpoint, which is expected.
+else if (GOOGLE_KEY === 'TEST_GOOGLE_KEY_ISOLATED' || GOOGLE_KEY === 'TEST_GOOGLE_KEY') { // Second condition for tests
     $apiResponse = callPerspectiveAPI($premise, GOOGLE_KEY);
 
     if ($apiResponse === false) {
-        $output->error = "Error calling moderation API (using TEST_GOOGLE_KEY).";
+        $output->error = "Error calling moderation API (using a test key: " . GOOGLE_KEY . ").";
         $output->vulgarity = null;
     } elseif (isset($apiResponse->attributeScores->OBSCENE->summaryScore->value)) {
         $output->error = ""; // Clear error
@@ -115,14 +118,14 @@ else if (GOOGLE_KEY === 'TEST_GOOGLE_KEY') {
         $output->vulgarity->score = $obsceneScore;
         $output->vulgarity->reject = ($obsceneScore > OBSCENE_THRESHOLD);
     } else {
-        $output->error = "Invalid response from moderation API (using TEST_GOOGLE_KEY).";
+        $output->error = "Invalid response from moderation API (using a test key: " . GOOGLE_KEY . ").";
         if (isset($apiResponse->error->message)) {
              $output->error .= " - API Message: " . $apiResponse->error->message;
         }
         $output->vulgarity = null;
     }
 }
-// This is the normal operational path if GOOGLE_KEY is defined, not empty, and not the test key.
+// This is the normal operational path if GOOGLE_KEY is defined, not empty, and not a test key.
 else {
     $apiResponse = callPerspectiveAPI($premise, GOOGLE_KEY);
 
@@ -146,7 +149,9 @@ else {
 }
 
 // The calling script (index.php) is responsible for:
-// header('Content-Type: application/json');
-// echo json_encode($output);
+// - Ensuring GOOGLE_KEY is defined (typically by including includes/key.php)
+// - Initializing $output object
+// - Setting header('Content-Type: application/json');
+// - echo json_encode($output);
 
 ?>
