@@ -202,6 +202,13 @@ async function GenerateStrip() {
 	const imageModel = document.getElementById("image-model").value;
 	const imageStyle = document.getElementById("image-style").value;
 
+	let vulgarityCheck = await api.CheckVulgarity(safeQuery);
+	console.log("🚀 ~ GenerateStrip ~ vulgarityCheck:", vulgarityCheck);
+	//if(vulgarityCheck && vulgarityCheck.error) {
+		SetStatus("error");
+		return;
+	//}
+
 	let concept = await api.WriteConcept(safeQuery, { model: conceptModel });
 	if (!concept || concept.error) {
 		SetStatus(concept.error == "ratelimit" ? concept.error : "error");

@@ -45,6 +45,13 @@ export class ComicGeneratorApi {
 		return result ? result.json : {};
 	}
 
+	async CheckVulgarity(premise) {
+		const result = await this.fetchApi("checkpremise", {
+			premise,
+		});
+		return result ? result.vulgarity : {};
+	}
+
 	async WriteConcept(premise, params) {
 		const { model } = params || {};
 		let result = await this.fetchApi("concept", {
