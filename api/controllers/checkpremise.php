@@ -13,7 +13,6 @@
     // Success Response JSON
     {
         "error": "",
-        // "model": "perspective_api", // This is no longer set by this controller
         "vulgarity": {
             "score": 0.123,
             "reject": false
@@ -22,20 +21,9 @@
     // Error Response JSON (e.g., empty premise)
     {
         "error": "Premise input is empty.",
-        // "model": "perspective_api", // This is no longer set by this controller
         "vulgarity": null
     }
  */
-
-// Define a placeholder for the Google API key if not already defined.
-// This is mainly for isolated testing IF key.php was not included by index.php
-// OR if PERSPECTIVE_KEY was not in key.php.
-// In a standard operational flow, PERSPECTIVE_KEY should be defined by index.php including key.php.
-if (!defined('PERSPECTIVE_KEY')) {
-    // This fallback makes the controller runnable in isolation for basic tests,
-    // but it's not the primary way PERSPECTIVE_KEY should be provided.
-    define('PERSPECTIVE_KEY', 'TEST_PERSPECTIVE_KEY_ISOLATED');
-}
 
 define('OBSCENE_THRESHOLD', 0.5); // Threshold for 'OBSCENE' attribute
 
@@ -101,30 +89,6 @@ else if (!defined('PERSPECTIVE_KEY') || PERSPECTIVE_KEY === '') {
     $output->error = "Google API key (PERSPECTIVE_KEY) for Perspective API is not configured (empty or not defined). Please check main configuration (includes/key.php).";
     $output->json = null;
 }
-// If key is the specific test key (either from this script's fallback or a test setup),
-// it's for testing the call path, but it's not a *valid* production key.
-// The API call will proceed and likely fail at the API endpoint, which is expected.
-else if (PERSPECTIVE_KEY === 'TEST_PERSPECTIVE_KEY_ISOLATED' || PERSPECTIVE_KEY === 'TEST_PERSPECTIVE_KEY') { // Second condition for tests
-    $apiResponse = callPerspectiveAPI($premise, PERSPECTIVE_KEY);
-
-    if ($apiResponse === false) {
-        $output->error = "Error calling moderation API (using a test key: " . PERSPECTIVE_KEY . ").";
-        $output->json = null;
-    } elseif (isset($apiResponse->attributeScores->OBSCENE->summaryScore->value)) {
-        $output->error = ""; // Clear error
-        $obsceneScore = $apiResponse->attributeScores->OBSCENE->summaryScore->value;
-
-        $output->json = new stdClass();
-        $output->json->score = $obsceneScore;
-        $output->json->reject = ($obsceneScore > OBSCENE_THRESHOLD);
-    } else {
-        $output->error = "Invalid response from moderation API (using a test key: " . PERSPECTIVE_KEY . ").";
-        if (isset($apiResponse->error->message)) {
-             $output->error .= " - API Message: " . $apiResponse->error->message;
-        }
-        $output->json = null;
-    }
-}
 // This is the normal operational path if PERSPECTIVE_KEY is defined, not empty, and not a test key.
 else {
     $apiResponse = callPerspectiveAPI($premise, PERSPECTIVE_KEY);
@@ -147,11 +111,5 @@ else {
         $output->json = null;
     }
 }
-
-// The calling script (index.php) is responsible for:
-// - Ensuring PERSPECTIVE_KEY is defined (typically by including includes/key.php)
-// - Initializing $output object
-// - Setting header('Content-Type: application/json');
-// - echo json_encode($output);
 
 ?>
