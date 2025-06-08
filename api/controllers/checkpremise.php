@@ -75,45 +75,30 @@ function callPerspectiveAPI($text, $apiKey) {
 
 // Get the premise from the POST request
 $premise = isset($_POST['premise']) ? $_POST['premise'] : '';
+$output->json = new stdClass();
 
 if (empty($premise)) {
     $output->error = "Premise input is empty.";
-    $output->json = null;
-}
-// Check if PERSPECTIVE_KEY is defined and not empty.
-// The fallback 'TEST_PERSPECTIVE_KEY_ISOLATED' is allowed to proceed for isolated testing.
-else if (!defined('PERSPECTIVE_KEY') || PERSPECTIVE_KEY === '') {
-    // This case implies PERSPECTIVE_KEY was explicitly defined as empty, or was not defined at all AND
-    // the fallback define('PERSPECTIVE_KEY', 'TEST_PERSPECTIVE_KEY_ISOLATED') was somehow skipped or PERSPECTIVE_KEY became undefined again.
-    // Primarily, this catches an empty string from key.php.
-    $output->error = "Google API key (PERSPECTIVE_KEY) for Perspective API is not configured (empty or not defined). Please check main configuration (includes/key.php).";
-    $output->json = null;
-}
-// This is the normal operational path if PERSPECTIVE_KEY is defined, not empty, and not a test key.
-else {
+} else {
     $apiResponse = callPerspectiveAPI($premise, PERSPECTIVE_KEY);
 
-    if ($apiResponse === false) {
-        $output->error = "Error calling moderation API.";
-        $output->json = null;
-    } elseif (isset($apiResponse->attributeScores->OBSCENE->summaryScore->value)) {
-        $output->error = ""; // Clear error if API call was successful and response is valid
+    if ($apiResponse && isset($apiResponse->attributeScores->OBSCENE->summaryScore->value)) {
         $obsceneScore = $apiResponse->attributeScores->OBSCENE->summaryScore->value;
         $toxicityScore = $apiResponse->attributeScores->TOXICITY->summaryScore->value;
         $severeToxicityScore = $apiResponse->attributeScores->SEVERE_TOXICITY->summaryScore->value;
 
-        $output->json = new stdClass();
         $output->json->score = $obsceneScore;
         $output->json->toxicity = $toxicityScore;
         $output->json->severeToxicity = $severeToxicityScore;
         $output->json->reject = ($obsceneScore > OBSCENE_THRESHOLD || $toxicityScore > OBSCENE_THRESHOLD || $severeToxicityScore > OBSCENE_THRESHOLD);
     } else {
-        $output->error = "Invalid response from moderation API.";
-         if (isset($apiResponse->error->message)) {
-             $output->error .= " - API Message: " . $apiResponse->error->message;
-         }
-        $output->json = null;
+        if (isset($apiResponse->error->message)) {
+             $output->json->error .= "API Message: " . $apiResponse->error->message;
+        } else {
+            $output->json->error = "Error calling moderation API.";
+        }
+        // Be lenient and allow the premise to be used if the API call fails.
+        $output->json->reject = false;
     }
 }
-
 ?>
