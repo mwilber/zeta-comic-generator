@@ -99,10 +99,14 @@ else {
     } elseif (isset($apiResponse->attributeScores->OBSCENE->summaryScore->value)) {
         $output->error = ""; // Clear error if API call was successful and response is valid
         $obsceneScore = $apiResponse->attributeScores->OBSCENE->summaryScore->value;
+        $toxicityScore = $apiResponse->attributeScores->TOXICITY->summaryScore->value;
+        $severeToxicityScore = $apiResponse->attributeScores->SEVERE_TOXICITY->summaryScore->value;
 
         $output->json = new stdClass();
         $output->json->score = $obsceneScore;
-        $output->json->reject = ($obsceneScore > OBSCENE_THRESHOLD);
+        $output->json->toxicity = $toxicityScore;
+        $output->json->severeToxicity = $severeToxicityScore;
+        $output->json->reject = ($obsceneScore > OBSCENE_THRESHOLD || $toxicityScore > OBSCENE_THRESHOLD || $severeToxicityScore > OBSCENE_THRESHOLD);
     } else {
         $output->error = "Invalid response from moderation API.";
          if (isset($apiResponse->error->message)) {
