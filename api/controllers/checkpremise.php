@@ -4,15 +4,23 @@
  *
  * Expects the POST parameter `premise` to be set.
  * This script assumes $output is initialized in the calling script (e.g., index.php).
+ * The script will set $output->error, $output->model, and $output->vulgarity.
  *
  * @example
-    // Response JSON
+    // Success Response JSON
     {
         "error": "",
-        "json": {
-            "vulgarity": false
-        },
-        "model": "perspective_api"
+        "model": "perspective_api",
+        "vulgarity": {
+            "score": 0.123,
+            "reject": false
+        }
+    }
+    // Error Response JSON (e.g., empty premise)
+    {
+        "error": "Premise input is empty.",
+        "model": "perspective_api",
+        "vulgarity": null
     }
  */
 
@@ -75,55 +83,43 @@ function callPerspectiveAPI($text, $apiKey) {
     return $decodedResponse;
 }
 
-// Ensure $output->json is initialized if this script is ever run standalone
-// (though it's designed to be included from index.php where $output is set up)
-if (!isset($output)) {
-    // This case should ideally not be hit if used as intended.
-    // If $output is not set by index.php, this script won't output correctly.
-    // For robustness in case of direct call for testing, we might init it,
-    // but the primary design is $output comes from index.php.
-    // For now, we'll assume $output is always pre-initialized.
-    // If direct calls become a use case, this needs proper handling for $output.
-}
-if (!isset($output->json)) {
-    $output->json = new stdClass();
-}
-
-
-$output->model = "perspective_api"; // Set model early
+// Set model early - this controller is specific to perspective_api
+$output->model = "perspective_api";
 
 // Get the premise from the POST request
 $premise = isset($_POST['premise']) ? $_POST['premise'] : '';
 
 if (empty($premise)) {
     $output->error = "Premise input is empty.";
-    $output->json->vulgarity = null;
+    $output->vulgarity = null;
 }
 // Check if GOOGLE_KEY is defined and not empty.
 // Allow 'TEST_GOOGLE_KEY' to proceed for testing the API call path.
 else if (!defined('GOOGLE_KEY') || GOOGLE_KEY === '') {
     $output->error = "Google API key (GOOGLE_KEY) for Perspective API is not configured or is empty. Please check includes/key.php.";
-    $output->json->vulgarity = null;
+    $output->vulgarity = null;
 }
 // If key is the specific test key, it's for testing the call path, but it's not a *valid* production key.
 // The API call will proceed and likely fail at the API endpoint, which is expected for 'TEST_GOOGLE_KEY'.
 else if (GOOGLE_KEY === 'TEST_GOOGLE_KEY') {
-    // Intentionally proceed to callPerspectiveAPI with the test key
     $apiResponse = callPerspectiveAPI($premise, GOOGLE_KEY);
 
     if ($apiResponse === false) {
         $output->error = "Error calling moderation API (using TEST_GOOGLE_KEY).";
-        $output->json->vulgarity = null;
+        $output->vulgarity = null;
     } elseif (isset($apiResponse->attributeScores->OBSCENE->summaryScore->value)) {
         $output->error = ""; // Clear error
         $obsceneScore = $apiResponse->attributeScores->OBSCENE->summaryScore->value;
-        $output->json->vulgarity = $obsceneScore > OBSCENE_THRESHOLD;
+
+        $output->vulgarity = new stdClass();
+        $output->vulgarity->score = $obsceneScore;
+        $output->vulgarity->reject = ($obsceneScore > OBSCENE_THRESHOLD);
     } else {
         $output->error = "Invalid response from moderation API (using TEST_GOOGLE_KEY).";
         if (isset($apiResponse->error->message)) {
              $output->error .= " - API Message: " . $apiResponse->error->message;
         }
-        $output->json->vulgarity = null;
+        $output->vulgarity = null;
     }
 }
 // This is the normal operational path if GOOGLE_KEY is defined, not empty, and not the test key.
@@ -132,17 +128,20 @@ else {
 
     if ($apiResponse === false) {
         $output->error = "Error calling moderation API.";
-        $output->json->vulgarity = null;
+        $output->vulgarity = null;
     } elseif (isset($apiResponse->attributeScores->OBSCENE->summaryScore->value)) {
         $output->error = ""; // Clear error if API call was successful and response is valid
         $obsceneScore = $apiResponse->attributeScores->OBSCENE->summaryScore->value;
-        $output->json->vulgarity = $obsceneScore > OBSCENE_THRESHOLD;
+
+        $output->vulgarity = new stdClass();
+        $output->vulgarity->score = $obsceneScore;
+        $output->vulgarity->reject = ($obsceneScore > OBSCENE_THRESHOLD);
     } else {
         $output->error = "Invalid response from moderation API.";
          if (isset($apiResponse->error->message)) {
              $output->error .= " - API Message: " . $apiResponse->error->message;
          }
-        $output->json->vulgarity = null;
+        $output->vulgarity = null;
     }
 }
 
