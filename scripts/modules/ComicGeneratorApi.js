@@ -45,6 +45,13 @@ export class ComicGeneratorApi {
 		return result ? result.json : {};
 	}
 
+	async CheckVulgarity(premise) {
+		const result = await this.fetchApi("checkpremise", {
+			premise,
+		});
+		return result ? result.json : {};
+	}
+
 	async WriteConcept(premise, params) {
 		const { model } = params || {};
 		let result = await this.fetchApi("concept", {
@@ -423,7 +430,7 @@ export class ComicGeneratorApi {
 					body: formData,
 				});
 				const data = await response.json();
-				if (!data || (!data.json && !data.response) || data.error) {
+				if (!data || (!data.json && !data.response) || data.error || typeof data?.json?.reject !== "undefined") {
 					throw data;
 				} else {
 					console.log("ComicGenerator: API response", data);

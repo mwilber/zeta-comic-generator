@@ -107,6 +107,9 @@
 		case 'log':
 			require __DIR__ . '/controllers/log.php';
 			break;
+		case 'checkpremise':
+			require __DIR__ . '/controllers/checkpremise.php';
+			break;
 		default:
 			$output->error = "Action not avaialble.";
 			break;
