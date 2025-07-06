@@ -40,6 +40,10 @@ export class ComicRenderer {
 		// Clear out the container element
 		this.el.innerHTML = "";
 
+		this.panelContainer = document.createElement("div");
+		this.panelContainer.className = "panel-container";
+		this.el.appendChild(this.panelContainer);
+
 		const { title, panels } = this.script;
 		// Set the container aria-label attribute to the comic title
 		this.el.setAttribute("role", "region");
@@ -175,7 +179,7 @@ export class ComicRenderer {
 		panelEl.className = "panel";
 		//panelEl.innerHTML = `Rendering...`;
 		panel.panelEl = panelEl;
-		this.el.appendChild(panelEl);
+		this.panelContainer.appendChild(panelEl);
 
 		return panelEl;
 	}
