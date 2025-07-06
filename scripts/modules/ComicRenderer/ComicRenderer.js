@@ -22,6 +22,22 @@ export class ComicRenderer {
 		if (script) this.script = this.LoadScript(params.script);
 
 		console.log("GZ ComicRenderer created");
+
+		// Set the css variable --mobile-panel-width to the width of this.el
+		const maxPanelWidth = 450;
+		this.setMobilePanelWidth = () => {
+			const containerWidth = Math.min(this.el.offsetWidth, maxPanelWidth);
+			this.el.style.setProperty(
+				"--mobile-panel-width",
+				(containerWidth - 4) + "px"
+			);
+			this.el.style.setProperty(
+				"--mobile-max-panel-width",
+				maxPanelWidth + "px"
+			);
+		};
+		this.setMobilePanelWidth();
+		window.addEventListener("resize", this.setMobilePanelWidth);
 	}
 
 	clear() {

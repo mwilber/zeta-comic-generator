@@ -1,3 +1,7 @@
+body {
+	--mobile-page-padding: 10px;
+}
+
 /* Comic Strip */
 
 #strip {
@@ -8,8 +12,12 @@
 	margin: auto;
 	background: #fff;
 	border: solid 1px #999;
-	padding: 8px;
+	padding: var(--container-padding);
 	box-shadow: 2px 2px 6px rgba(0,0,0,0.5);
+
+	--mobile-panel-width: 256px;
+	--container-padding: 8px;
+	--panel-border-width: 2px;
 }
 
 #strip.capture {
@@ -34,7 +42,7 @@
 	flex: 1;
 	width: 260px;
 	margin: 5px;
-	border: solid 2px black;
+	border: solid var(--panel-border-width) black;
 	/* padding-bottom: calc(33.3% - 14px); */
 	color: #999;
 	background: black;
@@ -107,7 +115,7 @@
 
 .strip-output > #strip,
 .strip-output > .strip-container,
-.strip-output > .panel-container {
+.strip-output > .strip-container > .panel-container {
 	width: 1024px;
 	max-width: none;
 	box-shadow: none;
@@ -201,14 +209,28 @@
 	}
 }
 
-@media screen and (max-width: 700px) {
-	#strip,
+@media screen and (max-width: 768px) {
+
+	/* TODO: Global Layout. Eventually this will apply to all pages */
+	.content {
+		width: calc(100% - var(--mobile-page-padding) * 2);
+		margin: 0 auto;
+		padding: var(--mobile-page-padding);
+	}
+
+
+
+
+
+	/* #strip,
     .strip-container,
 	.panel-container {
 		max-width: 275px;
-	}
+	} */
 	#strip .panel-container {
-		width: 260px;
+		width: calc(var(--mobile-panel-width) - var(--container-padding) * 2 + var(--panel-border-width) * 2);
+		max-width: var(--mobile-max-panel-width);
+		margin: auto;
 		overflow: hidden;
 		display: flex;
 		flex-wrap: nowrap;
@@ -226,14 +248,19 @@
 		border-radius: 10px;
 	}
 	#strip .panel-container::-webkit-scrollbar-track {
-		background: transparent;
+		/* A radial gradient that places a black line at the 33 and 66% marks */
+		background: radial-gradient(circle at 50%, transparent 32%, black 33%, transparent 33%);
+		/* background: radial-gradient(circle,rgba(255, 255, 255, 0) 33%, rgba(0, 0, 0, 1) 33%, rgba(255, 255, 255, 0) 33%); */
+		/* background: transparent; */
+		/* background: #ffffff; */
+	/* background: linear-gradient(90deg, rgba(255, 255, 255, 0) 33%, rgba(0, 0, 0, 1) 33%, rgba(255, 255, 255, 0) 33%, rgba(255, 255, 255, 0) 66%, rgba(0, 0, 0, 1) 66%, rgba(255, 255, 255, 0) 66%); */
 	}
 	#strip .panel {
 		scroll-snap-align: start;
 		flex-shrink: 0;
-		width: 256px;
-		height: 256px;
-		margin-right: 50px;
+		width: calc(var(--mobile-panel-width) - var(--container-padding) * 2);
+		height: calc(var(--mobile-panel-width) - var(--container-padding) * 2);
+		margin-right: 10px;
 		transform-origin: center center;
 		transform: scale(1);
 		transition: transform 0.5s;
