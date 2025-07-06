@@ -240,20 +240,16 @@ body {
 		-webkit-overflow-scrolling: touch;
 	}
 	#strip .panel-container::-webkit-scrollbar {
-		width: 10px;
 		height: 10px;
 	}
 	#strip .panel-container::-webkit-scrollbar-thumb {
-		background: black;
+		background: #333;
 		border-radius: 10px;
 	}
 	#strip .panel-container::-webkit-scrollbar-track {
-		/* A radial gradient that places a black line at the 33 and 66% marks */
-		background: radial-gradient(circle at 50%, transparent 32%, black 33%, transparent 33%);
-		/* background: radial-gradient(circle,rgba(255, 255, 255, 0) 33%, rgba(0, 0, 0, 1) 33%, rgba(255, 255, 255, 0) 33%); */
-		/* background: transparent; */
-		/* background: #ffffff; */
-	/* background: linear-gradient(90deg, rgba(255, 255, 255, 0) 33%, rgba(0, 0, 0, 1) 33%, rgba(255, 255, 255, 0) 33%, rgba(255, 255, 255, 0) 66%, rgba(0, 0, 0, 1) 66%, rgba(255, 255, 255, 0) 66%); */
+		border-radius: 10px;
+		background: transparent;
+		background: radial-gradient(circle at 50%, #999 32%, white 33%, white 34%, #999 35%);
 	}
 	#strip .panel {
 		scroll-snap-align: start;
@@ -261,9 +257,6 @@ body {
 		width: calc(var(--mobile-panel-width) - var(--container-padding) * 2);
 		height: calc(var(--mobile-panel-width) - var(--container-padding) * 2);
 		margin-right: 10px;
-		transform-origin: center center;
-		transform: scale(1);
-		transition: transform 0.5s;
 	}
 	#strip .panel:first-child {
 		margin-left: 0;
