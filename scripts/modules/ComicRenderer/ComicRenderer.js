@@ -20,16 +20,17 @@ export class ComicRenderer {
 		this.el = el;
 		this.size = size || 512;
 		if (script) this.script = this.LoadScript(params.script);
+		this.panelCount = 0;
 
 		console.log("GZ ComicRenderer created");
 
 		// Set the css variable --mobile-panel-width to the width of this.el
 		const maxPanelWidth = 450;
 		this.setMobilePanelWidth = () => {
-			const containerWidth = Math.min(this.el.offsetWidth, maxPanelWidth);
+			this.panelWidth = Math.min(this.el.offsetWidth, maxPanelWidth) - 4;
 			this.el.style.setProperty(
 				"--mobile-panel-width",
-				(containerWidth - 4) + "px"
+				this.panelWidth + "px"
 			);
 			this.el.style.setProperty(
 				"--mobile-max-panel-width",
@@ -55,10 +56,13 @@ export class ComicRenderer {
 
 		// Clear out the container element
 		this.el.innerHTML = "";
+		this.panelCount = 0;
 
 		this.panelContainer = document.createElement("div");
 		this.panelContainer.className = "panel-container";
 		this.el.appendChild(this.panelContainer);
+
+		this.AddPanelNavigation(this.panelContainer);
 
 		const { title, panels } = this.script;
 		// Set the container aria-label attribute to the comic title
@@ -90,12 +94,12 @@ export class ComicRenderer {
 				);
 				for (const cImage of characterImages) {
 					// Find dialog attached to the character image
-					let {action, character} = cImage;
+					let { action, character } = cImage;
 
-					let characterDialog = dialog.find (
+					let characterDialog = dialog.find(
 						(line) => line.character === character
 					);
-					let {text: line} = characterDialog || {};
+					let { text: line } = characterDialog || {};
 
 					if (action && character && line) {
 						let balloonData = CharacterAction.GetDialogBalloonData(
@@ -197,7 +201,43 @@ export class ComicRenderer {
 		panel.panelEl = panelEl;
 		this.panelContainer.appendChild(panelEl);
 
+		this.panelCount++;
+
 		return panelEl;
+	}
+
+	AddPanelNavigation(target) {
+		const navContainer = document.createElement("div");
+		navContainer.className = "nav-container";
+
+		["previous", "next"].forEach((direction) => {
+			const navBtn = document.createElement("button");
+			navBtn.title = direction;
+			navBtn.className = "nav-button " + direction;
+			if (direction == "previous") navBtn.setAttribute("disabled", "true");
+			navBtn.innerText = direction == "next" ? ">" : "<";
+			navBtn.addEventListener("click", () => {
+				target.scrollLeft += direction == "next" ? this.panelWidth : -this.panelWidth;
+			});
+			target.addEventListener("scroll", () => {
+				const currPos = Math.floor(target.scrollLeft / this.panelWidth);
+
+				const buttons = navContainer.querySelectorAll(".nav-button");
+				for (const button of buttons) {
+					button.removeAttribute("disabled");
+					if (
+						(currPos + 1 >= this.panelCount &&
+							button.classList.contains("next")) ||
+						(currPos == 0 &&
+							button.classList.contains("previous")))
+						button.setAttribute("disabled", "true");
+
+				}
+			});
+			navContainer.appendChild(navBtn);
+		});
+
+		this.el.appendChild(navContainer);
 	}
 
 	/**
