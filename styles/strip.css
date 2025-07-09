@@ -91,8 +91,9 @@ body {
 	position: relative;
 }
 
+/* The nav buttons are a mobile only feature.
+   There is a corresponding .active class in the mobile layout that makes this visible. */
 #strip .nav-container {
-	/* display: none; */
 	position: absolute;
 	top: 0;
 	left: 0;
@@ -101,16 +102,6 @@ body {
 	overflow: hidden;
 	opacity: 0;
 	transition: opacity 500ms 1ms, height 1ms 500ms ;
-}
-
-#strip .nav-container.active {
-	/* display: block; */
-	height: 100%;
-	opacity: 1;
-	transition: opacity 500ms 100ms, height 1ms 1ms ;
-}
-
-#strip .nav-container.active .nav-button {
 }
 
 #strip .nav-button {
@@ -288,14 +279,12 @@ body {
 	}
 
 
+	#strip .nav-container.active {
+		height: 100%;
+		opacity: 1;
+		transition: opacity 500ms 100ms, height 1ms 1ms ;
+	}
 
-
-
-	/* #strip,
-	.strip-container,
-	.panel-container {
-		max-width: 275px;
-	} */
 	#strip .panel-container {
 		width: calc(var(--mobile-panel-width) - var(--container-padding) * 2 + var(--panel-border-width) * 2);
 		max-width: var(--mobile-max-panel-width);
@@ -308,18 +297,22 @@ body {
 		scroll-behavior: smooth;
 		-webkit-overflow-scrolling: touch;
 	}
+
 	#strip .panel-container::-webkit-scrollbar {
 		height: 10px;
 	}
+
 	#strip .panel-container::-webkit-scrollbar-thumb {
 		background: #333;
 		border-radius: 10px;
 	}
+
 	#strip .panel-container::-webkit-scrollbar-track {
 		border-radius: 10px;
 		background: transparent;
 		background: radial-gradient(circle at 50%, #999 32%, white 33%, white 34%, #999 35%);
 	}
+
 	#strip .panel {
 		scroll-snap-align: start;
 		flex-shrink: 0;
@@ -327,12 +320,15 @@ body {
 		height: calc(var(--mobile-panel-width) - var(--container-padding) * 2);
 		margin-right: 10px;
 	}
+
 	#strip .panel:first-child {
 		margin-left: 0;
 	}
+
 	#strip .panel:last-child {
 		margin-right: 0;
 	}
+
 	#strip .panel .bubble {
 		font-size: 14px;
 	}

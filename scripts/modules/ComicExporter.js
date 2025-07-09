@@ -141,7 +141,7 @@ export class ComicExporter {
 		let canvas = await html2canvas(output, { scale: 1 });
 
 		// Cleanup the output copy
-		// setTimeout(() => output.remove(), 1000);
+		setTimeout(() => output.remove(), 1000);
 
 		let ctx = canvas.getContext("2d");
 		ctx.resetTransform();
