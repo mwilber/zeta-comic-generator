@@ -1,3 +1,7 @@
+body {
+	--mobile-page-padding: 10px;
+}
+
 /* Comic Strip */
 
 #strip {
@@ -8,8 +12,12 @@
 	margin: auto;
 	background: #fff;
 	border: solid 1px #999;
-	padding: 8px;
+	padding: var(--container-padding);
 	box-shadow: 2px 2px 6px rgba(0,0,0,0.5);
+
+	--mobile-panel-width: 256px;
+	--container-padding: 8px;
+	--panel-border-width: 2px;
 }
 
 #strip.capture {
@@ -20,10 +28,12 @@
 }
 
 #strip .strip-container,
-.strip-output .strip-container {
-    display: flex;
-    flex-wrap: wrap;
-    width: 100%;
+#strip .panel-container,
+.strip-output .strip-container,
+.strip-output .panel-container {
+	display: flex;
+	flex-wrap: wrap;
+	width: 100%;
 }
 
 #strip .panel,
@@ -32,7 +42,7 @@
 	flex: 1;
 	width: 260px;
 	margin: 5px;
-	border: solid 2px black;
+	border: solid var(--panel-border-width) black;
 	/* padding-bottom: calc(33.3% - 14px); */
 	color: #999;
 	background: black;
@@ -77,6 +87,66 @@
 	padding: 5px;
 }
 
+#strip .strip-container {
+	position: relative;
+}
+
+/* The nav buttons are a mobile only feature.
+   There is a corresponding .active class in the mobile layout that makes this visible. */
+#strip .nav-container {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 0%;
+	overflow: hidden;
+	opacity: 0;
+	transition: opacity 500ms 1ms, height 1ms 500ms ;
+}
+
+#strip .nav-button {
+	position: absolute;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	top: calc(var(--mobile-panel-width) / 2);
+	height: 100px;
+	width: 100px;
+	padding: 0;
+	margin: 0;
+	color: transparent;
+	border-radius: 50%;
+	background-color: rgba(0, 0, 0, 0.2);
+	border: none;
+	box-shadow: none;
+	transform: translateY(-50%);
+}
+
+#strip .nav-button[disabled] {
+	opacity: 0.25;
+}
+
+#strip .nav-button:after {
+	content: '';
+	display: block;
+	width: 40px;
+	height: 40px;
+	margin-left: -25px;
+	border-top: solid 10px #FFF;
+	border-right: solid 10px #FFF;
+	transform: rotate(45deg);
+}
+
+#strip .nav-button.previous:after {
+	transform: rotate(-135deg);
+	margin-left: 10px;
+}
+
+#strip .nav-button.next {
+	left: auto;
+	right: 0;
+}
+
 .strip-output {
 	margin: 0;
 	padding: 0;
@@ -104,7 +174,8 @@
 }
 
 .strip-output > #strip,
-.strip-output > .strip-container {
+.strip-output > .strip-container,
+.strip-output > .strip-container > .panel-container {
 	width: 1024px;
 	max-width: none;
 	box-shadow: none;
@@ -112,10 +183,11 @@
 	flex-direction: inherit;
 }
 
-.strip-output > .strip-container {
+.strip-output > .strip-container,
+.strip-output > .panel-container {
 	background-color: white;
-    padding: 8px;
-    padding-bottom: calc(16px + 2.5em);
+	padding: 8px;
+	padding-bottom: calc(16px + 2.5em);
 }
 
 .strip-output > #strip .panel {
@@ -197,15 +269,66 @@
 	}
 }
 
-@media screen and (max-width: 700px) {
-	#strip,
-    .strip-container {
-		flex-direction: column;
-		max-width: 275px;
+@media screen and (max-width: 768px) {
+
+	/* TODO: Global Layout. Eventually this will apply to all pages */
+	.content {
+		width: calc(100% - var(--mobile-page-padding) * 2);
+		margin: 0 auto;
+		padding: var(--mobile-page-padding);
 	}
+
+
+	#strip .nav-container.active {
+		height: 100%;
+		opacity: 1;
+		transition: opacity 500ms 100ms, height 1ms 1ms ;
+	}
+
+	#strip .panel-container {
+		width: calc(var(--mobile-panel-width) - var(--container-padding) * 2 + var(--panel-border-width) * 2);
+		max-width: var(--mobile-max-panel-width);
+		margin: auto;
+		overflow: hidden;
+		display: flex;
+		flex-wrap: nowrap;
+		overflow-x: auto;
+		scroll-snap-type: x mandatory;
+		scroll-behavior: smooth;
+		-webkit-overflow-scrolling: touch;
+	}
+
+	#strip .panel-container::-webkit-scrollbar {
+		height: 10px;
+	}
+
+	#strip .panel-container::-webkit-scrollbar-thumb {
+		background: #333;
+		border-radius: 10px;
+	}
+
+	#strip .panel-container::-webkit-scrollbar-track {
+		border-radius: 10px;
+		background: transparent;
+		background: radial-gradient(circle at 50%, #999 32%, white 33%, white 34%, #999 35%);
+	}
+
 	#strip .panel {
-		margin: 5px auto;
+		scroll-snap-align: start;
+		flex-shrink: 0;
+		width: calc(var(--mobile-panel-width) - var(--container-padding) * 2);
+		height: calc(var(--mobile-panel-width) - var(--container-padding) * 2);
+		margin-right: 10px;
 	}
+
+	#strip .panel:first-child {
+		margin-left: 0;
+	}
+
+	#strip .panel:last-child {
+		margin-right: 0;
+	}
+
 	#strip .panel .bubble {
 		font-size: 14px;
 	}
