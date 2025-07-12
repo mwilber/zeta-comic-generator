@@ -115,9 +115,11 @@
 		<h2>Composite</h2>
 		<div id="strip" role="region" aria-label="Comic Strip Composite" tabindex="-1">
 			<div class="strip-container">
-				<div id="panel1" class="panel"></div>
-				<div id="panel2" class="panel"></div>
-				<div id="panel3" class="panel"></div>
+				<div class="panel-container">
+					<div id="panel1" class="panel"></div>
+					<div id="panel2" class="panel"></div>
+					<div id="panel3" class="panel"></div>
+				</div>
 			</div>
 			<div class="strip-controls">
 				<button id="save" class="cartoon-button">
