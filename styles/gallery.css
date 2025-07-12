@@ -60,12 +60,12 @@
 }
 
 @media screen and (max-width: 900px) {
-	#gallery, .character-art {
+	.gallery #gallery, .character-art {
 		grid-template-columns: 1fr 1fr 1fr;
 	}
 }
 
-@media screen and (max-width: 550px) {
+@media screen and (max-width: 768px) {
 	#gallery, .character-art {
 		grid-template-columns: 1fr 1fr;
 	}
