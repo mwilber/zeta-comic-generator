@@ -202,6 +202,12 @@ async function GenerateStrip() {
 	const imageModel = document.getElementById("image-model").value;
 	const imageStyle = document.getElementById("image-style").value;
 
+	let vulgarityCheck = await api.CheckVulgarity(safeQuery);
+	if(vulgarityCheck && vulgarityCheck.reject) {
+		SetStatus("profanity");
+		return;
+	}
+
 	let concept = await api.WriteConcept(safeQuery, { model: conceptModel });
 	if (!concept || concept.error) {
 		SetStatus(concept.error == "ratelimit" ? concept.error : "error");
@@ -303,6 +309,8 @@ function SetStatus(status) {
 		);
 	} else if (status === "ratelimit") {
 		alert("The daily limit for generating comics has been reached. Please try again tomorrow.");
+	} else if (status === "profanity") {
+		alert("The premise contains profanity. Please try again with a different premise.");
 	}
 
 	document.body.dataset.status = status;
