@@ -86,11 +86,36 @@ try {
 		$output->id = $result->id;
 		$output->prompt = stripslashes($result->prompt);
 		$output->script = json_decode($result->json);
+		$output->seriesId = $result->seriesId;
 	} else {
 		$output->error = "No record found with ID: $id";
 	}
 } catch(PDOException $e) {
 	$output->error = "ERROR: Could not execute the query. " . $e->getMessage();
+}
+
+if($output->seriesId) {
+	$stmt = $db->prepare("SELECT * FROM `series` WHERE `id` = :id");
+	$stmt->bindParam(':id', $output->seriesId, PDO::PARAM_INT);
+	$stmt->execute();
+	$result = $stmt->fetch(PDO::FETCH_OBJ);
+	$output->series = new stdClass();
+	if($result) {
+		$output->series->title = $result->title;
+		$output->series->permalink = $result->permalink;
+		$output->series->currentIdx = -1;
+		$output->series->comics = [];
+		$stmt = $db->prepare("SELECT `permalink`, `title` FROM `comics` WHERE `seriesId` = :id AND `gallery` = 1 ORDER BY `timestamp` ASC");
+		$stmt->bindParam(':id', $output->seriesId, PDO::PARAM_INT);
+		$stmt->execute();
+		$result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+		foreach ($result as $record) {
+			array_push($output->series->comics, $record);
+			if($record['permalink'] == $hash) {
+				$output->series->currentIdx = count($output->series->comics) - 1;
+			}
+		}
+	}
 }
 
 if($output->script) $output->backgrounds = [];
@@ -117,11 +142,11 @@ try {
 if($output->script) $output->continuity = [];
 
 try {
-	$stmt = $db->prepare("SELECT `categories`.`prefix`, `continuity`.`categoryId`, `continuity`.`description`, `continuity`.`permalink` FROM `continuity`
+	$stmt = $db->prepare("SELECT `categories`.`prefix`, `categories`.`alias`, `categories`.`heading`, `continuity`.`categoryId`, `continuity`.`description`, `continuity`.`permalink` FROM `continuity`
 	JOIN `categories` ON `continuity`.`categoryId` = `categories`.`id`
 	JOIN `comic_continuity` ON comic_continuity.continuityId = continuity.id  
-	WHERE comic_continuity.comicId = :comicId 
-	ORDER BY `continuity`.`categoryId`"); // AND continuity.active = true");  
+	WHERE comic_continuity.comicId = :comicId AND continuity.active = true
+	ORDER BY `continuity`.`categoryId`"); // );  
 	$stmt->bindParam(':comicId', $output->id, PDO::PARAM_INT);
 	$stmt->execute();
 
@@ -130,8 +155,6 @@ try {
 		foreach ($result as $record) {
 			array_push($output->continuity, $record);
 		}
-	} else {
-		$output->error = "No continuity record found with Comic ID: $output->id";
 	}
 } catch(PDOException $e) {
 	$output->error = "ERROR: Could not execute the query. " . $e->getMessage();
