@@ -296,6 +296,8 @@ header {
 	position: relative;
 	height: 132px;
 	width:100%;
+	overflow-x: clip;
+    overflow-y: visible;
 }
 
 header .brand {
@@ -324,23 +326,119 @@ header h1 {
 }
 
 header nav {
+	position: absolute;
+	top: 0;
+	right: 0;
 	display: flex;
-	width: 70%;
+	flex-direction: row;
+	flex-wrap: wrap;
+	width: 100%;
 	margin: auto;
+	z-index: 100;
+	min-height: 150px;
+	min-width: 150px;
+	border-bottom: solid 2px #333e4d;
+	perspective: 150px;
+  	perspective-origin: 50% 50%;
+
+	background: #afbdcf;
+	box-shadow: rgba(0, 0, 0, 0.75) 0px 30px 50px;
+	transform-origin: top right;
+	overflow: hidden;
+}
+
+header nav, header nav a, header nav button, header nav .icon span {
+	transition-property: all;
+	transition-duration: 1s;
+	transition-timing-function: cubic-bezier(0.680, -0.550, 0.265, 1.550);
 }
 
 header nav a {
 	position: relative;
 	flex: 1;
+	flex-basis: auto;
 	text-align: center;
 	background: transparent;
 	height: 70px;
-	margin-top: 10px;
+	margin: 30px 0;
 	font-size: 3em !important;
+	min-width: 50px;
+	overflow: hidden;
+}
+
+header nav a.cartoon-button img {
+	opacity: 1;;
 }
 
 header nav a:hover {
 	background-size: 85%;
+}
+
+header nav button {
+	flex: 1;
+	width: 100%;
+	flex-basis: 100%;
+	background: transparent;
+	color:#333e4d;
+	border: none;
+	box-shadow: none;
+	font-size: 25px;
+	font-weight: bold;
+}
+
+header nav button .icon span {
+	display: block;
+	width: 30px;
+	height: 5px;
+	background-color: #333e4d;
+	margin: 6px auto;
+	border-radius: 5px;
+	pointer-events: none;
+}
+
+/* Rotate first bar */
+header nav:not(.collapsed) button .icon .bar1 {
+	transform: translate(0, 11px) rotate(-45deg);
+}
+
+/* Fade out the second bar */
+header nav:not(.collapsed) button .icon .bar2 {opacity: 0;}
+
+/* Rotate last bar */
+header nav:not(.collapsed) button .icon .bar3 {
+	transform: translate(0, -11px) rotate(45deg);
+}
+
+header nav.collapsed {
+	height: 150px;
+	width: 150px;
+	top: 0;
+	right: 0;
+	/* top: -75px;
+	right: -75px; */
+	/* top: 200px;
+	right: 150px; */
+	transform: rotate(45deg) translate(75px, -75px);
+	background: #333e4d;
+	box-shadow: none;
+}
+
+header nav.collapsed a {
+	height: 0px;
+	width: 0px;
+	margin: 0px;
+	transform: scale(0);
+}
+
+header nav.collapsed button {
+	margin-top: 80px;
+	height: 75px;
+	transform: rotateX(55deg);
+	color: white;
+}
+
+header nav.collapsed button .icon span {
+	background-color: white;
 }
 
 .content {
@@ -371,10 +469,10 @@ header nav a:hover {
 @media screen and (max-width: 900px) {
 	header nav {
 		margin: 0 0 0 25%;
+		flex-direction: column;
 	}
 	header nav a {
 		height: 50px;
-		margin-top: 25px;
 	}
 	header h1 {
 		padding-left: 20%;
@@ -393,7 +491,7 @@ header nav a:hover {
 		margin-bottom: 1em;
 	}
 	header .brand {
-		display: none;
+		height: 100px;
 	}
 	header nav {
 		margin: 0;
@@ -402,7 +500,6 @@ header nav a:hover {
 	}
 	header nav a {
 		height: 50px;
-		margin-top: 30px;
 		font-size: 2.5em !important;
 	}
 	header h1{
