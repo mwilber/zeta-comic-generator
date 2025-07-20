@@ -1,5 +1,6 @@
 body {
 	--mobile-page-padding: 10px;
+	--panel-border-width: 2px;
 }
 
 /* Comic Strip */
@@ -17,7 +18,6 @@ body {
 
 	--mobile-panel-width: 256px;
 	--container-padding: 8px;
-	--panel-border-width: 2px;
 }
 
 #strip.capture {
@@ -91,32 +91,22 @@ body {
 	position: relative;
 }
 
-/* The nav buttons are a mobile only feature.
-   There is a corresponding .active class in the mobile layout that makes this visible. */
-#strip .nav-container {
-	position: absolute;
-	top: 0;
-	left: 0;
-	width: 100%;
-	height: 0%;
-	overflow: hidden;
-	opacity: 0;
-	transition: opacity 500ms 1ms, height 1ms 500ms ;
-}
+/* The nav buttons are visible at widths < 768px */
 
 #strip .nav-button {
 	position: absolute;
-	display: flex;
+	z-index: 100;
+	display: none;
 	justify-content: center;
 	align-items: center;
 	top: calc(var(--mobile-panel-width) / 2);
-	height: 100px;
-	width: 100px;
+	height: 40px;
+	width: 40px;
 	padding: 0;
 	margin: 0;
 	color: transparent;
 	border-radius: 50%;
-	background-color: rgba(0, 0, 0, 0.2);
+	background-color: rgba(0, 0, 0, 0.4);
 	border: none;
 	box-shadow: none;
 	transform: translateY(-50%);
@@ -129,22 +119,26 @@ body {
 #strip .nav-button:after {
 	content: '';
 	display: block;
-	width: 40px;
-	height: 40px;
-	margin-left: -25px;
-	border-top: solid 10px #FFF;
-	border-right: solid 10px #FFF;
+	width: 15px;
+	height: 15px;
+	margin-left: -12px;
+	border-top: solid 4px #FFF;
+	border-right: solid 4px #FFF;
 	transform: rotate(45deg);
 }
 
 #strip .nav-button.previous:after {
 	transform: rotate(-135deg);
-	margin-left: 10px;
+	margin-left: -2px;
+}
+
+#strip .nav-button.nav-button.previous {
+	left: -5px;
 }
 
 #strip .nav-button.next {
 	left: auto;
-	right: 0;
+	right: -5px;
 }
 
 .strip-output {
@@ -153,6 +147,10 @@ body {
 	width: fit-content;
 	position: absolute;
 	left: 150%;
+}
+
+.strip-output .nav-button {
+	display: none;
 }
 
 .strip-output > .panel {
@@ -279,10 +277,8 @@ body {
 	}
 
 
-	#strip .nav-container.active {
-		height: 100%;
-		opacity: 1;
-		transition: opacity 500ms 100ms, height 1ms 1ms ;
+	#strip .nav-button {
+		display: flex;
 	}
 
 	#strip .panel-container {

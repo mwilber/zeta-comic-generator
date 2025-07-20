@@ -207,18 +207,6 @@ export class ComicRenderer {
 	}
 
 	AddPanelNavigation(target) {
-		const navContainer = document.createElement("div");
-		navContainer.className = "nav-container";
-
-		document.body.addEventListener("mousemove", () => {
-			navContainer.classList.add("active");
-
-			if (this.mousemovetimer) clearTimeout(this.mousemovetimer);
-			this.mousemovetimer = setTimeout(() => {
-				navContainer.classList.remove("active");
-				this.mousemovetimer = null;
-			}, 30000);
-		});
 
 		["previous", "next"].forEach((direction) => {
 			const navBtn = document.createElement("button");
@@ -230,9 +218,10 @@ export class ComicRenderer {
 				target.scrollLeft += direction == "next" ? this.panelWidth : -this.panelWidth;
 			});
 			target.addEventListener("scroll", () => {
+				if (this.panelCount <= 1) return;
 				const currPos = Math.floor(target.scrollLeft / this.panelWidth);
+				const buttons = target.parentElement.querySelectorAll(".nav-button");
 
-				const buttons = navContainer.querySelectorAll(".nav-button");
 				for (const button of buttons) {
 					button.removeAttribute("disabled");
 					if (
@@ -244,10 +233,8 @@ export class ComicRenderer {
 
 				}
 			});
-			navContainer.appendChild(navBtn);
+			target.parentElement.appendChild(navBtn);
 		});
-
-		this.el.appendChild(navContainer);
 	}
 
 	/**
