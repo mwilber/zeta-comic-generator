@@ -336,6 +336,7 @@ header nav {
 	margin: auto;
 	z-index: 100;
 	min-height: 150px;
+	max-height: 1000px;
 	min-width: 150px;
 	border-bottom: solid 2px #333e4d;
 	perspective: 150px;
@@ -350,7 +351,8 @@ header nav {
 header nav, header nav a, header nav button, header nav .icon span {
 	transition-property: all;
 	transition-duration: 1s;
-	transition-timing-function: cubic-bezier(0.680, -0.550, 0.265, 1.550);
+	/* transition-timing-function: cubic-bezier(0.680, -0.550, 0.265, 1.550); */
+	transition-timing-function: cubic-bezier(0.740, -0.215, 0.455, 1.310);
 }
 
 header nav a {
@@ -410,7 +412,7 @@ header nav:not(.collapsed) button .icon .bar3 {
 }
 
 header nav.collapsed {
-	height: 150px;
+	max-height: 150px;
 	width: 150px;
 	top: 0;
 	right: 0;
@@ -425,7 +427,7 @@ header nav.collapsed {
 
 header nav.collapsed a {
 	height: 0px;
-	width: 0px;
+	/* width: 0px; */
 	margin: 0px;
 	transform: scale(0);
 }
