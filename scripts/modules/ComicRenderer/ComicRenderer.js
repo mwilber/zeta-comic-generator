@@ -220,7 +220,7 @@ export class ComicRenderer {
 			target.addEventListener("scroll", () => {
 				if (this.panelCount <= 1) return;
 				const currPos = Math.floor(target.scrollLeft / this.panelWidth);
-				const buttons = target.querySelectorAll(".nav-button");
+				const buttons = target.parentElement.querySelectorAll(".nav-button");
 
 				for (const button of buttons) {
 					button.removeAttribute("disabled");
@@ -233,7 +233,7 @@ export class ComicRenderer {
 
 				}
 			});
-			target.appendChild(navBtn);
+			target.parentElement.appendChild(navBtn);
 		});
 	}
 
