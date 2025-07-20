@@ -155,7 +155,44 @@ export class ComicExporter {
 		ctx.fillText(title, 15, 370);
 
 		ctx.font = "normal 14px sans-serif";
-		ctx.fillText("\u201C" + displayPrompt + "\u201D", 15, 390);
+		// If displayPrompt is longer than 105 chars, split into multiple lines
+		const maxLineLength = 110;
+		const quoteLeft = "\u201C";
+		const quoteRight = "\u201D";
+		let promptLines = [];
+
+		if (displayPrompt.length > maxLineLength) {
+			// Try to split at word boundaries
+			let words = displayPrompt.split(" ");
+			let currentLine = "";
+			for (let word of words) {
+				if ((currentLine + word).length > maxLineLength) {
+					promptLines.push(currentLine.trim());
+					currentLine = word + " ";
+				} else {
+					currentLine += word + " ";
+				}
+			}
+			if (currentLine.trim().length > 0) {
+				promptLines.push(currentLine.trim());
+			}
+		} else {
+			promptLines = [displayPrompt];
+		}
+
+		// Add quotes to first and last line
+		if (promptLines.length === 1) {
+			promptLines[0] = quoteLeft + promptLines[0] + quoteRight;
+		} else if (promptLines.length > 1) {
+			promptLines[0] = quoteLeft + promptLines[0];
+			promptLines[promptLines.length - 1] = promptLines[promptLines.length - 1] + quoteRight;
+		}
+
+		let baseY = 390;
+		let lineHeight = 18;
+		for (let i = 0; i < promptLines.length; i++) {
+			ctx.fillText(promptLines[i], 15, baseY + i * lineHeight);
+		}
 
 		return canvas.toDataURL();
 	}
