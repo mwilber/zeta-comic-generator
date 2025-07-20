@@ -186,7 +186,7 @@ function AttachUiEvents() {
  */
 async function GenerateStrip() {
 	const query = document.getElementById("query");
-	if (!query || !query.value || query.value.length > 140) return;
+	if (!query || !query.value || query.value.length > 210) return;
 
 	comicRenderer.clear();
 	api.ClearComicData();
@@ -353,7 +353,7 @@ function UpdateProgress(amount) {
 /**
  * Updates the character count display for the "premise" text input field.
  *
- * It calculates the number of characters remaining before a 140 character 
+ * It calculates the number of characters remaining before a 210 character 
  * limit is reached, and updates the display in the "character-count" 
  * element. The display element's color is also updated to indicate
  * when the character limit has been exceeded.
@@ -363,7 +363,7 @@ function UpdateProgress(amount) {
 function SetCharCount() {
 	let el = document.getElementById("character-count");
 	let characterCount = document.getElementById("query").value.length;
-	let characterleft = 140 - characterCount;
+	let characterleft = 210 - characterCount;
 
 	// console.log(characterleft);
 

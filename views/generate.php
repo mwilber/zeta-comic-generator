@@ -107,7 +107,7 @@
 				</button>
 			</div>
 			<div class="row">
-				<span id="character-count">140 characters left</span>
+				<span id="character-count">210 characters left</span>
 			</div>
 		</div>
 	</div>
