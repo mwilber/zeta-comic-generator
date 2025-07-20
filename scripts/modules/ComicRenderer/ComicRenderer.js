@@ -207,8 +207,6 @@ export class ComicRenderer {
 	}
 
 	AddPanelNavigation(target) {
-		// const navContainer = document.querySelector("panel-container"); //document.createElement("div");
-		// navContainer.className = "nav-container";
 
 		["previous", "next"].forEach((direction) => {
 			const navBtn = document.createElement("button");
@@ -237,8 +235,6 @@ export class ComicRenderer {
 			});
 			target.appendChild(navBtn);
 		});
-
-		//this.el.appendChild(navContainer);
 	}
 
 	/**

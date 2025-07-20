@@ -118,13 +118,13 @@ body {
 
 #strip .nav-button:after {
 	content: '';
-    display: block;
-    width: 15px;
-    height: 15px;
-    margin-left: -12px;
-    border-top: solid 4px #FFF;
-    border-right: solid 4px #FFF;
-    transform: rotate(45deg);
+	display: block;
+	width: 15px;
+	height: 15px;
+	margin-left: -12px;
+	border-top: solid 4px #FFF;
+	border-right: solid 4px #FFF;
+	transform: rotate(45deg);
 }
 
 #strip .nav-button.previous:after {
