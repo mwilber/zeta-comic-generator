@@ -94,29 +94,31 @@ body {
 /* The nav buttons are a mobile only feature.
    There is a corresponding .active class in the mobile layout that makes this visible. */
 #strip .nav-container {
+	display: none;
 	position: absolute;
 	top: 0;
 	left: 0;
 	width: 100%;
 	height: 0%;
 	overflow: hidden;
-	opacity: 0;
 	transition: opacity 500ms 1ms, height 1ms 500ms ;
+	background-color: rgba(0, 0, 255, 0.5);
 }
 
 #strip .nav-button {
 	position: absolute;
+	z-index: 100;
 	display: flex;
 	justify-content: center;
 	align-items: center;
 	top: calc(var(--mobile-panel-width) / 2);
-	height: 100px;
-	width: 100px;
+	height: 40px;
+	width: 40px;
 	padding: 0;
 	margin: 0;
 	color: transparent;
 	border-radius: 50%;
-	background-color: rgba(0, 0, 0, 0.2);
+	background-color: rgba(0, 0, 0, 0.4);
 	border: none;
 	box-shadow: none;
 	transform: translateY(-50%);
@@ -128,18 +130,18 @@ body {
 
 #strip .nav-button:after {
 	content: '';
-	display: block;
-	width: 40px;
-	height: 40px;
-	margin-left: -25px;
-	border-top: solid 10px #FFF;
-	border-right: solid 10px #FFF;
-	transform: rotate(45deg);
+    display: block;
+    width: 15px;
+    height: 15px;
+    margin-left: -12px;
+    border-top: solid 4px #FFF;
+    border-right: solid 4px #FFF;
+    transform: rotate(45deg);
 }
 
 #strip .nav-button.previous:after {
 	transform: rotate(-135deg);
-	margin-left: 10px;
+	margin-left: -2px;
 }
 
 #strip .nav-button.next {
@@ -279,7 +281,8 @@ body {
 	}
 
 
-	#strip .nav-container.active {
+	#strip .nav-container {
+		display: block;
 		height: 100%;
 		opacity: 1;
 		transition: opacity 500ms 100ms, height 1ms 1ms ;
