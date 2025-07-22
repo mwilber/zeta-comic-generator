@@ -2,7 +2,7 @@
 	error_reporting(E_ALL);
 	ini_set('display_errors', 1);
 
-    require __DIR__ . '/api/includes/prompts.php';
+	require __DIR__ . '/api/includes/prompts.php';
 	require __DIR__ . '/api/includes/characteractions.php';
 
 	$request = $_SERVER['REQUEST_URI'];

@@ -1,3 +1,4 @@
+<?php require __DIR__ . '/../api/includes/key.php'; ?>
 <script>
 	const characterActions = <?php echo json_encode($GLOBALS['characterActions']); ?>;
 </script>
@@ -30,10 +31,12 @@
 		<h2>Setup</h2>
 		<div id="input">
 			<div class="row selections">
+				<?php if(defined("DEV_SITE") && DEV_SITE === true): ?>
 				<label>
 					Series ID
 					<input id="series-id" type="text" value="3" />
 				</label>
+				<?php endif; ?>
 				<label> 
 					Story Model
 					<div class="select">
