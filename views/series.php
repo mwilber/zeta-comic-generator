@@ -1,16 +1,22 @@
 <?php
+	require __DIR__ . '/../api/includes/key.php';
+
 	$database = new Database();
 	$db = $database->getConnection();
 
 	$hash = $path[2];
 	$series = null;
+	$seriesQueryDev = "series.active = 1 AND ";
+	if(defined("DEV_SITE") && DEV_SITE === true) {
+		$seriesQueryDev = "";
+	}
 	// If hash is set. Query the database for the story
-	if ($hash):
-		$stmt = $db->prepare("SELECT * FROM `series` WHERE active = 1 AND permalink = :hash ORDER BY timestamp DESC");
+	if ($hash) {
+		$stmt = $db->prepare("SELECT * FROM `series` WHERE ".$seriesQueryDev."permalink = :hash ORDER BY timestamp DESC");
 		$stmt->bindParam(':hash', $hash);
 		$stmt->execute();
 		$series = $stmt->fetch(PDO::FETCH_ASSOC);
-	endif;
+	}
 ?>
 <script>
 
@@ -73,8 +79,8 @@ else:
 			) c2 ON c1.seriesId = c2.seriesId AND c1.timestamp = c2.max_timestamp
 		) comics ON comics.seriesId = series.id
 		WHERE 
-			series.active = 1
-			AND comics.gallery = 1
+			".$seriesQueryDev."
+			comics.gallery = 1
 		ORDER BY 
 			series.timestamp DESC");
 		$stmt->execute();
