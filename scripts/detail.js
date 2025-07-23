@@ -111,14 +111,15 @@ document.addEventListener("DOMContentLoaded", () => {
 						alphaEl.innerHTML = `<h3>${continuitySorted.alpha.heading}:</h3> ${continuitySorted.alpha.items.map(item => item.description).join(", ")}`;
 						continuityEl.appendChild(alphaEl);
 					}
-					if (continuitySorted.event) {
-						let eventEl = document.createElement("div");
-						eventEl.classList.add("event");
-						eventEl.innerHTML = `<h3>${continuitySorted.event.heading}:</h3> ${continuitySorted.event.items.map(item => {
-							return `<a href="/gallery/${item.permalink}">${item.description}</a>`
-						}).join(", ")}`;
-						continuityEl.appendChild(eventEl);
-					}
+					// Hiding events until phase 2
+					// if (continuitySorted.event) {
+					// 	let eventEl = document.createElement("div");
+					// 	eventEl.classList.add("event");
+					// 	eventEl.innerHTML = `<h3>${continuitySorted.event.heading}:</h3> ${continuitySorted.event.items.map(item => {
+					// 		return `<a href="/gallery/${item.permalink}">${item.description}</a>`
+					// 	}).join(", ")}`;
+					// 	continuityEl.appendChild(eventEl);
+					// }
 
 					continuityEl.insertAdjacentHTML("afterbegin", `<h2 class="continuity-title">Notes</h2>`);
 				} else {
