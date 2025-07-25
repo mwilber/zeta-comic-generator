@@ -365,7 +365,7 @@ header nav a {
 	margin: 30px 0;
 	font-size: 3em !important;
 	min-width: 50px;
-	overflow: hidden;
+	overflow: visible;
 }
 
 header nav a.cartoon-button img {
@@ -430,6 +430,7 @@ header nav.collapsed a {
 	/* width: 0px; */
 	margin: 0px;
 	transform: scale(0);
+	overflow: hidden;
 }
 
 header nav.collapsed button {
@@ -537,6 +538,41 @@ header nav.collapsed button .icon span {
 @media screen and (max-height: 550px) {
 	.dialog {
 		top: 10vh;
+	}
+}
+
+@media screen and (min-width: 901px) {
+	header nav, header nav a, header nav button, header nav .icon span {
+		transition: none;
+	}
+
+	header nav,
+	header nav.collapsed {
+		transform: none;
+		background: none;
+		width: calc(100% - 220px);
+		height: auto;
+		min-height: 90px;
+		border: none;
+		position: static;
+		margin-left: 110px;
+		box-shadow: none;
+	}
+
+	header nav .expand-button,
+	header nav.collapsed .expand-button {
+		height: 0;
+		width: 0;
+		overflow: hidden;
+		flex: 0;
+		transform: scale(0);
+	}
+
+	header nav a,
+	header nav.collapsed a {
+		height: auto;
+		width: auto;
+		transform: none;
 	}
 }
 
