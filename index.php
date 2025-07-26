@@ -120,7 +120,8 @@
 				$path[1] = 'detail';
 				$path[2] = '36a16a2505369e0c922b6ea7a23a56d2';
 			case 'about':
-			case 'detail':
+            case 'detail':
+            case 'edit':
 			case 'gallery':
 			case 'generate':
 			case 'series':

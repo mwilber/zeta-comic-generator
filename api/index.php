@@ -84,6 +84,8 @@
 		case 'imgproxy':
 		case 'bedrock':
 		case 'metrics':
+		case 'update':
+		case 'thumbnail':
 			require __DIR__ . '/controllers/'.$controller.'.php';
 			break;
 		// Comic Generation API endpoints
