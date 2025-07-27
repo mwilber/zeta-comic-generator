@@ -47,9 +47,9 @@
 		</div>
 	</div>
 </div>
-<h2>Premise</h2>
-<div id="query" class="premise"></div>
-<h2>Composite</h2>
+<!-- <h2>Premise</h2>
+<div id="query" class="premise"></div> -->
+<h2>Preview</h2>
 <div id="strip">
     <!-- <div id="panel1" class="panel"></div>
 	<div id="panel2" class="panel"></div>
@@ -69,7 +69,7 @@
 </div>
 <div id="strip-output"></div>
 <div id="output"></div>
-<h2>Script</h2>
+<h2>Edit</h2>
 <ul id="script"></ul>
 
 <script type="module" src="/scripts/edit.js?v=<?php echo $version ?>"></script>

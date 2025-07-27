@@ -3,9 +3,6 @@ import { ComicRenderer } from "./modules/ComicRenderer/ComicRenderer.js";
 function ClearElements() {
 	[
 		'script',
-		// 'panel1',
-		// 'panel2',
-		// 'panel3'
 	].forEach((id) => document.getElementById(id).innerHTML = '');
 
 	document.querySelector(".strip-container").innerHTML = `
@@ -17,14 +14,6 @@ function ClearElements() {
 
 function SetStatus(status) {
 	document.body.dataset.status = status;
-
-	['query'].forEach((id) => {
-		document.getElementById(id)[status === 'generating' ? 'setAttribute' : 'removeAttribute']('disabled', '');
-	});
-
-	if(status === 'generating'){
-		
-	}
 }
 
 
@@ -50,10 +39,7 @@ function InitEditor() {
 				}
 				window.stripData = data;
 
-				const { id, prompt, script, backgrounds } = data;
-
-				script.prompt = prompt;
-				document.getElementById("query").innerHTML = `${prompt}`;
+				const { id, script, backgrounds } = data;
 
 				for (const [idx, panel] of script.panels.entries()) {
 					if (!Array.isArray(panel.dialog)) {
@@ -91,7 +77,6 @@ function InitEditor() {
 
 				window['comicTitle'] = script.title;
 
-				document.getElementById("query").innerHTML = `${data.prompt}`;
 				document.getElementById("script").innerHTML = `
 					<li>
 					</li>
@@ -169,7 +154,6 @@ function InitEditor() {
 
 function regenerateBackground(idx) {
 	const panelBackgroundDescription = document.querySelector("[name=script-panel-" + idx + "-background]");
-	console.log("🚀 ~ regenerateBackground ~ panelBackgroundDescription:", panelBackgroundDescription.value)
 	const newBackgroundImg = document.querySelector("#script-panel-" + idx + "-new-background-image");
 
 	const formData = new FormData();
