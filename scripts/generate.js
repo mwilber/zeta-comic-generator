@@ -366,14 +366,21 @@ function SetCharCount() {
 	let characterleft = 210 - characterCount;
 
 	// console.log(characterleft);
+	el.style.color = "";
+	el.style.fontWeight = "";
 
-	if (characterleft < 0) el.style.color = "#c00";
-	else if (characterleft < 15) el.style.color = "#600";
-	else el.style.color = "";
+	if (characterleft < 0) { 
+		el.style.color = "#f00";
+		el.style.fontWeight = "bold";
+	} else if (characterleft < 15)
+		el.style.color = "#c00";
+	else if (characterleft < 50)
+		el.style.color = "#900";
+		
 
 	if (characterleft < 0)
-		el.innerText = Math.abs(characterleft) + " over limit.";
-	else el.innerText = characterleft + " characters left.";
+		el.innerText = Math.abs(characterleft) + " over limit";
+	else el.innerText = characterleft + " characters left";
 
 	return true;
 }
