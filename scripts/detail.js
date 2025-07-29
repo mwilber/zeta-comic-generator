@@ -172,6 +172,13 @@ function AttachUiEvents() {
 			},
 		},
 		{
+			selector: "#edit",
+			event: "click",
+			handler: () => {
+				window.location = "/edit/" + comicId;
+			},
+		},
+		{
 			selector: "#download",
 			event: "click",
 			handler: () => {

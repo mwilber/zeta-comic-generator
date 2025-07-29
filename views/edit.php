@@ -1,3 +1,8 @@
+<?php
+	if(!defined("DEV_SITE") || (defined("DEV_SITE") && DEV_SITE !== true)) {
+		exit;
+	}
+?>
 <script>
 	const comicId = '<?php echo $path[2] ?>';
 	const characterActions = <?php echo json_encode($GLOBALS['characterActions']); ?>;
