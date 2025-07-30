@@ -68,10 +68,9 @@ function InitEditor() {
 
 				if (!script.credits) {
 					script.credits = {
+						concept: '',
 						script: '',
-						image: '',
-						background: '',
-						action: ''
+						image: ''
 					};
 				}
 
@@ -91,10 +90,9 @@ function InitEditor() {
 				document.getElementById("script").innerHTML += `<li>
 					<button id="quik-fill">Quick Fill</button>
 					<ul class="credits">
+						<li><span>Concept: </span><span><input name="script-credit-concept" value="${script.credits.concept}"/></span></li>
 						<li><span>Script: </span><span><input name="script-credit-script" value="${script.credits.script}"/></span></li>
 						<li><span>Images: </span><span><input name="script-credit-image" value="${script.credits.image}"/></span></li>
-						<li><span>Backgrounds: </span><span><input name="script-credit-background" value="${script.credits.background}"/></span></li>
-						<li><span>Actions: </span><span><input name="script-credit-action" value="${script.credits.action}"/></span></li>
 					</ul>
 				</li>`;
 
@@ -240,10 +238,9 @@ document.getElementById('download').addEventListener("click", () => {
 	data.title = data.script.title;
 
 	if (!data.script.credits) data.script.credits = {};
-	data.script.credits.script = document.querySelector("[name=script-credit-script]").value;
-	data.script.credits.image = document.querySelector("[name=script-credit-image]").value;
-	data.script.credits.background = document.querySelector("[name=script-credit-background]").value;
-	data.script.credits.action = document.querySelector("[name=script-credit-action]").value;
+	["concept", "script", "image"].forEach((field) => {
+		data.script.credits[field] = document.querySelector("[name=script-credit-" + field + "]").value;
+	});
 
 	data.script.panels.forEach((panel, idx) => {
 		for(let field of panelFieldNames) {
