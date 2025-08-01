@@ -76,6 +76,12 @@
 			<img class="burst" src="/assets/images/speech_bubble.svg" alt="Cartoon speech bubble icon" />
 			<span class="cartoon-font">Share</span>
 		</button>
+		<?php if(defined("DEV_SITE") && DEV_SITE === true): ?>
+		<button id="edit" class="cartoon-button">
+			<img class="burst" src="/assets/images/speech_bubble.svg" alt="Cartoon speech bubble icon" />
+			<span class="cartoon-font">Edit</span>
+		</button>
+		<?php endif; ?>
 	</div>
 </div>
 <div id="output"></div>
