@@ -47,7 +47,7 @@ document.addEventListener("DOMContentLoaded", () => {
 				if (data.series) {
 					document.getElementById("story-title")
 						.innerHTML = `
-							<a href="/stories/${data.series.permalink}">
+							<a href="/series/${data.series.permalink}">
 								${data.series.title}
 							</a> - Part ${data.series.currentIdx + 1}
 						`;
