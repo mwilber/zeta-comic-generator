@@ -65,7 +65,6 @@
 	require __DIR__ . '/models/gemthink.php';
 	require __DIR__ . '/models/ttn.php';
 	require __DIR__ . '/models/dall.php';
-	require __DIR__ . '/models/sdf.php';
 	require __DIR__ . '/models/claude.php';
 	require __DIR__ . '/models/deepseek.php';
 	require __DIR__ . '/models/deepseekr.php';

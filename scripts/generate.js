@@ -149,9 +149,10 @@ function AttachUiEvents() {
 					localStorage.setItem("image-model-select", value);
 				const styleSelectGroup =
 					document.getElementById("image-style-label");
-				if (value === "sdf")
-					styleSelectGroup.style.display = "block";
-				else styleSelectGroup.style.display = "none";
+				// if (value === "sdf")
+				// 	styleSelectGroup.style.display = "block";
+				// else 
+				styleSelectGroup.style.display = "none";
 			},
 		},
 		{

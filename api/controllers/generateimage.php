@@ -54,9 +54,6 @@ if ($hitCount >= RATE_LIMIT) {
 		case "ttn":
 			$model = new ModelTitanImage();
 			break;
-		case "sdf":
-			$model = new ModelStableDiffusion();
-			break;
 		case "imagen":
 			$model = new ModelImagen();
 			break;

@@ -37,7 +37,7 @@
 							<option value="">(Select a model)</option>
 							<option value="o">o3</option>
 							<option value="gemthink">Gemini 2.5 Pro</option>
-							<option value="grok">Grok 2</option>
+							<option value="grokadv">Grok 4</option>
 							<option value="claude">Claude Sonnet 3.5</option>
 							<option value="deepseekr">DeepSeek R1</option>
 							<!-- Titan Text Express v1 disabled because it can't handle the new prompt format -->
@@ -52,7 +52,7 @@
 							<option value="">(Select a model)</option>
 							<option value="gpt">GPT 4.1</option>
 							<option value="gem">Gemini 2.0 Flash</option>
-							<option value="grok">Grok 2</option>
+							<option value="grok">Grok 3</option>
 							<option value="claude">Claude Sonnet 3.5</option>
 							<option value="deepseek">DeepSeek V3</option>
 							<option value="llama">Llama 3</option>
@@ -68,7 +68,6 @@
 							<option value="">(Select a model)</option>
 							<option value="oai">Dall-E 3</option>
 							<option value="imagen">Imagen 3</option>
-							<option value="sdf">Stable Diffusion XL</option>
 							<option value="ttn">Titan Image (preview)</option>
 						</select>
 					</div>
