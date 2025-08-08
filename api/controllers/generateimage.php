@@ -60,6 +60,9 @@ if ($hitCount >= RATE_LIMIT) {
 		case "imagen":
 			$model = new ModelImagen();
 			break;
+		case "grokimg":
+			$model = new ModelGrokImage();
+			break;
 	}
 	if (!$model) {
 		$output->error = "Invalid model id";

@@ -73,6 +73,8 @@
 	require __DIR__ . '/models/imagen.php';
 	require __DIR__ . '/models/grok.php';
 	require __DIR__ . '/models/grokadv.php';
+	require __DIR__ . '/models/grokimg.php';
+
 
 	switch ($controller) {
 		// App API endpoints
