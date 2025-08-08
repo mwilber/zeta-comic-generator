@@ -229,6 +229,9 @@ function GetModel($modelAlias) {
 		case "grok":
 			$model = new ModelGrok();
 			break;
+		case "grokadv":
+			$model = new ModelGrokAdvanced();
+			break;
 	}
 	return $model;
 }

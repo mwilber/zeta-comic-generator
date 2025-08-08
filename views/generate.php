@@ -37,7 +37,7 @@
 							<option value="">(Select a model)</option>
 							<option value="o">o3</option>
 							<option value="gemthink">Gemini 2.5 Pro</option>
-							<option value="grok">Grok 3</option>
+							<option value="grokadv">Grok 4</option>
 							<option value="claude">Claude Sonnet 3.5</option>
 							<option value="deepseekr">DeepSeek R1</option>
 							<!-- Titan Text Express v1 disabled because it can't handle the new prompt format -->
