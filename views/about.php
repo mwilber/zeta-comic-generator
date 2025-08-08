@@ -56,7 +56,6 @@
 		<ul>
 			<li><a href="https://openai.com/dall-e-3" target="_blank" rel="noopener noreferrer">Dall-E 3</a></li>
 			<li><a href="https://deepmind.google/models/imagen/" target="_blank" rel="noopener noreferrer">Imagen 3</a></li>
-			<li><a href="https://aws.amazon.com/bedrock/titan/" target="_blank" rel="noopener noreferrer">Titan Image</a></li>
 		</ul>
 	</li>
 </ul>

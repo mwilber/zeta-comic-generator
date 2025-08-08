@@ -40,8 +40,6 @@
 							<option value="grok">Grok 2</option>
 							<option value="claude">Claude Sonnet 3.5</option>
 							<option value="deepseekr">DeepSeek R1</option>
-							<!-- Titan Text Express v1 disabled because it can't handle the new prompt format -->
-							<!-- <option value="ttn">Titan Text Express v1</option> -->
 						</select>
 					</div>
 				</label>
@@ -56,8 +54,6 @@
 							<option value="claude">Claude Sonnet 3.5</option>
 							<option value="deepseek">DeepSeek V3</option>
 							<option value="llama">Llama 3</option>
-							<!-- Titan Text Express v1 disabled because it can't handle the new prompt format -->
-							<!-- <option value="ttn">Titan Text Express v1</option> -->
 						</select>
 					</div>
 				</label>
@@ -68,7 +64,6 @@
 							<option value="">(Select a model)</option>
 							<option value="oai">Dall-E 3</option>
 							<option value="imagen">Imagen 3</option>
-							<option value="ttn">Titan Image (preview)</option>
 						</select>
 					</div>
 				</label>
