@@ -13,15 +13,15 @@
       "content": "Testing. Just say hi and hello world and nothing else."
     }
   ],
-  "model": "grok-2-latest",
+  "model": "grok-3",
   "stream": false,
   "temperature": 0
 }'
  */
 class ModelGrok extends BaseModel {
 	function __construct() {
-		$this->modelName = "grok-2-latest";
-		// $this->modelName = "grok-3";
+		$this->modelName = "grok-3";
+		// $this->modelName = "grok-2-latest";
 		$this->apiUrl = "https://api.x.ai/v1/chat/completions";
 		$this->apiKey = GROK_KEY;
 	}
