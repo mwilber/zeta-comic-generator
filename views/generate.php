@@ -35,7 +35,7 @@
 						Model Select
 						<div class="select">
 							<select name="group-select" id="group-select">
-								<option value="">(Select a group)</option>
+								<option value="">(Select a provider)</option>
 								<option value="openai">OpenAI</option>
 								<option value="google">Google</option>
 							</select>
