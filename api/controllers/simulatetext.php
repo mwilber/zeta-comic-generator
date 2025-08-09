@@ -35,9 +35,6 @@ if ($modelId) {
 		case "gem":
 			$model = new ModelGemini();
 			break;
-		case "claude":
-			$model = new ModelClaude();
-			break;
 		case "llama":
 			$model = new ModelLlama();
 			break;

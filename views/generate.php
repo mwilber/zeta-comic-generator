@@ -38,7 +38,6 @@
 							<option value="o">o3</option>
 							<option value="gemthink">Gemini 2.5 Pro</option>
 							<option value="grok">Grok 2</option>
-							<option value="claude">Claude Sonnet 3.5</option>
 							<option value="deepseekr">DeepSeek R1</option>
 						</select>
 					</div>
@@ -51,7 +50,6 @@
 							<option value="gpt">GPT 4.1</option>
 							<option value="gem">Gemini 2.0 Flash</option>
 							<option value="grok">Grok 2</option>
-							<option value="claude">Claude Sonnet 3.5</option>
 							<option value="deepseek">DeepSeek V3</option>
 							<option value="llama">Llama 3</option>
 						</select>
