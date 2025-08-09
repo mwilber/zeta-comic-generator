@@ -10,6 +10,22 @@ import { ScriptRenderer } from "./modules/ScriptRenderer.js";
 let api, comicRenderer, scriptRenderer;
 
 /**
+ * Model group configurations for easy selection
+ */
+const MODEL_GROUPS = {
+	openai: {
+		story: "o",        // o3
+		script: "gpt",     // GPT 4.1
+		image: "oai"       // Dall-E 3
+	},
+	google: {
+		story: "gemthink", // Gemini 2.5 Pro
+		script: "gem",     // Gemini 2.0 Flash
+		image: "imagen"    // Imagen 3
+	}
+};
+
+/**
  * Initializes the comic generation application when the DOM content has finished loading.
  * This function sets up the ComicRenderer and ScriptRenderer instances, attaches UI event handlers,
  * and sets the application status to "ready".
@@ -30,6 +46,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	});
 
 	AttachUiEvents();
+	SetInitialMode();
 	SetDefaultSelections();
 
 	api.GetMetrics().then((metrics)=>{
@@ -62,10 +79,14 @@ function SetDefaultSelections() {
 	const defaultSelection = "gpt";
 	const defaultImageSelection = "oai";
 	// TODO: Simplify this
+	const groupSelectEl = document.getElementById("group-select");
 	const storyModelEl = document.getElementById("story-model");
 	const scriptModelEl = document.getElementById("script-model");
 	const imageModelEl = document.getElementById("image-model");
 
+	let savedGroupSelection = localStorage
+		? localStorage.getItem("group-select")
+		: null;
 	let savedStoryModel = localStorage
 		? localStorage.getItem("story-model-select")
 		: null;
@@ -76,10 +97,100 @@ function SetDefaultSelections() {
 		? localStorage.getItem("image-model-select")
 		: null;
 
+	// Set group selection first
+	if (savedGroupSelection) {
+		groupSelectEl.value = savedGroupSelection;
+	}
+
 	storyModelEl.value = savedStoryModel || defaultConceptSelection;
 	scriptModelEl.value = savedScriptModel || defaultSelection;
 	imageModelEl.value = savedImageModel || defaultImageSelection;
 	// Fire a change event on the selections
+	groupSelectEl.dispatchEvent(new Event("change"));
+	storyModelEl.dispatchEvent(new Event("change"));
+	scriptModelEl.dispatchEvent(new Event("change"));
+	imageModelEl.dispatchEvent(new Event("change"));
+}
+
+/**
+ * Toggles between simple group selection and advanced model selection
+ */
+function ToggleSelectionMode() {
+	const groupSelection = document.getElementById("group-selection");
+	const modelSelection = document.getElementById("model-selection");
+	const toggleButton = document.getElementById("advanced-toggle");
+
+	const isAdvancedMode = modelSelection.style.display !== "none";
+
+	if (isAdvancedMode) {
+		// Switch to simple mode
+		modelSelection.style.display = "none";
+		groupSelection.style.display = "flex";
+		toggleButton.textContent = "Advanced";
+		// Save mode preference
+		if (localStorage) {
+			localStorage.setItem("selection-mode", "simple");
+		}
+	} else {
+		// Switch to advanced mode
+		groupSelection.style.display = "none";
+		modelSelection.style.display = "flex";
+		toggleButton.textContent = "Simple";
+		
+		// Clear group selection
+		const groupSelectEl = document.getElementById("group-select");
+		groupSelectEl.value = "";
+		
+		// Save mode preference and clear group selection from localStorage
+		if (localStorage) {
+			localStorage.setItem("selection-mode", "advanced");
+			localStorage.setItem("group-select", "");
+		}
+	}
+}
+
+/**
+ * Sets the initial selection mode based on saved preference or default
+ */
+function SetInitialMode() {
+	const savedMode = localStorage ? localStorage.getItem("selection-mode") : null;
+	const groupSelection = document.getElementById("group-selection");
+	const modelSelection = document.getElementById("model-selection");
+	const toggleButton = document.getElementById("advanced-toggle");
+
+	// Default to simple mode (group visible, models hidden)
+	if (savedMode === "advanced") {
+		groupSelection.style.display = "none";
+		modelSelection.style.display = "flex";
+		toggleButton.textContent = "Simple";
+	} else {
+		groupSelection.style.display = "flex";
+		modelSelection.style.display = "none";
+		toggleButton.textContent = "Advanced";
+	}
+}
+
+/**
+ * Updates model selections based on the selected group
+ * @param {string} groupKey - The key of the group to apply (e.g., 'openai', 'google')
+ */
+function ApplyGroupSelection(groupKey) {
+	if (!MODEL_GROUPS[groupKey]) {
+		console.warn(`Unknown group: ${groupKey}`);
+		return;
+	}
+
+	const group = MODEL_GROUPS[groupKey];
+	const storyModelEl = document.getElementById("story-model");
+	const scriptModelEl = document.getElementById("script-model");
+	const imageModelEl = document.getElementById("image-model");
+
+	// Update the dropdown values
+	storyModelEl.value = group.story;
+	scriptModelEl.value = group.script;
+	imageModelEl.value = group.image;
+
+	// Trigger change events to update any related functionality
 	storyModelEl.dispatchEvent(new Event("change"));
 	scriptModelEl.dispatchEvent(new Event("change"));
 	imageModelEl.dispatchEvent(new Event("change"));
@@ -154,6 +265,27 @@ function AttachUiEvents() {
 				// else 
 				styleSelectGroup.style.display = "none";
 			},
+		},
+		{
+			selector: "#group-select",
+			event: "change",
+			handler: (e) => {
+				let {value} = e.target;
+				// Apply the selected group's model configuration
+				if (value) {
+					ApplyGroupSelection(value);
+				}
+				// Save the group selection to localStorage
+				if(localStorage)
+					localStorage.setItem("group-select", value);
+			}
+		},
+		{
+			selector: "#advanced-toggle",
+			event: "click",
+			handler: (e) => {
+				ToggleSelectionMode();
+			}
 		},
 		{
 			selector: ".dialog .close",

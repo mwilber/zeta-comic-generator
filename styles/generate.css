@@ -272,9 +272,44 @@ progress[value]::-webkit-progress-value {
 	display:none;
 }
 
+/* Toggle Button Styles */
+.toggle-button {
+	background: #007cba;
+	color: white;
+	border: 1px solid #005a87;
+	border-radius: 4px;
+	padding: 0.5em 1em;
+	cursor: pointer;
+	font-size: 0.9em;
+	margin: 0 1em 0.5em 0;
+	transition: background-color 0.2s;
+}
+
+.toggle-button:hover {
+	background: #005a87;
+}
+
+.toggle-button:focus {
+	outline: 2px solid #0073aa;
+	outline-offset: 2px;
+}
+
+#group-selection,
+#model-selection {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 1em;
+}
+
 @media screen and (max-width: 900px) {
     #input .row.selections {
         flex-direction: column;
+    }
+    
+    #group-selection,
+    #model-selection {
+        flex-direction: column;
+        gap: 0.5em;
     }
 }
 

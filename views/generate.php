@@ -30,8 +30,22 @@
 		<h2>Setup</h2>
 		<div id="input">
 			<div class="row selections">
-				<label> 
-					Story Model
+				<div id="group-selection">
+					<label>
+						Group Select
+						<div class="select">
+							<select name="group-select" id="group-select">
+								<option value="">(Select a group)</option>
+								<option value="openai">OpenAI</option>
+								<option value="google">Google</option>
+							</select>
+						</div>
+					</label>
+				</div>
+				<button type="button" id="advanced-toggle" class="toggle-button">Advanced</button>
+				<div id="model-selection" style="display: none;">
+					<label> 
+						Story Model
 					<div class="select">
 						<select name="story-model" id="story-model">
 							<option value="">(Select a model)</option>
@@ -81,6 +95,7 @@
 						</select>
 					</div>
 				</label>
+				</div>
 			</div>
 			<div class="row">
 				<label for="query">
