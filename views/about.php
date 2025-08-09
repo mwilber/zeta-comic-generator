@@ -36,7 +36,7 @@
 			<li><a href="https://openai.com/product" target="_blank" rel="noopener noreferrer">o3</a></li>
 			<li><a href="https://deepmind.google/models/gemini/" target="_blank" rel="noopener noreferrer">Gemini 2.5 Pro</a></li>
 			<li><a href="https://x.ai/grok" target="_blank" rel="noopener noreferrer">Grok 2</a></li>
-			<li><a href="https://www.anthropic.com/claude/sonnet" target="_blank" rel="noopener noreferrer">Claude 3.5 Sonnet</a></li>
+			<li><a href="https://www.anthropic.com/claude/sonnet" target="_blank" rel="noopener noreferrer">Claude Sonnet 3.5</a></li>
 			<li><a href="https://github.com/deepseek-ai/DeepSeek-R1" target="_blank" rel="noopener noreferrer">DeepSeek R1</a></li>
 		</ul>
 	</li>
@@ -46,13 +46,13 @@
 			<li><a href="https://openai.com/product" target="_blank" rel="noopener noreferrer">GPT 4.1</a></li>
 			<li><a href="https://deepmind.google/models/gemini/" target="_blank" rel="noopener noreferrer">Gemini 2.0 Flash</a></li>
 			<li><a href="https://x.ai/grok" target="_blank" rel="noopener noreferrer">Grok 2</a></li>
-			<li><a href="https://www.anthropic.com/claude/sonnet" target="_blank" rel="noopener noreferrer">Claude 3.5 Sonnet</a></li>
+			<li><a href="https://www.anthropic.com/claude/sonnet" target="_blank" rel="noopener noreferrer">Claude Sonnet 3.5</a></li>
 			<li><a href="https://github.com/deepseek-ai/DeepSeek-V3" target="_blank" rel="noopener noreferrer">DeepSeek V3</a></li>
-			<li><a href="https://www.llama.com/" target="_blank" rel="noopener noreferrer">Llama 3.2</a></li>
+			<li><a href="https://www.llama.com/" target="_blank" rel="noopener noreferrer">Llama 3</a></li>
 		</ul>
 	</li>
 	<li>
-		<h3>Background</h3>
+		<h3>Image</h3>
 		<ul>
 			<li><a href="https://openai.com/dall-e-3" target="_blank" rel="noopener noreferrer">Dall-E 3</a></li>
 			<li><a href="https://deepmind.google/models/imagen/" target="_blank" rel="noopener noreferrer">Imagen 3</a></li>
