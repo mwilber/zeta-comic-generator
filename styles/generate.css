@@ -293,7 +293,7 @@ progress[value]::-webkit-progress-value {
 
 .toggle-button:focus {
 	outline: none;
-	border: 2px solid var(--select-focus, blue);
+	border: 2px solid black;
 	/* Compensate for thicker border by reducing padding */
 	padding: calc(0.25em - 1px) calc(1em - 1px);
 }
