@@ -97,10 +97,8 @@ function SetDefaultSelections() {
 		? localStorage.getItem("image-model-select")
 		: null;
 
-	// Set group selection first
-	if (savedGroupSelection) {
-		groupSelectEl.value = savedGroupSelection;
-	}
+	// Set group selection first (default to "openai" if none saved)
+	groupSelectEl.value = savedGroupSelection || "openai";
 
 	storyModelEl.value = savedStoryModel || defaultConceptSelection;
 	scriptModelEl.value = savedScriptModel || defaultSelection;
