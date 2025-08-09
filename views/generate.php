@@ -30,18 +30,32 @@
 		<h2>Setup</h2>
 		<div id="input">
 			<div class="row selections">
-				<label> 
-					Story Model
+				<div id="group-selection">
+					<label>
+						Model Select
+						<div class="select">
+							<select name="group-select" id="group-select">
+								<option value="">(Select a provider)</option>
+								<option value="openai">OpenAI</option>
+								<option value="google">Google</option>
+							</select>
+						</div>
+					</label>
+				</div>
+				<label>
+					<br/>
+					<button type="button" id="advanced-toggle" class="toggle-button">Advanced</button>
+				</label>
+				<div id="model-selection" style="display: none;">
+					<label> 
+						Story Model
 					<div class="select">
 						<select name="story-model" id="story-model">
 							<option value="">(Select a model)</option>
 							<option value="o">o3</option>
 							<option value="gemthink">Gemini 2.5 Pro</option>
 							<option value="grok">Grok 2</option>
-							<option value="claude">Claude Sonnet 3.5</option>
 							<option value="deepseekr">DeepSeek R1</option>
-							<!-- Titan Text Express v1 disabled because it can't handle the new prompt format -->
-							<!-- <option value="ttn">Titan Text Express v1</option> -->
 						</select>
 					</div>
 				</label>
@@ -53,11 +67,8 @@
 							<option value="gpt">GPT 4.1</option>
 							<option value="gem">Gemini 2.0 Flash</option>
 							<option value="grok">Grok 2</option>
-							<option value="claude">Claude Sonnet 3.5</option>
 							<option value="deepseek">DeepSeek V3</option>
 							<option value="llama">Llama 3</option>
-							<!-- Titan Text Express v1 disabled because it can't handle the new prompt format -->
-							<!-- <option value="ttn">Titan Text Express v1</option> -->
 						</select>
 					</div>
 				</label>
@@ -68,8 +79,6 @@
 							<option value="">(Select a model)</option>
 							<option value="oai">Dall-E 3</option>
 							<option value="imagen">Imagen 3</option>
-							<option value="sdf">Stable Diffusion XL</option>
-							<option value="ttn">Titan Image (preview)</option>
 						</select>
 					</div>
 				</label>
@@ -89,6 +98,7 @@
 						</select>
 					</div>
 				</label>
+				</div>
 			</div>
 			<div class="row">
 				<label for="query">

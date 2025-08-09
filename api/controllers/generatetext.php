@@ -211,12 +211,6 @@ function GetModel($modelAlias) {
 		case "gemthink":
 			$model = new ModelGemThink();
 			break;
-		case "ttn":
-			$model = new ModelTitan();
-			break;
-		case "claude":
-			$model = new ModelClaude();
-			break;
 		case "llama":
 			$model = new ModelLlama();
 			break;
