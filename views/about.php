@@ -34,6 +34,7 @@
 		<h3>Story</h3>
 		<ul>
 			<li><a href="https://openai.com/product" target="_blank" rel="noopener noreferrer">o3</a></li>
+			<li><a href="https://openai.com/product" target="_blank" rel="noopener noreferrer">GPT 5</a></li>
 			<li><a href="https://deepmind.google/models/gemini/" target="_blank" rel="noopener noreferrer">Gemini 2.5 Pro</a></li>
 			<li><a href="https://x.ai/grok" target="_blank" rel="noopener noreferrer">Grok 2</a></li>
 			<li><a href="https://www.anthropic.com/claude/sonnet" target="_blank" rel="noopener noreferrer">Claude 3.5 Sonnet</a></li>
@@ -43,7 +44,7 @@
 	<li>
 		<h3>Script</h3>
 		<ul>
-			<li><a href="https://openai.com/product" target="_blank" rel="noopener noreferrer">GPT 4.1</a></li>
+			<li><a href="https://openai.com/product" target="_blank" rel="noopener noreferrer">GPT 5 Mini</a></li>
 			<li><a href="https://deepmind.google/models/gemini/" target="_blank" rel="noopener noreferrer">Gemini 2.0 Flash</a></li>
 			<li><a href="https://x.ai/grok" target="_blank" rel="noopener noreferrer">Grok 2</a></li>
 			<li><a href="https://www.anthropic.com/claude/sonnet" target="_blank" rel="noopener noreferrer">Claude 3.5 Sonnet</a></li>

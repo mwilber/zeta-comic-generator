@@ -202,6 +202,9 @@ function GetModel($modelAlias) {
 		case "gpt":
 			$model = new ModelGpt();
 			break;
+		case "gpt5":
+			$model = new ModelGpt5();
+			break;
 		case "gpt45":
 			$model = new ModelGpt45();
 			break;

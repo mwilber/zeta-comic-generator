@@ -59,6 +59,7 @@
 
 	// AI Models
 	require __DIR__ . '/models/gpt.php';
+	require __DIR__ . '/models/gpt5.php';
 	//require __DIR__ . '/models/gpt45.php';
 	require __DIR__ . '/models/o.php';
 	require __DIR__ . '/models/gem.php';

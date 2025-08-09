@@ -58,7 +58,7 @@ document.addEventListener("DOMContentLoaded", () => {
  * After setting the values, a 'change' event is dispatched on the corresponding elements to trigger any related functionality.
  */
 function SetDefaultSelections() {
-	const defaultConceptSelection = "o";
+	const defaultConceptSelection = "gpt5";
 	const defaultSelection = "gpt";
 	const defaultImageSelection = "oai";
 	// TODO: Simplify this
