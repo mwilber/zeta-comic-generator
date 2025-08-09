@@ -32,7 +32,7 @@
 			<div class="row selections">
 				<div id="group-selection">
 					<label>
-						Group Select
+						Model Select
 						<div class="select">
 							<select name="group-select" id="group-select">
 								<option value="">(Select a group)</option>
@@ -42,7 +42,10 @@
 						</div>
 					</label>
 				</div>
-				<button type="button" id="advanced-toggle" class="toggle-button">Advanced</button>
+				<label>
+					<br/>
+					<button type="button" id="advanced-toggle" class="toggle-button">Advanced</button>
+				</label>
 				<div id="model-selection" style="display: none;">
 					<label> 
 						Story Model

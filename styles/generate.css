@@ -272,26 +272,30 @@ progress[value]::-webkit-progress-value {
 	display:none;
 }
 
-/* Toggle Button Styles */
+/* Toggle Button Styles - Match dropdown appearance */
 .toggle-button {
-	background: #007cba;
-	color: white;
-	border: 1px solid #005a87;
-	border-radius: 4px;
-	padding: 0.5em 1em;
-	cursor: pointer;
-	font-size: 0.9em;
-	margin: 0 1em 0.5em 0;
-	transition: background-color 0.2s;
+	/* Match dropdown styling */
+	border: 1px solid var(--select-border, #777);
+	border-radius: 0.25em;
+	padding: 0.25em 1em;
+	font-size: 1.25rem;
+	font-weight: bold;;
+	background: #3050cc;
+    color: white;
+	height: auto;
+	
+	margin: 0;
 }
 
 .toggle-button:hover {
-	background: #005a87;
+	background: #2040aa;
 }
 
 .toggle-button:focus {
-	outline: 2px solid #0073aa;
-	outline-offset: 2px;
+	outline: none;
+	border: 2px solid var(--select-focus, blue);
+	/* Compensate for thicker border by reducing padding */
+	padding: calc(0.25em - 1px) calc(1em - 1px);
 }
 
 #group-selection,
