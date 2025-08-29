@@ -103,6 +103,12 @@ function InitEditor() {
 						let bkgId = data.backgrounds[idx].match(/backgrounds\/([a-zA-Z0-9]+)\.png/);
 						bkgId = (bkgId && bkgId[1]) ? "~/process_image.sh " + bkgId[1] : "null";
 
+						let dialog = panel.dialog[0].text;
+						// Escape quotes in dialog
+						if (dialog) {
+							dialog = dialog.replace(/"/g, '&quot;');
+						}
+
 						document.getElementById("script").innerHTML += `
 						<li>
 							<h3>Panel ${idx + 1}</h3>
@@ -112,7 +118,7 @@ function InitEditor() {
 										<tr><td>Description</td> <td><textarea name="script-panel-${idx}-scene">${panel.scene}</textarea></td></tr>
 										<tr><td>Action</td> <td><input name="script-panel-${idx}-action" value="${panel.action}"/></td></tr>
 										<tr><td>Alt Action</td> <td><input name="script-panel-${idx}-altAction" value="${panel.altAction}"/></td></tr>
-										<tr><td>Dialog</td> <td><input name="script-panel-${idx}-dialog" value="${panel.dialog[0].text}"/></td></tr>
+										<tr><td>Dialog</td> <td><input name="script-panel-${idx}-dialog" value="${dialog}"/></td></tr>
 										<tr><td>Background</td> <td><textarea name="script-panel-${idx}-background">${panel.background}</textarea></td></tr>
 										<tr><td></td><td>
 											<img id="script-panel-${idx}-new-background-image" src="${data.backgrounds[idx]}" style="width: 100%;"/>
