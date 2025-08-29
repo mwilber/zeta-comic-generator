@@ -70,8 +70,9 @@
 		$params = [];
 		switch ($action) {
 			case "system":
-				$params[] = "Alpha Zeta's character profile includes the following: \n\n<strong>{ a bullet list of Alpha Zeta's character traits }</strong>";
 				$params[] = implode(", ", array_keys($GLOBALS['characterActions']));
+				$params[] = "Alpha Zeta's character profile includes the following: \n\n<strong>{ a bullet list of Alpha Zeta's character traits }</strong>";
+				$params[] = "Events that have occurred in past comics: \n\n<strong>{ a bullet list of events from past comics }</strong>";
 			case "concept":
 				$params[] = "<strong>{ The story premise }</strong>";
 				break;
