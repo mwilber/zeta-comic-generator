@@ -38,10 +38,34 @@ document.addEventListener("DOMContentLoaded", () => {
 					return;
 				}
 
-				const { id, prompt, script, backgrounds } = data;
+				const { id, prompt, script, backgrounds, continuity } = data;
 
 				script.prompt = prompt;
+				script.series = data.series;
 				document.getElementById("query").innerHTML = `${prompt}`;
+
+				if (data.series) {
+					document.getElementById("story-title")
+						.innerHTML = `
+							<a href="/series/${data.series.permalink}">
+								${data.series.title}
+							</a> - Part ${data.series.currentIdx + 1}
+						`;
+					const seriesNav = document.getElementById("story-nav");
+					if (data.series.comics.length > 1) {
+						if (data.series.currentIdx > 0) {
+							seriesNav.innerHTML += `<a href="/detail/${data.series.comics[data.series.currentIdx - 1].permalink}">Previous</a>`;
+						} else {
+							seriesNav.innerHTML += `Previous`;
+						}
+						seriesNav.innerHTML += ` | `;
+						if (data.series.currentIdx < data.series.comics.length - 1) {
+							seriesNav.innerHTML += `<a href="/detail/${data.series.comics[data.series.currentIdx + 1].permalink}">Next</a>`;
+						} else {
+							seriesNav.innerHTML += `Next`;
+						}
+					}
+				}
 
 				for (const [idx, panel] of script.panels.entries()) {
 					if (!Array.isArray(panel.dialog)) {
@@ -68,33 +92,39 @@ document.addEventListener("DOMContentLoaded", () => {
 				scriptRenderer.LoadScript(script);
 				comicRenderer.LoadScript(script);
 
-				// if (data.continuity) {
-				// 	let continuityEl = document.getElementById("continuity");
-				// 	let lastCategory = 0;
-				// 	let continuityHTML = "";
-				// 	for (const item of data.continuity) {
-				// 		if (item.categoryId !== lastCategory) {
-				// 			if (lastCategory !== 0) {
-				// 				continuityHTML += `</ul></li>`;
-				// 			}
-				// 			continuityHTML += `
-				// 				<li>
-				// 				<h3>${item.prefix}</h3>
-				// 				<ul>
-				// 			`;
-				// 			lastCategory = item.categoryId;
-				// 		}
-				// 		continuityHTML += `
-				// 			<li>
-				// 				<a href="/gallery/${item.permalink}">${item.description}</a>
-				// 			</li>
-				// 		`;
-				// 	}
+				let continuityEl = document.getElementById("continuity");
+				if (continuity?.length) {
+					let continuitySorted = {categories: []};
+					for (const item of continuity) {
+						if (!continuitySorted[item.alias]) {
+							continuitySorted[item.alias] = {
+								heading: item.heading,
+								items: [],
+							};
+						}
+						continuitySorted[item.alias].items.push(item);
+					}
 
-				// 	continuityHTML += `</ul></li>`;
+					if (continuitySorted.alpha) {
+						let alphaEl = document.createElement("div");
+						alphaEl.classList.add("character");
+						alphaEl.innerHTML = `<h3>${continuitySorted.alpha.heading}:</h3> ${continuitySorted.alpha.items.map(item => item.description).join(", ")}`;
+						continuityEl.appendChild(alphaEl);
+					}
+					// Hiding events until phase 2
+					// if (continuitySorted.event) {
+					// 	let eventEl = document.createElement("div");
+					// 	eventEl.classList.add("event");
+					// 	eventEl.innerHTML = `<h3>${continuitySorted.event.heading}:</h3> ${continuitySorted.event.items.map(item => {
+					// 		return `<a href="/gallery/${item.permalink}">${item.description}</a>`
+					// 	}).join(", ")}`;
+					// 	continuityEl.appendChild(eventEl);
+					// }
 
-				// 	continuityEl.innerHTML  = continuityHTML;
-				// }
+					continuityEl.insertAdjacentHTML("afterbegin", `<h2 class="continuity-title">Notes</h2>`);
+				} else {
+					continuityEl.style.display = "none";
+				}
 
 				AttachUiEvents();
 			});
@@ -139,6 +169,13 @@ function AttachUiEvents() {
 				if (closeBtn) {
 					closeBtn.focus();
 				}
+			},
+		},
+		{
+			selector: "#edit",
+			event: "click",
+			handler: () => {
+				window.location = "/edit/" + comicId;
 			},
 		},
 		{

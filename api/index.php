@@ -20,6 +20,7 @@
 	error_reporting(E_ERROR);
 
 	define("SIMULATION_MODE", "none"); // all, text, image, none
+	define("SIMULATE_DELAY", 0);
 	define("SIMULATE_ERRORS", false);
 
 	$request = $_SERVER['REQUEST_URI'];
@@ -33,7 +34,7 @@
 	// Validate the path
 	if(isset($path[2])) {
 		$controller = $path[2];
-		if($controller == 'detail' || $controller == 'gallery') {
+		if($controller == 'detail' || $controller == 'gallery' || $controller == 'stories') {
 			if(isset($path[3]) && $path[3]) {
 				$hash = $path[3];
 			} else {
@@ -59,6 +60,7 @@
 
 	// AI Models
 	require __DIR__ . '/models/gpt.php';
+	require __DIR__ . '/models/gpt5.php';
 	//require __DIR__ . '/models/gpt45.php';
 	require __DIR__ . '/models/o.php';
 	require __DIR__ . '/models/gem.php';
@@ -75,10 +77,13 @@
 		case 'comic':
 		case 'detail':
 		case 'gallery':
+		case 'stories':
 		case 'save':
 		case 'imgproxy':
 		case 'bedrock':
 		case 'metrics':
+		case 'update':
+		case 'thumbnail':
 			require __DIR__ . '/controllers/'.$controller.'.php';
 			break;
 		// Comic Generation API endpoints
@@ -86,6 +91,7 @@
 		case 'concept':
 		case 'script':
 		case 'background':
+		case 'continuity':
 		case 'action':
 			if (SIMULATION_MODE == "all" || SIMULATION_MODE == "text") {
 				require __DIR__ . '/controllers/simulatetext.php';

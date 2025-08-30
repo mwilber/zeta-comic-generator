@@ -34,6 +34,7 @@
 		<h3>Story</h3>
 		<ul>
 			<li><a href="https://openai.com/product" target="_blank" rel="noopener noreferrer">o3</a></li>
+			<li><a href="https://openai.com/product" target="_blank" rel="noopener noreferrer">GPT 5</a></li>
 			<li><a href="https://deepmind.google/models/gemini/" target="_blank" rel="noopener noreferrer">Gemini 2.5 Pro</a></li>
 			<li><a href="https://x.ai/grok" target="_blank" rel="noopener noreferrer">Grok 2</a></li>
 			<li><a href="https://github.com/deepseek-ai/DeepSeek-R1" target="_blank" rel="noopener noreferrer">DeepSeek R1</a></li>
@@ -42,7 +43,7 @@
 	<li>
 		<h3>Script</h3>
 		<ul>
-			<li><a href="https://openai.com/product" target="_blank" rel="noopener noreferrer">GPT 4.1</a></li>
+			<li><a href="https://openai.com/product" target="_blank" rel="noopener noreferrer">GPT 5 Mini</a></li>
 			<li><a href="https://deepmind.google/models/gemini/" target="_blank" rel="noopener noreferrer">Gemini 2.0 Flash</a></li>
 			<li><a href="https://x.ai/grok" target="_blank" rel="noopener noreferrer">Grok 2</a></li>
 			<li><a href="https://github.com/deepseek-ai/DeepSeek-V3" target="_blank" rel="noopener noreferrer">DeepSeek V3</a></li>
@@ -65,8 +66,9 @@
 		$params = [];
 		switch ($action) {
 			case "system":
-				$params[] = "Alpha Zeta's character profile includes the following: \n\n<strong>{ a bullet list of Alpha Zeta's character traits }</strong>";
 				$params[] = implode(", ", array_keys($GLOBALS['characterActions']));
+				$params[] = "Alpha Zeta's character profile includes the following: \n\n<strong>{ a bullet list of Alpha Zeta's character traits }</strong>";
+				$params[] = "Events that have occurred in past comics: \n\n<strong>{ a bullet list of events from past comics }</strong>";
 			case "concept":
 				$params[] = "<strong>{ The story premise }</strong>";
 				break;

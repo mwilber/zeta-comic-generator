@@ -22,6 +22,37 @@
 	animation: blink-animation 1s step-start 0s infinite;;
 }
 
+.story-controls {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: space-between;
+	margin: 5px;
+}
+
+.story-controls #story-title {
+	font-size: 1.5em;
+	font-weight: bold;
+}
+
+.story-controls a {
+	text-decoration-thickness: .025em;
+  	text-underline-offset: 1.5px;
+	text-decoration-style: dotted;
+}
+
+.story-controls #story-nav {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: space-between;
+}
+
+.story-controls #story-nav a {
+	padding: 0 5px;
+}
+
+
 @keyframes blink-animation {
 	50% {
 		visibility: hidden;

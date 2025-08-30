@@ -1,3 +1,21 @@
+<?php
+	require __DIR__ . '/../api/includes/key.php';
+
+	$seriesRs = null;
+
+	if(defined("DEV_SITE") && DEV_SITE === true) {
+		$database = new Database();
+		$db = $database->getConnection();
+
+		try {
+			$stmt = $db->prepare("SELECT * FROM `series` ORDER BY timestamp DESC");
+			$stmt->execute();
+			$seriesRs = $stmt->fetchAll(PDO::FETCH_ASSOC);
+		} catch(PDOException $e) {
+			echo "ERROR: Could not execute the query. " . $e->getMessage();
+		}
+	}
+?>
 <script>
 	const characterActions = <?php echo json_encode($GLOBALS['characterActions']); ?>;
 </script>
@@ -30,29 +48,32 @@
 		<h2>Setup</h2>
 		<div id="input">
 			<div class="row selections">
-				<div id="group-selection">
+				<?php if(defined("DEV_SITE") && DEV_SITE === true): ?>
+					<?php if($seriesRs): ?> 
 					<label>
-						Model Select
+						Series
 						<div class="select">
-							<select name="group-select" id="group-select">
-								<option value="">(Select a provider)</option>
-								<option value="openai">OpenAI</option>
-								<option value="google">Google</option>
-							</select>
+						<select name="series-id" id="series-id">
+							<option value="" selected>None</option>
+							<?php foreach($seriesRs as $series): ?>
+							<option value="<?= $series['id'] ?>"><?php if($series['active'] == 0): echo "!"; endif; ?>
+								<?= htmlspecialchars($series['title']) ?>
+							</option>
+							<?php endforeach; ?>
+						</select>
 						</div>
 					</label>
-				</div>
-				<label>
-					<br/>
-					<button type="button" id="advanced-toggle" class="toggle-button">Advanced</button>
-				</label>
-				<div id="model-selection" style="display: none;">
-					<label> 
-						Story Model
+					<?php endif; ?>
+				<?php else: ?>
+					<input id="series-id" type="hidden" value="" />
+				<?php endif; ?>
+				<label> 
+					Story Model
 					<div class="select">
 						<select name="story-model" id="story-model">
 							<option value="">(Select a model)</option>
 							<option value="o">o3</option>
+							<option value="gpt5">GPT 5</option>
 							<option value="gemthink">Gemini 2.5 Pro</option>
 							<option value="grok">Grok 2</option>
 							<option value="deepseekr">DeepSeek R1</option>
@@ -64,7 +85,7 @@
 					<div class="select">
 						<select name="script-model" id="script-model">
 							<option value="">(Select a model)</option>
-							<option value="gpt">GPT 4.1</option>
+							<option value="gpt">GPT 5 Mini</option>
 							<option value="gem">Gemini 2.0 Flash</option>
 							<option value="grok">Grok 2</option>
 							<option value="deepseek">DeepSeek V3</option>
@@ -113,7 +134,7 @@
 				</button>
 			</div>
 			<div class="row">
-				<span id="character-count">140 characters left</span>
+				<span id="character-count">210 characters left</span>
 			</div>
 		</div>
 	</div>

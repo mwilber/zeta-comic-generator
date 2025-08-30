@@ -32,6 +32,7 @@ $workflowId = POSTval("workflowId", "");
 $actionId = $controller;
 $messages = GetMessages();
 $query = POSTval("query", "");
+$seriesId = POSTval("seriesId", "");
 if ($query == "" && isset($_GET['query'])) {
 	$query = $_GET['query'];
 }
@@ -44,7 +45,10 @@ switch ($actionId) {
 		$paramVal = $query;
 		if ($paramVal) {
 			$params[] = addPeriod($paramVal);
+		} else {
+			$params[] = "";
 		}
+		$params[] = GetSeriesParam($seriesId);
 		break;
 	case "script":
 		// Add the character actions, use the $GLOBALS array and convert each key name to a comma-separated string
@@ -139,6 +143,15 @@ function GetCharacterCategory() {
 	return $row;
 }
 
+function GetEventsCategory() {
+	$database = new Database();
+	$db = $database->getConnection();
+	$stmt = $db->prepare("SELECT * FROM `categories` WHERE `alias` = 'event'");
+	$stmt->execute();
+	$row = $stmt->fetch(PDO::FETCH_ASSOC);
+	return $row;
+}
+
 /**
  * Retrieves a set of continuity records from the database based on the provided category ID.
  *
@@ -150,6 +163,27 @@ function GetContinuityByCategoryId($categoryId) {
 	$db = $database->getConnection();
 	$stmt = $db->prepare("SELECT * FROM `continuity` WHERE `categoryId` = :categoryId AND `active` = true");
 	$stmt->bindParam(":categoryId", $categoryId, PDO::PARAM_INT);
+	$stmt->execute();
+	$recordSet = $stmt->fetchAll(PDO::FETCH_ASSOC);
+	return $recordSet;
+}
+
+function GetSeries($seriesId) {
+	$database = new Database();
+	$db = $database->getConnection();
+	$stmt = $db->prepare("SELECT * FROM `series` WHERE `id` = :seriesId");
+	$stmt->bindParam(":seriesId", $seriesId, PDO::PARAM_INT);
+	$stmt->execute();
+	$row = $stmt->fetch(PDO::FETCH_ASSOC);
+	return $row;
+}
+
+
+function GetComicsBySeriesId($seriesId) {
+	$database = new Database();
+	$db = $database->getConnection();
+	$stmt = $db->prepare("SELECT `summary` FROM `comics` WHERE `seriesId` = :seriesId AND `gallery` = 1 ORDER BY `timestamp` ASC");
+	$stmt->bindParam(":seriesId", $seriesId, PDO::PARAM_INT);
 	$stmt->execute();
 	$recordSet = $stmt->fetchAll(PDO::FETCH_ASSOC);
 	return $recordSet;
@@ -202,6 +236,9 @@ function GetModel($modelAlias) {
 		case "gpt":
 			$model = new ModelGpt();
 			break;
+		case "gpt5":
+			$model = new ModelGpt5();
+			break;
 		case "gpt45":
 			$model = new ModelGpt45();
 			break;
@@ -211,6 +248,12 @@ function GetModel($modelAlias) {
 		case "gemthink":
 			$model = new ModelGemThink();
 			break;
+		case "ttn":
+			$model = new ModelTitan();
+			break;
+		case "claude":
+			$model = new ModelClaude();
+			break;
 		case "llama":
 			$model = new ModelLlama();
 			break;
@@ -219,9 +262,6 @@ function GetModel($modelAlias) {
 			break;
 		case "deepseekr":
 			$model = new ModelDeepSeekR();
-			break;
-		case "grok":
-			$model = new ModelGrok();
 			break;
 	}
 	return $model;
@@ -239,16 +279,60 @@ function GetSystemPromptParams() {
 	if (isset($characterCategory['id'])) {
 		$continuityData = GetContinuityByCategoryId($characterCategory['id']);
 		foreach ($continuityData as $record) {
-			$characterContinuity[] = $record['description'];
+			$characterContinuity[] = $record['id'] . ": " . $record['description'];
+		}
+	}
+
+	$eventsCategory = GetEventsCategory();
+	$eventsContinuity = [];
+	if (isset($eventsCategory['id'])) {
+		$continuityData = GetContinuityByCategoryId($eventsCategory['id']);
+		foreach ($continuityData as $record) {
+			$eventsContinuity[] = $record['id'] . ": " . $record['description'];
 		}
 	}
 
 	// Set up the parameters for the prompt
-	$params[] = "\n" . $characterCategory['prompt'] . "\n - " . implode("\n - ", $characterContinuity) . "\n";
+
 	// Add the character actions, use the $GLOBALS array and convert each key name to a comma-separated string
 	$params[] = implode(", ", array_keys($GLOBALS['characterActions']));
 
+	// Add the character profile
+	$params[] = "\n" . $characterCategory['prompt'] . "\n " . implode("\n - ", $characterContinuity) . "\n";
+
+	// Add the events profile
+	$params[] = "\n" . $eventsCategory['prompt'] . "\n " . implode("\n - ", $eventsContinuity) . "\n";
+
 	return $params;
+}
+
+function GetSeriesParam($seriesId) {
+	$param = "";
+
+	$series = GetSeries($seriesId);
+
+	$comicsRs = GetComicsBySeriesId($seriesId);
+	$comics = [];
+	foreach ($comicsRs as $comic) {
+		$comics[] = " - " . $comic['summary'];
+	}
+
+	if ($series) {
+		$param .= "\n";
+		$param .= "This comic strip is the continuation of a series of comic strips titled: \"" . $series["title"] . "\".\n";
+		$param .= "Do not include the series title in the comic title.\n";
+		// If the series premise field is not empty, add it to the param
+		if ($series['premise']) {
+			$param .= "The premise of the series is: " . $series['premise'] . "\n";
+		}
+		if (count($comics) > 0) {
+			$param .= "The following is a summary of each of the previous comic strips in this series: \n";
+			$param .= implode("\n", $comics);
+			$param .= "\n";
+		}
+	}
+
+	return $param;
 }
 
 function addPeriod($str) {

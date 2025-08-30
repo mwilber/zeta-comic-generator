@@ -9,7 +9,7 @@
  */
 
 // pause execution for 1 second to simulate the remote API response
-sleep(1);
+sleep(SIMULATE_DELAY);
 
 $actionId = $controller;
 $output->actionId = $actionId;
@@ -78,7 +78,7 @@ if ($actionId == "script") {
 }
 
 $prompts = new Prompts();
-$output->prompt = $prompts->generatePrompt($actionId, array($params), array($continuity, $categories));
+$output->prompt = $prompts->generatePrompt($actionId, array($params));
 
 
 $output->error = "";
@@ -95,7 +95,7 @@ switch ($actionId) {
 			"role" => "user",
 			"content" => $output->prompt
 		]);
-		$response = "{\"concept\":\"In this comic strip, Alpha Zeta is perplexed by the human concept of taking tests and decides to try taking one to better understand it. In the first panel, Alpha Zeta is sitting at a desk with a human-style test paper in front of him, looking curious yet slightly confused as he analyzes the questions on the test. He\\u2019s trying to make sense of why humans would willingly subject themselves to this. In the second panel, we see Alpha Zeta in a classroom with other human students who are diligently taking their tests while Alpha looks increasingly perplexed, scratching his head and doing some analysis on a particularly challenging question. The third panel shows Alpha Zeta standing triumphantly at the front of the classroom, reporting his discovery to the teacher with a big grin: 'I still don't understand why humans do this, but I appreciate the funny answers I came up with! Can we make this a regular event?' The teacher and students laugh at his cheeky interpretation of a test.\"}";
+		$response = "{\"concept\":\"In this comic strip, Alpha Zeta is perplexed by the human concept of taking tests and decides to try taking one to better understand it. In the first panel, Alpha Zeta is sitting at a desk with a human-style test paper in front of him, looking curious yet slightly confused as he analyzes the questions on the test. He\\u2019s trying to make sense of why humans would willingly subject themselves to this. In the second panel, we see Alpha Zeta in a classroom with other human students who are diligently taking their tests while Alpha looks increasingly perplexed, scratching his head and doing some analysis on a particularly challenging question. The third panel shows Alpha Zeta standing triumphantly at the front of the classroom, reporting his discovery to the teacher with a big grin: 'I still don't understand why humans do this, but I appreciate the funny answers I came up with! Can we make this a regular event?' The teacher and students laugh at his cheeky interpretation of a test.\", \"memory\": [{\"id\": 1, \"description\": \"This is a test memory\"}, {\"id\": 75, \"description\": \"Da moon\"}]}";
 		array_push($messages, (object) [
 			"role" => "assistant",
 			"content" => $response
@@ -110,7 +110,7 @@ switch ($actionId) {
 			"role" => "user",
 			"content" => $output->prompt
 		]);
-		$response = "{\"title\":\"Alpha Zeta's Test Adventure\",\"panels\":[{\"scene\":\"Alpha Zeta is in a school classroom, sitting at a desk surrounded by human students. The desk is neatly arranged with a test paper and a pencil, while Alpha Zeta appears focused and curious.\",\"action\":\"sitting\",\"dialog\":\"Hmm, so this is a human test. Interesting way to pass the time!\"},{\"scene\":\"Alpha Zeta is now puzzled, analyzing a particularly complex math problem on the test paper. Other students are concentrated on their work, while Alpha Zeta scratches his head and looks perplexed.\",\"action\":\"analysis\",\"dialog\":\"I'm not sure if this problem needs numbers or a magic wand.\"},{\"scene\":\"Alpha Zeta is standing at the front of the classroom, animatedly reporting his experience to the amused teacher and classmates. The room is filled with laughter as they react to Alpha's unexpected enthusiasm.\",\"action\":\"reporting\",\"dialog\":\"I've decided\\u2014human tests should come with popcorn! Can we make this a regular event?\"}],\"memory\":[1,3,10],\"newmemory\":[{\"type\":1,\"description\":\"sitting\"},{\"type\":3,\"description\":\"analysis\"},{\"type\":10,\"description\":\"reporting\"}]}";
+		$response = "{\"title\":\"Alpha Zeta's Test Adventure\",\"panels\":[{\"scene\":\"Alpha Zeta is in a school classroom, sitting at a desk surrounded by human students. The desk is neatly arranged with a test paper and a pencil, while Alpha Zeta appears focused and curious.\",\"action\":\"sitting\",\"dialog\":\"Hmm, so this is a human test. Interesting way to pass the time!\"},{\"scene\":\"Alpha Zeta is now puzzled, analyzing a particularly complex math problem on the test paper. Other students are concentrated on their work, while Alpha Zeta scratches his head and looks perplexed.\",\"action\":\"analysis\",\"dialog\":\"I'm not sure if this problem needs numbers or a magic wand.\"},{\"scene\":\"Alpha Zeta is standing at the front of the classroom, animatedly reporting his experience to the amused teacher and classmates. The room is filled with laughter as they react to Alpha's unexpected enthusiasm.\",\"action\":\"reporting\",\"dialog\":\"I've decided\\u2014human tests should come with popcorn! Can we make this a regular event?\"}],\"summary\":\"Alpha Zeta's Test Adventure\"}";
 		array_push($messages, (object) [
 			"role" => "assistant",
 			"content" => $response
@@ -133,6 +133,19 @@ switch ($actionId) {
 		break;
 	case "action":
 		$output->data->panels = json_decode("[{\"action\": \"standing\"},{\"action\": \"typing\",\"altAction\": \"hopeful\"},{\"action\": \"joyous\"}]");
+		break;
+	case "continuity":
+		$output->prompt = "Continuity prompt here.";
+		array_push($messages, (object) [
+			"role" => "user",
+			"content" => $output->prompt
+		]);
+		$response = "{\"alpha\": [\"Simulated Trait 1\", \"Simulated Trait 2\"], \"event\": [\"Simulated Event 1\",\"Simulated Event 2\",\"Simulated Event 3\"]}";
+		array_push($messages, (object) [
+			"role" => "assistant",
+			"content" => $response
+		]);
+		$output->data = json_decode($response);
 		break;
 }
 

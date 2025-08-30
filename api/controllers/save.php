@@ -186,7 +186,7 @@
 		$jsonData = $_POST["script"];
 	
 		// prepare query statement
-		$stmt = $db->prepare("INSERT INTO `comics` (`title`,`prompt`,`json`) VALUES (".$db->quote($_POST["title"]).",".$db->quote($_POST["prompt"]).",".$db->quote($jsonData).");");
+		$stmt = $db->prepare("INSERT INTO `comics` (`title`,`prompt`,`json`,`summary`,`seriesId`) VALUES (".$db->quote($_POST["title"]).",".$db->quote($_POST["prompt"]).",".$db->quote($jsonData).",".$db->quote($_POST["summary"]).",".$db->quote($_POST["seriesId"]).");");
 		// execute query
 		$stmt->execute();
 		$output->response->comicId = $db->lastInsertId();
@@ -231,34 +231,38 @@
 			}
 		}
 
-		$memoriesRaw = $_POST["newmemory"];
-		$output->response->newmemories = $memoriesRaw;
-		if(isset($memoriesRaw) && !empty($memoriesRaw)) {
-			$memories = json_decode($memoriesRaw);
-			// Verify that $memories is an array
-			if (is_array($memories)) {
-				foreach ($memories as $memory) {
-					// Check for existing record
-					$stmt = $db->prepare("SELECT `id` FROM `continuity` WHERE `description` = ".$db->quote($memory->description).";");
-					$stmt->execute();
-					$existingRecord = $stmt->fetch(PDO::FETCH_ASSOC);
-	
-					if ($existingRecord) {
-						$memoryId = $existingRecord['id'];
-					} else {
+		$continuityRaw = $_POST["continuity"];
+		$output->response->continuity = $continuityRaw;
+		if(isset($continuityRaw) && !empty($continuityRaw)) {
+			$continuity = json_decode($continuityRaw);
+			// Verify that $continuity is an object
+			if (is_object($continuity)) {
+				$categories = array('alpha', 'event');
+				// Retrieve records from the `category` table where `alias` matches any value in the $categories array
+				$placeholders = implode(',', array_fill(0, count($categories), '?'));
+				$stmt = $db->prepare("SELECT * FROM `categories` WHERE `alias` IN ($placeholders);");
+				$stmt->execute($categories);
+				$categoryRecords = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+				foreach ($categoryRecords as $category) {
+					$alias = $category['alias'];
+					$continuityItems = $continuity->$alias;
+					foreach ($continuityItems as $item) {
 						// prepare query statement
-						$stmt = $db->prepare("INSERT INTO `continuity` (`categoryId`, `description`) VALUES (".$db->quote($memory->type).", ".$db->quote($memory->description).");");
+						$stmt = $db->prepare("INSERT INTO `continuity` (`categoryId`, `description`) VALUES (".$db->quote($category['id']).", ".$db->quote($item).");");
 						// execute query
 						$stmt->execute();
-						$memoryId = $db->lastInsertId();
+      
+						$itemId = $db->lastInsertId();
 						// Update the `permalink` field with an md5 hash of the new ID
-						$stmt = $db->prepare("UPDATE `continuity` SET `permalink`=".$db->quote(md5($memoryId))." WHERE `id`=".$memoryId.";");
+						$stmt = $db->prepare("UPDATE `continuity` SET `permalink`=".$db->quote(md5($itemId))." WHERE `id`=".$itemId.";");
+						$stmt->execute();
+
+						// Insert a record into the table `comic_continuity`. The table has two fields: `comicId` and `continuityId`
+						$stmt = $db->prepare("INSERT INTO `comic_continuity` (`comicId`, `continuityId`) VALUES ('".$output->response->comicId."', '".$itemId."');");
+						// execute query
 						$stmt->execute();
 					}
-					// Insert a record into the table `comic_continuity`. The table has two fields: `comicId` and `continuityId`
-					$stmt = $db->prepare("INSERT INTO `comic_continuity` (`comicId`, `continuityId`) VALUES ('".$output->response->comicId."', '".$memoryId."');");
-					// execute query
-					$stmt->execute();
 				}
 			} else {
 				//$output->error = "Invalid memories format";
@@ -272,8 +276,12 @@
 			// Verify that $memories is an array
 			if (is_array($memories)) {
 				foreach ($memories as $memory) {
+					// If $memory->id is not set, or not a number, skip this iteration
+					if (!isset($memory->id) || !is_numeric($memory->id)) {
+						continue;
+					}
 					// Check for existing record
-					$stmt = $db->prepare("SELECT `id` FROM `continuity` WHERE `id` = ".$memory.";");
+					$stmt = $db->prepare("SELECT `id` FROM `continuity` WHERE `id` = ".$memory->id.";");
 					$stmt->execute();
 					$existingRecord = $stmt->fetch(PDO::FETCH_ASSOC);
 
