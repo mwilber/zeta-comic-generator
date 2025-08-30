@@ -272,9 +272,48 @@ progress[value]::-webkit-progress-value {
 	display:none;
 }
 
+/* Toggle Button Styles - Match dropdown appearance */
+.toggle-button {
+	/* Match dropdown styling */
+	border: 1px solid var(--select-border, #777);
+	border-radius: 0.25em;
+	padding: 0.25em 1em;
+	font-size: 1.25rem;
+	font-weight: bold;;
+	background: #3050cc;
+    color: white;
+	height: auto;
+	
+	margin: 0;
+}
+
+.toggle-button:hover {
+	background: #2040aa;
+}
+
+.toggle-button:focus {
+	outline: none;
+	border: 2px solid black;
+	/* Compensate for thicker border by reducing padding */
+	padding: calc(0.25em - 1px) calc(1em - 1px);
+}
+
+#group-selection,
+#model-selection {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 1em;
+}
+
 @media screen and (max-width: 900px) {
     #input .row.selections {
         flex-direction: column;
+    }
+    
+    #group-selection,
+    #model-selection {
+        flex-direction: column;
+        gap: 0.5em;
     }
 }
 

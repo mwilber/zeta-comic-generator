@@ -51,12 +51,6 @@ if ($hitCount >= RATE_LIMIT) {
 		case "oai":
 			$model = new ModelDallE();
 			break;
-		case "ttn":
-			$model = new ModelTitanImage();
-			break;
-		case "sdf":
-			$model = new ModelStableDiffusion();
-			break;
 		case "imagen":
 			$model = new ModelImagen();
 			break;
