@@ -261,7 +261,7 @@ function AttachUiEvents() {
 				// if (value === "sdf")
 				// 	styleSelectGroup.style.display = "block";
 				// else 
-				styleSelectGroup.style.display = "none";
+				// styleSelectGroup.style.display = "none";
 			},
 		},
 		{

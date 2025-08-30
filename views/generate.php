@@ -67,8 +67,25 @@
 				<?php else: ?>
 					<input id="series-id" type="hidden" value="" />
 				<?php endif; ?>
-				<label> 
-					Story Model
+				<div id="group-selection">
+					<label>
+						Model Select
+						<div class="select">
+							<select name="group-select" id="group-select">
+								<option value="">(Select a provider)</option>
+								<option value="openai">OpenAI</option>
+								<option value="google">Google</option>
+							</select>
+						</div>
+					</label>
+				</div>
+				<label>
+					<br/>
+					<button type="button" id="advanced-toggle" class="toggle-button">Advanced</button>
+				</label>
+				<div id="model-selection" style="display: none;">
+					<label> 
+						Story Model
 					<div class="select">
 						<select name="story-model" id="story-model">
 							<option value="">(Select a model)</option>
