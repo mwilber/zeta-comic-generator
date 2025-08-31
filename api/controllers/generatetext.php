@@ -248,9 +248,6 @@ function GetModel($modelAlias) {
 		case "gemthink":
 			$model = new ModelGemThink();
 			break;
-		case "llama":
-			$model = new ModelLlama();
-			break;
 		case "deepseek":
 			$model = new ModelDeepseek();
 			break;

@@ -68,7 +68,6 @@
 	require __DIR__ . '/models/dall.php';
 	require __DIR__ . '/models/deepseek.php';
 	require __DIR__ . '/models/deepseekr.php';
-	require __DIR__ . '/models/llama.php';
 	require __DIR__ . '/models/imagen.php';
 	require __DIR__ . '/models/grok.php';
 

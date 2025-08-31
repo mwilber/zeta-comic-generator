@@ -47,7 +47,6 @@
 			<li><a href="https://deepmind.google/models/gemini/" target="_blank" rel="noopener noreferrer">Gemini 2.0 Flash</a></li>
 			<li><a href="https://x.ai/grok" target="_blank" rel="noopener noreferrer">Grok 2</a></li>
 			<li><a href="https://github.com/deepseek-ai/DeepSeek-V3" target="_blank" rel="noopener noreferrer">DeepSeek V3</a></li>
-			<li><a href="https://www.llama.com/" target="_blank" rel="noopener noreferrer">Llama 3</a></li>
 		</ul>
 	</li>
 	<li>
