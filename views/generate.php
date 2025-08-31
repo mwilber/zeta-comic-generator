@@ -47,7 +47,7 @@
 	<div class="query-wrapper">
 		<h2>Setup</h2>
 		<div id="input">
-			<div class="row selections">
+			<div class="row selections" style="flex-wrap: wrap;">
 				<?php if(defined("DEV_SITE") && DEV_SITE === true): ?>
 					<?php if($seriesRs): ?> 
 					<label>
@@ -67,65 +67,75 @@
 				<?php else: ?>
 					<input id="series-id" type="hidden" value="" />
 				<?php endif; ?>
-				<label> 
-					Story Model
-					<div class="select">
-						<select name="story-model" id="story-model">
-							<option value="">(Select a model)</option>
-							<option value="o">o3</option>
-							<option value="gpt5">GPT 5</option>
-							<option value="gemthink">Gemini 2.5 Pro</option>
-							<option value="grok">Grok 2</option>
-							<option value="claude">Claude Sonnet 3.5</option>
-							<option value="deepseekr">DeepSeek R1</option>
-							<!-- Titan Text Express v1 disabled because it can't handle the new prompt format -->
-							<!-- <option value="ttn">Titan Text Express v1</option> -->
-						</select>
-					</div>
-				</label>
-				<label> 
-					Script Model
-					<div class="select">
-						<select name="script-model" id="script-model">
-							<option value="">(Select a model)</option>
-							<option value="gpt">GPT 5 Mini</option>
-							<option value="gem">Gemini 2.0 Flash</option>
-							<option value="grok">Grok 2</option>
-							<option value="claude">Claude Sonnet 3.5</option>
-							<option value="deepseek">DeepSeek V3</option>
-							<option value="llama">Llama 3</option>
-							<!-- Titan Text Express v1 disabled because it can't handle the new prompt format -->
-							<!-- <option value="ttn">Titan Text Express v1</option> -->
-						</select>
-					</div>
-				</label>
+				<div id="group-selection">
+					<label>
+						Model Select
+						<div class="select">
+							<select name="group-select" id="group-select">
+								<option value="">(Select a provider)</option>
+								<option value="openai">OpenAI</option>
+								<option value="google">Google</option>
+							</select>
+						</div>
+					</label>
+				</div>
+				<div id="model-selection" style="display: none;">
+					<label> 
+						Story Model
+						<div class="select">
+							<select name="story-model" id="story-model">
+								<option value="">(Select a model)</option>
+								<option value="o">o3</option>
+								<option value="gpt5">GPT 5</option>
+								<option value="gemthink">Gemini 2.5 Pro</option>
+								<option value="grok">Grok 2</option>
+								<option value="deepseekr">DeepSeek R1</option>
+							</select>
+						</div>
+					</label>
+					<label> 
+						Script Model
+						<div class="select">
+							<select name="script-model" id="script-model">
+								<option value="">(Select a model)</option>
+								<option value="gpt">GPT 5 Mini</option>
+								<option value="gem">Gemini 2.0 Flash</option>
+								<option value="grok">Grok 2</option>
+								<option value="deepseek">DeepSeek V3</option>
+								<option value="llama">Llama 3</option>
+							</select>
+						</div>
+					</label>
+					<label>
+						Image Model
+						<div class="select">
+							<select name="image-model" id="image-model">
+								<option value="">(Select a model)</option>
+								<option value="oai">Dall-E 3</option>
+								<option value="imagen">Imagen 3</option>
+							</select>
+						</div>
+					</label>
+					<label id="image-style-label" style="display:none;">
+						Image Style
+						<div class="select">
+							<select name="image-style" id="image-style">
+								<option value="" selected>(default)</option>
+								<option value="anime">Anime</option>
+								<option value="cinematic">Cinematic</option>
+								<option value="comic-book">Comic Book</option>
+								<option value="fantasy-art">Fantasy</option>
+								<option value="low-poly">Low Poly</option>
+								<option value="neon-punk">Neon Punk</option>
+								<option value="origami">Origami</option>
+								<option value="photographic">Photographic</option>
+							</select>
+						</div>
+					</label>
+				</div>
 				<label>
-					Image Model
-					<div class="select">
-						<select name="image-model" id="image-model">
-							<option value="">(Select a model)</option>
-							<option value="oai">Dall-E 3</option>
-							<option value="imagen">Imagen 3</option>
-							<option value="sdf">Stable Diffusion XL</option>
-							<option value="ttn">Titan Image (preview)</option>
-						</select>
-					</div>
-				</label>
-				<label id="image-style-label" style="display:none;">
-					Image Style
-					<div class="select">
-						<select name="image-style" id="image-style">
-							<option value="" selected>(default)</option>
-							<option value="anime">Anime</option>
-							<option value="cinematic">Cinematic</option>
-							<option value="comic-book">Comic Book</option>
-							<option value="fantasy-art">Fantasy</option>
-							<option value="low-poly">Low Poly</option>
-							<option value="neon-punk">Neon Punk</option>
-							<option value="origami">Origami</option>
-							<option value="photographic">Photographic</option>
-						</select>
-					</div>
+					<br/>
+					<button type="button" id="advanced-toggle" class="toggle-button">Advanced</button>
 				</label>
 			</div>
 			<div class="row">
