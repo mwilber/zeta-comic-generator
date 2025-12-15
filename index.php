@@ -34,6 +34,10 @@
 			$path[1] = 'home';
 		}
 
+		// if $path[1] is set and not "home", update the title
+		if($path[1] !== "" && $path[1] != "home")
+			$meta->title = ucfirst($path[1]) . " - " . $meta->siteTitle;
+
 		$database = new Database();
 		$db = $database->getConnection();
 
@@ -47,7 +51,7 @@
 
 			if ($result && isset($result->json)) {
 				$meta->hash = $result->permalink;
-				$meta->title = $result->title;
+				$meta->title = $result->title . " - " . $meta->siteTitle;
 				$meta->image = $meta->siteUrl."/assets/thumbnails/thumb_".$result->permalink.".png";
 				$meta->description = "Check out my comic strip `" . $result->title . "` from Zeta Comic Generator. " . $meta->description;
 				$meta->imageDescription = $result->title . " from " . $meta->imageDescription;
@@ -73,7 +77,7 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta http-equiv="X-UA-Compatible" content="ie=edge">
-	<title><?php echo $meta->siteTitle; ?></title>
+	<title><?php echo $meta->title; ?></title>
 	<meta name="description" content="<?php echo $meta->description; ?>">
 
 	<meta property="og:url" content="<?php echo $meta->url; ?>">
