@@ -69,6 +69,7 @@
 	require __DIR__ . '/models/deepseekr.php';
 	require __DIR__ . '/models/imagen.php';
 	require __DIR__ . '/models/grok.php';
+	require __DIR__ . '/models/gptimage.php';
 
 	switch ($controller) {
 		// App API endpoints

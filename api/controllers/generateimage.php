@@ -51,6 +51,9 @@ if ($hitCount >= RATE_LIMIT) {
 		case "oai":
 			$model = new ModelDallE();
 			break;
+		case "gptimage":
+			$model = new ModelGptImage();
+			break;
 		case "imagen":
 			$model = new ModelImagen();
 			break;
