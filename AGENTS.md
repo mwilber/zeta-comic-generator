@@ -39,7 +39,7 @@ Zeta Comic Generator is an AI-powered comic strip creation tool that generates 3
 ## AI Model Integration
 
 ### Text Models (`/api/models/`)
-- GPT variants: `gpt.php`, `gpt45.php`, `gpt5.php`, `o.php`
+- GPT variants: `gpt.php`, `gpt45.php`, `gpt5.php`
 - Claude: `claude.php`
 - Gemini: `gem.php`, `gemthink.php`
 - Other: `deepseek.php`, `deepseekr.php`, `grok.php`, `llama.php`

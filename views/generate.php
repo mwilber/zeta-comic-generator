@@ -85,7 +85,6 @@
 						<div class="select">
 							<select name="story-model" id="story-model">
 								<option value="">(Select a model)</option>
-								<option value="o">o3</option>
 								<option value="gpt5">GPT 5</option>
 								<option value="gemthink">Gemini 2.5 Pro</option>
 								<option value="grok">Grok 2</option>

@@ -62,7 +62,6 @@
 	require __DIR__ . '/models/gpt.php';
 	require __DIR__ . '/models/gpt5.php';
 	//require __DIR__ . '/models/gpt45.php';
-	require __DIR__ . '/models/o.php';
 	require __DIR__ . '/models/gem.php';
 	require __DIR__ . '/models/gemthink.php';
 	require __DIR__ . '/models/dall.php';

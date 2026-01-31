@@ -33,7 +33,6 @@
 	<li>
 		<h3>Story</h3>
 		<ul>
-			<li><a href="https://openai.com/product" target="_blank" rel="noopener noreferrer">o3</a></li>
 			<li><a href="https://openai.com/product" target="_blank" rel="noopener noreferrer">GPT 5</a></li>
 			<li><a href="https://deepmind.google/models/gemini/" target="_blank" rel="noopener noreferrer">Gemini 2.5 Pro</a></li>
 			<li><a href="https://x.ai/grok" target="_blank" rel="noopener noreferrer">Grok 2</a></li>

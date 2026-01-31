@@ -14,7 +14,7 @@ let api, comicRenderer, scriptRenderer;
  */
 const MODEL_GROUPS = {
 	openai: {
-		story: "o",        // o3
+		story: "gpt5",     // GPT 5
 		script: "gpt",     // GPT 4.1
 		image: "oai"       // Dall-E 3
 	},
