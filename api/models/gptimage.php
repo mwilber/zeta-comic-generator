@@ -17,29 +17,12 @@ class ModelGptImage extends BaseModel {
 			"prompt" => $prompt,
 			"n" => 1,
 			"size" => $this->imageSize,
-			"quality" => "low"
+			"quality" => "low",
+			"background" => "opaque"
 		];
 
 		return $body;
 	}
-
-	// protected function processResponse($response) {
-	// 	$result = new stdClass;
-	// 	$json = $response;
-	// 	$result->data = $json;
-
-	// 	$result->error = $json->error;
-
-	// 	if (isset($json->data[0])) {
-	// 		$result->json = $json->data[0];
-	// 	}
-
-	// 	$result->tokens = [
-	// 		"image" => 1,
-	// 	];
-
-	// 	return $result;
-	// }
 
 	protected function processResponse($response) {
 		$result = new stdClass;
@@ -47,9 +30,6 @@ class ModelGptImage extends BaseModel {
 		$result->data = $json;
 
 		$result->error = $json->error;
-
-		// print_r($response);
-		// die;
 
 		$base64_image_data = $result->data->data[0]->b64_json;
 		$imagePath = $this->saveImageFromBase64($base64_image_data, $this->modelName);
