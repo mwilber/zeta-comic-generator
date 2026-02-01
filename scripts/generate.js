@@ -14,9 +14,9 @@ let api, comicRenderer, scriptRenderer;
  */
 const MODEL_GROUPS = {
 	openai: {
-		story: "o",        // o3
-		script: "gpt",     // GPT 4.1
-		image: "oai"       // Dall-E 3
+		story: "gpt5",     // GPT 5
+		script: "gpt",     // GPT 5 mini
+		image: "gptimage"  // GPT Image
 	},
 	google: {
 		story: "gemthink", // Gemini 2.5 Pro
@@ -77,7 +77,7 @@ document.addEventListener("DOMContentLoaded", () => {
 function SetDefaultSelections() {
 	const defaultConceptSelection = "gpt5";
 	const defaultSelection = "gpt";
-	const defaultImageSelection = "oai";
+	const defaultImageSelection = "gptimage";
 	// TODO: Simplify this
 	const groupSelectEl = document.getElementById("group-select");
 	const storyModelEl = document.getElementById("story-model");
@@ -104,7 +104,10 @@ function SetDefaultSelections() {
 	scriptModelEl.value = savedScriptModel || defaultSelection;
 	imageModelEl.value = savedImageModel || defaultImageSelection;
 	// Fire a change event on the selections
-	groupSelectEl.dispatchEvent(new Event("change"));
+	const hasSavedModels = !!(savedStoryModel || savedScriptModel || savedImageModel);
+	if (!hasSavedModels) {
+		groupSelectEl.dispatchEvent(new Event("change"));
+	}
 	storyModelEl.dispatchEvent(new Event("change"));
 	scriptModelEl.dispatchEvent(new Event("change"));
 	imageModelEl.dispatchEvent(new Event("change"));
@@ -128,6 +131,9 @@ function ToggleSelectionMode() {
 		// Save mode preference
 		if (localStorage) {
 			localStorage.setItem("selection-mode", "simple");
+			document
+				.getElementById("group-select")
+				.dispatchEvent(new Event("change"));
 		}
 	} else {
 		// Switch to advanced mode

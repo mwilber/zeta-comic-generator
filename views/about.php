@@ -33,8 +33,7 @@
 	<li>
 		<h3>Story</h3>
 		<ul>
-			<li><a href="https://openai.com/product" target="_blank" rel="noopener noreferrer">o3</a></li>
-			<li><a href="https://openai.com/product" target="_blank" rel="noopener noreferrer">GPT 5</a></li>
+			<li><a href="https://platform.openai.com/docs/models/gpt-5.2" target="_blank" rel="noopener noreferrer">GPT 5.2</a></li>
 			<li><a href="https://deepmind.google/models/gemini/" target="_blank" rel="noopener noreferrer">Gemini 2.5 Pro</a></li>
 			<li><a href="https://x.ai/grok" target="_blank" rel="noopener noreferrer">Grok 2</a></li>
 			<li><a href="https://github.com/deepseek-ai/DeepSeek-R1" target="_blank" rel="noopener noreferrer">DeepSeek R1</a></li>
@@ -43,7 +42,7 @@
 	<li>
 		<h3>Script</h3>
 		<ul>
-			<li><a href="https://openai.com/product" target="_blank" rel="noopener noreferrer">GPT 5 Mini</a></li>
+			<li><a href="https://platform.openai.com/docs/models/gpt-5-mini" target="_blank" rel="noopener noreferrer">GPT 5 Mini</a></li>
 			<li><a href="https://deepmind.google/models/gemini/" target="_blank" rel="noopener noreferrer">Gemini 2.0 Flash</a></li>
 			<li><a href="https://x.ai/grok" target="_blank" rel="noopener noreferrer">Grok 2</a></li>
 			<li><a href="https://github.com/deepseek-ai/DeepSeek-V3" target="_blank" rel="noopener noreferrer">DeepSeek V3</a></li>
@@ -52,6 +51,7 @@
 	<li>
 		<h3>Image</h3>
 		<ul>
+			<li><a href="https://platform.openai.com/docs/models/gpt-image-1.5" target="_blank" rel="noopener noreferrer">GPT Image 1.5</a></li>
 			<li><a href="https://openai.com/dall-e-3" target="_blank" rel="noopener noreferrer">Dall-E 3</a></li>
 			<li><a href="https://deepmind.google/models/imagen/" target="_blank" rel="noopener noreferrer">Imagen 3</a></li>
 		</ul>

@@ -72,7 +72,6 @@
 						Model Select
 						<div class="select">
 							<select name="group-select" id="group-select">
-								<option value="">(Select a provider)</option>
 								<option value="openai">OpenAI</option>
 								<option value="google">Google</option>
 							</select>
@@ -84,8 +83,6 @@
 						Story Model
 						<div class="select">
 							<select name="story-model" id="story-model">
-								<option value="">(Select a model)</option>
-								<option value="o">o3</option>
 								<option value="gpt5">GPT 5</option>
 								<option value="gemthink">Gemini 2.5 Pro</option>
 								<option value="grok">Grok 2</option>
@@ -97,7 +94,6 @@
 						Script Model
 						<div class="select">
 							<select name="script-model" id="script-model">
-								<option value="">(Select a model)</option>
 								<option value="gpt">GPT 5 Mini</option>
 								<option value="gem">Gemini 2.0 Flash</option>
 								<option value="grok">Grok 2</option>
@@ -109,8 +105,8 @@
 						Image Model
 						<div class="select">
 							<select name="image-model" id="image-model">
-								<option value="">(Select a model)</option>
 								<option value="oai">Dall-E 3</option>
+								<option value="gptimage">GPT Image</option>
 								<option value="imagen">Imagen 3</option>
 							</select>
 						</div>

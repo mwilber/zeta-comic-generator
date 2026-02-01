@@ -26,9 +26,6 @@ $modelId = POSTval("model", "oai");
 $model = null;
 if ($modelId) {
 	switch ($modelId) {
-		case "o":
-			$model = new ModelO();
-			break;
 		case "gpt":
 			$model = new ModelGpt();
 			break;
@@ -43,7 +40,11 @@ if ($modelId) {
 			break;	
 	}
 	// Record the model that was used
-	$output->model = "SIMULATION (".$model->modelName.")";
+	if ($model) {
+		$output->model = "SIMULATION (".$model->modelName.")";
+	} else {
+		$output->error = "Invalid model id";
+	}
 }
 
 $database = new Database();

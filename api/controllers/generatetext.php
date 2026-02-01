@@ -230,9 +230,6 @@ function GetMessages() {
 function GetModel($modelAlias) {
 	$model = null;
 	switch ($modelAlias) {
-		case "o":
-			$model = new ModelO();
-			break;
 		case "gpt":
 			$model = new ModelGpt();
 			break;

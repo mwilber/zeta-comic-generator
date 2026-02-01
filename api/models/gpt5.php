@@ -8,7 +8,7 @@ require_once('gpt.php');
 class ModelGpt5 extends ModelGpt {
 	function __construct() {
 		parent::__construct();
-		$this->modelName = "gpt-5";
+		$this->modelName = "gpt-5.2";
 		$this->apiUrl = "https://api.openai.com/v1/responses";
 	}
 
