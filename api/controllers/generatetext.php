@@ -251,6 +251,12 @@ function GetModel($modelAlias) {
 		case "deepseekr":
 			$model = new ModelDeepSeekR();
 			break;
+		case "grok":
+			$model = new ModelGrok();
+			break;
+		case "grokadv":
+			$model = new ModelGrokAdvanced();
+			break;
 	}
 	return $model;
 }
