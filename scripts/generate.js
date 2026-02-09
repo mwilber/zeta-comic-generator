@@ -10,6 +10,22 @@ import { ScriptRenderer } from "./modules/ScriptRenderer.js";
 let api, comicRenderer, scriptRenderer;
 
 /**
+ * Model group configurations for easy selection
+ */
+const MODEL_GROUPS = {
+	openai: {
+		story: "gpt5",     // GPT 5
+		script: "gpt",     // GPT 5 mini
+		image: "gptimage"  // GPT Image
+	},
+	google: {
+		story: "gemthink", // Gemini 2.5 Pro
+		script: "gem",     // Gemini 2.0 Flash
+		image: "imagen"    // Imagen 3
+	}
+};
+
+/**
  * Initializes the comic generation application when the DOM content has finished loading.
  * This function sets up the ComicRenderer and ScriptRenderer instances, attaches UI event handlers,
  * and sets the application status to "ready".
@@ -30,6 +46,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	});
 
 	AttachUiEvents();
+	SetInitialMode();
 	SetDefaultSelections();
 
 	api.GetMetrics().then((metrics)=>{
@@ -58,14 +75,18 @@ document.addEventListener("DOMContentLoaded", () => {
  * After setting the values, a 'change' event is dispatched on the corresponding elements to trigger any related functionality.
  */
 function SetDefaultSelections() {
-	const defaultConceptSelection = "o";
+	const defaultConceptSelection = "gpt5";
 	const defaultSelection = "gpt";
-	const defaultImageSelection = "oai";
+	const defaultImageSelection = "gptimage";
 	// TODO: Simplify this
+	const groupSelectEl = document.getElementById("group-select");
 	const storyModelEl = document.getElementById("story-model");
 	const scriptModelEl = document.getElementById("script-model");
 	const imageModelEl = document.getElementById("image-model");
 
+	let savedGroupSelection = localStorage
+		? localStorage.getItem("group-select")
+		: null;
 	let savedStoryModel = localStorage
 		? localStorage.getItem("story-model-select")
 		: null;
@@ -76,10 +97,104 @@ function SetDefaultSelections() {
 		? localStorage.getItem("image-model-select")
 		: null;
 
+	// Set group selection first (default to "openai" if none saved)
+	groupSelectEl.value = savedGroupSelection || "openai";
+
 	storyModelEl.value = savedStoryModel || defaultConceptSelection;
 	scriptModelEl.value = savedScriptModel || defaultSelection;
 	imageModelEl.value = savedImageModel || defaultImageSelection;
 	// Fire a change event on the selections
+	const hasSavedModels = !!(savedStoryModel || savedScriptModel || savedImageModel);
+	if (!hasSavedModels) {
+		groupSelectEl.dispatchEvent(new Event("change"));
+	}
+	storyModelEl.dispatchEvent(new Event("change"));
+	scriptModelEl.dispatchEvent(new Event("change"));
+	imageModelEl.dispatchEvent(new Event("change"));
+}
+
+/**
+ * Toggles between simple group selection and advanced model selection
+ */
+function ToggleSelectionMode() {
+	const groupSelection = document.getElementById("group-selection");
+	const modelSelection = document.getElementById("model-selection");
+	const toggleButton = document.getElementById("advanced-toggle");
+
+	const isAdvancedMode = modelSelection.style.display !== "none";
+
+	if (isAdvancedMode) {
+		// Switch to simple mode
+		modelSelection.style.display = "none";
+		groupSelection.style.display = "flex";
+		toggleButton.textContent = "Advanced";
+		// Save mode preference
+		if (localStorage) {
+			localStorage.setItem("selection-mode", "simple");
+			document
+				.getElementById("group-select")
+				.dispatchEvent(new Event("change"));
+		}
+	} else {
+		// Switch to advanced mode
+		groupSelection.style.display = "none";
+		modelSelection.style.display = "flex";
+		toggleButton.textContent = "Simple";
+		
+		// Clear group selection
+		const groupSelectEl = document.getElementById("group-select");
+		groupSelectEl.value = "";
+		
+		// Save mode preference and clear group selection from localStorage
+		if (localStorage) {
+			localStorage.setItem("selection-mode", "advanced");
+			localStorage.setItem("group-select", "");
+		}
+	}
+}
+
+/**
+ * Sets the initial selection mode based on saved preference or default
+ */
+function SetInitialMode() {
+	const savedMode = localStorage ? localStorage.getItem("selection-mode") : null;
+	const groupSelection = document.getElementById("group-selection");
+	const modelSelection = document.getElementById("model-selection");
+	const toggleButton = document.getElementById("advanced-toggle");
+
+	// Default to simple mode (group visible, models hidden)
+	if (savedMode === "advanced") {
+		groupSelection.style.display = "none";
+		modelSelection.style.display = "flex";
+		toggleButton.textContent = "Simple";
+	} else {
+		groupSelection.style.display = "flex";
+		modelSelection.style.display = "none";
+		toggleButton.textContent = "Advanced";
+	}
+}
+
+/**
+ * Updates model selections based on the selected group
+ * @param {string} groupKey - The key of the group to apply (e.g., 'openai', 'google')
+ */
+function ApplyGroupSelection(groupKey) {
+	if (!MODEL_GROUPS[groupKey]) {
+		console.warn(`Unknown group: ${groupKey}`);
+		return;
+	}
+
+	const group = MODEL_GROUPS[groupKey];
+	const storyModelEl = document.getElementById("story-model");
+	const scriptModelEl = document.getElementById("script-model");
+	const imageModelEl = document.getElementById("image-model");
+
+	// Update the dropdown values
+	storyModelEl.value = group.story;
+	scriptModelEl.value = group.script;
+	imageModelEl.value = group.image;
+
+	// Trigger change events to update any related functionality
 	storyModelEl.dispatchEvent(new Event("change"));
 	scriptModelEl.dispatchEvent(new Event("change"));
 	imageModelEl.dispatchEvent(new Event("change"));
@@ -149,10 +264,32 @@ function AttachUiEvents() {
 					localStorage.setItem("image-model-select", value);
 				const styleSelectGroup =
 					document.getElementById("image-style-label");
-				if (value === "sdf")
-					styleSelectGroup.style.display = "block";
-				else styleSelectGroup.style.display = "none";
+				// if (value === "sdf")
+				// 	styleSelectGroup.style.display = "block";
+				// else 
+				// styleSelectGroup.style.display = "none";
 			},
+		},
+		{
+			selector: "#group-select",
+			event: "change",
+			handler: (e) => {
+				let {value} = e.target;
+				// Apply the selected group's model configuration
+				if (value) {
+					ApplyGroupSelection(value);
+				}
+				// Save the group selection to localStorage
+				if(localStorage)
+					localStorage.setItem("group-select", value);
+			}
+		},
+		{
+			selector: "#advanced-toggle",
+			event: "click",
+			handler: (e) => {
+				ToggleSelectionMode();
+			}
 		},
 		{
 			selector: ".dialog .close",
@@ -186,7 +323,7 @@ function AttachUiEvents() {
  */
 async function GenerateStrip() {
 	const query = document.getElementById("query");
-	if (!query || !query.value || query.value.length > 140) return;
+	if (!query || !query.value || query.value.length > 210) return;
 
 	comicRenderer.clear();
 	api.ClearComicData();
@@ -201,40 +338,42 @@ async function GenerateStrip() {
 	const textModel = document.getElementById("script-model").value;
 	const imageModel = document.getElementById("image-model").value;
 	const imageStyle = document.getElementById("image-style").value;
+	const seriesId = document.getElementById("series-id").value;
 
-	let concept = await api.WriteConcept(safeQuery, { model: conceptModel });
+	// Step 1: Generate the story concept
+	let concept = await api.WriteConcept(safeQuery, { model: conceptModel, seriesId });
 	if (!concept || concept.error) {
 		SetStatus(concept.error == "ratelimit" ? concept.error : "error");
 		return;
 	}
-	// If textModels.length > 1 then we need to remove the first element
 
+	// Step 2: Generate the script
 	let script = await api.WriteScript(safeQuery, { model: textModel });
 	if (!script || script.error) {
 		SetStatus(script.error == "ratelimit" ? script.error : "error");
 		return;
 	}
-	
-	// let action = await api.WriteAction({ model: textModel });
-	// if (!action || action.error) {
-	// 	SetStatus("error");
-	// 	return;
-	// }
 
+	// Step 3: Generate the background descriptions
 	let background = await api.WriteBackground({ model: textModel });
 	if (!background || background.error) {
 		SetStatus("error");
 		return;
 	}
 
+	// Step 4: Render the background images
 	let image = await api.DrawBackgrounds({ model: imageModel, style: imageStyle });
 	if (!image || image.error) {
 		SetStatus("error");
 		return;
 	}
 
+	// Step 5: Add the character images
 	await api.DrawAction();
-	api.onUpdate(api.comic, api.PercentComplete());
+	// Note: drawAction does not call onUpdate, need to call manually if this is the last step. No longer needed because it is covered in continuity step now.
+
+	// Step 6: Generate new story continuity
+	await api.WriteContinuity({ model: textModel });
 
 	//TODO: Check the renderer progress. Handle error if <100 at this point.
 
@@ -261,6 +400,7 @@ async function SaveStrip() {
 		alert("There was a problem saving.");
 	}
 	console.log("Success:", data);
+	document.getElementById("save").removeAttribute("disabled");
 	window.location.replace("/detail/" + data.response.permalink);
 }
 
@@ -350,7 +490,7 @@ function UpdateProgress(amount) {
 /**
  * Updates the character count display for the "premise" text input field.
  *
- * It calculates the number of characters remaining before a 140 character 
+ * It calculates the number of characters remaining before a 210 character 
  * limit is reached, and updates the display in the "character-count" 
  * element. The display element's color is also updated to indicate
  * when the character limit has been exceeded.
@@ -360,17 +500,24 @@ function UpdateProgress(amount) {
 function SetCharCount() {
 	let el = document.getElementById("character-count");
 	let characterCount = document.getElementById("query").value.length;
-	let characterleft = 140 - characterCount;
+	let characterleft = 210 - characterCount;
 
 	// console.log(characterleft);
+	el.style.color = "";
+	el.style.fontWeight = "";
 
-	if (characterleft < 0) el.style.color = "#c00";
-	else if (characterleft < 15) el.style.color = "#600";
-	else el.style.color = "";
+	if (characterleft < 0) { 
+		el.style.color = "#f00";
+		el.style.fontWeight = "bold";
+	} else if (characterleft < 15)
+		el.style.color = "#c00";
+	else if (characterleft < 50)
+		el.style.color = "#900";
+		
 
 	if (characterleft < 0)
-		el.innerText = Math.abs(characterleft) + " over limit.";
-	else el.innerText = characterleft + " characters left.";
+		el.innerText = Math.abs(characterleft) + " over limit";
+	else el.innerText = characterleft + " characters left";
 
 	return true;
 }

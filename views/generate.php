@@ -1,3 +1,21 @@
+<?php
+	require __DIR__ . '/../api/includes/key.php';
+
+	$seriesRs = null;
+
+	if(defined("DEV_SITE") && DEV_SITE === true) {
+		$database = new Database();
+		$db = $database->getConnection();
+
+		try {
+			$stmt = $db->prepare("SELECT * FROM `series` ORDER BY timestamp DESC");
+			$stmt->execute();
+			$seriesRs = $stmt->fetchAll(PDO::FETCH_ASSOC);
+		} catch(PDOException $e) {
+			echo "ERROR: Could not execute the query. " . $e->getMessage();
+		}
+	}
+?>
 <script>
 	const characterActions = <?php echo json_encode($GLOBALS['characterActions']); ?>;
 </script>
@@ -29,66 +47,91 @@
 	<div class="query-wrapper">
 		<h2>Setup</h2>
 		<div id="input">
-			<div class="row selections">
-				<label> 
-					Story Model
-					<div class="select">
-						<select name="story-model" id="story-model">
-							<option value="">(Select a model)</option>
-							<option value="o">o3</option>
-							<option value="gemthink">Gemini 2.5 Pro</option>
-							<option value="grokadv">Grok 4</option>
-							<option value="claude">Claude Sonnet 3.5</option>
-							<option value="deepseekr">DeepSeek R1</option>
-							<!-- Titan Text Express v1 disabled because it can't handle the new prompt format -->
-							<!-- <option value="ttn">Titan Text Express v1</option> -->
+			<div class="row selections" style="flex-wrap: wrap;">
+				<?php if(defined("DEV_SITE") && DEV_SITE === true): ?>
+					<?php if($seriesRs): ?> 
+					<label>
+						Series
+						<div class="select">
+						<select name="series-id" id="series-id">
+							<option value="" selected>None</option>
+							<?php foreach($seriesRs as $series): ?>
+							<option value="<?= $series['id'] ?>"><?php if($series['active'] == 0): echo "!"; endif; ?>
+								<?= htmlspecialchars($series['title']) ?>
+							</option>
+							<?php endforeach; ?>
 						</select>
-					</div>
-				</label>
-				<label> 
-					Script Model
-					<div class="select">
-						<select name="script-model" id="script-model">
-							<option value="">(Select a model)</option>
-							<option value="gpt">GPT 4.1</option>
-							<option value="gem">Gemini 2.0 Flash</option>
-							<option value="grok">Grok 3</option>
-							<option value="claude">Claude Sonnet 3.5</option>
-							<option value="deepseek">DeepSeek V3</option>
-							<option value="llama">Llama 3</option>
-							<!-- Titan Text Express v1 disabled because it can't handle the new prompt format -->
-							<!-- <option value="ttn">Titan Text Express v1</option> -->
-						</select>
-					</div>
-				</label>
+						</div>
+					</label>
+					<?php endif; ?>
+				<?php else: ?>
+					<input id="series-id" type="hidden" value="" />
+				<?php endif; ?>
+				<div id="group-selection">
+					<label>
+						Model Select
+						<div class="select">
+							<select name="group-select" id="group-select">
+								<option value="openai">OpenAI</option>
+								<option value="google">Google</option>
+							</select>
+						</div>
+					</label>
+				</div>
+				<div id="model-selection" style="display: none;">
+					<label> 
+						Story Model
+						<div class="select">
+							<select name="story-model" id="story-model">
+								<option value="gpt5">GPT 5</option>
+								<option value="gemthink">Gemini 2.5 Pro</option>
+								<option value="grokadv">Grok 4</option>
+								<option value="deepseekr">DeepSeek R1</option>
+							</select>
+						</div>
+					</label>
+					<label> 
+						Script Model
+						<div class="select">
+							<select name="script-model" id="script-model">
+								<option value="gpt">GPT 5 Mini</option>
+								<option value="gem">Gemini 2.0 Flash</option>
+								<option value="grok">Grok 3</option>
+								<option value="deepseek">DeepSeek V3</option>
+							</select>
+						</div>
+					</label>
+					<label>
+						Image Model
+						<div class="select">
+							<select name="image-model" id="image-model">
+								<option value="oai">Dall-E 3</option>
+								<option value="gptimage">GPT Image</option>
+								<option value="imagen">Imagen 3</option>
+								<option value="grokimg">Grok Image 2</option>
+							</select>
+						</div>
+					</label>
+					<label id="image-style-label" style="display:none;">
+						Image Style
+						<div class="select">
+							<select name="image-style" id="image-style">
+								<option value="" selected>(default)</option>
+								<option value="anime">Anime</option>
+								<option value="cinematic">Cinematic</option>
+								<option value="comic-book">Comic Book</option>
+								<option value="fantasy-art">Fantasy</option>
+								<option value="low-poly">Low Poly</option>
+								<option value="neon-punk">Neon Punk</option>
+								<option value="origami">Origami</option>
+								<option value="photographic">Photographic</option>
+							</select>
+						</div>
+					</label>
+				</div>
 				<label>
-					Image Model
-					<div class="select">
-						<select name="image-model" id="image-model">
-							<option value="">(Select a model)</option>
-							<option value="oai">Dall-E 3</option>
-							<option value="imagen">Imagen 3</option>
-							<option value="grokimg">Grok Image 2</option>
-							<option value="sdf">Stable Diffusion XL</option>
-							<option value="ttn">Titan Image (preview)</option>
-						</select>
-					</div>
-				</label>
-				<label id="image-style-label" style="display:none;">
-					Image Style
-					<div class="select">
-						<select name="image-style" id="image-style">
-							<option value="" selected>(default)</option>
-							<option value="anime">Anime</option>
-							<option value="cinematic">Cinematic</option>
-							<option value="comic-book">Comic Book</option>
-							<option value="fantasy-art">Fantasy</option>
-							<option value="low-poly">Low Poly</option>
-							<option value="neon-punk">Neon Punk</option>
-							<option value="origami">Origami</option>
-							<option value="photographic">Photographic</option>
-						</select>
-					</div>
+					<br/>
+					<button type="button" id="advanced-toggle" class="toggle-button">Advanced</button>
 				</label>
 			</div>
 			<div class="row">
@@ -104,7 +147,7 @@
 				</button>
 			</div>
 			<div class="row">
-				<span id="character-count">140 characters left</span>
+				<span id="character-count">210 characters left</span>
 			</div>
 		</div>
 	</div>

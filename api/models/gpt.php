@@ -12,7 +12,8 @@ class ModelGpt extends BaseModel {
 		// $this->modelName = "gpt-4o-2024-05-13";
 		// $this->modelName = "gpt-4o-2024-08-06";
 		// $this->modelName = "gpt-4o-mini-2024-07-18";
-		$this->modelName = "gpt-4.1-2025-04-14";
+		// $this->modelName = "gpt-4.1-2025-04-14";
+		$this->modelName = "gpt-5-mini";
 
 		$this->apiUrl = "https://api.openai.com/v1/chat/completions";
 		$this->apiKey = OPENAI_KEY;

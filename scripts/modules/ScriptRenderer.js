@@ -29,11 +29,16 @@ export class ScriptRenderer {
 	async render() {
 		if (!this.validate()) return;
 
-		const { title, panels, credits, concept } = this.script;
+		const { title, panels, credits, concept, story } = this.script;
 
 		this.el.setAttribute("aria-label", "Script");
+		this.el.innerHTML = "";
 
-		this.el.innerHTML = `<li aria-label="Title"><h2>${title}</h2></li>`;
+		if (story) {
+			this.el.innerHTML += `<li aria-label="Story Title"><h2 class="story-title">${story.title} - Part ${story.currentIdx + 1}</h2></li>`;
+		}
+
+		this.el.innerHTML += `<li aria-label="Title"><h2>${title}</h2></li>`;
 
 		if (credits && credits.script) {
 			let conseptCredit = credits.concept ?

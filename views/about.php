@@ -33,31 +33,27 @@
 	<li>
 		<h3>Story</h3>
 		<ul>
-			<li><a href="https://openai.com/product" target="_blank" rel="noopener noreferrer">o3</a></li>
+			<li><a href="https://platform.openai.com/docs/models/gpt-5.2" target="_blank" rel="noopener noreferrer">GPT 5.2</a></li>
 			<li><a href="https://deepmind.google/models/gemini/" target="_blank" rel="noopener noreferrer">Gemini 2.5 Pro</a></li>
 			<li><a href="https://x.ai/grok" target="_blank" rel="noopener noreferrer">Grok 4</a></li>
-			<li><a href="https://www.anthropic.com/claude/sonnet" target="_blank" rel="noopener noreferrer">Claude 3.5 Sonnet</a></li>
 			<li><a href="https://github.com/deepseek-ai/DeepSeek-R1" target="_blank" rel="noopener noreferrer">DeepSeek R1</a></li>
 		</ul>
 	</li>
 	<li>
 		<h3>Script</h3>
 		<ul>
-			<li><a href="https://openai.com/product" target="_blank" rel="noopener noreferrer">GPT 4.1</a></li>
+			<li><a href="https://platform.openai.com/docs/models/gpt-5-mini" target="_blank" rel="noopener noreferrer">GPT 5 Mini</a></li>
 			<li><a href="https://deepmind.google/models/gemini/" target="_blank" rel="noopener noreferrer">Gemini 2.0 Flash</a></li>
 			<li><a href="https://x.ai/grok" target="_blank" rel="noopener noreferrer">Grok 3</a></li>
-			<li><a href="https://www.anthropic.com/claude/sonnet" target="_blank" rel="noopener noreferrer">Claude 3.5 Sonnet</a></li>
 			<li><a href="https://github.com/deepseek-ai/DeepSeek-V3" target="_blank" rel="noopener noreferrer">DeepSeek V3</a></li>
-			<li><a href="https://www.llama.com/" target="_blank" rel="noopener noreferrer">Llama 3.2</a></li>
 		</ul>
 	</li>
 	<li>
-		<h3>Background</h3>
+		<h3>Image</h3>
 		<ul>
+			<li><a href="https://platform.openai.com/docs/models/gpt-image-1.5" target="_blank" rel="noopener noreferrer">GPT Image 1.5</a></li>
 			<li><a href="https://openai.com/dall-e-3" target="_blank" rel="noopener noreferrer">Dall-E 3</a></li>
 			<li><a href="https://deepmind.google/models/imagen/" target="_blank" rel="noopener noreferrer">Imagen 3</a></li>
-			<li><a href="https://stability.ai/stable-image" target="_blank" rel="noopener noreferrer">Stable Diffusion XL</a></li>
-			<li><a href="https://aws.amazon.com/bedrock/titan/" target="_blank" rel="noopener noreferrer">Titan Image</a></li>
 		</ul>
 	</li>
 </ul>
@@ -69,8 +65,9 @@
 		$params = [];
 		switch ($action) {
 			case "system":
-				$params[] = "Alpha Zeta's character profile includes the following: \n\n<strong>{ a bullet list of Alpha Zeta's character traits }</strong>";
 				$params[] = implode(", ", array_keys($GLOBALS['characterActions']));
+				$params[] = "Alpha Zeta's character profile includes the following: \n\n<strong>{ a bullet list of Alpha Zeta's character traits }</strong>";
+				$params[] = "Events that have occurred in past comics: \n\n<strong>{ a bullet list of events from past comics }</strong>";
 			case "concept":
 				$params[] = "<strong>{ The story premise }</strong>";
 				break;

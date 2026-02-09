@@ -9,7 +9,7 @@
  */
 
 // pause execution for 2 seconds to simulate the remote API response
-sleep(2);
+sleep(SIMULATE_DELAY);
 
 $query = $_POST["query"];
 $output->prompt = $query;

@@ -1,6 +1,14 @@
 const listing = {};
 
 const priceTable = {
+	"gpt-5": {
+		prompt_tokens: 1.25 / 1000000,
+		completion_tokens: 10 / 1000000,
+	},
+	"gpt-5-mini": {
+		prompt_tokens: 0.25 / 1000000,
+		completion_tokens: 2.00 / 1000000,
+	},
 	"gpt-4.1-2025-04-14": {
 		prompt_tokens: 2 / 1000000,
 		completion_tokens: 8 / 1000000,

@@ -2,13 +2,15 @@
 	error_reporting(E_ALL);
 	ini_set('display_errors', 1);
 
-    require __DIR__ . '/api/includes/prompts.php';
+	require __DIR__ . '/api/includes/prompts.php';
 	require __DIR__ . '/api/includes/characteractions.php';
+	require __DIR__ . '/api/includes/key.php';
+	require __DIR__ . '/api/includes/db.php';
 
 	$request = $_SERVER['REQUEST_URI'];
 	//echo $request;
 
-	$version = "3.1.0";
+	$version = "3.5.0";
 	$meta = new stdClass();
 	$meta->siteTitle = "Zeta Comic Generator";
 	$meta->title = "Zeta Comic Generator";
@@ -23,34 +25,38 @@
 
 	// Validate the path
 	if(isset($path[1])) {
-		if($path[1] == 'detail' && (!isset($path[2]) || !$path[2])) {
+
+		if(
+			($path[1] == 'detail' && (!isset($path[2]) || !$path[2])) ||
+			($path[1] == 'edit' && (!defined("DEV_SITE") || (defined("DEV_SITE") && DEV_SITE !== true)))
+		) {
 			// If no detail hash, display the home page
 			$path[1] = 'home';
-		} else {
-			// Grab share metadata
-            require __DIR__ . '/api/includes/key.php';
-			require __DIR__ . '/api/includes/db.php';
-
-			$database = new Database();
-			$db = $database->getConnection();
-
-			try {
-				$stmt = $db->prepare("SELECT * FROM `comics` WHERE permalink = :id");
-				$stmt->bindParam(':id', $path[2], PDO::PARAM_STR);
-				$stmt->execute();
-
-				// Fetch the single record as an object
-				$result = $stmt->fetch(PDO::FETCH_OBJ);
-
-				if ($result && isset($result->json)) {
-					$meta->hash = $result->permalink;
-					$meta->title = $result->title;
-					$meta->image = $meta->siteUrl."/assets/thumbnails/thumb_".$result->permalink.".png";
-					$meta->description = "Check out my comic strip `" . $result->title . "` from Zeta Comic Generator. " . $meta->description;
-					$meta->imageDescription = $result->title . " from " . $meta->imageDescription;
-				}
-			} catch(PDOException $e) {	}
 		}
+
+		// if $path[1] is set and not "home", update the title
+		if($path[1] !== "" && $path[1] != "home")
+			$meta->title = ucfirst($path[1]) . " - " . $meta->siteTitle;
+
+		$database = new Database();
+		$db = $database->getConnection();
+
+		try {
+			$stmt = $db->prepare("SELECT * FROM `comics` WHERE permalink = :id");
+			$stmt->bindParam(':id', $path[2], PDO::PARAM_STR);
+			$stmt->execute();
+
+			// Fetch the single record as an object
+			$result = $stmt->fetch(PDO::FETCH_OBJ);
+
+			if ($result && isset($result->json)) {
+				$meta->hash = $result->permalink;
+				$meta->title = $result->title . " - " . $meta->siteTitle;
+				$meta->image = $meta->siteUrl."/assets/thumbnails/thumb_".$result->permalink.".png";
+				$meta->description = "Check out my comic strip `" . $result->title . "` from Zeta Comic Generator. " . $meta->description;
+				$meta->imageDescription = $result->title . " from " . $meta->imageDescription;
+			}
+		} catch(PDOException $e) {	}
 	}
 
 	// 
@@ -71,7 +77,7 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta http-equiv="X-UA-Compatible" content="ie=edge">
-	<title><?php echo $meta->siteTitle; ?></title>
+	<title><?php echo $meta->title; ?></title>
 	<meta name="description" content="<?php echo $meta->description; ?>">
 
 	<meta property="og:url" content="<?php echo $meta->url; ?>">
@@ -96,6 +102,7 @@
 	<link rel="stylesheet" href="/styles/detail.css?v=<?php echo $version ?>">
 	<link rel="stylesheet" href="/styles/footer.css?v=<?php echo $version ?>">
 	<link rel="stylesheet" href="/styles/gallery.css?v=<?php echo $version ?>">
+	<link rel="stylesheet" href="/styles/series.css?v=<?php echo $version ?>">
 	<link rel="stylesheet" href="/styles/generate.css?v=<?php echo $version ?>">
 	<link rel="stylesheet" href="/styles/home.css?v=<?php echo $version ?>">
 	<link rel="stylesheet" href="/styles/script.css?v=<?php echo $version ?>">
@@ -120,8 +127,10 @@
 				$path[2] = '36a16a2505369e0c922b6ea7a23a56d2';
 			case 'about':
 			case 'detail':
+			case 'edit':
 			case 'gallery':
 			case 'generate':
+			case 'series':
 			case 'debugger':
 				require __DIR__ . '/views/'.$path[1].'.php';
 				break;
