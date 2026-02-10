@@ -37,7 +37,13 @@ if ($modelId) {
 			break;
 		case "deepseekr":
 			$model = new ModelDeepSeekR();
-			break;	
+			break;
+		case "grok":
+			$model = new ModelGrok();
+			break;
+		case "grokadv":
+			$model = new ModelGrokAdvanced();
+			break;
 	}
 	// Record the model that was used
 	if ($model) {

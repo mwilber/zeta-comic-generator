@@ -22,6 +22,11 @@ const MODEL_GROUPS = {
 		story: "gemthink", // Gemini 2.5 Pro
 		script: "gem",     // Gemini 2.0 Flash
 		image: "imagen"    // Imagen 3
+	},
+	xai: {
+		story: "grokadv", // Grok 4
+		script: "grok",     // Grok 4.1 Fast
+		image: "grokimg"    // Grok Image 2
 	}
 };
 

@@ -74,6 +74,7 @@
 							<select name="group-select" id="group-select">
 								<option value="openai">OpenAI</option>
 								<option value="google">Google</option>
+								<option value="xai">xAI</option>
 							</select>
 						</div>
 					</label>
@@ -85,7 +86,7 @@
 							<select name="story-model" id="story-model">
 								<option value="gpt5">GPT 5</option>
 								<option value="gemthink">Gemini 2.5 Pro</option>
-								<option value="grok">Grok 2</option>
+								<option value="grokadv">Grok 4</option>
 								<option value="deepseekr">DeepSeek R1</option>
 							</select>
 						</div>
@@ -96,7 +97,7 @@
 							<select name="script-model" id="script-model">
 								<option value="gpt">GPT 5 Mini</option>
 								<option value="gem">Gemini 2.0 Flash</option>
-								<option value="grok">Grok 2</option>
+								<option value="grok">Grok 4.1 Fast</option>
 								<option value="deepseek">DeepSeek V3</option>
 							</select>
 						</div>
@@ -108,6 +109,7 @@
 								<option value="oai">Dall-E 3</option>
 								<option value="gptimage">GPT Image</option>
 								<option value="imagen">Imagen 3</option>
+								<option value="grokimg">Grok Image 2</option>
 							</select>
 						</div>
 					</label>
