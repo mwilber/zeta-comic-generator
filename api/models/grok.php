@@ -20,7 +20,8 @@
  */
 class ModelGrok extends BaseModel {
 	function __construct() {
-		$this->modelName = "grok-3";
+		$this->modelName = "grok-4-1-fast-non-reasoning";
+		// $this->modelName = "grok-3";
 		// $this->modelName = "grok-2-latest";
 		$this->apiUrl = "https://api.x.ai/v1/chat/completions";
 		$this->apiKey = GROK_KEY;
