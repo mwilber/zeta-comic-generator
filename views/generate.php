@@ -74,6 +74,7 @@
 							<select name="group-select" id="group-select">
 								<option value="openai">OpenAI</option>
 								<option value="google">Google</option>
+								<option value="xai">xAI</option>
 							</select>
 						</div>
 					</label>
