@@ -110,8 +110,8 @@ $GLOBALS['characterActions'] = [
 	],
 	'skeptical' => [
 		'pointer' => [
-			'x' => 240,
-			'y' => 110,
+			'x' => 220,
+			'y' => 160,
 		],
 	],
 	'standing' => [
