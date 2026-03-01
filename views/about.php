@@ -52,8 +52,9 @@
 		<h3>Image</h3>
 		<ul>
 			<li><a href="https://platform.openai.com/docs/models/gpt-image-1.5" target="_blank" rel="noopener noreferrer">GPT Image 1.5</a></li>
-			<li><a href="https://openai.com/dall-e-3" target="_blank" rel="noopener noreferrer">Dall-E 3</a></li>
 			<li><a href="https://deepmind.google/models/imagen/" target="_blank" rel="noopener noreferrer">Imagen 3</a></li>
+			<li><a href="https://docs.x.ai/developers/models/grok-imagine-image" target="_blank" rel="noopener noreferrer">Grok Imagine</a></li>
+			<li><a href="https://openai.com/dall-e-3" target="_blank" rel="noopener noreferrer">Dall-E 3</a></li>
 		</ul>
 	</li>
 </ul>

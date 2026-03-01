@@ -5,7 +5,7 @@ require_once('_base_model.php');
  */
 class ModelImagen extends BaseModel {
 	function __construct() {
-		$this->modelName = "imagen-3.0-generate-002";
+		$this->modelName = "imagen-4.0-generate-001";
 		$this->apiKey = GOOGLE_KEY;
 		$this->apiUrl = "https://generativelanguage.googleapis.com/v1beta/models/".$this->modelName.":predict?key=".$this->apiKey;
 		$this->imageSize = "1024x1024";

@@ -109,7 +109,7 @@
 								<option value="oai">Dall-E 3</option>
 								<option value="gptimage">GPT Image</option>
 								<option value="imagen">Imagen 3</option>
-								<option value="grokimg">Grok Image 2</option>
+								<option value="grokimg">Grok Imagine</option>
 							</select>
 						</div>
 					</label>
