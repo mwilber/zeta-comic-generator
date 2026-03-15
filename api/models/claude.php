@@ -7,7 +7,7 @@ require_once('_aws_model.php');
 class ModelClaude extends BaseAwsModel {
 	function __construct() {
 		parent::__construct();
-		$this->modelName = "anthropic.claude-3-5-sonnet-20240620-v1:0";
+		$this->modelName = "anthropic.claude-sonnet-4-20250514-v1:0";
 	}
 
 	protected function buildRequestBody($messages) {
