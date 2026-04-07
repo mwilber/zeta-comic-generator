@@ -85,7 +85,7 @@
 						<div class="select">
 							<select name="story-model" id="story-model">
 								<option value="gpt5">GPT 5</option>
-								<option value="gemthink">Gemini 2.5 Pro</option>
+								<option value="gemthink">Gemini 3.1 Pro</option>
 								<option value="grokadv">Grok 4</option>
 								<option value="deepseekr">DeepSeek R1</option>
 							</select>
@@ -96,7 +96,7 @@
 						<div class="select">
 							<select name="script-model" id="script-model">
 								<option value="gpt">GPT 5 Mini</option>
-								<option value="gem">Gemini 2.0 Flash</option>
+								<option value="gem">Gemini 3 Flash</option>
 								<option value="grok">Grok 4.1 Fast</option>
 								<option value="deepseek">DeepSeek V3</option>
 							</select>

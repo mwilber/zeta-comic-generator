@@ -34,7 +34,7 @@
 		<h3>Story</h3>
 		<ul>
 			<li><a href="https://platform.openai.com/docs/models/gpt-5.2" target="_blank" rel="noopener noreferrer">GPT 5.2</a></li>
-			<li><a href="https://deepmind.google/models/gemini/" target="_blank" rel="noopener noreferrer">Gemini 2.5 Pro</a></li>
+			<li><a href="https://deepmind.google/models/gemini/" target="_blank" rel="noopener noreferrer">Gemini 3.1 Pro</a></li>
 			<li><a href="https://docs.x.ai/developers/models/grok-4-0709" target="_blank" rel="noopener noreferrer">Grok 4</a></li>
 			<li><a href="https://github.com/deepseek-ai/DeepSeek-R1" target="_blank" rel="noopener noreferrer">DeepSeek R1</a></li>
 		</ul>
@@ -43,7 +43,7 @@
 		<h3>Script</h3>
 		<ul>
 			<li><a href="https://platform.openai.com/docs/models/gpt-5-mini" target="_blank" rel="noopener noreferrer">GPT 5 Mini</a></li>
-			<li><a href="https://deepmind.google/models/gemini/" target="_blank" rel="noopener noreferrer">Gemini 2.0 Flash</a></li>
+			<li><a href="https://deepmind.google/models/gemini/" target="_blank" rel="noopener noreferrer">Gemini 3 Flash</a></li>
 			<li><a href="https://docs.x.ai/developers/models/grok-4-1-fast-non-reasoning" target="_blank" rel="noopener noreferrer">Grok 4.1 Fast</a></li>
 			<li><a href="https://github.com/deepseek-ai/DeepSeek-V3" target="_blank" rel="noopener noreferrer">DeepSeek V3</a></li>
 		</ul>

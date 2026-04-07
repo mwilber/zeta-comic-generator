@@ -19,8 +19,8 @@ const MODEL_GROUPS = {
 		image: "gptimage"  // GPT Image
 	},
 	google: {
-		story: "gemthink", // Gemini 2.5 Pro
-		script: "gem",     // Gemini 2.0 Flash
+		story: "gemthink", // Gemini 3.1 Pro
+		script: "gem",     // Gemini 3 Flash
 		image: "imagen"    // Imagen 3
 	},
 	xai: {
