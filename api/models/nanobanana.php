@@ -27,7 +27,6 @@ class ModelNanoBanana extends BaseModel {
 			"imageConfig" => [
 				"aspectRatio" => "1:1",
 				"imageSize" => "1K",
-				"outputMimeType" => "image/png"
 			],
 		];
 
@@ -68,12 +67,12 @@ class ModelNanoBanana extends BaseModel {
 					}
 					foreach ($candidate->content->parts as $part) {
 						if (is_object($part) && isset($part->inlineData) && is_object($part->inlineData) && isset($part->inlineData->data)) {
-							$part->inlineData->data = "";
+							$part->inlineData->data = null;
 						}
 						if (is_object($part)) {
 							foreach (array_keys(get_object_vars($part)) as $partKey) {
 								if (strtolower($partKey) === "thoughtsignature") {
-									$part->{$partKey} = "";
+									$part->{$partKey} = null;
 								}
 							}
 						}
