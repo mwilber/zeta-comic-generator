@@ -5,7 +5,7 @@
 		if(localStorage) {
 			localStorage.setItem('story-model-select', 'gemthink');
 			localStorage.setItem('script-model-select', 'gem');
-			localStorage.setItem('image-model-select', 'imagen');
+			localStorage.setItem('image-model-select', 'nanobanana');
 		}
 	<?php endif; ?>
 </script>

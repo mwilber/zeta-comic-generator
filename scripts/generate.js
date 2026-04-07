@@ -21,7 +21,7 @@ const MODEL_GROUPS = {
 	google: {
 		story: "gemthink", // Gemini 3.1 Pro
 		script: "gem",     // Gemini 3 Flash
-		image: "imagen"    // Imagen 3
+		image: "nanobanana" // Nano Banana 2
 	},
 	xai: {
 		story: "grokadv", // Grok 4

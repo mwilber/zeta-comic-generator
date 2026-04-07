@@ -108,7 +108,8 @@
 							<select name="image-model" id="image-model">
 								<option value="oai">Dall-E 3</option>
 								<option value="gptimage">GPT Image</option>
-								<option value="imagen">Imagen 3</option>
+								<option value="imagen">Imagen 4</option>
+								<option value="nanobanana">Nano Banana 2</option>
 								<option value="grokimg">Grok Imagine</option>
 							</select>
 						</div>
