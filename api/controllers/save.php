@@ -96,8 +96,12 @@
 		// Save the local image backup to s3
 		uploadS3($local_path, $fileName, $saveDir . '-full/');
 
-		// Load the image
-		$image = imagecreatefrompng($local_path);
+		// Load the image from raw bytes so local files can be PNG, JPEG, etc.
+		$imageData = file_get_contents($local_path);
+		if ($imageData === false) {
+			die('Failed to read local image data');
+		}
+		$image = imagecreatefromstring($imageData);
 		if ($image === false) {
 			die('Failed to create image from downloaded data');
 		}

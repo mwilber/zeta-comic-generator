@@ -57,6 +57,9 @@ if ($hitCount >= RATE_LIMIT) {
 		case "imagen":
 			$model = new ModelImagen();
 			break;
+		case "nanobanana":
+			$model = new ModelNanoBanana();
+			break;
 		case "grokimg":
 			$model = new ModelGrokImage();
 			break;

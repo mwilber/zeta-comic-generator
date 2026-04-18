@@ -5,7 +5,7 @@ require_once('_base_model.php');
  */
 class ModelGemini extends BaseModel {
 	function __construct() {
-		$this->modelName = "gemini-2.5-flash";
+		$this->modelName = "gemini-3-flash-preview";
 		$this->apiKey = GOOGLE_KEY;
 		$this->apiUrl = "https://generativelanguage.googleapis.com/v1beta/models/".$this->modelName.":generateContent?key=".$this->apiKey;
 	}
