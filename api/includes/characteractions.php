@@ -1,5 +1,11 @@
 <?php
 $GLOBALS['characterActions'] = [
+	'amused' => [
+		'pointer' => [
+			'x' => 310,
+			'y' => 110,
+		],
+	],
 	'analysis' => [
 		'pointer' => [
 			'x' => 190,
