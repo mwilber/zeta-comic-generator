@@ -104,6 +104,7 @@ $results->twitter = createBufferScheduledPost(BUFFER_ACCESS_TOKEN, [
 	'channelId' => $channelIds['twitter'],
 	'text' => $finalPostText,
 	'dueAt' => $scheduledAtIso,
+	'service' => 'twitter',
 	'imageUrls' => [$stripMediaUrl],
 ]);
 
@@ -111,6 +112,7 @@ $results->linkedin = createBufferScheduledPost(BUFFER_ACCESS_TOKEN, [
 	'channelId' => $channelIds['linkedin'],
 	'text' => $finalPostText,
 	'dueAt' => $scheduledAtIso,
+	'service' => 'linkedin',
 	'imageUrls' => [$stripMediaUrl],
 ]);
 
@@ -118,6 +120,7 @@ $results->instagram = createBufferScheduledPost(BUFFER_ACCESS_TOKEN, [
 	'channelId' => $channelIds['instagram'],
 	'text' => $finalPostText,
 	'dueAt' => $scheduledAtIso,
+	'service' => 'instagram',
 	'imageUrls' => $panelMediaUrls,
 ]);
 
@@ -181,7 +184,7 @@ function storeImageDataUrl($dataUrl, $prefix) {
 		return null;
 	}
 
-	return 'https://comicgenerator.greenzeta.com/api/comicpromoter/media.php?id=' . rawurlencode($id . $ext);
+	return getPublicBaseUrl() . '/api/comicpromoter/media.php?id=' . rawurlencode($id . $ext);
 }
 
 function findBufferChannelIds($accessToken, $overrides = []) {
@@ -304,6 +307,14 @@ GQL;
 		],
 	];
 
+	if (($params['service'] ?? '') === 'instagram') {
+		$input['metadata'] = [
+			'instagram' => [
+				'type' => 'post',
+			],
+		];
+	}
+
 	$response = callBufferGraphQL($accessToken, $mutation, ['input' => $input]);
 	if (isset($response['error'])) {
 		$err = new stdClass();
@@ -337,6 +348,24 @@ GQL;
 	$ok = new stdClass();
 	$ok->post = json_decode(json_encode($createPost['post']));
 	return $ok;
+}
+
+function getPublicBaseUrl() {
+	$scheme = 'https';
+	if (!empty($_SERVER['HTTP_X_FORWARDED_PROTO'])) {
+		$scheme = explode(',', $_SERVER['HTTP_X_FORWARDED_PROTO'])[0];
+	} elseif (!empty($_SERVER['REQUEST_SCHEME'])) {
+		$scheme = $_SERVER['REQUEST_SCHEME'];
+	} elseif (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') {
+		$scheme = 'https';
+	} else {
+		$scheme = 'http';
+	}
+
+	$host = $_SERVER['HTTP_X_FORWARDED_HOST'] ?? ($_SERVER['HTTP_HOST'] ?? 'comicgenerator.greenzeta.com');
+	$host = trim(explode(',', $host)[0]);
+
+	return $scheme . '://' . $host;
 }
 
 function callBufferGraphQL($accessToken, $query, $variables = []) {
