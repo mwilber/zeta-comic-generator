@@ -11,6 +11,7 @@ Zeta Comic Generator is an AI-powered comic strip creation tool that generates 3
 ### Backend (PHP/MySQL)
 - **API Router**: `/api/index.php` routes requests to controllers under `/api/controllers/`.
 - **Controllers**: handle app endpoints (`comic`, `detail`, `gallery`, `series`, `save`, `metrics`, `thumbnail`, `update`, `imgproxy`) and generation endpoints (`concept`, `script`, `background`, `action`, `image`) plus simulation endpoints.
+- **Comic Promoter API (standalone)**: `/api/comicpromoter/` contains feature-specific endpoints that are intentionally not routed through `/api/index.php`.
 - **Database**: MySQL tables include `comics`, `series`, `continuity`, `comic_continuity`, `backgrounds`, `requestlog`, `metrics`, `categories`.
 - **AI Integration**: Models in `/api/models/` implement text and image generation.
 - **Utilities**: `/api/includes/` provides DB, S3, prompt templates, logging, character actions, and API keys.
@@ -22,6 +23,7 @@ Zeta Comic Generator is an AI-powered comic strip creation tool that generates 3
 - **Scripts**: `/scripts/` page controllers (generate, gallery, detail, home, edit, debugger).
 - **Modules**: `/scripts/modules/` shared classes for rendering, exporting, API access, and script display.
 - **Styles**: `/styles/` page-specific CSS and shared layout styles (`main.css`, `strip.css`, `script.css`, etc.).
+- **Comic Promoter frontend (standalone)**: `/comicpromoter/` contains a separate index page, scripts, and styles for social posting workflow.
 
 ## Key Components
 
@@ -91,6 +93,54 @@ The admin panel is in `/admin/` and has its own `CLAUDE.md` with scope restricti
 - **S3 Assets**: `zeta-comic-generator.s3.us-east-2.amazonaws.com`
 - **Production**: `comicgenerator.greenzeta.com`
 - **Development**: `zcgdev.greenzeta.com`
+
+## Comic Promoter Feature
+
+The Comic Promoter is designed as a separable feature module and lives only in:
+- `/comicpromoter/`
+- `/api/comicpromoter/`
+
+### Entry Point
+- Frontend URL: `/comicpromoter/?permalink={comic_permalink}`
+
+### Workflow
+1. Read `permalink` from query string.
+2. Fetch comic detail from the public API URL:
+   - `https://comicgenerator.greenzeta.com/api/detail/{permalink}/`
+3. Render the comic with existing shared modules:
+   - `ComicRenderer` (`/scripts/modules/ComicRenderer/ComicRenderer.js`)
+   - `ComicExporter` (`/scripts/modules/ComicExporter.js`)
+4. Generate image data in-memory (base64):
+   - full strip image
+   - three individual panel images
+5. Generate social post copy via OpenAI GPT-5.4 using:
+   - `/api/comicpromoter/generate_post_text.php`
+   - Output must include `[URL_HERE]` placeholder for final link substitution.
+6. Submit scheduling payload to:
+   - `/api/comicpromoter/schedule_buffer_posts.php`
+7. Schedule Buffer posts for:
+   - Twitter/X (full strip image)
+   - LinkedIn (full strip image)
+   - Instagram (three panel images)
+8. Scheduled time is fixed at **11:59am** on the selected date.
+
+### API Endpoints in `/api/comicpromoter/`
+- `generate_post_text.php`: Generates post text with GPT-5.4.
+- `schedule_buffer_posts.php`: Creates scheduled Buffer posts.
+- `media.php`: Serves temporary generated image files for Buffer media URLs.
+
+### Required Keys in `/api/includes/key.php`
+- `OPENAI_KEY` (existing)
+- `BUFFER_ACCESS_TOKEN`
+- Optional Buffer profile overrides:
+  - `BUFFER_TWITTER_PROFILE_ID`
+  - `BUFFER_LINKEDIN_PROFILE_ID`
+  - `BUFFER_INSTAGRAM_PROFILE_ID`
+
+### Isolation Rules
+- Do not modify legacy pages/controllers to support Comic Promoter.
+- Keep all Comic Promoter code isolated to `/comicpromoter` and `/api/comicpromoter`.
+- Reuse existing shared front-end modules where possible instead of duplicating logic.
 
 ## Patterns & Conventions
 
