@@ -52,8 +52,8 @@ $finalPostText = str_replace('[URL_HERE]', $detailUrl, $postTextTemplate);
 $finalPostText .= "\n\n" . $additionalText;
 $finalPostText .= "\n\n" . $hashtags;
 
-$scheduledAtTs = buildScheduleTimestamp($date);
-if (!$scheduledAtTs) {
+$scheduledAtIso = buildScheduleIso8601($date);
+if (!$scheduledAtIso) {
 	http_response_code(400);
 	$output->error = 'Invalid date. Expected YYYY-MM-DD.';
 	echo json_encode($output);
@@ -75,62 +75,57 @@ if (!$stripMediaUrl || count($panelMediaUrls) < 3) {
 	exit;
 }
 
-$profiles = getBufferProfiles(BUFFER_ACCESS_TOKEN);
-if (!$profiles || isset($profiles->error)) {
+$channelIds = findBufferChannelIds(BUFFER_ACCESS_TOKEN, [
+	'twitter' => defined('BUFFER_TWITTER_PROFILE_ID') ? BUFFER_TWITTER_PROFILE_ID : '',
+	'linkedin' => defined('BUFFER_LINKEDIN_PROFILE_ID') ? BUFFER_LINKEDIN_PROFILE_ID : '',
+	'instagram' => defined('BUFFER_INSTAGRAM_PROFILE_ID') ? BUFFER_INSTAGRAM_PROFILE_ID : '',
+]);
+
+if (isset($channelIds['error'])) {
 	http_response_code(500);
-	$output->error = 'Failed to retrieve Buffer profiles.';
-	$output->debug = $profiles;
+	$output->error = 'Failed to retrieve Buffer channels.';
+	$output->debug = $channelIds;
 	echo json_encode($output);
 	exit;
 }
 
-$profileIds = [
-	'twitter' => findProfileId($profiles, 'twitter', defined('BUFFER_TWITTER_PROFILE_ID') ? BUFFER_TWITTER_PROFILE_ID : ''),
-	'linkedin' => findProfileId($profiles, 'linkedin', defined('BUFFER_LINKEDIN_PROFILE_ID') ? BUFFER_LINKEDIN_PROFILE_ID : ''),
-	'instagram' => findProfileId($profiles, 'instagram', defined('BUFFER_INSTAGRAM_PROFILE_ID') ? BUFFER_INSTAGRAM_PROFILE_ID : ''),
-];
-
-if (!$profileIds['twitter'] || !$profileIds['linkedin'] || !$profileIds['instagram']) {
-	http_response_code(400);
-	$output->error = 'Missing connected Buffer profiles for twitter/linkedin/instagram.';
-	$output->profiles = $profileIds;
-	echo json_encode($output);
-	exit;
+foreach (['twitter', 'linkedin', 'instagram'] as $service) {
+	if (empty($channelIds[$service])) {
+		http_response_code(400);
+		$output->error = 'Missing connected Buffer channels for twitter/linkedin/instagram.';
+		$output->channels = $channelIds;
+		echo json_encode($output);
+		exit;
+	}
 }
 
 $results = new stdClass();
-$results->twitter = createBufferUpdate(BUFFER_ACCESS_TOKEN, [
-	'profile_ids' => [$profileIds['twitter']],
+$results->twitter = createBufferScheduledPost(BUFFER_ACCESS_TOKEN, [
+	'channelId' => $channelIds['twitter'],
 	'text' => $finalPostText,
-	'scheduled_at' => $scheduledAtTs,
-	'media' => [
-		'photo' => $stripMediaUrl,
-	],
+	'dueAt' => $scheduledAtIso,
+	'imageUrls' => [$stripMediaUrl],
 ]);
 
-$results->linkedin = createBufferUpdate(BUFFER_ACCESS_TOKEN, [
-	'profile_ids' => [$profileIds['linkedin']],
+$results->linkedin = createBufferScheduledPost(BUFFER_ACCESS_TOKEN, [
+	'channelId' => $channelIds['linkedin'],
 	'text' => $finalPostText,
-	'scheduled_at' => $scheduledAtTs,
-	'media' => [
-		'photo' => $stripMediaUrl,
-	],
+	'dueAt' => $scheduledAtIso,
+	'imageUrls' => [$stripMediaUrl],
 ]);
 
-$results->instagram = createBufferUpdate(BUFFER_ACCESS_TOKEN, [
-	'profile_ids' => [$profileIds['instagram']],
+$results->instagram = createBufferScheduledPost(BUFFER_ACCESS_TOKEN, [
+	'channelId' => $channelIds['instagram'],
 	'text' => $finalPostText,
-	'scheduled_at' => $scheduledAtTs,
-	'media' => [
-		'photo' => $panelMediaUrls,
-	],
+	'dueAt' => $scheduledAtIso,
+	'imageUrls' => $panelMediaUrls,
 ]);
 
 foreach (['twitter', 'linkedin', 'instagram'] as $network) {
 	$item = $results->{$network};
-	if (!$item || isset($item->error) || (isset($item->success) && $item->success !== true)) {
+	if (!is_object($item) || isset($item->error) || !isset($item->post) || !isset($item->post->id)) {
 		http_response_code(500);
-		$output->error = 'Failed creating Buffer update for ' . $network;
+		$output->error = 'Failed creating Buffer post for ' . $network;
 		$output->result = $results;
 		echo json_encode($output);
 		exit;
@@ -141,10 +136,12 @@ $output->result = $results;
 
 echo json_encode($output);
 
-function buildScheduleTimestamp($date) {
+function buildScheduleIso8601($date) {
 	try {
-		$dt = new DateTime($date . ' 11:59:00');
-		return $dt->getTimestamp();
+		$local = new DateTime($date . ' 11:59:00');
+		$utc = clone $local;
+		$utc->setTimezone(new DateTimeZone('UTC'));
+		return $utc->format('Y-m-d\\TH:i:s.000\\Z');
 	} catch (Exception $e) {
 		return null;
 	}
@@ -187,72 +184,211 @@ function storeImageDataUrl($dataUrl, $prefix) {
 	return 'https://comicgenerator.greenzeta.com/api/comicpromoter/media.php?id=' . rawurlencode($id . $ext);
 }
 
-function getBufferProfiles($accessToken) {
-	$url = 'https://api.bufferapp.com/1/profiles.json?access_token=' . rawurlencode($accessToken);
-	$ch = curl_init();
-	curl_setopt($ch, CURLOPT_URL, $url);
-	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-	curl_setopt($ch, CURLOPT_TIMEOUT, 30);
-	$responseRaw = curl_exec($ch);
-	curl_close($ch);
-	return json_decode($responseRaw);
-}
+function findBufferChannelIds($accessToken, $overrides = []) {
+	$result = [
+		'twitter' => trim($overrides['twitter'] ?? ''),
+		'linkedin' => trim($overrides['linkedin'] ?? ''),
+		'instagram' => trim($overrides['instagram'] ?? ''),
+	];
 
-function findProfileId($profiles, $service, $overrideId = '') {
-	if ($overrideId) return $overrideId;
-	if (!is_array($profiles)) return '';
-	foreach ($profiles as $profile) {
-		if (!is_object($profile)) continue;
-		if (($profile->service ?? '') === $service) {
-			return $profile->id ?? '';
+	if ($result['twitter'] && $result['linkedin'] && $result['instagram']) {
+		return $result;
+	}
+
+	$orgQuery = <<<'GQL'
+query GetOrganizations {
+  account {
+    organizations {
+      id
+    }
+  }
+}
+GQL;
+
+	$orgResponse = callBufferGraphQL($accessToken, $orgQuery, []);
+	if (isset($orgResponse['error'])) {
+		return $orgResponse;
+	}
+
+	$orgs = $orgResponse['data']['account']['organizations'] ?? [];
+	if (!is_array($orgs) || count($orgs) === 0) {
+		return ['error' => 'No organizations returned for this Buffer account.'];
+	}
+
+	$channelsQuery = <<<'GQL'
+query GetChannels($organizationId: OrganizationId!) {
+  channels(input: { organizationId: $organizationId }) {
+    id
+    service
+  }
+}
+GQL;
+
+	foreach ($orgs as $org) {
+		$orgId = $org['id'] ?? '';
+		if (!$orgId) continue;
+
+		$channelsResponse = callBufferGraphQL($accessToken, $channelsQuery, [
+			'organizationId' => $orgId,
+		]);
+		if (isset($channelsResponse['error'])) {
+			return $channelsResponse;
+		}
+
+		$channels = $channelsResponse['data']['channels'] ?? [];
+		if (!is_array($channels)) continue;
+
+		foreach ($channels as $channel) {
+			$channelId = $channel['id'] ?? '';
+			$service = normalizeBufferService($channel['service'] ?? '');
+			if (!$channelId || !$service) continue;
+			if (empty($result[$service])) {
+				$result[$service] = $channelId;
+			}
+		}
+
+		if ($result['twitter'] && $result['linkedin'] && $result['instagram']) {
+			break;
 		}
 	}
+
+	return $result;
+}
+
+function normalizeBufferService($service) {
+	$service = strtolower(trim((string)$service));
+	if (!$service) return '';
+	if ($service === 'x' || $service === 'twitter' || strpos($service, 'twitter') !== false) return 'twitter';
+	if ($service === 'linkedin' || strpos($service, 'linkedin') !== false) return 'linkedin';
+	if ($service === 'instagram' || strpos($service, 'instagram') !== false) return 'instagram';
 	return '';
 }
 
-function createBufferUpdate($accessToken, $payload) {
-	$body = [
-		'access_token' => $accessToken,
-		'text' => $payload['text'],
-		'scheduled_at' => $payload['scheduled_at'],
-		'shorten' => 'false',
-	];
-
-	foreach ($payload['profile_ids'] as $idx => $profileId) {
-		$body['profile_ids[' . $idx . ']'] = $profileId;
-	}
-
-	if (isset($payload['media']) && isset($payload['media']['photo'])) {
-		if (is_array($payload['media']['photo'])) {
-			foreach ($payload['media']['photo'] as $idx => $photoUrl) {
-				$body['media[photo][' . $idx . ']'] = $photoUrl;
-			}
-		} else {
-			$body['media[photo]'] = $payload['media']['photo'];
+function createBufferScheduledPost($accessToken, $params) {
+	$images = [];
+	foreach (($params['imageUrls'] ?? []) as $url) {
+		if (is_string($url) && $url) {
+			$images[] = ['url' => $url];
 		}
 	}
 
-	$ch = curl_init();
-	curl_setopt($ch, CURLOPT_URL, 'https://api.bufferapp.com/1/updates/create.json');
+	$mutation = <<<'GQL'
+mutation CreatePost($input: CreatePostInput!) {
+  createPost(input: $input) {
+    __typename
+    ... on PostActionSuccess {
+      post {
+        id
+        text
+        assets {
+          id
+          mimeType
+        }
+      }
+    }
+    ... on MutationError {
+      message
+    }
+  }
+}
+GQL;
+
+	$input = [
+		'text' => $params['text'],
+		'channelId' => $params['channelId'],
+		'schedulingType' => 'automatic',
+		'mode' => 'customSchedule',
+		'dueAt' => $params['dueAt'],
+		'assets' => [
+			'images' => $images,
+		],
+	];
+
+	$response = callBufferGraphQL($accessToken, $mutation, ['input' => $input]);
+	if (isset($response['error'])) {
+		$err = new stdClass();
+		$err->error = $response['error'];
+		$err->response = $response;
+		return $err;
+	}
+
+	$createPost = $response['data']['createPost'] ?? null;
+	if (!is_array($createPost)) {
+		$err = new stdClass();
+		$err->error = 'Buffer GraphQL createPost response missing.';
+		$err->response = $response;
+		return $err;
+	}
+
+	if (($createPost['__typename'] ?? '') === 'MutationError') {
+		$err = new stdClass();
+		$err->error = $createPost['message'] ?? 'Buffer createPost failed.';
+		$err->response = $createPost;
+		return $err;
+	}
+
+	if (!isset($createPost['post']['id'])) {
+		$err = new stdClass();
+		$err->error = 'Buffer createPost did not return post id.';
+		$err->response = $createPost;
+		return $err;
+	}
+
+	$ok = new stdClass();
+	$ok->post = json_decode(json_encode($createPost['post']));
+	return $ok;
+}
+
+function callBufferGraphQL($accessToken, $query, $variables = []) {
+	$payload = [
+		'query' => $query,
+		'variables' => $variables,
+	];
+
+	$ch = curl_init('https://api.buffer.com');
 	curl_setopt($ch, CURLOPT_POST, true);
-	curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($body));
 	curl_setopt($ch, CURLOPT_HTTPHEADER, [
-		'Content-Type: application/x-www-form-urlencoded',
+		'Content-Type: application/json',
 		'Authorization: Bearer ' . $accessToken,
 	]);
+	curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 	curl_setopt($ch, CURLOPT_TIMEOUT, 45);
 
 	$responseRaw = curl_exec($ch);
+	$curlErr = curl_error($ch);
 	$httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 	curl_close($ch);
 
-	$response = json_decode($responseRaw);
+	if ($responseRaw === false) {
+		return [
+			'error' => 'Buffer request failed: ' . ($curlErr ?: 'unknown cURL error'),
+		];
+	}
+
+	$response = json_decode($responseRaw, true);
+	if (!is_array($response)) {
+		return [
+			'error' => 'Buffer response was not valid JSON.',
+			'httpCode' => $httpCode,
+			'raw' => $responseRaw,
+		];
+	}
+
 	if ($httpCode >= 400) {
-		$err = new stdClass();
-		$err->error = 'Buffer API HTTP ' . $httpCode;
-		$err->response = $response ? $response : $responseRaw;
-		return $err;
+		return [
+			'error' => 'Buffer API HTTP ' . $httpCode,
+			'httpCode' => $httpCode,
+			'response' => $response,
+		];
+	}
+
+	if (isset($response['errors']) && is_array($response['errors']) && count($response['errors']) > 0) {
+		return [
+			'error' => 'Buffer GraphQL returned errors.',
+			'errors' => $response['errors'],
+			'response' => $response,
+		];
 	}
 
 	return $response;
