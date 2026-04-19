@@ -62,6 +62,15 @@ p.description {
 .character-art li {
 	margin: 5px;
 	position: relative;
+	border: solid 2px black;
+	background-color: #f5f5f5;
+	background-image:
+		linear-gradient(45deg, #d8d8d8 25%, transparent 25%),
+		linear-gradient(-45deg, #d8d8d8 25%, transparent 25%),
+		linear-gradient(45deg, transparent 75%, #d8d8d8 75%),
+		linear-gradient(-45deg, transparent 75%, #d8d8d8 75%);
+	background-size: 18px 18px;
+	background-position: 0 0, 0 9px, 9px -9px, -9px 0;
 }
 
 .character-art h3 {
@@ -78,8 +87,7 @@ p.description {
 }
 
 .character-art img {
-	width: calc(100% - 4px);
-	border: solid 2px black;
+	width: 100%;
 }
 
 .prompts {
