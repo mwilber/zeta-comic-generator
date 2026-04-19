@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/../api/includes/characteractions.php';
 $version = "1.0.0";
 ?>
 <!DOCTYPE html>
@@ -54,6 +55,7 @@ $version = "1.0.0";
 
 	<script async src="/scripts/html2canvas.min.js"></script>
 	<script>
+		const characterActions = <?php echo json_encode($GLOBALS['characterActions']); ?>;
 		window.COMICPROMOTER_CONFIG = {
 			baseUrl: "https://comicgenerator.greenzeta.com"
 		};
