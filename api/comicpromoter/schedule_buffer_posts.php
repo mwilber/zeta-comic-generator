@@ -311,6 +311,7 @@ GQL;
 		$input['metadata'] = [
 			'instagram' => [
 				'type' => 'post',
+				'shouldShareToFeed' => true,
 			],
 		];
 	}
