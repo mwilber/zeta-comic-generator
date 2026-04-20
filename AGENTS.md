@@ -113,11 +113,13 @@ The Comic Promoter is designed as a separable feature module and lives only in:
 4. Generate image data in-memory (base64):
    - full strip image
    - three individual panel images
-5. Generate social post copy via OpenAI GPT-5.4 using:
-   - `/api/comicpromoter/generate_post_text.php`
-   - Output must include `[URL_HERE]` placeholder for final link substitution.
+5. Default post text currently starts as:
+   - `Testing: [URL_HERE]`
+   - (`generate_post_text.php` exists but is intentionally not called from the current frontend flow to control cost during debugging/validation.)
 6. Submit scheduling payload to:
    - `/api/comicpromoter/schedule_buffer_posts.php`
+   - Use `multipart/form-data` with fields: `permalink`, `postTextTemplate`, `additionalText`, `hashtags`, `date`
+   - Upload media files as `strip` (single file) and `panels[]` (three files)
 7. Schedule Buffer posts for:
    - Twitter/X (full strip image)
    - LinkedIn (full strip image)
@@ -128,6 +130,13 @@ The Comic Promoter is designed as a separable feature module and lives only in:
 - `generate_post_text.php`: Generates post text with GPT-5.4.
 - `schedule_buffer_posts.php`: Creates scheduled Buffer posts.
 - `media.php`: Serves temporary generated image files for Buffer media URLs.
+
+### Comic Promoter Debugging Learnings (April 2026)
+- Large JSON payloads containing inline base64 image data were unreliable in production and repeatedly failed with `Invalid request payload` / JSON control-character parsing errors.
+- Wrapping payload JSON as base64/base64url did not reliably fix transport corruption in this environment.
+- Stable approach: send text fields + binary image files via `multipart/form-data`, then persist uploads server-side and pass resulting media URLs to Buffer.
+- Buffer `CreatePostInput.mode` must be `customScheduled` for this account/schema. `customSchedule` fails with GraphQL enum validation errors.
+- Keep deep payload byte-dump diagnostics out of steady-state code; add them only as temporary troubleshooting instrumentation and remove once root cause is confirmed.
 
 ### Required Keys in `/api/includes/key.php`
 - `OPENAI_KEY` (existing)

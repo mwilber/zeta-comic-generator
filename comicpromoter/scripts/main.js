@@ -130,40 +130,6 @@ function renderPreviews() {
 	});
 }
 
-function buildComicSummaryForPrompt() {
-	const { script, prompt } = state.comic;
-	return {
-		permalink: state.permalink,
-		title: script.title,
-		premise: prompt,
-		panels: script.panels.map((panel, idx) => ({
-			panel: idx + 1,
-			scene: panel.scene || "",
-			dialog: Array.isArray(panel.dialog)
-				? panel.dialog.map((line) => line?.text || "").filter(Boolean)
-				: [],
-		})),
-	};
-}
-
-async function generatePostText() {
-	const response = await fetch("/api/comicpromoter/generate_post_text.php", {
-		method: "POST",
-		headers: {
-			"Content-Type": "application/json",
-		},
-		body: JSON.stringify({
-			comic: buildComicSummaryForPrompt(),
-		}),
-	});
-
-	const data = await response.json();
-	if (!response.ok || data.error) {
-		throw new Error(data.error || "Failed to generate post text.");
-	}
-	return data.postText || "";
-}
-
 async function exportImages() {
 	await waitForImagesToLoad(els.stripContainer);
 
@@ -256,9 +222,7 @@ async function submitToBuffer(event) {
 
 		const data = await response.json();
 		if (!response.ok || data.error) {
-			console.error("Buffer scheduling response", data);
-			const debugInfo = data?.debug ? ` Debug: ${JSON.stringify(data.debug)}` : "";
-			throw new Error((data.error || "Buffer scheduling failed.") + debugInfo);
+			throw new Error(data.error || "Buffer scheduling failed.");
 		}
 
 		setResult("Success: posts were sent to Buffer.");

@@ -26,12 +26,7 @@ if (!defined('BUFFER_ACCESS_TOKEN') || !BUFFER_ACCESS_TOKEN) {
 }
 
 $rawInput = file_get_contents('php://input');
-$originalRawInput = $rawInput;
-$input = null;
-$jsonErrorCode = JSON_ERROR_NONE;
-$jsonErrorMsg = 'No error';
 $usingUploadedMedia = false;
-$payloadB64FromPost = isset($_POST['payloadB64']) && is_string($_POST['payloadB64']) ? $_POST['payloadB64'] : '';
 $hasDirectMultipartPayload = isset($_POST['permalink']) && isset($_POST['postTextTemplate']) && isset($_POST['date']);
 
 if ($hasDirectMultipartPayload) {
@@ -47,97 +42,13 @@ if ($hasDirectMultipartPayload) {
 			'panels' => ['__uploaded_panels__'],
 		],
 	];
-} elseif ($payloadB64FromPost !== '') {
-	$decodedJson = decodeBase64Utf8($payloadB64FromPost);
-	if ($decodedJson === null) {
-		http_response_code(400);
-		$output->error = 'Invalid request payload.';
-		$output->debug = array_merge(buildPayloadDebug($rawInput), [
-			'jsonError' => 'Invalid payloadB64 encoding from form payload.',
-			'jsonErrorCode' => -1,
-			'transport' => 'multipart.payloadB64',
-		]);
-		echo json_encode($output);
-		exit;
-	}
-
-	$decodedInput = json_decode($decodedJson);
-	if (!$decodedInput) {
-		http_response_code(400);
-		$output->error = 'Invalid request payload.';
-		$output->debug = array_merge(buildPayloadDebug($decodedJson), [
-			'jsonError' => json_last_error_msg(),
-			'jsonErrorCode' => json_last_error(),
-			'transport' => 'multipart.payloadB64.decoded',
-		]);
-		echo json_encode($output);
-		exit;
-	}
-	$input = $decodedInput;
 } else {
 	$input = json_decode($rawInput);
-	$jsonErrorCode = json_last_error();
-	$jsonErrorMsg = json_last_error_msg();
-}
-
-if (!$input && $jsonErrorCode === JSON_ERROR_CTRL_CHAR && is_string($rawInput) && $rawInput !== '') {
-	$sanitizedRawInput = preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/', '', $rawInput);
-	if (is_string($sanitizedRawInput) && $sanitizedRawInput !== $rawInput) {
-		$input = json_decode($sanitizedRawInput);
-		$jsonErrorCode = json_last_error();
-		$jsonErrorMsg = json_last_error_msg();
-		if ($input) {
-			$rawInput = $sanitizedRawInput;
-		}
-	}
-}
-
-if ($input && isset($input->payloadB64) && is_string($input->payloadB64) && $input->payloadB64 !== '') {
-	$decodedJson = decodeBase64Utf8($input->payloadB64);
-	if ($decodedJson === null) {
-		http_response_code(400);
-		$output->error = 'Invalid request payload.';
-		$output->debug = array_merge(buildPayloadDebug($originalRawInput), [
-			'jsonError' => 'Invalid payloadB64 encoding.',
-			'jsonErrorCode' => -1,
-			'transport' => 'payloadB64',
-		]);
-		echo json_encode($output);
-		exit;
-	}
-
-	$decodedInput = json_decode($decodedJson);
-	if (!$decodedInput) {
-		http_response_code(400);
-		$output->error = 'Invalid request payload.';
-		$output->debug = array_merge(buildPayloadDebug($decodedJson), [
-			'jsonError' => json_last_error_msg(),
-			'jsonErrorCode' => json_last_error(),
-			'transport' => 'payloadB64.decoded',
-		]);
-		echo json_encode($output);
-		exit;
-	}
-
-	$input = $decodedInput;
 }
 
 if (!$input) {
 	http_response_code(400);
 	$output->error = 'Invalid request payload.';
-	$output->debug = array_merge(buildPayloadDebug($originalRawInput), [
-		'jsonError' => $jsonErrorMsg,
-		'jsonErrorCode' => $jsonErrorCode,
-		'postMaxSize' => ini_get('post_max_size'),
-		'uploadMaxFilesize' => ini_get('upload_max_filesize'),
-		'memoryLimit' => ini_get('memory_limit'),
-		'controlCharSamples' => sampleControlChars($originalRawInput, 8),
-	]);
-	$contentLength = $output->debug['contentLength'];
-	$postMaxBytes = parseIniSizeToBytes((string)$output->debug['postMaxSize']);
-	if ($contentLength > 0 && $postMaxBytes > 0 && $contentLength > $postMaxBytes) {
-		$output->debug['hint'] = 'Request body appears larger than post_max_size; PHP may discard or truncate input.';
-	}
 	echo json_encode($output);
 	exit;
 }
@@ -593,91 +504,4 @@ function callBufferGraphQL($accessToken, $query, $variables = []) {
 	}
 
 	return $response;
-}
-
-function parseIniSizeToBytes($size) {
-	$size = trim(strtolower((string)$size));
-	if ($size === '') return 0;
-
-	$unit = substr($size, -1);
-	$value = (float)$size;
-
-	if ($unit === 'g') return (int)($value * 1024 * 1024 * 1024);
-	if ($unit === 'm') return (int)($value * 1024 * 1024);
-	if ($unit === 'k') return (int)($value * 1024);
-
-	return (int)$value;
-}
-
-function sampleControlChars($input, $maxSamples = 8) {
-	if (!is_string($input) || $input === '') return [];
-	$samples = [];
-	$len = strlen($input);
-	$maxSamples = max(1, (int)$maxSamples);
-	for ($i = 0; $i < $len; $i++) {
-		$byte = ord($input[$i]);
-		if ($byte < 32 || $byte === 127) {
-			$start = max(0, $i - 16);
-			$snippet = substr($input, $start, min(32, $len - $start));
-			$samples[] = [
-				'pos' => $i,
-				'byte' => $byte,
-				'hex' => strtoupper(str_pad(dechex($byte), 2, '0', STR_PAD_LEFT)),
-				'contextHex' => strtoupper(bin2hex($snippet)),
-			];
-			if (count($samples) >= $maxSamples) break;
-		}
-	}
-	return $samples;
-}
-
-function decodeBase64Utf8($value) {
-	if (!is_string($value) || $value === '') return null;
-
-	$normalized = trim($value);
-	$normalized = str_replace(' ', '+', $normalized);
-	$normalized = strtr($normalized, '-_', '+/');
-	$padding = strlen($normalized) % 4;
-	if ($padding > 0) {
-		$normalized .= str_repeat('=', 4 - $padding);
-	}
-
-	$decoded = base64_decode($normalized, true);
-	if ($decoded === false) return null;
-	if (function_exists('mb_check_encoding') && !mb_check_encoding($decoded, 'UTF-8')) {
-		return null;
-	}
-	return $decoded;
-}
-
-function buildPayloadDebug($rawInput) {
-	$raw = is_string($rawInput) ? $rawInput : '';
-	$len = strlen($raw);
-	$start = substr($raw, 0, min(120, $len));
-	$end = $len > 120 ? substr($raw, -120) : $start;
-	return [
-		'contentType' => $_SERVER['CONTENT_TYPE'] ?? '',
-		'contentLength' => isset($_SERVER['CONTENT_LENGTH']) ? (int)$_SERVER['CONTENT_LENGTH'] : 0,
-		'rawLength' => $len,
-		'postPayloadB64Length' => isset($_POST['payloadB64']) && is_string($_POST['payloadB64']) ? strlen($_POST['payloadB64']) : 0,
-		'rawMd5' => md5($raw),
-		'rawStartsWith' => substr($start, 0, 32),
-		'rawEndsWith' => substr($end, -32),
-		'rawStartHex' => strtoupper(bin2hex($start)),
-		'rawEndHex' => strtoupper(bin2hex($end)),
-		'containsPayloadB64Key' => strpos($raw, '"payloadB64"') !== false,
-		'containsLegacyImagesKey' => strpos($raw, '"images"') !== false,
-		'containsNullByte' => strpos($raw, "\0") !== false,
-		'isUtf8' => isUtf8String($raw),
-		'userAgent' => $_SERVER['HTTP_USER_AGENT'] ?? '',
-	];
-}
-
-function isUtf8String($value) {
-	if (!is_string($value)) return false;
-	if ($value === '') return true;
-	if (function_exists('mb_check_encoding')) {
-		return mb_check_encoding($value, 'UTF-8');
-	}
-	return preg_match('//u', $value) === 1;
 }
