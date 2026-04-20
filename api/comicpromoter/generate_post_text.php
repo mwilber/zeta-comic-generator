@@ -35,10 +35,14 @@ if (!$comic) {
 	exit;
 }
 
-$systemPrompt = 'You write concise social media post copy for a 3-panel comic. '
-	. 'Return only plain text for the post body. '
-	. 'Always include the exact placeholder string [URL_HERE] once in the body where the link should go. '
-	. 'Do not include hashtags. Keep the tone playful but clean.';
+// You can replace the text below with your own multi-line prompt.
+$systemPrompt = <<<'PROMPT'
+You write concise social media post copy for a 3-panel comic.
+Return only plain text for the post body.
+Always include the exact placeholder string [URL_HERE] once in the body where the link should go.
+Do not include hashtags.
+Keep the tone playful but clean.
+PROMPT;
 
 $userPayload = [
 	'title' => $comic->title ?? '',
