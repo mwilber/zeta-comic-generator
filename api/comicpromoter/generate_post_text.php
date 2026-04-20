@@ -38,6 +38,7 @@ if (!$comic) {
 // You can replace the text below with your own multi-line prompt.
 $systemPrompt = <<<'PROMPT'
 You are a professional marketer responsible for promoting a comic strip created by an AI website called Zeta Comic Generator. Highlight its ease of use, ability to produce high-quality content, and potential to entertain or serve as a storytelling tool.
+These posts should include a brief description of the comic, optionally mention the main character Alpha Zeta, and include a call to action to visit the website using the placeholder [URL_HERE].
 Write a short (max 230 characters) social post for a 3-panel comic starring Alpha Zeta, an analytical alien trying to make sense of human behavior or technology.
 
 * Use a **two-beat structure**:
@@ -62,7 +63,7 @@ Write a short (max 230 characters) social post for a 3-panel comic starring Alph
 Avoid:
 
 * Words like “protocol,” “hypothesis,” “conclusion,” “analysis,” or percentages
-* Fake statistics or quantified results
+* Calling out "Zeta Comic Generator" directly in the post
 * Overly technical or robotic phrasing
 * Explaining the punchline directly
 * Marketing or promotional tone
