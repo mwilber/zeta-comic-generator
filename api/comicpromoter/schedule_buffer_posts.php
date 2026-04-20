@@ -48,13 +48,11 @@ if ($input && isset($input->payloadB64) && is_string($input->payloadB64) && $inp
 	if ($decodedJson === null) {
 		http_response_code(400);
 		$output->error = 'Invalid request payload.';
-		$output->debug = [
+		$output->debug = array_merge(buildPayloadDebug($originalRawInput), [
 			'jsonError' => 'Invalid payloadB64 encoding.',
 			'jsonErrorCode' => -1,
-			'contentType' => $_SERVER['CONTENT_TYPE'] ?? '',
-			'contentLength' => isset($_SERVER['CONTENT_LENGTH']) ? (int)$_SERVER['CONTENT_LENGTH'] : 0,
-			'rawLength' => is_string($rawInput) ? strlen($rawInput) : 0,
-		];
+			'transport' => 'payloadB64',
+		]);
 		echo json_encode($output);
 		exit;
 	}
@@ -63,13 +61,11 @@ if ($input && isset($input->payloadB64) && is_string($input->payloadB64) && $inp
 	if (!$decodedInput) {
 		http_response_code(400);
 		$output->error = 'Invalid request payload.';
-		$output->debug = [
+		$output->debug = array_merge(buildPayloadDebug($decodedJson), [
 			'jsonError' => json_last_error_msg(),
 			'jsonErrorCode' => json_last_error(),
-			'contentType' => $_SERVER['CONTENT_TYPE'] ?? '',
-			'contentLength' => isset($_SERVER['CONTENT_LENGTH']) ? (int)$_SERVER['CONTENT_LENGTH'] : 0,
-			'rawLength' => is_string($decodedJson) ? strlen($decodedJson) : 0,
-		];
+			'transport' => 'payloadB64.decoded',
+		]);
 		echo json_encode($output);
 		exit;
 	}
@@ -80,17 +76,14 @@ if ($input && isset($input->payloadB64) && is_string($input->payloadB64) && $inp
 if (!$input) {
 	http_response_code(400);
 	$output->error = 'Invalid request payload.';
-	$output->debug = [
+	$output->debug = array_merge(buildPayloadDebug($originalRawInput), [
 		'jsonError' => $jsonErrorMsg,
 		'jsonErrorCode' => $jsonErrorCode,
-		'contentType' => $_SERVER['CONTENT_TYPE'] ?? '',
-		'contentLength' => isset($_SERVER['CONTENT_LENGTH']) ? (int)$_SERVER['CONTENT_LENGTH'] : 0,
-		'rawLength' => is_string($rawInput) ? strlen($rawInput) : 0,
 		'postMaxSize' => ini_get('post_max_size'),
 		'uploadMaxFilesize' => ini_get('upload_max_filesize'),
 		'memoryLimit' => ini_get('memory_limit'),
 		'controlCharSamples' => sampleControlChars($originalRawInput, 8),
-	];
+	]);
 	$contentLength = $output->debug['contentLength'];
 	$postMaxBytes = parseIniSizeToBytes((string)$output->debug['postMaxSize']);
 	if ($contentLength > 0 && $postMaxBytes > 0 && $contentLength > $postMaxBytes) {
@@ -537,4 +530,35 @@ function decodeBase64Utf8($value) {
 		return null;
 	}
 	return $decoded;
+}
+
+function buildPayloadDebug($rawInput) {
+	$raw = is_string($rawInput) ? $rawInput : '';
+	$len = strlen($raw);
+	$start = substr($raw, 0, min(120, $len));
+	$end = $len > 120 ? substr($raw, -120) : $start;
+	return [
+		'contentType' => $_SERVER['CONTENT_TYPE'] ?? '',
+		'contentLength' => isset($_SERVER['CONTENT_LENGTH']) ? (int)$_SERVER['CONTENT_LENGTH'] : 0,
+		'rawLength' => $len,
+		'rawMd5' => md5($raw),
+		'rawStartsWith' => substr($start, 0, 32),
+		'rawEndsWith' => substr($end, -32),
+		'rawStartHex' => strtoupper(bin2hex($start)),
+		'rawEndHex' => strtoupper(bin2hex($end)),
+		'containsPayloadB64Key' => strpos($raw, '"payloadB64"') !== false,
+		'containsLegacyImagesKey' => strpos($raw, '"images"') !== false,
+		'containsNullByte' => strpos($raw, "\0") !== false,
+		'isUtf8' => isUtf8String($raw),
+		'userAgent' => $_SERVER['HTTP_USER_AGENT'] ?? '',
+	];
+}
+
+function isUtf8String($value) {
+	if (!is_string($value)) return false;
+	if ($value === '') return true;
+	if (function_exists('mb_check_encoding')) {
+		return mb_check_encoding($value, 'UTF-8');
+	}
+	return preg_match('//u', $value) === 1;
 }
