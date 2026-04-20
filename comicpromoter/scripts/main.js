@@ -200,6 +200,15 @@ function sanitizeControlChars(value) {
 	return value.replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/g, "");
 }
 
+function encodeUtf8ToBase64(value) {
+	const bytes = new TextEncoder().encode(value);
+	let binary = "";
+	for (let i = 0; i < bytes.length; i += 1) {
+		binary += String.fromCharCode(bytes[i]);
+	}
+	return btoa(binary);
+}
+
 async function submitToBuffer(event) {
 	event.preventDefault();
 	setResult("");
@@ -230,7 +239,9 @@ async function submitToBuffer(event) {
 			headers: {
 				"Content-Type": "application/json",
 			},
-			body: JSON.stringify(payload),
+			body: JSON.stringify({
+				payloadB64: encodeUtf8ToBase64(JSON.stringify(payload)),
+			}),
 		});
 
 		const data = await response.json();

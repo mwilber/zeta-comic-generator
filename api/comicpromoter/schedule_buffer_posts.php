@@ -43,6 +43,40 @@ if (!$input && $jsonErrorCode === JSON_ERROR_CTRL_CHAR && is_string($rawInput) &
 	}
 }
 
+if ($input && isset($input->payloadB64) && is_string($input->payloadB64) && $input->payloadB64 !== '') {
+	$decodedJson = decodeBase64Utf8($input->payloadB64);
+	if ($decodedJson === null) {
+		http_response_code(400);
+		$output->error = 'Invalid request payload.';
+		$output->debug = [
+			'jsonError' => 'Invalid payloadB64 encoding.',
+			'jsonErrorCode' => -1,
+			'contentType' => $_SERVER['CONTENT_TYPE'] ?? '',
+			'contentLength' => isset($_SERVER['CONTENT_LENGTH']) ? (int)$_SERVER['CONTENT_LENGTH'] : 0,
+			'rawLength' => is_string($rawInput) ? strlen($rawInput) : 0,
+		];
+		echo json_encode($output);
+		exit;
+	}
+
+	$decodedInput = json_decode($decodedJson);
+	if (!$decodedInput) {
+		http_response_code(400);
+		$output->error = 'Invalid request payload.';
+		$output->debug = [
+			'jsonError' => json_last_error_msg(),
+			'jsonErrorCode' => json_last_error(),
+			'contentType' => $_SERVER['CONTENT_TYPE'] ?? '',
+			'contentLength' => isset($_SERVER['CONTENT_LENGTH']) ? (int)$_SERVER['CONTENT_LENGTH'] : 0,
+			'rawLength' => is_string($decodedJson) ? strlen($decodedJson) : 0,
+		];
+		echo json_encode($output);
+		exit;
+	}
+
+	$input = $decodedInput;
+}
+
 if (!$input) {
 	http_response_code(400);
 	$output->error = 'Invalid request payload.';
@@ -494,4 +528,13 @@ function sampleControlChars($input, $maxSamples = 8) {
 		}
 	}
 	return $samples;
+}
+
+function decodeBase64Utf8($value) {
+	$decoded = base64_decode($value, true);
+	if ($decoded === false) return null;
+	if (function_exists('mb_check_encoding') && !mb_check_encoding($decoded, 'UTF-8')) {
+		return null;
+	}
+	return $decoded;
 }
