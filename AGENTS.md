@@ -136,6 +136,8 @@ The Comic Promoter is designed as a separable feature module and lives only in:
 - Wrapping payload JSON as base64/base64url did not reliably fix transport corruption in this environment.
 - Stable approach: send text fields + binary image files via `multipart/form-data`, then persist uploads server-side and pass resulting media URLs to Buffer.
 - Buffer `CreatePostInput.mode` must be `customScheduled` for this account/schema. `customSchedule` fails with GraphQL enum validation errors.
+- Buffer GraphQL `createPost` currently does not expose a URL-shortening toggle (no documented `shorten` field in `CreatePostInput` or per-service metadata inputs); the legacy REST API had `shorten`, but this integration is GraphQL-based.
+- Follow-up item: periodically check Buffer GraphQL docs/changelog for a URL-shortening setting and implement it if/when officially added.
 - Keep deep payload byte-dump diagnostics out of steady-state code; add them only as temporary troubleshooting instrumentation and remove once root cause is confirmed.
 
 ### Required Keys in `/api/includes/key.php`
