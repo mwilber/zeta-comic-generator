@@ -39,10 +39,10 @@ $version = "1.0.0";
 				<textarea id="post-text" rows="7" required></textarea>
 
 				<label for="additional-text">Additional Post Text</label>
-				<textarea id="additional-text" rows="3">additional text</textarea>
+				<textarea id="additional-text" rows="3">Zeta Comic Generator turns a one-line prompt into a finished three-panel strip in seconds. A JavaScript front end drives PHP endpoints that pipe story ideas to an LLM, dialogue to a lighter model, and backgrounds to an image generator before compositing hand-drawn art of Alpha Zeta.</textarea>
 
 				<label for="hashtags">Hashtags</label>
-				<input id="hashtags" type="text" placeholder="#ai #comic #alphazeta">
+				<input id="hashtags" type="text" value="#AI #AIart #characterart #GenerativeArt #sciencefiction #scifi #humor #Aliens #AIComics #UFOTwitter">
 
 				<label for="post-date">Post Date</label>
 				<input id="post-date" type="date" required>

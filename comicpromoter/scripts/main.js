@@ -67,7 +67,7 @@ function normalizeComicData(data) {
 		panel.images = [];
 		if (backgrounds[idx]) {
 			panel.images.push({
-				url: backgrounds[idx],
+				url: getProxiedBackgroundUrl(backgrounds[idx]),
 				type: "background",
 				alt: "Background image",
 			});
@@ -88,6 +88,12 @@ function normalizeComicData(data) {
 	};
 }
 
+function getProxiedBackgroundUrl(url) {
+	if (!url) return "";
+	if (url.includes("/api/imgproxy/")) return url;
+	return `/api/imgproxy/?url=${encodeURIComponent(url)}`;
+}
+
 async function waitForImagesToLoad(rootEl) {
 	if (!rootEl) return;
 	const images = Array.from(rootEl.querySelectorAll("img"));
@@ -101,15 +107,6 @@ async function waitForImagesToLoad(rootEl) {
 				})
 		)
 	);
-}
-
-function proxyBackgroundsForCapture() {
-	const backgrounds = document.querySelectorAll(".background");
-	backgrounds.forEach((backgroundEl) => {
-		if (!backgroundEl.src.includes("/api/imgproxy/")) {
-			backgroundEl.src = `${BASE_URL}/api/imgproxy/?url=${encodeURIComponent(backgroundEl.src)}`;
-		}
-	});
 }
 
 function renderPreviews() {
@@ -168,7 +165,6 @@ async function generatePostText() {
 }
 
 async function exportImages() {
-	proxyBackgroundsForCapture();
 	await waitForImagesToLoad(els.stripContainer);
 
 	const stripUrl = await ComicExporter.RenderStripAsDataUrl(state.renderer.el, {
