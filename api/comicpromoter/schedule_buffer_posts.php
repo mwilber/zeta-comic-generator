@@ -25,6 +25,10 @@ if (!defined('BUFFER_ACCESS_TOKEN') || !BUFFER_ACCESS_TOKEN) {
 	exit;
 }
 
+$bufferLegacyAccessToken = (defined('BUFFER_LEGACY_ACCESS_TOKEN') && trim((string)BUFFER_LEGACY_ACCESS_TOKEN) !== '')
+	? trim((string)BUFFER_LEGACY_ACCESS_TOKEN)
+	: trim((string)BUFFER_ACCESS_TOKEN);
+
 $rawInput = file_get_contents('php://input');
 $usingUploadedMedia = false;
 $hasDirectMultipartPayload = isset($_POST['permalink']) && isset($_POST['postTextTemplate']) && isset($_POST['date']);
@@ -151,7 +155,7 @@ $results->linkedin = createBufferScheduledPost(BUFFER_ACCESS_TOKEN, [
 // Keep X/LinkedIn on GraphQL.
 $results->instagram = [];
 foreach ($panelMediaUrls as $idx => $panelMediaUrl) {
-	$results->instagram[] = createBufferLegacyScheduledPost(BUFFER_ACCESS_TOKEN, [
+	$results->instagram[] = createBufferLegacyScheduledPost($bufferLegacyAccessToken, [
 		'profileId' => $channelIds['instagram'],
 		'text' => $idx === 0 ? $finalPostText : '',
 		'scheduledAt' => addMinutesToIso8601($scheduledAtIso, $idx),
@@ -513,7 +517,14 @@ function createBufferLegacyScheduledPost($accessToken, $params) {
 
 	if ($httpCode >= 400) {
 		$err = new stdClass();
-		$err->error = 'Buffer legacy API HTTP ' . $httpCode;
+		$detail = '';
+		if (isset($response['error']) && is_string($response['error'])) {
+			$detail = ': ' . $response['error'];
+			if (stripos($response['error'], 'OIDC tokens are not accepted for direct API access') !== false) {
+				$detail .= '. Configure BUFFER_LEGACY_ACCESS_TOKEN in api/includes/key.php with a legacy Buffer OAuth access token (bufferapp.com/oauth2).';
+			}
+		}
+		$err->error = 'Buffer legacy API HTTP ' . $httpCode . $detail;
 		$err->response = $response;
 		return $err;
 	}
