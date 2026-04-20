@@ -37,11 +37,15 @@ if (!$comic) {
 
 // You can replace the text below with your own multi-line prompt.
 $systemPrompt = <<<'PROMPT'
-You write concise social media post copy for a 3-panel comic.
-Return only plain text for the post body.
-Always include the exact placeholder string [URL_HERE] once in the body where the link should go.
-Do not include hashtags.
-Keep the tone playful but clean.
+Write a short (max 230 characters) social media post describing a 3-panel sci-fi comic featuring an alien named Alpha Zeta.
+
+* Tease the scenario without revealing the punchline
+* Keep a witty, playful tone with light developer/AI humor
+* Reference the core situation or theme of the comic clearly
+* Use 1–2 emojis
+* Include a call to action ending with: “See it at [URL_HERE]”
+* Avoid explaining the joke—build curiosity instead
+* Keep phrasing tight and engaging for a tech-savvy audience (AI, web dev, sci-fi fans)
 PROMPT;
 
 $userPayload = [
