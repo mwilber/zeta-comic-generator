@@ -558,7 +558,17 @@ function sampleControlChars($input, $maxSamples = 8) {
 }
 
 function decodeBase64Utf8($value) {
-	$decoded = base64_decode($value, true);
+	if (!is_string($value) || $value === '') return null;
+
+	$normalized = trim($value);
+	$normalized = str_replace(' ', '+', $normalized);
+	$normalized = strtr($normalized, '-_', '+/');
+	$padding = strlen($normalized) % 4;
+	if ($padding > 0) {
+		$normalized .= str_repeat('=', 4 - $padding);
+	}
+
+	$decoded = base64_decode($normalized, true);
 	if ($decoded === false) return null;
 	if (function_exists('mb_check_encoding') && !mb_check_encoding($decoded, 'UTF-8')) {
 		return null;

@@ -200,13 +200,13 @@ function sanitizeControlChars(value) {
 	return value.replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/g, "");
 }
 
-function encodeUtf8ToBase64(value) {
+function encodeUtf8ToBase64Url(value) {
 	const bytes = new TextEncoder().encode(value);
 	let binary = "";
 	for (let i = 0; i < bytes.length; i += 1) {
 		binary += String.fromCharCode(bytes[i]);
 	}
-	return btoa(binary);
+	return btoa(binary).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
 }
 
 async function submitToBuffer(event) {
@@ -234,7 +234,7 @@ async function submitToBuffer(event) {
 			},
 		};
 		const formData = new FormData();
-		formData.append("payloadB64", encodeUtf8ToBase64(JSON.stringify(payload)));
+		formData.append("payloadB64", encodeUtf8ToBase64Url(JSON.stringify(payload)));
 
 		const response = await fetch("/api/comicpromoter/schedule_buffer_posts.php", {
 			method: "POST",
