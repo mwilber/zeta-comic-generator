@@ -471,7 +471,7 @@ GQL;
 		'text' => $params['text'],
 		'channelId' => $params['channelId'],
 		'schedulingType' => 'automatic',
-		'mode' => 'customSchedule',
+		'mode' => 'customScheduled',
 		'dueAt' => $params['dueAt'],
 		'assets' => [
 			'images' => $images,
