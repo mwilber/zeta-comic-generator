@@ -27,9 +27,43 @@ if (!defined('BUFFER_ACCESS_TOKEN') || !BUFFER_ACCESS_TOKEN) {
 
 $rawInput = file_get_contents('php://input');
 $originalRawInput = $rawInput;
-$input = json_decode($rawInput);
-$jsonErrorCode = json_last_error();
-$jsonErrorMsg = json_last_error_msg();
+$input = null;
+$jsonErrorCode = JSON_ERROR_NONE;
+$jsonErrorMsg = 'No error';
+$payloadB64FromPost = isset($_POST['payloadB64']) && is_string($_POST['payloadB64']) ? $_POST['payloadB64'] : '';
+
+if ($payloadB64FromPost !== '') {
+	$decodedJson = decodeBase64Utf8($payloadB64FromPost);
+	if ($decodedJson === null) {
+		http_response_code(400);
+		$output->error = 'Invalid request payload.';
+		$output->debug = array_merge(buildPayloadDebug($rawInput), [
+			'jsonError' => 'Invalid payloadB64 encoding from form payload.',
+			'jsonErrorCode' => -1,
+			'transport' => 'multipart.payloadB64',
+		]);
+		echo json_encode($output);
+		exit;
+	}
+
+	$decodedInput = json_decode($decodedJson);
+	if (!$decodedInput) {
+		http_response_code(400);
+		$output->error = 'Invalid request payload.';
+		$output->debug = array_merge(buildPayloadDebug($decodedJson), [
+			'jsonError' => json_last_error_msg(),
+			'jsonErrorCode' => json_last_error(),
+			'transport' => 'multipart.payloadB64.decoded',
+		]);
+		echo json_encode($output);
+		exit;
+	}
+	$input = $decodedInput;
+} else {
+	$input = json_decode($rawInput);
+	$jsonErrorCode = json_last_error();
+	$jsonErrorMsg = json_last_error_msg();
+}
 
 if (!$input && $jsonErrorCode === JSON_ERROR_CTRL_CHAR && is_string($rawInput) && $rawInput !== '') {
 	$sanitizedRawInput = preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/', '', $rawInput);
@@ -541,6 +575,7 @@ function buildPayloadDebug($rawInput) {
 		'contentType' => $_SERVER['CONTENT_TYPE'] ?? '',
 		'contentLength' => isset($_SERVER['CONTENT_LENGTH']) ? (int)$_SERVER['CONTENT_LENGTH'] : 0,
 		'rawLength' => $len,
+		'postPayloadB64Length' => isset($_POST['payloadB64']) && is_string($_POST['payloadB64']) ? strlen($_POST['payloadB64']) : 0,
 		'rawMd5' => md5($raw),
 		'rawStartsWith' => substr($start, 0, 32),
 		'rawEndsWith' => substr($end, -32),

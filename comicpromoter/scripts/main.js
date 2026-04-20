@@ -233,15 +233,12 @@ async function submitToBuffer(event) {
 				panels: state.images.panels,
 			},
 		};
+		const formData = new FormData();
+		formData.append("payloadB64", encodeUtf8ToBase64(JSON.stringify(payload)));
 
 		const response = await fetch("/api/comicpromoter/schedule_buffer_posts.php", {
 			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify({
-				payloadB64: encodeUtf8ToBase64(JSON.stringify(payload)),
-			}),
+			body: formData,
 		});
 
 		const data = await response.json();
