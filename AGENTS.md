@@ -113,9 +113,9 @@ The Comic Promoter is designed as a separable feature module and lives only in:
 4. Generate image data in-memory (base64):
    - full strip image
    - three individual panel images
-5. Default post text currently starts as:
-   - `Testing: [URL_HERE]`
-   - (`generate_post_text.php` exists but is intentionally not called from the current frontend flow to control cost during debugging/validation.)
+5. Generate social post copy via OpenAI GPT-5.4 using:
+   - `/api/comicpromoter/generate_post_text.php`
+   - Output must include `[URL_HERE]` placeholder for final link substitution.
 6. Submit scheduling payload to:
    - `/api/comicpromoter/schedule_buffer_posts.php`
    - Use `multipart/form-data` with fields: `permalink`, `postTextTemplate`, `additionalText`, `hashtags`, `date`

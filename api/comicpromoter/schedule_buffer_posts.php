@@ -177,7 +177,7 @@ echo json_encode($output);
 function buildScheduleIso8601($date) {
 	try {
 		$eastern = new DateTimeZone('America/New_York');
-		$local = new DateTime($date . ' 21:52:00', $eastern);
+		$local = new DateTime($date . ' 11:59:00', $eastern);
 		$utc = clone $local;
 		$utc->setTimezone(new DateTimeZone('UTC'));
 		return $utc->format('Y-m-d\\TH:i:s.000\\Z');

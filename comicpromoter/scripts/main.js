@@ -130,6 +130,40 @@ function renderPreviews() {
 	});
 }
 
+function buildComicSummaryForPrompt() {
+	const { script, prompt } = state.comic;
+	return {
+		permalink: state.permalink,
+		title: script.title,
+		premise: prompt,
+		panels: script.panels.map((panel, idx) => ({
+			panel: idx + 1,
+			scene: panel.scene || "",
+			dialog: Array.isArray(panel.dialog)
+				? panel.dialog.map((line) => line?.text || "").filter(Boolean)
+				: [],
+		})),
+	};
+}
+
+async function generatePostText() {
+	const response = await fetch("/api/comicpromoter/generate_post_text.php", {
+		method: "POST",
+		headers: {
+			"Content-Type": "application/json",
+		},
+		body: JSON.stringify({
+			comic: buildComicSummaryForPrompt(),
+		}),
+	});
+
+	const data = await response.json();
+	if (!response.ok || data.error) {
+		throw new Error(data.error || "Failed to generate post text.");
+	}
+	return data.postText || "";
+}
+
 async function exportImages() {
 	await waitForImagesToLoad(els.stripContainer);
 
@@ -257,7 +291,9 @@ async function init() {
 		setStatus("Generating full strip and panel images...");
 		await exportImages();
 
-		els.postText.value = "Testing: [URL_HERE]";
+		setStatus("Generating social post text with GPT-5.4...");
+		const postText = await generatePostText();
+		els.postText.value = postText;
 
 		setStatus("Ready");
 	} catch (error) {
