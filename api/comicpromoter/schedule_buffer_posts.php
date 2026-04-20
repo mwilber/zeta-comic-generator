@@ -147,16 +147,15 @@ $results->linkedin = createBufferScheduledPost(BUFFER_ACCESS_TOKEN, [
 	'imageUrls' => [$stripMediaUrl],
 ]);
 
-// Buffer docs/examples model image publishing with a single image URL per post.
-// For Instagram, publish one post per panel image to avoid multi-image media validation failures.
+// Instagram: use Buffer legacy updates/create endpoint for media posting reliability.
+// Keep X/LinkedIn on GraphQL.
 $results->instagram = [];
 foreach ($panelMediaUrls as $idx => $panelMediaUrl) {
-	$results->instagram[] = createBufferScheduledPost(BUFFER_ACCESS_TOKEN, [
-		'channelId' => $channelIds['instagram'],
+	$results->instagram[] = createBufferLegacyScheduledPost(BUFFER_ACCESS_TOKEN, [
+		'profileId' => $channelIds['instagram'],
 		'text' => $idx === 0 ? $finalPostText : '',
-		'dueAt' => addMinutesToIso8601($scheduledAtIso, $idx),
-		'service' => 'instagram',
-		'imageUrls' => [$panelMediaUrl],
+		'scheduledAt' => addMinutesToIso8601($scheduledAtIso, $idx),
+		'imageUrl' => $panelMediaUrl,
 	]);
 }
 
@@ -471,6 +470,80 @@ GQL;
 
 	$ok = new stdClass();
 	$ok->post = json_decode(json_encode($createPost['post']));
+	return $ok;
+}
+
+function createBufferLegacyScheduledPost($accessToken, $params) {
+	$endpoint = 'https://api.bufferapp.com/1/updates/create.json';
+	$postFields = [
+		'access_token' => $accessToken,
+		'profile_ids[]' => $params['profileId'],
+		'text' => (string)($params['text'] ?? ''),
+		'now' => 'false',
+		'shorten' => 'true',
+		'scheduled_at' => (string)($params['scheduledAt'] ?? ''),
+		'media[photo]' => (string)($params['imageUrl'] ?? ''),
+		'media[thumbnail]' => (string)($params['imageUrl'] ?? ''),
+	];
+
+	$ch = curl_init($endpoint);
+	curl_setopt($ch, CURLOPT_POST, true);
+	curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($postFields));
+	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+	curl_setopt($ch, CURLOPT_TIMEOUT, 45);
+
+	$responseRaw = curl_exec($ch);
+	$curlErr = curl_error($ch);
+	$httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+	curl_close($ch);
+
+	if ($responseRaw === false) {
+		$err = new stdClass();
+		$err->error = 'Buffer legacy request failed: ' . ($curlErr ?: 'unknown cURL error');
+		return $err;
+	}
+
+	$response = json_decode($responseRaw, true);
+	if (!is_array($response)) {
+		$err = new stdClass();
+		$err->error = 'Buffer legacy response was not valid JSON.';
+		$err->response = $responseRaw;
+		return $err;
+	}
+
+	if ($httpCode >= 400) {
+		$err = new stdClass();
+		$err->error = 'Buffer legacy API HTTP ' . $httpCode;
+		$err->response = $response;
+		return $err;
+	}
+
+	if (isset($response['success']) && $response['success'] === false) {
+		$err = new stdClass();
+		$err->error = isset($response['message']) ? (string)$response['message'] : 'Buffer legacy create update failed.';
+		$err->response = $response;
+		return $err;
+	}
+
+	$postId = '';
+	if (isset($response['updates']) && is_array($response['updates']) && isset($response['updates'][0]['id'])) {
+		$postId = (string)$response['updates'][0]['id'];
+	} elseif (isset($response['update']) && is_array($response['update']) && isset($response['update']['id'])) {
+		$postId = (string)$response['update']['id'];
+	}
+
+	if ($postId === '') {
+		$err = new stdClass();
+		$err->error = 'Buffer legacy create update did not return update id.';
+		$err->response = $response;
+		return $err;
+	}
+
+	$ok = new stdClass();
+	$ok->post = (object)[
+		'id' => $postId,
+	];
+	$ok->raw = $response;
 	return $ok;
 }
 
