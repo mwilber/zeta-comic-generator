@@ -30,9 +30,24 @@ $originalRawInput = $rawInput;
 $input = null;
 $jsonErrorCode = JSON_ERROR_NONE;
 $jsonErrorMsg = 'No error';
+$usingUploadedMedia = false;
 $payloadB64FromPost = isset($_POST['payloadB64']) && is_string($_POST['payloadB64']) ? $_POST['payloadB64'] : '';
+$hasDirectMultipartPayload = isset($_POST['permalink']) && isset($_POST['postTextTemplate']) && isset($_POST['date']);
 
-if ($payloadB64FromPost !== '') {
+if ($hasDirectMultipartPayload) {
+	$usingUploadedMedia = true;
+	$input = (object)[
+		'permalink' => $_POST['permalink'] ?? '',
+		'postTextTemplate' => $_POST['postTextTemplate'] ?? '',
+		'additionalText' => $_POST['additionalText'] ?? '',
+		'hashtags' => $_POST['hashtags'] ?? '',
+		'date' => $_POST['date'] ?? '',
+		'images' => (object)[
+			'strip' => '__uploaded_strip__',
+			'panels' => ['__uploaded_panels__'],
+		],
+	];
+} elseif ($payloadB64FromPost !== '') {
 	$decodedJson = decodeBase64Utf8($payloadB64FromPost);
 	if ($decodedJson === null) {
 		http_response_code(400);
@@ -154,11 +169,22 @@ if (!$scheduledAtIso) {
 	exit;
 }
 
-$stripMediaUrl = storeImageDataUrl($images->strip, 'strip');
-$panelMediaUrls = [];
-if (is_array($images->panels)) {
-	foreach ($images->panels as $idx => $panelDataUrl) {
-		$panelMediaUrls[] = storeImageDataUrl($panelDataUrl, 'panel_' . ($idx + 1));
+if ($usingUploadedMedia) {
+	$stripMediaUrl = storeUploadedMediaFile($_FILES['strip'] ?? null, 'strip');
+	$panelMediaUrls = [];
+	foreach (normalizeUploadedFilesArray($_FILES['panels'] ?? null) as $idx => $panelFile) {
+		$panelUrl = storeUploadedMediaFile($panelFile, 'panel_' . ($idx + 1));
+		if ($panelUrl) {
+			$panelMediaUrls[] = $panelUrl;
+		}
+	}
+} else {
+	$stripMediaUrl = storeImageDataUrl($images->strip, 'strip');
+	$panelMediaUrls = [];
+	if (is_array($images->panels)) {
+		foreach ($images->panels as $idx => $panelDataUrl) {
+			$panelMediaUrls[] = storeImageDataUrl($panelDataUrl, 'panel_' . ($idx + 1));
+		}
 	}
 }
 
@@ -245,6 +271,54 @@ function buildScheduleIso8601($date) {
 	} catch (Exception $e) {
 		return null;
 	}
+}
+
+function storeUploadedMediaFile($file, $prefix) {
+	if (!is_array($file) || !isset($file['error']) || $file['error'] !== UPLOAD_ERR_OK) {
+		return null;
+	}
+	$tmpName = $file['tmp_name'] ?? '';
+	if (!is_string($tmpName) || $tmpName === '' || !is_uploaded_file($tmpName)) {
+		return null;
+	}
+
+	$mime = '';
+	if (function_exists('mime_content_type')) {
+		$mime = (string)mime_content_type($tmpName);
+	}
+
+	$ext = '.png';
+	if ($mime === 'image/jpeg') $ext = '.jpg';
+	if ($mime === 'image/webp') $ext = '.webp';
+
+	$id = $prefix . '_' . bin2hex(random_bytes(12));
+	$dir = __DIR__ . '/tmp';
+	if (!is_dir($dir)) {
+		mkdir($dir, 0775, true);
+	}
+	$path = $dir . '/' . $id . $ext;
+	if (!move_uploaded_file($tmpName, $path)) {
+		return null;
+	}
+	return getPublicBaseUrl() . '/api/comicpromoter/media.php?id=' . rawurlencode($id . $ext);
+}
+
+function normalizeUploadedFilesArray($filesField) {
+	if (!is_array($filesField) || !isset($filesField['name']) || !is_array($filesField['name'])) {
+		return [];
+	}
+	$normalized = [];
+	$count = count($filesField['name']);
+	for ($i = 0; $i < $count; $i++) {
+		$normalized[] = [
+			'name' => $filesField['name'][$i] ?? '',
+			'type' => $filesField['type'][$i] ?? '',
+			'tmp_name' => $filesField['tmp_name'][$i] ?? '',
+			'error' => $filesField['error'][$i] ?? UPLOAD_ERR_NO_FILE,
+			'size' => $filesField['size'][$i] ?? 0,
+		];
+	}
+	return $normalized;
 }
 
 function storeImageDataUrl($dataUrl, $prefix) {

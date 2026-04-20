@@ -200,13 +200,18 @@ function sanitizeControlChars(value) {
 	return value.replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/g, "");
 }
 
-function encodeUtf8ToBase64Url(value) {
-	const bytes = new TextEncoder().encode(value);
-	let binary = "";
-	for (let i = 0; i < bytes.length; i += 1) {
-		binary += String.fromCharCode(bytes[i]);
+function dataUrlToBlob(dataUrl) {
+	const [meta, encoded] = dataUrl.split(",", 2);
+	if (!meta || !encoded) throw new Error("Invalid image data URL.");
+	const mimeMatch = meta.match(/^data:(.*?);base64$/);
+	const mime = mimeMatch?.[1] || "image/png";
+	const binary = atob(encoded);
+	const len = binary.length;
+	const bytes = new Uint8Array(len);
+	for (let i = 0; i < len; i += 1) {
+		bytes[i] = binary.charCodeAt(i);
 	}
-	return btoa(binary).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
+	return new Blob([bytes], { type: mime });
 }
 
 async function submitToBuffer(event) {
@@ -234,7 +239,15 @@ async function submitToBuffer(event) {
 			},
 		};
 		const formData = new FormData();
-		formData.append("payloadB64", encodeUtf8ToBase64Url(JSON.stringify(payload)));
+		formData.append("permalink", payload.permalink);
+		formData.append("postTextTemplate", payload.postTextTemplate);
+		formData.append("additionalText", payload.additionalText);
+		formData.append("hashtags", payload.hashtags);
+		formData.append("date", payload.date);
+		formData.append("strip", dataUrlToBlob(payload.images.strip), "strip.png");
+		payload.images.panels.forEach((panelDataUrl, idx) => {
+			formData.append("panels[]", dataUrlToBlob(panelDataUrl), `panel_${idx + 1}.png`);
+		});
 
 		const response = await fetch("/api/comicpromoter/schedule_buffer_posts.php", {
 			method: "POST",
@@ -280,9 +293,7 @@ async function init() {
 		setStatus("Generating full strip and panel images...");
 		await exportImages();
 
-		setStatus("Generating social post text with GPT-5.4...");
-		const postText = await generatePostText();
-		els.postText.value = postText;
+		els.postText.value = "Testing: [URL_HERE]";
 
 		setStatus("Ready");
 	} catch (error) {
