@@ -147,42 +147,17 @@ $results->linkedin = createBufferScheduledPost(BUFFER_ACCESS_TOKEN, [
 	'imageUrls' => [$stripMediaUrl],
 ]);
 
-// Instagram: use GraphQL createPost flow (panel-by-panel image posts).
-$results->instagram = [];
-foreach ($panelMediaUrls as $idx => $panelMediaUrl) {
-	$results->instagram[] = createBufferScheduledPost(BUFFER_ACCESS_TOKEN, [
-		'channelId' => $channelIds['instagram'],
-		'text' => $idx === 0 ? $finalPostText : '',
-		'dueAt' => addMinutesToIso8601($scheduledAtIso, $idx),
-		'service' => 'instagram',
-		'imageUrls' => [$panelMediaUrl],
-	]);
-}
+// Instagram: one post with all three panel images attached.
+$results->instagram = createBufferScheduledPost(BUFFER_ACCESS_TOKEN, [
+	'channelId' => $channelIds['instagram'],
+	'text' => $finalPostText,
+	'dueAt' => $scheduledAtIso,
+	'service' => 'instagram',
+	'imageUrls' => $panelMediaUrls,
+]);
 
 foreach (['twitter', 'linkedin', 'instagram'] as $network) {
 	$item = $results->{$network};
-	if ($network === 'instagram') {
-		if (!is_array($item) || count($item) === 0) {
-			http_response_code(500);
-			$output->error = 'Failed creating Buffer post for instagram.';
-			$output->result = $results;
-			echo json_encode($output);
-			exit;
-		}
-		foreach ($item as $idx => $instagramPost) {
-			if (!is_object($instagramPost) || isset($instagramPost->error) || !isset($instagramPost->post) || !isset($instagramPost->post->id)) {
-				http_response_code(500);
-				$networkError = (is_object($instagramPost) && isset($instagramPost->error) && is_string($instagramPost->error))
-					? ': ' . $instagramPost->error
-					: '.';
-				$output->error = 'Failed creating Buffer post for instagram panel ' . ($idx + 1) . $networkError;
-				$output->result = $results;
-				echo json_encode($output);
-				exit;
-			}
-		}
-		continue;
-	}
 	if (!is_object($item) || isset($item->error) || !isset($item->post) || !isset($item->post->id)) {
 		http_response_code(500);
 		$networkError = (is_object($item) && isset($item->error) && is_string($item->error))
@@ -208,19 +183,6 @@ function buildScheduleIso8601($date) {
 		return $utc->format('Y-m-d\\TH:i:s.000\\Z');
 	} catch (Exception $e) {
 		return null;
-	}
-}
-
-function addMinutesToIso8601($iso, $minutes) {
-	try {
-		$dt = new DateTime($iso);
-		$minutes = (int)$minutes;
-		if ($minutes > 0) {
-			$dt->modify('+' . $minutes . ' minutes');
-		}
-		return $dt->format('Y-m-d\\TH:i:s.000\\Z');
-	} catch (Exception $e) {
-		return $iso;
 	}
 }
 
