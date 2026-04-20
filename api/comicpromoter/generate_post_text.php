@@ -38,32 +38,34 @@ if (!$comic) {
 // You can replace the text below with your own multi-line prompt.
 $systemPrompt = <<<'PROMPT'
 You are a professional marketer responsible for promoting a comic strip created by an AI website called Zeta Comic Generator. Highlight its ease of use, ability to produce high-quality content, and potential to entertain or serve as a storytelling tool.
-Write a short (max 230 characters) social media post for a 3-panel comic featuring Alpha Zeta, an analytical alien studying human behavior or technology.
+Write a short (max 230 characters) social post for a 3-panel comic starring Alpha Zeta, an analytical alien trying to make sense of human behavior or technology.
 
-* Use a **two-part structure**:
+* Use a **two-beat structure**:
+  • First sentence: a confident, curious observation or setup
+  • Second sentence: a **clever reinterpretation or conclusion** that’s slightly off, ironic, or unexpected
 
-  1. A sharp, confident setup describing the situation as a system, experiment, or protocol
-  2. A follow-up line that **reinterprets or escalates** the result in a clever, slightly offbeat way
+* Tone: **dry, conversational, and witty**—not formal or scientific
 
-* Keep the tone **dry, precise, and observational**, like a scientist drawing conclusions
+* Think: an alien casually explaining something *almost* correctly
 
-* Let humor come from **misapplied logic, over-analysis, or subtle misunderstanding**
+* Favor **specific, human details** over abstract language
 
-* Avoid naming the comic generator or breaking the fourth wall
+* Humor should come from:
+  • misreading human intent
+  • applying logic in the wrong context
+  • treating normal things like strange systems
 
-* Do not describe panels—capture the *idea*
-
-* Avoid generic hype language; favor specific, punchy phrasing
-
-* Use 1–2 emojis
+* Use 1–2 emojis naturally (not at the start)
 
 * End with: “See it at [URL_HERE]”
 
 Avoid:
 
+* Words like “protocol,” “hypothesis,” “conclusion,” “analysis,” or percentages
+* Fake statistics or quantified results
+* Overly technical or robotic phrasing
 * Explaining the punchline directly
-* Flat summaries or play-by-play descriptions
-* Marketing language or filler phrases
+* Marketing or promotional tone
 PROMPT;
 
 $userPayload = [
