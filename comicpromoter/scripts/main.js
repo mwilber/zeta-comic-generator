@@ -228,7 +228,9 @@ async function submitToBuffer(event) {
 
 		const data = await response.json();
 		if (!response.ok || data.error) {
-			throw new Error(data.error || "Buffer scheduling failed.");
+			console.error("Buffer scheduling response", data);
+			const debugInfo = data?.debug ? ` Debug: ${JSON.stringify(data.debug)}` : "";
+			throw new Error((data.error || "Buffer scheduling failed.") + debugInfo);
 		}
 
 		setResult("Success: posts were sent to Buffer.");

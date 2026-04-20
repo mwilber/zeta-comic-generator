@@ -25,10 +25,26 @@ if (!defined('BUFFER_ACCESS_TOKEN') || !BUFFER_ACCESS_TOKEN) {
 	exit;
 }
 
-$input = json_decode(file_get_contents('php://input'));
+$rawInput = file_get_contents('php://input');
+$input = json_decode($rawInput);
 if (!$input) {
 	http_response_code(400);
 	$output->error = 'Invalid request payload.';
+	$output->debug = [
+		'jsonError' => json_last_error_msg(),
+		'jsonErrorCode' => json_last_error(),
+		'contentType' => $_SERVER['CONTENT_TYPE'] ?? '',
+		'contentLength' => isset($_SERVER['CONTENT_LENGTH']) ? (int)$_SERVER['CONTENT_LENGTH'] : 0,
+		'rawLength' => is_string($rawInput) ? strlen($rawInput) : 0,
+		'postMaxSize' => ini_get('post_max_size'),
+		'uploadMaxFilesize' => ini_get('upload_max_filesize'),
+		'memoryLimit' => ini_get('memory_limit'),
+	];
+	$contentLength = $output->debug['contentLength'];
+	$postMaxBytes = parseIniSizeToBytes((string)$output->debug['postMaxSize']);
+	if ($contentLength > 0 && $postMaxBytes > 0 && $contentLength > $postMaxBytes) {
+		$output->debug['hint'] = 'Request body appears larger than post_max_size; PHP may discard or truncate input.';
+	}
 	echo json_encode($output);
 	exit;
 }
@@ -425,4 +441,18 @@ function callBufferGraphQL($accessToken, $query, $variables = []) {
 	}
 
 	return $response;
+}
+
+function parseIniSizeToBytes($size) {
+	$size = trim(strtolower((string)$size));
+	if ($size === '') return 0;
+
+	$unit = substr($size, -1);
+	$value = (float)$size;
+
+	if ($unit === 'g') return (int)($value * 1024 * 1024 * 1024);
+	if ($unit === 'm') return (int)($value * 1024 * 1024);
+	if ($unit === 'k') return (int)($value * 1024);
+
+	return (int)$value;
 }
