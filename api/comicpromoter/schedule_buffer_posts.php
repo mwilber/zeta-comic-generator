@@ -26,19 +26,36 @@ if (!defined('BUFFER_ACCESS_TOKEN') || !BUFFER_ACCESS_TOKEN) {
 }
 
 $rawInput = file_get_contents('php://input');
+$originalRawInput = $rawInput;
 $input = json_decode($rawInput);
+$jsonErrorCode = json_last_error();
+$jsonErrorMsg = json_last_error_msg();
+
+if (!$input && $jsonErrorCode === JSON_ERROR_CTRL_CHAR && is_string($rawInput) && $rawInput !== '') {
+	$sanitizedRawInput = preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/', '', $rawInput);
+	if (is_string($sanitizedRawInput) && $sanitizedRawInput !== $rawInput) {
+		$input = json_decode($sanitizedRawInput);
+		$jsonErrorCode = json_last_error();
+		$jsonErrorMsg = json_last_error_msg();
+		if ($input) {
+			$rawInput = $sanitizedRawInput;
+		}
+	}
+}
+
 if (!$input) {
 	http_response_code(400);
 	$output->error = 'Invalid request payload.';
 	$output->debug = [
-		'jsonError' => json_last_error_msg(),
-		'jsonErrorCode' => json_last_error(),
+		'jsonError' => $jsonErrorMsg,
+		'jsonErrorCode' => $jsonErrorCode,
 		'contentType' => $_SERVER['CONTENT_TYPE'] ?? '',
 		'contentLength' => isset($_SERVER['CONTENT_LENGTH']) ? (int)$_SERVER['CONTENT_LENGTH'] : 0,
 		'rawLength' => is_string($rawInput) ? strlen($rawInput) : 0,
 		'postMaxSize' => ini_get('post_max_size'),
 		'uploadMaxFilesize' => ini_get('upload_max_filesize'),
 		'memoryLimit' => ini_get('memory_limit'),
+		'controlCharSamples' => sampleControlChars($originalRawInput, 8),
 	];
 	$contentLength = $output->debug['contentLength'];
 	$postMaxBytes = parseIniSizeToBytes((string)$output->debug['postMaxSize']);
@@ -455,4 +472,26 @@ function parseIniSizeToBytes($size) {
 	if ($unit === 'k') return (int)($value * 1024);
 
 	return (int)$value;
+}
+
+function sampleControlChars($input, $maxSamples = 8) {
+	if (!is_string($input) || $input === '') return [];
+	$samples = [];
+	$len = strlen($input);
+	$maxSamples = max(1, (int)$maxSamples);
+	for ($i = 0; $i < $len; $i++) {
+		$byte = ord($input[$i]);
+		if ($byte < 32 || $byte === 127) {
+			$start = max(0, $i - 16);
+			$snippet = substr($input, $start, min(32, $len - $start));
+			$samples[] = [
+				'pos' => $i,
+				'byte' => $byte,
+				'hex' => strtoupper(str_pad(dechex($byte), 2, '0', STR_PAD_LEFT)),
+				'contextHex' => strtoupper(bin2hex($snippet)),
+			];
+			if (count($samples) >= $maxSamples) break;
+		}
+	}
+	return $samples;
 }

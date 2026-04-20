@@ -195,6 +195,11 @@ function defaultDateInputValue() {
 	return `${yyyy}-${mm}-${dd}`;
 }
 
+function sanitizeControlChars(value) {
+	if (typeof value !== "string") return value || "";
+	return value.replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/g, "");
+}
+
 async function submitToBuffer(event) {
 	event.preventDefault();
 	setResult("");
@@ -208,22 +213,24 @@ async function submitToBuffer(event) {
 	setResult("Sending posts to Buffer...");
 
 	try {
+		const payload = {
+			permalink: state.permalink,
+			postTextTemplate: sanitizeControlChars(els.postText.value),
+			additionalText: sanitizeControlChars(els.additionalText.value),
+			hashtags: sanitizeControlChars(els.hashtags.value),
+			date: els.postDate.value,
+			images: {
+				strip: state.images.strip,
+				panels: state.images.panels,
+			},
+		};
+
 		const response = await fetch("/api/comicpromoter/schedule_buffer_posts.php", {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",
 			},
-			body: JSON.stringify({
-				permalink: state.permalink,
-				postTextTemplate: els.postText.value,
-				additionalText: els.additionalText.value,
-				hashtags: els.hashtags.value,
-				date: els.postDate.value,
-				images: {
-					strip: state.images.strip,
-					panels: state.images.panels,
-				},
-			}),
+			body: JSON.stringify(payload),
 		});
 
 		const data = await response.json();
