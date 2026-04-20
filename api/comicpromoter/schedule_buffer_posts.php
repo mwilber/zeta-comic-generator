@@ -128,7 +128,10 @@ foreach (['twitter', 'linkedin', 'instagram'] as $network) {
 	$item = $results->{$network};
 	if (!is_object($item) || isset($item->error) || !isset($item->post) || !isset($item->post->id)) {
 		http_response_code(500);
-		$output->error = 'Failed creating Buffer post for ' . $network;
+		$networkError = (is_object($item) && isset($item->error) && is_string($item->error))
+			? ': ' . $item->error
+			: '.';
+		$output->error = 'Failed creating Buffer post for ' . $network . $networkError;
 		$output->result = $results;
 		echo json_encode($output);
 		exit;
@@ -300,7 +303,7 @@ GQL;
 		'text' => $params['text'],
 		'channelId' => $params['channelId'],
 		'schedulingType' => 'automatic',
-		'mode' => 'customScheduled',
+		'mode' => 'customSchedule',
 		'dueAt' => $params['dueAt'],
 		'assets' => [
 			'images' => $images,
