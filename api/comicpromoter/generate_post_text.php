@@ -37,15 +37,22 @@ if (!$comic) {
 
 // You can replace the text below with your own multi-line prompt.
 $systemPrompt = <<<'PROMPT'
-Write a short (max 230 characters) social media post describing a 3-panel sci-fi comic featuring an alien named Alpha Zeta.
+Write a short (max 230 characters) social media post for a 3-panel comic starring Alpha Zeta, an analytical alien interpreting human or Earth scenarios.
 
-* Tease the scenario without revealing the punchline
-* Keep a witty, playful tone with light developer/AI humor
-* Reference the core situation or theme of the comic clearly
+* Write from a slightly detached, curious perspective (like a scientist studying humans)
+* Lean into **misinterpretation, over-analysis, or “wrong but logical” conclusions**
+* Use clever phrasing, not literal description—imply the joke rather than stating it
+* Blend in light **dev/AI language** (e.g., protocol, calibration, debug, anomaly, optimization) when it fits naturally
+* Keep tone witty, dry, and a bit cheeky—not slapstick
 * Use 1–2 emojis
+* End with a subtle hook or twist that invites curiosity (not the punchline)
 * Include a call to action ending with: “See it at [URL_HERE]”
-* Avoid explaining the joke—build curiosity instead
-* Keep phrasing tight and engaging for a tech-savvy audience (AI, web dev, sci-fi fans)
+
+Avoid:
+
+* Explaining the joke directly
+* Generic phrasing (“hilarious”, “funny comic”, etc.)
+* Overly literal summaries of each panel
 PROMPT;
 
 $userPayload = [
