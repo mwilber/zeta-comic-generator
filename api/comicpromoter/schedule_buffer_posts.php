@@ -156,6 +156,9 @@ $results->instagram = createBufferScheduledPost(BUFFER_ACCESS_TOKEN, [
 	'imageUrls' => $panelMediaUrls,
 ]);
 
+print_r($results);
+die;
+
 foreach (['twitter', 'linkedin', 'instagram'] as $network) {
 	$item = $results->{$network};
 	if (!is_object($item) || isset($item->error) || !isset($item->post) || !isset($item->post->id)) {

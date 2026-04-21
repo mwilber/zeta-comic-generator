@@ -94,22 +94,28 @@ $body = [
 	],
 ];
 
-$ch = curl_init();
-curl_setopt($ch, CURLOPT_URL, 'https://api.openai.com/v1/responses');
-curl_setopt($ch, CURLOPT_HTTPHEADER, [
-	'Authorization: Bearer ' . OPENAI_KEY,
-	'Content-Type: application/json',
-]);
-curl_setopt($ch, CURLOPT_POST, true);
-curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($body));
-curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-curl_setopt($ch, CURLOPT_TIMEOUT, 60);
+if (false) {
 
-$responseRaw = curl_exec($ch);
-$httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-curl_close($ch);
+	$ch = curl_init();
+	curl_setopt($ch, CURLOPT_URL, 'https://api.openai.com/v1/responses');
+	curl_setopt($ch, CURLOPT_HTTPHEADER, [
+		'Authorization: Bearer ' . OPENAI_KEY,
+		'Content-Type: application/json',
+	]);
+	curl_setopt($ch, CURLOPT_POST, true);
+	curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($body));
+	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+	curl_setopt($ch, CURLOPT_TIMEOUT, 60);
 
-$response = json_decode($responseRaw);
+	$responseRaw = curl_exec($ch);
+	$httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+	curl_close($ch);
+
+	$response = json_decode($responseRaw);
+
+} else {
+	$response = json_decode('{"output":[{"content":[{"text":"Testing: [URL_HERE]"}]}]}');
+}
 
 if ($httpCode >= 400 || !$response) {
 	http_response_code(500);
