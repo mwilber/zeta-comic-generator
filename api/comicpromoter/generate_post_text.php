@@ -94,7 +94,7 @@ $body = [
 	],
 ];
 
-if (false) {
+if (true) {
 
 	$ch = curl_init();
 	curl_setopt($ch, CURLOPT_URL, 'https://api.openai.com/v1/responses');
