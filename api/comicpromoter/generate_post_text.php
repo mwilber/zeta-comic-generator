@@ -27,6 +27,7 @@ if (!defined('OPENAI_KEY') || !OPENAI_KEY) {
 
 $input = json_decode(file_get_contents('php://input'));
 $comic = isset($input->comic) ? $input->comic : null;
+$customPrompt = isset($input->prompt) && is_string($input->prompt) ? trim($input->prompt) : '';
 
 if (!$comic) {
 	http_response_code(400);
@@ -73,6 +74,25 @@ $userPayload = [
 	'panels' => $comic->panels ?? [],
 ];
 
+$inputMessages = [
+	[
+		'role' => 'system',
+		'content' => $systemPrompt,
+	],
+];
+
+if ($customPrompt !== '') {
+	$inputMessages[] = [
+		'role' => 'user',
+		'content' => $customPrompt,
+	];
+}
+
+$inputMessages[] = [
+	'role' => 'user',
+	'content' => json_encode($userPayload),
+];
+
 $body = [
 	'model' => 'gpt-5.4',
 	'stream' => false,
@@ -82,16 +102,7 @@ $body = [
 	'text' => [
 		'verbosity' => 'medium',
 	],
-	'input' => [
-		[
-			'role' => 'system',
-			'content' => $systemPrompt,
-		],
-		[
-			'role' => 'user',
-			'content' => json_encode($userPayload),
-		],
-	],
+	'input' => $inputMessages,
 ];
 
 if (true) {

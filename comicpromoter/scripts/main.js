@@ -18,6 +18,8 @@ const els = {
 	previewPanels: document.getElementById("preview-panels"),
 	postForm: document.getElementById("post-form"),
 	postText: document.getElementById("post-text"),
+	postPrompt: document.getElementById("post-prompt"),
+	generatePostTextBtn: document.getElementById("generate-post-text-btn"),
 	additionalText: document.getElementById("additional-text"),
 	hashtags: document.getElementById("hashtags"),
 	postDate: document.getElementById("post-date"),
@@ -154,6 +156,7 @@ async function generatePostText() {
 		},
 		body: JSON.stringify({
 			comic: buildComicSummaryForPrompt(),
+			prompt: (els.postPrompt?.value || "").trim(),
 		}),
 	});
 
@@ -267,6 +270,26 @@ async function submitToBuffer(event) {
 	}
 }
 
+async function handleGeneratePostTextClick() {
+	if (!state.comic) {
+		setStatus("Comic is not loaded yet.");
+		return;
+	}
+
+	els.generatePostTextBtn.disabled = true;
+	setStatus("Generating social post text with GPT-5.4...");
+
+	try {
+		const postText = await generatePostText();
+		els.postText.value = postText;
+		setStatus("Ready");
+	} catch (error) {
+		setStatus(error.message || "Failed to generate post text.");
+	} finally {
+		els.generatePostTextBtn.disabled = false;
+	}
+}
+
 async function init() {
 	state.permalink = getPermalinkFromUrl();
 	if (!state.permalink) {
@@ -277,6 +300,7 @@ async function init() {
 
 	els.postDate.value = defaultDateInputValue();
 	els.postForm.addEventListener("submit", submitToBuffer);
+	els.generatePostTextBtn.addEventListener("click", handleGeneratePostTextClick);
 
 	try {
 		setStatus("Loading comic data...");
@@ -290,10 +314,6 @@ async function init() {
 
 		setStatus("Generating full strip and panel images...");
 		await exportImages();
-
-		setStatus("Generating social post text with GPT-5.4...");
-		const postText = await generatePostText();
-		els.postText.value = postText;
 
 		setStatus("Ready");
 	} catch (error) {
