@@ -113,8 +113,10 @@ The Comic Promoter is designed as a separable feature module and lives only in:
 4. Generate image data in-memory (base64):
    - full strip image
    - three individual panel images
-5. Generate social post copy via OpenAI GPT-5.4 using:
+5. User manually generates social post copy via OpenAI GPT-5.4 by clicking **Generate Post Text** (it does not auto-run on page load):
    - `/api/comicpromoter/generate_post_text.php`
+   - Optional UI field: `Prompt` (short text input). If non-empty, it is sent as an additional `user` message immediately after the `system` message.
+   - The system prompt remains unchanged regardless of optional prompt input.
    - Output must include `[URL_HERE]` placeholder for final link substitution.
 6. Submit scheduling payload to:
    - `/api/comicpromoter/schedule_buffer_posts.php`
@@ -123,11 +125,11 @@ The Comic Promoter is designed as a separable feature module and lives only in:
 7. Schedule Buffer posts for:
    - Twitter/X (full strip image)
    - LinkedIn (full strip image)
-   - Instagram (three panel images)
-8. Scheduled time is fixed at **11:59am** on the selected date.
+   - Instagram (single post with all three panel images attached)
+8. Scheduled time is fixed at **11:59am America/New_York** on the selected date.
 
 ### API Endpoints in `/api/comicpromoter/`
-- `generate_post_text.php`: Generates post text with GPT-5.4.
+- `generate_post_text.php`: Generates post text with GPT-5.4; accepts `comic` plus optional `prompt` and inserts optional prompt as an additional `user` message after `system`.
 - `schedule_buffer_posts.php`: Creates scheduled Buffer posts.
 - `media.php`: Serves temporary generated image files for Buffer media URLs.
 
