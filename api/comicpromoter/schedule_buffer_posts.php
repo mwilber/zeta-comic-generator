@@ -6,6 +6,15 @@ header('Content-Type: application/json; charset=UTF-8');
 header('Access-Control-Allow-Origin: *');
 
 require_once __DIR__ . '/../includes/key.php';
+if (!class_exists('Aws\\S3\\S3Client')) {
+	$vendorAutoload = __DIR__ . '/../../vendor/autoload.php';
+	if (is_file($vendorAutoload)) {
+		require_once $vendorAutoload;
+	}
+}
+
+const BUFFER_MEDIA_S3_FOLDER = 'buffer/';
+const BUFFER_MEDIA_S3_PUBLIC_ROOT = 'https://zeta-comic-generator.s3.us-east-2.amazonaws.com/';
 
 $output = new stdClass();
 $output->error = '';
@@ -205,15 +214,7 @@ function storeUploadedMediaFile($file, $prefix) {
 	if ($mime === 'image/webp') $ext = '.webp';
 
 	$id = $prefix . '_' . bin2hex(random_bytes(12));
-	$dir = __DIR__ . '/tmp';
-	if (!is_dir($dir)) {
-		mkdir($dir, 0775, true);
-	}
-	$path = $dir . '/' . $id . $ext;
-	if (!move_uploaded_file($tmpName, $path)) {
-		return null;
-	}
-	return getPublicBaseUrl() . '/api/comicpromoter/media.php?id=' . rawurlencode($id . $ext);
+	return uploadMediaToS3FromPath($tmpName, $id . $ext, false);
 }
 
 function normalizeUploadedFilesArray($filesField) {
@@ -258,17 +259,77 @@ function storeImageDataUrl($dataUrl, $prefix) {
 	if ($decoded === false) return null;
 
 	$id = $prefix . '_' . bin2hex(random_bytes(12));
-	$dir = __DIR__ . '/tmp';
-	if (!is_dir($dir)) {
-		mkdir($dir, 0775, true);
-	}
-	$path = $dir . '/' . $id . $ext;
-
-	if (file_put_contents($path, $decoded) === false) {
+	$tmpFile = writeBufferTmpMediaFile($decoded, $id . $ext);
+	if (!$tmpFile) {
 		return null;
 	}
 
-	return getPublicBaseUrl() . '/api/comicpromoter/media.php?id=' . rawurlencode($id . $ext);
+	return uploadMediaToS3FromPath($tmpFile, $id . $ext, true);
+}
+
+function writeBufferTmpMediaFile($bytes, $fileName) {
+	$dir = __DIR__ . '/tmp';
+	if (!is_dir($dir) && !mkdir($dir, 0775, true) && !is_dir($dir)) {
+		return null;
+	}
+
+	$path = $dir . '/' . $fileName;
+	if (file_put_contents($path, $bytes) === false) {
+		return null;
+	}
+
+	return $path;
+}
+
+function uploadMediaToS3FromPath($localPath, $fileName, $deleteLocalAfterUpload) {
+	if (!is_string($localPath) || $localPath === '' || !is_file($localPath)) {
+		return null;
+	}
+	if (!class_exists('Aws\\S3\\S3Client')) {
+		return null;
+	}
+	if (!defined('AWS_REGION') || !defined('AWS_ACCESS_KEY') || !defined('AWS_SECRET_KEY') || !defined('BUCKET_NAME')) {
+		return null;
+	}
+
+	$mime = 'image/png';
+	if (function_exists('mime_content_type')) {
+		$detected = (string)mime_content_type($localPath);
+		if ($detected) {
+			$mime = $detected;
+		}
+	}
+
+	$uploadOk = false;
+	try {
+		$s3Client = new Aws\S3\S3Client([
+			'version' => 'latest',
+			'region' => AWS_REGION,
+			'credentials' => [
+				'key' => AWS_ACCESS_KEY,
+				'secret' => AWS_SECRET_KEY,
+			],
+		]);
+		$s3Client->putObject([
+			'Bucket' => BUCKET_NAME,
+			'Key' => BUFFER_MEDIA_S3_FOLDER . $fileName,
+			'SourceFile' => $localPath,
+			'ACL' => 'public-read',
+			'ContentType' => $mime,
+		]);
+		$uploadOk = true;
+	} catch (Exception $e) {
+		$uploadOk = false;
+	}
+
+	if ($deleteLocalAfterUpload && is_file($localPath)) {
+		@unlink($localPath);
+	}
+	if (!$uploadOk) {
+		return null;
+	}
+
+	return BUFFER_MEDIA_S3_PUBLIC_ROOT . BUFFER_MEDIA_S3_FOLDER . rawurlencode($fileName);
 }
 
 function findBufferChannelIds($accessToken, $overrides = []) {
@@ -433,24 +494,6 @@ GQL;
 	$ok = new stdClass();
 	$ok->post = json_decode(json_encode($createPost['post']));
 	return $ok;
-}
-
-function getPublicBaseUrl() {
-	$scheme = 'https';
-	if (!empty($_SERVER['HTTP_X_FORWARDED_PROTO'])) {
-		$scheme = explode(',', $_SERVER['HTTP_X_FORWARDED_PROTO'])[0];
-	} elseif (!empty($_SERVER['REQUEST_SCHEME'])) {
-		$scheme = $_SERVER['REQUEST_SCHEME'];
-	} elseif (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') {
-		$scheme = 'https';
-	} else {
-		$scheme = 'http';
-	}
-
-	$host = $_SERVER['HTTP_X_FORWARDED_HOST'] ?? ($_SERVER['HTTP_HOST'] ?? 'comicgenerator.greenzeta.com');
-	$host = trim(explode(',', $host)[0]);
-
-	return $scheme . '://' . $host;
 }
 
 function callBufferGraphQL($accessToken, $query, $variables = []) {
