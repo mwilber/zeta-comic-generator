@@ -122,6 +122,8 @@ The Comic Promoter is designed as a separable feature module and lives only in:
    - `/api/comicpromoter/schedule_buffer_posts.php`
    - Use `multipart/form-data` with fields: `permalink`, `postTextTemplate`, `additionalText`, `hashtags`, `date`
    - Upload media files as `strip` (single file) and `panels[]` (three files)
+   - Server uploads media to S3 under `buffer/` and passes public S3 URLs to Buffer:
+     - `https://zeta-comic-generator.s3.us-east-2.amazonaws.com/buffer/{filename}`
 7. Schedule Buffer posts for:
    - Twitter/X (full strip image)
    - LinkedIn (full strip image)
@@ -131,12 +133,15 @@ The Comic Promoter is designed as a separable feature module and lives only in:
 ### API Endpoints in `/api/comicpromoter/`
 - `generate_post_text.php`: Generates post text with GPT-5.4; accepts `comic` plus optional `prompt` and inserts optional prompt as an additional `user` message after `system`.
 - `schedule_buffer_posts.php`: Creates scheduled Buffer posts.
-- `media.php`: Serves temporary generated image files for Buffer media URLs.
+- `media.php`: Legacy helper that serves temporary generated image files; current scheduling flow uses S3 `buffer/` URLs for Buffer media instead.
 
 ### Comic Promoter Debugging Learnings (April 2026)
 - Large JSON payloads containing inline base64 image data were unreliable in production and repeatedly failed with `Invalid request payload` / JSON control-character parsing errors.
 - Wrapping payload JSON as base64/base64url did not reliably fix transport corruption in this environment.
 - Stable approach: send text fields + binary image files via `multipart/form-data`, then persist uploads server-side and pass resulting media URLs to Buffer.
+- Confirmed in production testing: Instagram/Buffer media fetch failures were caused by Buffer being unable to reliably crawl media hosted on the app server domain.
+- Current stable fix: upload Comic Promoter media to S3 in `buffer/` and send Buffer S3 public URLs (`https://zeta-comic-generator.s3.us-east-2.amazonaws.com/buffer/{filename}`).
+- Implementation note (`/api/comicpromoter/schedule_buffer_posts.php`): uploaded files are sent directly to S3 from PHP upload temp paths; data URL images are written to `/api/comicpromoter/tmp`, uploaded to S3, then local temp files are deleted.
 - Buffer `CreatePostInput.mode` must be `customScheduled` for this account/schema. `customSchedule` fails with GraphQL enum validation errors.
 - Buffer GraphQL `createPost` currently does not expose a URL-shortening toggle (no documented `shorten` field in `CreatePostInput` or per-service metadata inputs); the legacy REST API had `shorten`, but this integration is GraphQL-based.
 - Follow-up item: periodically check Buffer GraphQL docs/changelog for a URL-shortening setting and implement it if/when officially added.
