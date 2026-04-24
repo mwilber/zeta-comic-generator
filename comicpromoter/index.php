@@ -1,6 +1,8 @@
 <?php
 require_once __DIR__ . '/../api/includes/characteractions.php';
 $version = "1.0.0";
+$permalink = isset($_GET['permalink']) ? trim((string)$_GET['permalink']) : '';
+$detailHref = '/detail/' . rawurlencode($permalink);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -16,7 +18,12 @@ $version = "1.0.0";
 </head>
 <body class="comicpromoter" data-status="ready">
 	<main class="content">
-		<h1>Comic Promoter</h1>
+		<div class="page-header">
+			<h1>Comic Promoter</h1>
+			<?php if ($permalink !== ''): ?>
+				<a class="detail-link" href="<?php echo htmlspecialchars($detailHref, ENT_QUOTES, 'UTF-8'); ?>">View Comic</a>
+			<?php endif; ?>
+		</div>
 		<p id="status" class="status">Loading...</p>
 
 		<section class="card">

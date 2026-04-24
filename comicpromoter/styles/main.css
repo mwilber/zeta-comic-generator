@@ -4,6 +4,20 @@
 	padding: 20px;
 }
 
+.page-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 16px;
+}
+
+.detail-link {
+	font-weight: 700;
+	color: #0b57d0;
+	text-decoration: underline;
+	white-space: nowrap;
+}
+
 .card {
 	background: #fff;
 	border: 1px solid #ccc;
@@ -77,6 +91,11 @@
 }
 
 @media (max-width: 600px) {
+	.page-header {
+		flex-direction: column;
+		align-items: flex-start;
+	}
+
 	.preview-image.panel {
 		width: 100%;
 	}
