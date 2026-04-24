@@ -11,3 +11,5 @@ composer.phar
 vendor/
 .env
 .dh-diag
+.dmux
+.dmux-hooks

@@ -179,6 +179,14 @@ function AttachUiEvents() {
 			},
 		},
 		{
+			selector: "#promote",
+			event: "click",
+			handler: () => {
+				window.location =
+					"/comicpromoter/?permalink=" + encodeURIComponent(comicId);
+			},
+		},
+		{
 			selector: "#download",
 			event: "click",
 			handler: () => {
