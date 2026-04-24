@@ -183,7 +183,7 @@ function AttachUiEvents() {
 			event: "click",
 			handler: () => {
 				window.location =
-					"/comicpromoter/?permalink=" + encodeURIComponent(comicId);
+					"/comicpromoter/index.php?permalink=" + encodeURIComponent(comicId);
 			},
 		},
 		{
