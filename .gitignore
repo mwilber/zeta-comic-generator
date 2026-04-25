@@ -13,3 +13,4 @@ vendor/
 .dh-diag
 .dmux
 .dmux-hooks
+api/comicpromoter/tmp/
