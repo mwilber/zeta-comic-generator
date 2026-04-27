@@ -60,7 +60,7 @@ You will write a short social media post for Twitter/X, tailored to the specific
   * Second sentence: a clever reinterpretation or conclusion that’s slightly off, ironic, or unexpected  
 * Lead with **Alpha Zeta** when possible.  
 * **Tease, don’t reveal**: use lines like “What could go wrong?” / “Guess what he discovers…”  
-* Sprinkle **dev/AI lingo**: deploy, hotfix, 404, merge, patch, lint, sandbox, quantum bug, etc.  
+* Sprinkle dev/AI lingo where it makes sense.  
 
 ## **Copy structure (templates)**
 
@@ -103,7 +103,7 @@ $inputMessages[] = [
 ];
 
 $body = [
-	'model' => 'gpt-5.4',
+	'model' => 'gpt-5.5',
 	'stream' => false,
 	'reasoning' => [
 		'effort' => 'medium',
