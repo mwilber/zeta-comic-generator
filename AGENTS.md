@@ -11,6 +11,7 @@ Zeta Comic Generator is an AI-powered comic strip creation tool that generates 3
 ### Backend (PHP/MySQL)
 - **API Router**: `/api/index.php` routes requests to controllers under `/api/controllers/`.
 - **Controllers**: handle app endpoints (`comic`, `detail`, `gallery`, `series`, `save`, `metrics`, `thumbnail`, `update`, `imgproxy`) and generation endpoints (`concept`, `script`, `background`, `action`, `image`) plus simulation endpoints.
+- **Comic Promoter API (standalone)**: `/api/comicpromoter/` contains feature-specific endpoints that are intentionally not routed through `/api/index.php`.
 - **Database**: MySQL tables include `comics`, `series`, `continuity`, `comic_continuity`, `backgrounds`, `requestlog`, `metrics`, `categories`.
 - **AI Integration**: Models in `/api/models/` implement text and image generation.
 - **Utilities**: `/api/includes/` provides DB, S3, prompt templates, logging, character actions, and API keys.
@@ -22,6 +23,7 @@ Zeta Comic Generator is an AI-powered comic strip creation tool that generates 3
 - **Scripts**: `/scripts/` page controllers (generate, gallery, detail, home, edit, debugger).
 - **Modules**: `/scripts/modules/` shared classes for rendering, exporting, API access, and script display.
 - **Styles**: `/styles/` page-specific CSS and shared layout styles (`main.css`, `strip.css`, `script.css`, etc.).
+- **Comic Promoter frontend (standalone)**: `/comicpromoter/` contains a separate index page, scripts, and styles for social posting workflow.
 
 ## Key Components
 
@@ -91,6 +93,72 @@ The admin panel is in `/admin/` and has its own `CLAUDE.md` with scope restricti
 - **S3 Assets**: `zeta-comic-generator.s3.us-east-2.amazonaws.com`
 - **Production**: `comicgenerator.greenzeta.com`
 - **Development**: `zcgdev.greenzeta.com`
+
+## Comic Promoter Feature
+
+The Comic Promoter is designed as a separable feature module and lives only in:
+- `/comicpromoter/`
+- `/api/comicpromoter/`
+
+### Entry Point
+- Frontend URL: `/comicpromoter/?permalink={comic_permalink}`
+
+### Workflow
+1. Read `permalink` from query string.
+2. Fetch comic detail from the public API URL:
+   - `https://comicgenerator.greenzeta.com/api/detail/{permalink}/`
+3. Render the comic with existing shared modules:
+   - `ComicRenderer` (`/scripts/modules/ComicRenderer/ComicRenderer.js`)
+   - `ComicExporter` (`/scripts/modules/ComicExporter.js`)
+4. Generate image data in-memory (base64):
+   - full strip image
+   - three individual panel images
+5. User manually generates social post copy via OpenAI GPT-5.4 by clicking **Generate Post Text** (it does not auto-run on page load):
+   - `/api/comicpromoter/generate_post_text.php`
+   - Optional UI field: `Prompt` (short text input). If non-empty, it is sent as an additional `user` message immediately after the `system` message.
+   - The system prompt remains unchanged regardless of optional prompt input.
+   - Output must include `[URL_HERE]` placeholder for final link substitution.
+6. Submit scheduling payload to:
+   - `/api/comicpromoter/schedule_buffer_posts.php`
+   - Use `multipart/form-data` with fields: `permalink`, `postTextTemplate`, `additionalText`, `hashtags`, `date`
+   - Upload media files as `strip` (single file) and `panels[]` (three files)
+   - Server uploads media to S3 under `buffer/` and passes public S3 URLs to Buffer:
+     - `https://zeta-comic-generator.s3.us-east-2.amazonaws.com/buffer/{filename}`
+7. Schedule Buffer posts for:
+   - Twitter/X (full strip image)
+   - LinkedIn (full strip image)
+   - Instagram (single post with all three panel images attached)
+8. Scheduled time is fixed at **11:59am America/New_York** on the selected date.
+
+### API Endpoints in `/api/comicpromoter/`
+- `generate_post_text.php`: Generates post text with GPT-5.4; accepts `comic` plus optional `prompt` and inserts optional prompt as an additional `user` message after `system`.
+- `schedule_buffer_posts.php`: Creates scheduled Buffer posts.
+- `media.php`: Legacy helper that serves temporary generated image files; current scheduling flow uses S3 `buffer/` URLs for Buffer media instead.
+
+### Comic Promoter Debugging Learnings (April 2026)
+- Large JSON payloads containing inline base64 image data were unreliable in production and repeatedly failed with `Invalid request payload` / JSON control-character parsing errors.
+- Wrapping payload JSON as base64/base64url did not reliably fix transport corruption in this environment.
+- Stable approach: send text fields + binary image files via `multipart/form-data`, then persist uploads server-side and pass resulting media URLs to Buffer.
+- Confirmed in production testing: Instagram/Buffer media fetch failures were caused by Buffer being unable to reliably crawl media hosted on the app server domain.
+- Current stable fix: upload Comic Promoter media to S3 in `buffer/` and send Buffer S3 public URLs (`https://zeta-comic-generator.s3.us-east-2.amazonaws.com/buffer/{filename}`).
+- Implementation note (`/api/comicpromoter/schedule_buffer_posts.php`): uploaded files are sent directly to S3 from PHP upload temp paths; data URL images are written to `/api/comicpromoter/tmp`, uploaded to S3, then local temp files are deleted.
+- Buffer `CreatePostInput.mode` must be `customScheduled` for this account/schema. `customSchedule` fails with GraphQL enum validation errors.
+- Buffer GraphQL `createPost` currently does not expose a URL-shortening toggle (no documented `shorten` field in `CreatePostInput` or per-service metadata inputs); the legacy REST API had `shorten`, but this integration is GraphQL-based.
+- Follow-up item: periodically check Buffer GraphQL docs/changelog for a URL-shortening setting and implement it if/when officially added.
+- Keep deep payload byte-dump diagnostics out of steady-state code; add them only as temporary troubleshooting instrumentation and remove once root cause is confirmed.
+
+### Required Keys in `/api/includes/key.php`
+- `OPENAI_KEY` (existing)
+- `BUFFER_ACCESS_TOKEN`
+- Optional Buffer profile overrides:
+  - `BUFFER_TWITTER_PROFILE_ID`
+  - `BUFFER_LINKEDIN_PROFILE_ID`
+  - `BUFFER_INSTAGRAM_PROFILE_ID`
+
+### Isolation Rules
+- Do not modify legacy pages/controllers to support Comic Promoter.
+- Keep all Comic Promoter code isolated to `/comicpromoter` and `/api/comicpromoter`.
+- Reuse existing shared front-end modules where possible instead of duplicating logic.
 
 ## Patterns & Conventions
 
