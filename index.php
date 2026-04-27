@@ -52,7 +52,7 @@
 			if ($result && isset($result->json)) {
 				$meta->hash = $result->permalink;
 				$meta->title = $result->title . " - " . $meta->siteTitle;
-				$meta->image = $meta->siteUrl."/assets/thumbnails/thumb_".$result->permalink.".png";
+				$meta->image = BUCKET_URL . "/thumbnails/thumb_".$result->permalink.".png";
 				$meta->description = "Check out my comic strip `" . $result->title . "` from Zeta Comic Generator. " . $meta->description;
 				$meta->imageDescription = $result->title . " from " . $meta->imageDescription;
 			}
