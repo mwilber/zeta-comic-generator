@@ -8,7 +8,8 @@ require_once('grok.php');
 class ModelGrokAdvanced extends ModelGrok {
 	function __construct() {
 		parent::__construct();
-		$this->modelName = "grok-4";
+		$this->modelName = "grok-4.3";
+		//$this->modelName = "grok-4";
 	}
 
 	protected function buildRequestBody($messages) {
