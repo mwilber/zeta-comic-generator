@@ -77,6 +77,10 @@
 			<span class="cartoon-font">Share</span>
 		</button>
 		<?php if(defined("DEV_SITE") && DEV_SITE === true): ?>
+		<button id="promote" class="cartoon-button">
+			<img class="burst" src="/assets/images/speech_bubble.svg" alt="Cartoon speech bubble icon" />
+			<span class="cartoon-font">Promote</span>
+		</button>
 		<button id="edit" class="cartoon-button">
 			<img class="burst" src="/assets/images/speech_bubble.svg" alt="Cartoon speech bubble icon" />
 			<span class="cartoon-font">Edit</span>
