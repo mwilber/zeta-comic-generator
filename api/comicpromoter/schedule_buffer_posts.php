@@ -413,10 +413,14 @@ function normalizeBufferService($service) {
 }
 
 function createBufferScheduledPost($accessToken, $params) {
-	$images = [];
+	$assets = [];
 	foreach (($params['imageUrls'] ?? []) as $url) {
 		if (is_string($url) && $url) {
-			$images[] = ['url' => $url];
+			$assets[] = [
+				'image' => [
+					'url' => $url,
+				],
+			];
 		}
 	}
 
@@ -447,9 +451,7 @@ GQL;
 		'schedulingType' => 'automatic',
 		'mode' => 'customScheduled',
 		'dueAt' => $params['dueAt'],
-		'assets' => [
-			'images' => $images,
-		],
+		'assets' => $assets,
 	];
 
 	if (($params['service'] ?? '') === 'instagram') {

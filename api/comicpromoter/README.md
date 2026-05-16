@@ -17,5 +17,5 @@ Add the following constants to `api/includes/key.php`:
 ## Endpoints
 
 - `generate_post_text.php` - Generates social copy using GPT-5.4 with `[URL_HERE]` placeholder.
-- `schedule_buffer_posts.php` - Schedules posts to Buffer for X, LinkedIn, and Instagram using Buffer GraphQL API (`https://api.buffer.com`).
+- `schedule_buffer_posts.php` - Schedules posts to Buffer for X, LinkedIn, and Instagram using Buffer GraphQL API (`https://api.buffer.com`). Image media uses Buffer's ordered `assets: [{ image: { url } }]` input shape required after May 25, 2026.
 - `media.php?id=...` - Serves temporary media files generated from base64 data URLs.
