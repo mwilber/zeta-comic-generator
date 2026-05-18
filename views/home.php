@@ -30,6 +30,16 @@
 	<a href="/generate">Create</a> comics from your ideas.
 </header>
 
+<section class="animated-short-callout" aria-labelledby="animated-short-title">
+	<a href="https://www.youtube.com/watch?v=eP0bWg1HjKk" target="_blank" rel="noopener noreferrer">
+		<img src="https://i.ytimg.com/vi/eP0bWg1HjKk/hqdefault.jpg" alt="Poster frame for Selfie, Alpha Zeta's first animated short">
+		<span>
+			<strong id="animated-short-title">Watch Alpha in his first animated short.</strong>
+			<em>Selfie</em> was created with AI video generators. Now on YouTube!
+		</span>
+	</a>
+</section>
+
 <h2>Latest Comics</h2>
 <div id="gallery" role="region" aria-label="Gallery of latest comics">
 <?php foreach ($rows as $row): ?>
