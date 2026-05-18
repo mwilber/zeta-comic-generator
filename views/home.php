@@ -35,7 +35,7 @@
 		<img src="https://i.ytimg.com/vi/eP0bWg1HjKk/hqdefault.jpg" alt="Poster frame for Selfie, Alpha Zeta's first animated short">
 		<span>
 			<strong id="animated-short-title">Watch Alpha in his first animated short.</strong>
-			<em>Selfie</em> was created with AI video generators.
+			Created with AI video generators: <em>Selfie</em>
 		</span>
 	</a>
 </section>
