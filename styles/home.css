@@ -26,6 +26,51 @@ main p {
     margin: 0;
 }
 
+.animated-short-callout {
+    background: #eaf4db;
+    border: solid 2px #333e4d;
+    box-shadow: 4px 4px 0 rgba(51, 62, 77, 0.25);
+    margin: 0.5em auto 2em auto;
+    max-width: 760px;
+    padding: 0.75em;
+}
+
+.animated-short-callout a {
+    align-items: center;
+    color: #333e4d;
+    display: flex;
+    gap: 1em;
+    text-decoration: none;
+}
+
+.animated-short-callout img {
+    aspect-ratio: 16 / 9;
+    border: solid 2px #000;
+    flex: 0 0 190px;
+    object-fit: cover;
+    width: 190px;
+}
+
+.animated-short-callout span {
+    display: block;
+    font-size: 1.35em;
+    line-height: 1.35em;
+}
+
+.animated-short-callout strong {
+    display: block;
+    font-family: 'Bangers', Arial, Helvetica, sans-serif;
+    font-size: 1.35em;
+    font-weight: normal;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.animated-short-callout em {
+    font-style: italic;
+    font-weight: bold;
+}
+
 .action-buttons {
     font-size: 3em;
     margin-top: 0.5em;
@@ -142,5 +187,23 @@ p.description {
 
     p.diagram img {
         width: 100%;
+    }
+
+    .animated-short-callout {
+        margin-bottom: 1.5em;
+    }
+
+    .animated-short-callout a {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .animated-short-callout img {
+        flex-basis: auto;
+        width: 100%;
+    }
+
+    .animated-short-callout span {
+        font-size: 1.15em;
     }
 } 
