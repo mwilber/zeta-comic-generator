@@ -6,7 +6,8 @@ This directory contains standalone API endpoints for the `comicpromoter` feature
 
 Add the following constants to `api/includes/key.php`:
 
-- `BUFFER_ACCESS_TOKEN`
+- `BUFFER_API_KEY`
+- Legacy fallback: `BUFFER_ACCESS_TOKEN`
 - Optional overrides:
   - `BUFFER_TWITTER_PROFILE_ID` (Buffer Channel ID override)
   - `BUFFER_LINKEDIN_PROFILE_ID` (Buffer Channel ID override)

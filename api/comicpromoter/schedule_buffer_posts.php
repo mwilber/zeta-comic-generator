@@ -19,6 +19,7 @@ const BUFFER_MEDIA_S3_PUBLIC_ROOT = 'https://zeta-comic-generator.s3.us-east-2.a
 $output = new stdClass();
 $output->error = '';
 $output->result = null;
+$bufferApiKey = getBufferApiKey();
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 	http_response_code(405);
@@ -27,9 +28,9 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 	exit;
 }
 
-if (!defined('BUFFER_ACCESS_TOKEN') || !BUFFER_ACCESS_TOKEN) {
+if (!$bufferApiKey) {
 	http_response_code(500);
-	$output->error = 'Buffer access token not configured. Set BUFFER_ACCESS_TOKEN in api/includes/key.php';
+	$output->error = 'Buffer API key not configured. Set BUFFER_API_KEY in api/includes/key.php';
 	echo json_encode($output);
 	exit;
 }
@@ -115,7 +116,7 @@ if (!$stripMediaUrl || count($panelMediaUrls) < 3) {
 	exit;
 }
 
-$channelIds = findBufferChannelIds(BUFFER_ACCESS_TOKEN, [
+$channelIds = findBufferChannelIds($bufferApiKey, [
 	'twitter' => defined('BUFFER_TWITTER_PROFILE_ID') ? BUFFER_TWITTER_PROFILE_ID : '',
 	'linkedin' => defined('BUFFER_LINKEDIN_PROFILE_ID') ? BUFFER_LINKEDIN_PROFILE_ID : '',
 	'instagram' => defined('BUFFER_INSTAGRAM_PROFILE_ID') ? BUFFER_INSTAGRAM_PROFILE_ID : '',
@@ -140,7 +141,7 @@ foreach (['twitter', 'linkedin', 'instagram'] as $service) {
 }
 
 $results = new stdClass();
-$results->twitter = createBufferScheduledPost(BUFFER_ACCESS_TOKEN, [
+$results->twitter = createBufferScheduledPost($bufferApiKey, [
 	'channelId' => $channelIds['twitter'],
 	'text' => $finalPostText,
 	'dueAt' => $scheduledAtIso,
@@ -148,7 +149,7 @@ $results->twitter = createBufferScheduledPost(BUFFER_ACCESS_TOKEN, [
 	'imageUrls' => [$stripMediaUrl],
 ]);
 
-$results->linkedin = createBufferScheduledPost(BUFFER_ACCESS_TOKEN, [
+$results->linkedin = createBufferScheduledPost($bufferApiKey, [
 	'channelId' => $channelIds['linkedin'],
 	'text' => $finalPostText,
 	'dueAt' => $scheduledAtIso,
@@ -157,7 +158,7 @@ $results->linkedin = createBufferScheduledPost(BUFFER_ACCESS_TOKEN, [
 ]);
 
 // Instagram: one post with all three panel images attached.
-$results->instagram = createBufferScheduledPost(BUFFER_ACCESS_TOKEN, [
+$results->instagram = createBufferScheduledPost($bufferApiKey, [
 	'channelId' => $channelIds['instagram'],
 	'text' => $finalPostText,
 	'dueAt' => $scheduledAtIso,
@@ -182,6 +183,24 @@ foreach (['twitter', 'linkedin', 'instagram'] as $network) {
 $output->result = $results;
 
 echo json_encode($output);
+
+function getBufferApiKey() {
+	if (defined('BUFFER_API_KEY') && BUFFER_API_KEY) {
+		return BUFFER_API_KEY;
+	}
+	$envApiKey = getenv('BUFFER_API_KEY');
+	if ($envApiKey) {
+		return $envApiKey;
+	}
+	if (defined('BUFFER_ACCESS_TOKEN') && BUFFER_ACCESS_TOKEN) {
+		return BUFFER_ACCESS_TOKEN;
+	}
+	$envAccessToken = getenv('BUFFER_ACCESS_TOKEN');
+	if ($envAccessToken) {
+		return $envAccessToken;
+	}
+	return '';
+}
 
 function buildScheduleIso8601($date) {
 	try {
