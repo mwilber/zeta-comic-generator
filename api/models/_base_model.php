@@ -124,15 +124,12 @@ class BaseModel {
 		$json = $response;
 		$result->data = $json;
 
-		$result->error = $json->error;
+		$result->error = $json->error ?? null;
 
-		if(isset($json->choices[0]->message->content)) {
-			$script = trim($json->choices[0]->message->content);
-			$script = str_replace("\\n", "", $script);
-			$script = str_replace("\\r", "", $script);
-			$script = str_replace("\\t", "", $script);
-			$script = str_replace("```json", "", $script);
-			$script = str_replace("`", "", $script);
+		$script = $this->extractTextFromResponse($json);
+
+		if($script !== null) {
+			$script = $this->cleanJsonText($script);
 			$jscript = json_decode($script);
 
 			$result->debug = $script;
@@ -141,12 +138,87 @@ class BaseModel {
 
 		if(isset($json->usage)) {
 			$result->tokens = [
-				"prompt_tokens" => $json->usage->prompt_tokens,
-				"completion_tokens" => $json->usage->completion_tokens,
+				"prompt_tokens" => $json->usage->prompt_tokens ?? $json->usage->input_tokens ?? 0,
+				"completion_tokens" => $json->usage->completion_tokens ?? $json->usage->output_tokens ?? 0,
 			];
 		}
 
 		return $result;
+	}
+
+	/**
+	 * Extract generated text from OpenAI Chat Completions or Responses API payloads.
+	 *
+	 * @param stdClass|null $json The decoded response.
+	 * @return string|null The generated text, if found.
+	 */
+	protected function extractTextFromResponse($json) {
+		if(!is_object($json)) return null;
+
+		if(isset($json->choices[0]->message->content) && is_string($json->choices[0]->message->content)) {
+			return trim($json->choices[0]->message->content);
+		}
+
+		if(isset($json->choices[0]->text) && is_string($json->choices[0]->text)) {
+			return trim($json->choices[0]->text);
+		}
+
+		if(isset($json->output_text) && is_string($json->output_text)) {
+			return trim($json->output_text);
+		}
+
+		if(!isset($json->output) || !is_array($json->output)) return null;
+
+		$text = $this->extractTextFromResponsesOutput($json->output, true);
+		if($text !== null) return $text;
+
+		return $this->extractTextFromResponsesOutput($json->output, false);
+	}
+
+	/**
+	 * Extract text from a Responses API output array.
+	 *
+	 * @param array $output The Responses API output array.
+	 * @param bool $messageOnly Whether to only inspect final message items.
+	 * @return string|null The generated text, if found.
+	 */
+	protected function extractTextFromResponsesOutput($output, $messageOnly) {
+		foreach($output as $item) {
+			if(!is_object($item)) continue;
+			if($messageOnly && (!isset($item->type) || $item->type !== "message")) continue;
+			if(!isset($item->content)) continue;
+
+			if(is_string($item->content) && trim($item->content) !== "") {
+				return trim($item->content);
+			}
+
+			if(!is_array($item->content)) continue;
+
+			foreach($item->content as $contentItem) {
+				if(!is_object($contentItem)) continue;
+				if(isset($contentItem->text) && is_string($contentItem->text) && trim($contentItem->text) !== "") {
+					return trim($contentItem->text);
+				}
+			}
+		}
+
+		return null;
+	}
+
+	/**
+	 * Normalize model text before decoding JSON.
+	 *
+	 * @param string $text The generated text.
+	 * @return string Cleaned JSON text.
+	 */
+	protected function cleanJsonText($text) {
+		$text = trim($text);
+		$text = str_replace("\\n", "", $text);
+		$text = str_replace("\\r", "", $text);
+		$text = str_replace("\\t", "", $text);
+		$text = str_replace("```json", "", $text);
+		$text = str_replace("`", "", $text);
+		return trim($text);
 	}
 
 	/**
