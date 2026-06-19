@@ -5,7 +5,7 @@ require_once('_base_model.php');
  */
 class ModelGptImage extends BaseModel {
 	function __construct() {
-		$this->modelName = "gpt-image-1.5";
+		$this->modelName = "gpt-image-2";
 		$this->apiUrl = "https://api.openai.com/v1/images/generations";
 		$this->apiKey = OPENAI_KEY;
 		$this->imageSize = "1024x1024";
