@@ -74,16 +74,16 @@ class ModelGptImage extends BaseModel {
 
 		if(isset($json->data) && is_array($json->data)) {
 			foreach($json->data as $item) {
-				if(is_object($item) && isset($item->b64_json) && is_string($item->b64_json) && $item->b64_json !== "") {
-					return $item->b64_json;
+				if(is_object($item) && isset($item->b64_json) && is_string($item->b64_json) && trim($item->b64_json) !== "") {
+					return trim($item->b64_json);
 				}
 			}
 		}
 
 		if(isset($json->output) && is_array($json->output)) {
 			foreach($json->output as $item) {
-				if(is_object($item) && isset($item->type) && $item->type === "image_generation_call" && isset($item->result) && is_string($item->result) && $item->result !== "") {
-					return $item->result;
+				if(is_object($item) && isset($item->type) && $item->type === "image_generation_call" && isset($item->result) && is_string($item->result) && trim($item->result) !== "") {
+					return trim($item->result);
 				}
 			}
 		}

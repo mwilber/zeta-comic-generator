@@ -277,11 +277,11 @@ class BaseModel {
 	 */
 	protected function saveImageFromBase64($base64, $modelId) {
 		$saveDir = 'backgrounds';
-		$output_dir = '../assets/' . $saveDir . '-full';
+		$output_dir = dirname(__DIR__, 2) . '/assets/' . $saveDir . '-full';
 		$absolute_path = '/assets/' . $saveDir . '-full';
 
 		if (!file_exists($output_dir)) {
-			mkdir($output_dir);
+			mkdir($output_dir, 0777, true);
 		}
 
 		$i = 1;
@@ -289,14 +289,35 @@ class BaseModel {
 			$i++;
 		}
 
-		$image_data = base64_decode($base64);
+		if (!is_string($base64) || trim($base64) === "") {
+			throw new Exception("Image response did not contain base64 data.");
+		}
+
+		$base64 = trim($base64);
+		if (strpos($base64, 'base64,') !== false) {
+			$base64 = substr($base64, strpos($base64, 'base64,') + 7);
+		}
+
+		$image_data = base64_decode($base64, true);
+		if ($image_data === false || strlen($image_data) === 0) {
+			throw new Exception("Image response contained invalid base64 data.");
+		}
 
 		// TODO: Send image as url encoded base64 and modify the save script to handle.
 		$image_path = "$output_dir/$modelId" . '_' . "$i.png";
 
 		$file = fopen($image_path, 'wb');
-		fwrite($file, $image_data);
+		if (!$file) {
+			throw new Exception("Unable to open image file for writing.");
+		}
+
+		$bytesWritten = fwrite($file, $image_data);
 		fclose($file);
+
+		if ($bytesWritten === false || $bytesWritten !== strlen($image_data) || filesize($image_path) === 0) {
+			@unlink($image_path);
+			throw new Exception("Unable to write generated image data.");
+		}
 
 		$image_path = "$absolute_path/$modelId" . '_' . "$i.png";
 
