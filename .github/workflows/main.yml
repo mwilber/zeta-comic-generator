@@ -8,16 +8,32 @@ jobs:
     if: github.ref == 'refs/heads/master'
     steps:
       - name: 🚚 Get latest code                     # Checkout the latest code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v7
 
-      - name: 📂 SFTP uploader                       # Upload to SFTP 
-        uses: wangyucode/sftp-upload-action@v1.4.8
-        with:
-          host: ${{ secrets.HOST }}                  # Recommended to put the credentials in github secrets.
-          username: ${{ secrets.USER }}
-          password: ${{ secrets.PASSWORD }}
-          forceUpload: true                          # Optional, Force uploading all files, Default to false(upload only newer files).
-          localDir: '.'                              # Required, Absolute or relative to cwd.
-          remoteDir: '/home/greenzeta/comicgenerator.greenzeta.com/'                             # Required, Absolute path only.
-          exclude: '.git*,.DS_Store'                 # Optional. exclude patterns (glob), use ',' to split, Default to ''.
-          dryRun: false
+      - name: Install SFTP uploader
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes --no-install-recommends lftp
+
+      - name: 📂 SFTP uploader                       # Upload to SFTP
+        env:
+          SFTP_HOST: ${{ secrets.HOST }}
+          SFTP_USER: ${{ secrets.USER }}
+          SFTP_PASSWORD: ${{ secrets.PASSWORD }}
+        run: |
+          lftp "sftp://${SFTP_HOST}" <<EOF
+          set sftp:auto-confirm yes
+          set net:max-retries 3
+          set net:timeout 30
+          user "${SFTP_USER}" "${SFTP_PASSWORD}"
+          mkdir -p /home/greenzeta/comicgenerator.greenzeta.com/
+          mirror --reverse --verbose --ignore-time \
+            --exclude-glob .git* \
+            --exclude-glob .git*/** \
+            --exclude-glob .DS_Store \
+            --exclude-glob **/.DS_Store \
+            --exclude-glob .github/** \
+            --exclude-glob .vscode/** \
+            ./ /home/greenzeta/comicgenerator.greenzeta.com/
+          bye
+          EOF
