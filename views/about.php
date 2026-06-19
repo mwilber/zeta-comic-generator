@@ -33,7 +33,7 @@
 	<li>
 		<h3>Story</h3>
 		<ul>
-			<li><a href="https://platform.openai.com/docs/models/gpt-5.2" target="_blank" rel="noopener noreferrer">GPT 5.2</a></li>
+			<li><a href="https://platform.openai.com/docs/models/gpt-5.5" target="_blank" rel="noopener noreferrer">GPT 5.5</a></li>
 			<li><a href="https://deepmind.google/models/gemini/" target="_blank" rel="noopener noreferrer">Gemini 3.1 Pro</a></li>
 			<li><a href="https://docs.x.ai/developers/models/grok-4.3" target="_blank" rel="noopener noreferrer">Grok 4.3</a></li>
 			<li><a href="https://github.com/deepseek-ai/DeepSeek-R1" target="_blank" rel="noopener noreferrer">DeepSeek R1</a></li>
@@ -42,7 +42,7 @@
 	<li>
 		<h3>Script</h3>
 		<ul>
-			<li><a href="https://platform.openai.com/docs/models/gpt-5-mini" target="_blank" rel="noopener noreferrer">GPT 5 Mini</a></li>
+			<li><a href="https://platform.openai.com/docs/models/gpt-5.4" target="_blank" rel="noopener noreferrer">GPT 5.4</a></li>
 			<li><a href="https://deepmind.google/models/gemini/" target="_blank" rel="noopener noreferrer">Gemini 3 Flash</a></li>
 			<li><a href="https://docs.x.ai/developers/models/grok-4.20-non-reasoning" target="_blank" rel="noopener noreferrer">Grok 4.2 (non-reasoning)</a></li>
 			<li><a href="https://github.com/deepseek-ai/DeepSeek-V3" target="_blank" rel="noopener noreferrer">DeepSeek V3</a></li>
@@ -51,11 +51,11 @@
 	<li>
 		<h3>Image</h3>
 		<ul>
-			<li><a href="https://platform.openai.com/docs/models/gpt-image-1.5" target="_blank" rel="noopener noreferrer">GPT Image 1.5</a></li>
+			<li><a href="https://platform.openai.com/docs/models/gpt-image-2" target="_blank" rel="noopener noreferrer">GPT Image 2</a></li>
 			<li><a href="https://deepmind.google/models/imagen/" target="_blank" rel="noopener noreferrer">Imagen 4</a></li>
 			<li><a href="https://deepmind.google/models/gemini/" target="_blank" rel="noopener noreferrer">Nano Banana 2</a></li>
 			<li><a href="https://docs.x.ai/developers/models/grok-imagine-image" target="_blank" rel="noopener noreferrer">Grok Imagine</a></li>
-			<li><a href="https://openai.com/dall-e-3" target="_blank" rel="noopener noreferrer">Dall-E 3</a></li>
+			<li><a href="https://openai.com/dall-e-3" target="_blank" rel="noopener noreferrer">DALL-E 3</a></li>
 		</ul>
 	</li>
 </ul>

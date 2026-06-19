@@ -14,9 +14,9 @@ let api, comicRenderer, scriptRenderer;
  */
 const MODEL_GROUPS = {
 	openai: {
-		story: "gpt5",     // GPT 5
-		script: "gpt",     // GPT 5 mini
-		image: "gptimage"  // GPT Image
+		story: "gpt5",     // GPT 5.5
+		script: "gpt",     // GPT 5.4
+		image: "gptimage"  // GPT Image 2
 	},
 	google: {
 		story: "gemthink", // Gemini 3.1 Pro
