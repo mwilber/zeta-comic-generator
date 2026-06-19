@@ -7,6 +7,7 @@ class BaseModel {
 	public $apiUrl;
 	protected $apiKey;
 	protected $responseFormat = "json_object";
+	protected $requestTimeout = 30;
 
 	/**
 	 * Send a payload to the model and return the result.
@@ -242,11 +243,25 @@ class BaseModel {
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 	
 		// Timeout in seconds
-		curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+		curl_setopt($ch, CURLOPT_TIMEOUT, $this->requestTimeout);
 	
 		$response = curl_exec($ch);
+		if ($response === false) {
+			$error = curl_error($ch);
+			$errno = curl_errno($ch);
+			curl_close($ch);
+			throw new Exception("API request failed: cURL error ".$errno.($error ? " - ".$error : ""));
+		}
 
-		return json_decode($response);
+		$httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+		curl_close($ch);
+
+		$json = json_decode($response);
+		if ($json === null && json_last_error() !== JSON_ERROR_NONE) {
+			throw new Exception("API returned invalid JSON: ".json_last_error_msg()." (HTTP ".$httpCode.")");
+		}
+
+		return $json;
 	}
 
 	/**

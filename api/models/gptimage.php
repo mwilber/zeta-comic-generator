@@ -11,6 +11,7 @@ class ModelGptImage extends BaseModel {
 		$this->apiUrl = "https://api.openai.com/v1/images/generations";
 		$this->apiKey = OPENAI_KEY;
 		$this->imageSize = "1024x1024";
+		$this->requestTimeout = 120;
 	}
 
 	protected function buildRequestBody($prompt) {
