@@ -250,6 +250,9 @@ class BaseModel {
 			$error = curl_error($ch);
 			$errno = curl_errno($ch);
 			curl_close($ch);
+			if ($errno === CURLE_OPERATION_TIMEDOUT) {
+				throw new Exception("API request timed out after ".$this->requestTimeout." seconds while waiting for ".$this->modelName.".");
+			}
 			throw new Exception("API request failed: cURL error ".$errno.($error ? " - ".$error : ""));
 		}
 
