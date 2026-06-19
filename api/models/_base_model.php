@@ -7,6 +7,7 @@ class BaseModel {
 	public $apiUrl;
 	protected $apiKey;
 	protected $responseFormat = "json_object";
+	protected $requestTimeout = 30;
 
 	/**
 	 * Send a payload to the model and return the result.
@@ -124,15 +125,12 @@ class BaseModel {
 		$json = $response;
 		$result->data = $json;
 
-		$result->error = $json->error;
+		$result->error = $json->error ?? null;
 
-		if(isset($json->choices[0]->message->content)) {
-			$script = trim($json->choices[0]->message->content);
-			$script = str_replace("\\n", "", $script);
-			$script = str_replace("\\r", "", $script);
-			$script = str_replace("\\t", "", $script);
-			$script = str_replace("```json", "", $script);
-			$script = str_replace("`", "", $script);
+		$script = $this->extractTextFromResponse($json);
+
+		if($script !== null) {
+			$script = $this->cleanJsonText($script);
 			$jscript = json_decode($script);
 
 			$result->debug = $script;
@@ -141,12 +139,87 @@ class BaseModel {
 
 		if(isset($json->usage)) {
 			$result->tokens = [
-				"prompt_tokens" => $json->usage->prompt_tokens,
-				"completion_tokens" => $json->usage->completion_tokens,
+				"prompt_tokens" => $json->usage->prompt_tokens ?? $json->usage->input_tokens ?? 0,
+				"completion_tokens" => $json->usage->completion_tokens ?? $json->usage->output_tokens ?? 0,
 			];
 		}
 
 		return $result;
+	}
+
+	/**
+	 * Extract generated text from OpenAI Chat Completions or Responses API payloads.
+	 *
+	 * @param stdClass|null $json The decoded response.
+	 * @return string|null The generated text, if found.
+	 */
+	protected function extractTextFromResponse($json) {
+		if(!is_object($json)) return null;
+
+		if(isset($json->choices[0]->message->content) && is_string($json->choices[0]->message->content)) {
+			return trim($json->choices[0]->message->content);
+		}
+
+		if(isset($json->choices[0]->text) && is_string($json->choices[0]->text)) {
+			return trim($json->choices[0]->text);
+		}
+
+		if(isset($json->output_text) && is_string($json->output_text)) {
+			return trim($json->output_text);
+		}
+
+		if(!isset($json->output) || !is_array($json->output)) return null;
+
+		$text = $this->extractTextFromResponsesOutput($json->output, true);
+		if($text !== null) return $text;
+
+		return $this->extractTextFromResponsesOutput($json->output, false);
+	}
+
+	/**
+	 * Extract text from a Responses API output array.
+	 *
+	 * @param array $output The Responses API output array.
+	 * @param bool $messageOnly Whether to only inspect final message items.
+	 * @return string|null The generated text, if found.
+	 */
+	protected function extractTextFromResponsesOutput($output, $messageOnly) {
+		foreach($output as $item) {
+			if(!is_object($item)) continue;
+			if($messageOnly && (!isset($item->type) || $item->type !== "message")) continue;
+			if(!isset($item->content)) continue;
+
+			if(is_string($item->content) && trim($item->content) !== "") {
+				return trim($item->content);
+			}
+
+			if(!is_array($item->content)) continue;
+
+			foreach($item->content as $contentItem) {
+				if(!is_object($contentItem)) continue;
+				if(isset($contentItem->text) && is_string($contentItem->text) && trim($contentItem->text) !== "") {
+					return trim($contentItem->text);
+				}
+			}
+		}
+
+		return null;
+	}
+
+	/**
+	 * Normalize model text before decoding JSON.
+	 *
+	 * @param string $text The generated text.
+	 * @return string Cleaned JSON text.
+	 */
+	protected function cleanJsonText($text) {
+		$text = trim($text);
+		$text = str_replace("\\n", "", $text);
+		$text = str_replace("\\r", "", $text);
+		$text = str_replace("\\t", "", $text);
+		$text = str_replace("```json", "", $text);
+		$text = str_replace("`", "", $text);
+		return trim($text);
 	}
 
 	/**
@@ -170,11 +243,28 @@ class BaseModel {
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 	
 		// Timeout in seconds
-		curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+		curl_setopt($ch, CURLOPT_TIMEOUT, $this->requestTimeout);
 	
 		$response = curl_exec($ch);
+		if ($response === false) {
+			$error = curl_error($ch);
+			$errno = curl_errno($ch);
+			curl_close($ch);
+			if ($errno === CURLE_OPERATION_TIMEDOUT) {
+				throw new Exception("API request timed out after ".$this->requestTimeout." seconds while waiting for ".$this->modelName.".");
+			}
+			throw new Exception("API request failed: cURL error ".$errno.($error ? " - ".$error : ""));
+		}
 
-		return json_decode($response);
+		$httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+		curl_close($ch);
+
+		$json = json_decode($response);
+		if ($json === null && json_last_error() !== JSON_ERROR_NONE) {
+			throw new Exception("API returned invalid JSON: ".json_last_error_msg()." (HTTP ".$httpCode.")");
+		}
+
+		return $json;
 	}
 
 	/**
@@ -205,11 +295,11 @@ class BaseModel {
 	 */
 	protected function saveImageFromBase64($base64, $modelId) {
 		$saveDir = 'backgrounds';
-		$output_dir = '../assets/' . $saveDir . '-full';
+		$output_dir = dirname(__DIR__, 2) . '/assets/' . $saveDir . '-full';
 		$absolute_path = '/assets/' . $saveDir . '-full';
 
 		if (!file_exists($output_dir)) {
-			mkdir($output_dir);
+			mkdir($output_dir, 0777, true);
 		}
 
 		$i = 1;
@@ -217,14 +307,35 @@ class BaseModel {
 			$i++;
 		}
 
-		$image_data = base64_decode($base64);
+		if (!is_string($base64) || trim($base64) === "") {
+			throw new Exception("Image response did not contain base64 data.");
+		}
+
+		$base64 = trim($base64);
+		if (strpos($base64, 'base64,') !== false) {
+			$base64 = substr($base64, strpos($base64, 'base64,') + 7);
+		}
+
+		$image_data = base64_decode($base64, true);
+		if ($image_data === false || strlen($image_data) === 0) {
+			throw new Exception("Image response contained invalid base64 data.");
+		}
 
 		// TODO: Send image as url encoded base64 and modify the save script to handle.
 		$image_path = "$output_dir/$modelId" . '_' . "$i.png";
 
 		$file = fopen($image_path, 'wb');
-		fwrite($file, $image_data);
+		if (!$file) {
+			throw new Exception("Unable to open image file for writing.");
+		}
+
+		$bytesWritten = fwrite($file, $image_data);
 		fclose($file);
+
+		if ($bytesWritten === false || $bytesWritten !== strlen($image_data) || filesize($image_path) === 0) {
+			@unlink($image_path);
+			throw new Exception("Unable to write generated image data.");
+		}
 
 		$image_path = "$absolute_path/$modelId" . '_' . "$i.png";
 

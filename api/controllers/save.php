@@ -1,7 +1,11 @@
 <?php
+	function assetPath($path = '') {
+		return dirname(__DIR__, 2) . '/assets' . $path;
+	}
+
 	function downloadImage($url, $saveDir = 'backgrounds') {
-		$savePath = '../assets/' . $saveDir . '/';
-		$backupPath = '../assets/' . $saveDir . '-full/';
+		$savePath = assetPath('/' . $saveDir . '/');
+		$backupPath = assetPath('/' . $saveDir . '-full/');
 		// Create the directory if it doesn't exist
 		if (!file_exists($savePath)) {
 			mkdir($savePath, 0777, true);
@@ -74,8 +78,8 @@
 	}
 
 	function saveLocalImage($local_path, $saveDir = 'backgrounds') {
-		$savePath = '../assets/' . $saveDir . '/';
-		$backupPath = '../assets/' . $saveDir . '-full/';
+		$savePath = assetPath('/' . $saveDir . '/');
+		$backupPath = assetPath('/' . $saveDir . '-full/');
 		// Create the directory if it doesn't exist
 		if (!file_exists($savePath)) {
 			mkdir($savePath, 0777, true);
@@ -166,9 +170,10 @@
 		imagecopy($newImage, $image2, 0, 0, 0, 0, $width1, $height1);
 
 		// Save the new image to the file system
-		imagepng($newImage, '../assets/thumbnails/thumb_'.$id.'.png');
+		$thumbnailPath = assetPath('/thumbnails/thumb_'.$id.'.png');
+		imagepng($newImage, $thumbnailPath);
 
-		uploadS3('../assets/thumbnails/thumb_'.$id.'.png', 'thumb_'.$id.'.png', 'thumbnails/');
+		uploadS3($thumbnailPath, 'thumb_'.$id.'.png', 'thumbnails/');
 
 		// Free up memory
 		imagedestroy($image1);
@@ -211,7 +216,7 @@
 				try {
 					//$fileName = downloadImage($bkgUrl);
 					if (isset($bkgUrl[0]) && $bkgUrl[0] === '/') {
-						$fileName = saveLocalImage('..'.$bkgUrl);
+						$fileName = saveLocalImage(dirname(__DIR__, 2).$bkgUrl);
 					} else {
 						// Pass $bkgUrl to downloadImage function
 						$fileName = downloadImage($bkgUrl);
@@ -230,7 +235,7 @@
 
 				if($idx == 1){
 					//Save the images to composite into a thumbnail
-					renderThumbnail($output->response->permalink, "../assets/backgrounds/".$fileName, "../assets/character_art/".$_POST["fg".($idx + 1)]);
+					renderThumbnail($output->response->permalink, assetPath("/backgrounds/".$fileName), assetPath("/character_art/".$_POST["fg".($idx + 1)]));
 				}
 			}
 		}

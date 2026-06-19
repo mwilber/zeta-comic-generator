@@ -84,7 +84,7 @@
 						Story Model
 						<div class="select">
 							<select name="story-model" id="story-model">
-								<option value="gpt5">GPT 5</option>
+								<option value="gpt5">GPT 5.5</option>
 								<option value="gemthink">Gemini 3.1 Pro</option>
 								<option value="grokadv">Grok 4.3</option>
 								<option value="deepseekr">DeepSeek R1</option>
@@ -95,7 +95,7 @@
 						Script Model
 						<div class="select">
 							<select name="script-model" id="script-model">
-								<option value="gpt">GPT 5 Mini</option>
+								<option value="gpt">GPT 5.4</option>
 								<option value="gem">Gemini 3 Flash</option>
 								<option value="grok">Grok 4.2 (non-reasoning)</option>
 								<option value="deepseek">DeepSeek V3</option>
@@ -106,8 +106,8 @@
 						Image Model
 						<div class="select">
 							<select name="image-model" id="image-model">
-								<option value="oai">Dall-E 3</option>
-								<option value="gptimage">GPT Image</option>
+								<option value="oai">DALL-E 3</option>
+								<option value="gptimage">GPT Image 2</option>
 								<option value="imagen">Imagen 4</option>
 								<option value="nanobanana">Nano Banana 2</option>
 								<option value="grokimg">Grok Imagine</option>

@@ -13,10 +13,32 @@ class ModelGpt extends BaseModel {
 		// $this->modelName = "gpt-4o-2024-08-06";
 		// $this->modelName = "gpt-4o-mini-2024-07-18";
 		// $this->modelName = "gpt-4.1-2025-04-14";
-		$this->modelName = "gpt-5-mini";
+		$this->modelName = "gpt-5.4";
 
-		$this->apiUrl = "https://api.openai.com/v1/chat/completions";
+		$this->apiUrl = "https://api.openai.com/v1/responses";
 		$this->apiKey = OPENAI_KEY;
 	}
+
+	protected function buildRequestBody($messages) {
+		$messagesArray = [];
+		foreach ($messages as $message) {
+			$messagesArray[] = [
+				"role" => $message->role === "developer" ? "system" : $message->role,
+				"content" => $message->content
+			];
+		}
+
+		return [
+			'model' => $this->modelName,
+			'stream' => false,
+			'reasoning' => [
+				'effort' => 'medium'
+			],
+			'text' => [
+				'verbosity' => 'medium',
+			],
+			'input' => $messagesArray
+		];
+	}
 }
-?>
+?> 
