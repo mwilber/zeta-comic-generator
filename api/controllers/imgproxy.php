@@ -7,9 +7,13 @@
  * from the remote URL and returns the contents with the appropriate MIME type.
  */
 	$remoteImage = $_GET['url'];
-	if (!$remoteImage) die;
+	if (!$remoteImage) {
+		http_response_code(400);
+		exit;
+	}
 	$imginfo = getimagesize($remoteImage);
-	header("Content-type: ".$imginfo['mime']);
-	$output = readfile($remoteImage);
-	echo $output;
-?>
+	if ($imginfo && isset($imginfo['mime'])) {
+		header("Content-Type: ".$imginfo['mime']);
+	}
+	readfile($remoteImage);
+	exit;

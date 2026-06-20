@@ -41,4 +41,3 @@ class ModelGpt extends BaseModel {
 		];
 	}
 }
-?> 

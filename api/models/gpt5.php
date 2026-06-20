@@ -11,4 +11,3 @@ class ModelGpt5 extends ModelGpt {
 		$this->modelName = "gpt-5.5";
 	}
 }
-?> 
