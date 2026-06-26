@@ -16,7 +16,7 @@
 	$meta->title = "Zeta Comic Generator";
 	$meta->siteUrl = (empty($_SERVER['HTTPS']) ? 'http' : 'https') . "://$_SERVER[HTTP_HOST]";
 	$meta->url = (empty($_SERVER['HTTPS']) ? 'http' : 'https') . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
-	$meta->image = $meta->url . "assets/images/social_share_2_1024.png";
+	$meta->image = $meta->url . "assets/images/hero_share.jpg";
 	$meta->description = "AI powered stories featuring a little green alien named Alpha. Create comics from your ideas.";
 	$meta->imageDescription = "Zeta Comic Generator";
 
