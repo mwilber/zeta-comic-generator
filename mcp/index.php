@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 use GuzzleHttp\Psr7\ServerRequest;
 use Mcp\Server\Transport\Http\Middleware\CorsMiddleware;
-use Mcp\Server\Transport\StatelessHttpTransport;
+use Mcp\Server\Session\FileSessionStore;
+use Mcp\Server\Transport\StreamableHttpTransport;
 use ZetaComicGenerator\Mcp\ComicMcp;
 use ZetaComicGenerator\Mcp\DraftRepository;
 use ZetaComicGenerator\Mcp\McpServerFactory;
@@ -48,12 +49,16 @@ try {
         $projectRoot,
     );
 
-    $protocol = McpServerFactory::build($comicMcp, $siteBaseUrl);
-    $transport = new StatelessHttpTransport(
-        $protocol,
+    $server = McpServerFactory::build(
+        $comicMcp,
+        $siteBaseUrl,
+        new FileSessionStore(sys_get_temp_dir().'/zeta-comic-generator-mcp-sessions'),
+    );
+    $transport = new StreamableHttpTransport(
+        ServerRequest::fromGlobals(),
         middleware: [new CorsMiddleware(['*'])],
     );
-    $response = $transport->handle(ServerRequest::fromGlobals());
+    $response = $server->run($transport);
 
     http_response_code($response->getStatusCode());
     foreach ($response->getHeaders() as $name => $values) {

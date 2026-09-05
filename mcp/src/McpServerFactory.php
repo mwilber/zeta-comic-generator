@@ -10,11 +10,15 @@ use Mcp\Schema\Extension\Apps\ToolVisibility;
 use Mcp\Schema\Extension\Apps\UiToolMeta;
 use Mcp\Schema\ToolAnnotations;
 use Mcp\Server;
-use Mcp\Server\Stateless\StatelessProtocol;
+use Mcp\Server\Session\SessionStoreInterface;
 
 final class McpServerFactory
 {
-    public static function build(ComicMcp $comicMcp, string $siteBaseUrl): StatelessProtocol
+    public static function build(
+        ComicMcp $comicMcp,
+        string $siteBaseUrl,
+        ?SessionStoreInterface $sessionStore = null,
+    ): Server
     {
         $workflowProperty = [
             'type' => 'string',
@@ -27,7 +31,7 @@ final class McpServerFactory
             $savePayloadProperties[$field] = ['type' => 'string'];
         }
 
-        return Server::builder()
+        $builder = Server::builder()
             ->setServerInfo(
                 'zeta-comic-generator',
                 '1.0.0',
@@ -126,6 +130,12 @@ final class McpServerFactory
                     'additionalProperties' => false,
                 ],
             )
-            ->buildStateless([ProtocolVersion::V2026_07_28]);
+            ->setModernVersions([ProtocolVersion::V2026_07_28]);
+
+        if (null !== $sessionStore) {
+            $builder->setSession(sessionStore: $sessionStore);
+        }
+
+        return $builder->build();
     }
 }

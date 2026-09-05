@@ -1,6 +1,6 @@
 # Zeta Comic Generator MCP server
 
-The public MCP endpoint is `https://comicgenerator.greenzeta.com/mcp`. It serves the stateless MCP `2026-07-28` protocol and advertises the MCP Apps extension for the inline comic strip.
+The public MCP endpoint is `https://comicgenerator.greenzeta.com/mcp`. It serves both handshake-era Streamable HTTP clients and the stateless MCP `2026-07-28` protocol, and advertises the MCP Apps extension for the inline comic strip.
 
 ## Workflow
 
@@ -15,7 +15,7 @@ The existing API remains the source of truth for the daily rate limit. Its scrip
 
 1. Run `composer install --no-dev --optimize-autoloader` from the project root. Dependencies are resolved against PHP 8.1 or later.
 2. Apply `mcp/migrations/001_create_mcp_drafts.sql` to the application database.
-3. Deploy the root and `mcp/.htaccess` rules with Apache rewrite support enabled.
+3. Deploy the root and `mcp/.htaccess` rules with Apache rewrite support enabled. The `DirectoryCheckHandler` rule prevents Apache from redirecting `/mcp` to `/mcp/`, which can change an MCP POST into a GET in some clients.
 4. Optionally define `MCP_SITE_BASE_URL` in `api/includes/key.php` or the environment. It defaults to `https://comicgenerator.greenzeta.com`.
 
 The MCP endpoint is intentionally public, matching the public generation experience. The HTTP transport allows cross-origin MCP hosts; production host validation is expected at the existing web server or reverse proxy.

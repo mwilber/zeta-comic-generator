@@ -1,7 +1,11 @@
 DirectoryIndex index.php
 
+<IfModule mod_dir.c>
+DirectoryCheckHandler On
+</IfModule>
+
 <IfModule mod_rewrite.c>
 RewriteEngine On
 RewriteCond %{REQUEST_FILENAME} !-f
-RewriteRule ^ index.php [L]
+RewriteRule ^ index.php [END]
 </IfModule>

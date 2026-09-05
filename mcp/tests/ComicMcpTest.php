@@ -3,8 +3,10 @@
 declare(strict_types=1);
 
 use GuzzleHttp\Psr7\ServerRequest;
+use Mcp\Server;
+use Mcp\Server\Session\InMemorySessionStore;
 use Mcp\Schema\Wire\McpHeader;
-use Mcp\Server\Transport\StatelessHttpTransport;
+use Mcp\Server\Transport\StreamableHttpTransport;
 use ZetaComicGenerator\Mcp\ComicMcp;
 use ZetaComicGenerator\Mcp\DraftRepositoryInterface;
 use ZetaComicGenerator\Mcp\McpServerFactory;
@@ -104,8 +106,14 @@ final class FakeWebsiteApi implements WebsiteApiClientInterface
     }
 }
 
+function sendHttpRequest(Server $server, ServerRequest $request): \Psr\Http\Message\ResponseInterface
+{
+    $transport = new StreamableHttpTransport($request, middleware: []);
+    return $server->run($transport);
+}
+
 /** @return array<string, mixed> */
-function protocolRequest(object $protocol, string $method, array $params = [], ?string $name = null): array
+function protocolRequest(Server $server, string $method, array $params = [], ?string $name = null): array
 {
     $params['_meta'] = [
         'io.modelcontextprotocol/protocolVersion' => '2026-07-28',
@@ -124,8 +132,7 @@ function protocolRequest(object $protocol, string $method, array $params = [], ?
     if (null !== $name) {
         $headers['Mcp-Name'] = McpHeader::encode($name);
     }
-    $transport = new StatelessHttpTransport($protocol, middleware: []);
-    $response = $transport->handle(new ServerRequest('POST', 'https://example.test/mcp', $headers, $body));
+    $response = sendHttpRequest($server, new ServerRequest('POST', 'https://example.test/mcp', $headers, $body));
     expect(200 === $response->getStatusCode(), 'Expected a successful protocol response, got '.$response->getStatusCode().'.');
     $decoded = json_decode((string) $response->getBody(), true, 512, JSON_THROW_ON_ERROR);
     expect(is_array($decoded), 'Protocol response was not an object.');
@@ -186,10 +193,15 @@ expect(1 === $api->saveCalls, 'Website save API should be called exactly once.')
 $savedAgain = $comicMcp->saveComic($draftId);
 expect(!$savedAgain->isError && 1 === $api->saveCalls, 'Repeated save must be idempotent.');
 
-$protocol = McpServerFactory::build($comicMcp, 'https://comicgenerator.greenzeta.com');
-$discovery = protocolRequest($protocol, 'server/discover');
+$sessionStore = new InMemorySessionStore();
+$server = McpServerFactory::build(
+    $comicMcp,
+    'https://comicgenerator.greenzeta.com',
+    $sessionStore,
+);
+$discovery = protocolRequest($server, 'server/discover');
 expect(isset($discovery['result']['capabilities']['extensions']['io.modelcontextprotocol/ui']), 'MCP Apps extension is missing from discovery.');
-$tools = protocolRequest($protocol, 'tools/list');
+$tools = protocolRequest($server, 'tools/list');
 $toolNames = array_column($tools['result']['tools'] ?? [], 'name');
 expect(in_array('prepare_comic_generation', $toolNames, true), 'Prepare tool is missing.');
 expect(in_array('generate_comic', $toolNames, true), 'Generate tool is missing.');
@@ -207,18 +219,67 @@ foreach ($tools['result']['tools'] ?? [] as $tool) {
 expect(ComicMcp::APP_URI === ($generateTool['_meta']['ui']['resourceUri'] ?? null), 'Generate tool is not linked to the comic app.');
 expect(['app'] === ($stageTool['_meta']['ui']['visibility'] ?? null), 'Staging tool is not marked app-only.');
 
-$resource = protocolRequest($protocol, 'resources/read', ['uri' => ComicMcp::APP_URI], ComicMcp::APP_URI);
+$resource = protocolRequest($server, 'resources/read', ['uri' => ComicMcp::APP_URI], ComicMcp::APP_URI);
 $resourceContent = $resource['result']['contents'][0] ?? [];
 expect('text/html;profile=mcp-app' === ($resourceContent['mimeType'] ?? null), 'App resource has the wrong MIME type.');
 expect(str_contains($resourceContent['text'] ?? '', '/mcp/app.js?v=1.0.0'), 'App resource does not load its UI script.');
 expect(!str_contains($resourceContent['text'] ?? '', '<nav'), 'App resource unexpectedly contains website navigation.');
 
 $protocolPrepare = protocolRequest(
-    $protocol,
+    $server,
     'tools/call',
     ['name' => 'prepare_comic_generation', 'arguments' => ['premise' => 'Protocol test', 'workflow' => 'openai']],
     'prepare_comic_generation',
 );
 expect(true === ($protocolPrepare['result']['structuredContent']['available'] ?? false), 'Prepare tool failed through the 2026-07-28 protocol.');
+
+$legacyInitializeBody = json_encode([
+    'jsonrpc' => '2.0',
+    'id' => 2,
+    'method' => 'initialize',
+    'params' => [
+        'protocolVersion' => '2025-06-18',
+        'capabilities' => ['extensions' => ['io.modelcontextprotocol/ui' => new stdClass()]],
+        'clientInfo' => ['name' => 'mcpjam-test', 'version' => '1.0.0'],
+    ],
+], JSON_THROW_ON_ERROR);
+$legacyInitialize = sendHttpRequest($server, new ServerRequest(
+    'POST',
+    'https://example.test/mcp',
+    ['Content-Type' => 'application/json', 'Accept' => 'application/json, text/event-stream'],
+    $legacyInitializeBody,
+));
+expect(200 === $legacyInitialize->getStatusCode(), 'Handshake-era initialize request failed.');
+$legacySessionId = $legacyInitialize->getHeaderLine('Mcp-Session-Id');
+expect('' !== $legacySessionId, 'Handshake-era initialize did not create a session.');
+$legacyInitializeJson = json_decode((string) $legacyInitialize->getBody(), true, 512, JSON_THROW_ON_ERROR);
+expect('2025-06-18' === ($legacyInitializeJson['result']['protocolVersion'] ?? null), 'Handshake-era protocol version was not negotiated.');
+
+$legacyToolsBody = json_encode([
+    'jsonrpc' => '2.0',
+    'id' => 3,
+    'method' => 'tools/list',
+    'params' => [],
+], JSON_THROW_ON_ERROR);
+$legacyFollowupServer = McpServerFactory::build(
+    $comicMcp,
+    'https://comicgenerator.greenzeta.com',
+    $sessionStore,
+);
+$legacyTools = sendHttpRequest($legacyFollowupServer, new ServerRequest(
+    'POST',
+    'https://example.test/mcp',
+    [
+        'Content-Type' => 'application/json',
+        'Accept' => 'application/json, text/event-stream',
+        'MCP-Protocol-Version' => '2025-06-18',
+        'Mcp-Session-Id' => $legacySessionId,
+    ],
+    $legacyToolsBody,
+));
+expect(200 === $legacyTools->getStatusCode(), 'Handshake-era tools/list request failed.');
+$legacyToolsJson = json_decode((string) $legacyTools->getBody(), true, 512, JSON_THROW_ON_ERROR);
+$legacyToolNames = array_column($legacyToolsJson['result']['tools'] ?? [], 'name');
+expect(in_array('generate_comic', $legacyToolNames, true), 'Handshake-era tools/list omitted generate_comic.');
 
 echo "ComicMcp tests passed.\n";
