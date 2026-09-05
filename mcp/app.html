@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <base href="{{SITE_BASE_URL}}/">
+    <title>Zeta Comic Strip</title>
+    <link rel="stylesheet" href="{{SITE_BASE_URL}}/styles/strip.css?v=3.5.0">
+    <style>
+        * { box-sizing: border-box; }
+        :root {
+            color-scheme: light dark;
+            --app-background: var(--color-background-primary, transparent);
+            --app-text: var(--color-text-primary, #202020);
+        }
+        html, body {
+            margin: 0;
+            width: 100%;
+            background: var(--app-background);
+            color: var(--app-text);
+            font-family: var(--font-sans, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
+        }
+        body { padding: 8px; }
+        #strip {
+            width: 100%;
+            max-width: 942px;
+            box-shadow: none;
+        }
+        #strip .panel.is-loading {
+            overflow: hidden;
+            background: #d8d8d8;
+        }
+        #strip .panel.is-loading::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            transform: translateX(-100%);
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .45), transparent);
+            animation: comic-loading 1.4s infinite;
+        }
+        .visually-hidden {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+        @keyframes comic-loading { to { transform: translateX(100%); } }
+        @media (prefers-reduced-motion: reduce) {
+            #strip .panel.is-loading::after { animation: none; }
+        }
+    </style>
+    <script>const characterActions = {{CHARACTER_ACTIONS}};</script>
+</head>
+<body>
+    <main id="strip" aria-label="Comic strip being generated">
+        <div class="strip-container">
+            <div class="panel-container">
+                <div class="panel is-loading"></div>
+                <div class="panel is-loading"></div>
+                <div class="panel is-loading"></div>
+            </div>
+        </div>
+    </main>
+    <div id="app-status" class="visually-hidden" role="status" aria-live="polite">Preparing comic generation.</div>
+    <script type="module" src="{{SITE_BASE_URL}}/mcp/app.js?v=1.0.0"></script>
+</body>
+</html>

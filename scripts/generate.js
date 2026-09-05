@@ -1,4 +1,5 @@
 import { ComicGeneratorApi } from "./modules/ComicGeneratorApi.js";
+import { COMIC_WORKFLOWS, ComicGenerationWorkflow } from "./modules/ComicGenerationWorkflow.js";
 import { ComicRenderer } from "./modules/ComicRenderer/ComicRenderer.js";
 import { ScriptRenderer } from "./modules/ScriptRenderer.js";
 
@@ -8,27 +9,7 @@ import { ScriptRenderer } from "./modules/ScriptRenderer.js";
  * generating and saving comic strips.
  */
 let api, comicRenderer, scriptRenderer;
-
-/**
- * Model group configurations for easy selection
- */
-const MODEL_GROUPS = {
-	openai: {
-		story: "gpt5",     // GPT 5.5
-		script: "gpt",     // GPT 5.4
-		image: "gptimage"  // GPT Image 2
-	},
-	google: {
-		story: "gemthink", // Gemini 3.1 Pro
-		script: "gem",     // Gemini 3 Flash
-		image: "nanobanana" // Nano Banana 2
-	},
-	xai: {
-		story: "grokadv", // Grok 4
-		script: "grok",     // Grok 4.1 Fast
-		image: "grokimg"    // Grok Image 2
-	}
-};
+const MODEL_GROUPS = COMIC_WORKFLOWS;
 
 /**
  * Initializes the comic generation application when the DOM content has finished loading.
@@ -331,7 +312,6 @@ async function GenerateStrip() {
 	if (!query || !query.value || query.value.length > 210) return;
 
 	comicRenderer.clear();
-	api.ClearComicData();
 	ClearElements();
 	UpdateProgress(0);
 	SetStatus("generating");
@@ -345,40 +325,18 @@ async function GenerateStrip() {
 	const imageStyle = document.getElementById("image-style").value;
 	const seriesId = document.getElementById("series-id").value;
 
-	// Step 1: Generate the story concept
-	let concept = await api.WriteConcept(safeQuery, { model: conceptModel, seriesId });
-	if (!concept || concept.error) {
-		SetStatus(concept.error == "ratelimit" ? concept.error : "error");
+	const workflow = new ComicGenerationWorkflow({ api });
+	const result = await workflow.Generate(safeQuery, {
+		storyModel: conceptModel,
+		scriptModel: textModel,
+		imageModel,
+		imageStyle,
+		seriesId,
+	});
+	if (!result || result.error) {
+		SetStatus(result && result.error === "ratelimit" ? "ratelimit" : "error");
 		return;
 	}
-
-	// Step 2: Generate the script
-	let script = await api.WriteScript(safeQuery, { model: textModel });
-	if (!script || script.error) {
-		SetStatus(script.error == "ratelimit" ? script.error : "error");
-		return;
-	}
-
-	// Step 3: Generate the background descriptions
-	let background = await api.WriteBackground({ model: textModel });
-	if (!background || background.error) {
-		SetStatus("error");
-		return;
-	}
-
-	// Step 4: Render the background images
-	let image = await api.DrawBackgrounds({ model: imageModel, style: imageStyle });
-	if (!image || image.error) {
-		SetStatus("error");
-		return;
-	}
-
-	// Step 5: Add the character images
-	await api.DrawAction();
-	// Note: drawAction does not call onUpdate, need to call manually if this is the last step. No longer needed because it is covered in continuity step now.
-
-	// Step 6: Generate new story continuity
-	await api.WriteContinuity({ model: textModel });
 
 	//TODO: Check the renderer progress. Handle error if <100 at this point.
 
