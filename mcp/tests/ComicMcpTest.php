@@ -222,8 +222,15 @@ expect(['app'] === ($stageTool['_meta']['ui']['visibility'] ?? null), 'Staging t
 $resource = protocolRequest($server, 'resources/read', ['uri' => ComicMcp::APP_URI], ComicMcp::APP_URI);
 $resourceContent = $resource['result']['contents'][0] ?? [];
 expect('text/html;profile=mcp-app' === ($resourceContent['mimeType'] ?? null), 'App resource has the wrong MIME type.');
-expect(str_contains($resourceContent['text'] ?? '', '/mcp/app.js?v=1.0.0'), 'App resource does not load its UI script.');
-expect(!str_contains($resourceContent['text'] ?? '', '<nav'), 'App resource unexpectedly contains website navigation.');
+$appHtml = $resourceContent['text'] ?? '';
+expect(str_contains($appHtml, 'class ComicGeneratorApi'), 'App resource does not contain the bundled API client.');
+expect(str_contains($appHtml, 'class ComicRenderer'), 'App resource does not contain the bundled comic renderer.');
+expect(str_contains($appHtml, 'async function generateComic'), 'App resource does not contain its UI controller.');
+expect(!preg_match('/<script[^>]+src=/i', $appHtml), 'App resource loads a cross-origin script.');
+expect(!preg_match('/<link[^>]+stylesheet/i', $appHtml), 'App resource loads a cross-origin stylesheet.');
+expect(!preg_match('/^\s*(?:import|export)\b/m', $appHtml), 'App resource contains an unresolved module statement.');
+expect(!str_contains($appHtml, '{{'), 'App resource contains an unresolved template placeholder.');
+expect(!str_contains($appHtml, '<nav'), 'App resource unexpectedly contains website navigation.');
 
 $protocolPrepare = protocolRequest(
     $server,

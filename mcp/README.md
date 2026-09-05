@@ -11,11 +11,13 @@ The public MCP endpoint is `https://comicgenerator.greenzeta.com/mcp`. It serves
 
 The existing API remains the source of truth for the daily rate limit. Its script-generation step records the generation attempt, whether or not the comic is subsequently saved.
 
+The MCP App resource inlines the shared strip stylesheet and a server-built bundle of the existing JavaScript modules. This is intentional: ChatGPT renders the resource on a sandbox origin, where external module scripts require CORS headers even when the resource domain is allowed by the app CSP.
+
 ## Deployment
 
 1. Run `composer install --no-dev --optimize-autoloader` from the project root. Dependencies are resolved against PHP 8.1 or later.
 2. Apply `mcp/migrations/001_create_mcp_drafts.sql` to the application database.
-3. Deploy the root and `mcp/.htaccess` rules with Apache rewrite support enabled. The `DirectoryCheckHandler` rule prevents Apache from redirecting `/mcp` to `/mcp/`, which can change an MCP POST into a GET in some clients.
+3. Deploy the root and `mcp/.htaccess` rules with Apache rewrite support enabled. The scoped `DirectorySlash Off` and `RewriteOptions AllowNoSlash` rules let `/mcp` execute `mcp/index.php` without a redirect, because a redirect can change an MCP POST into a GET in some clients.
 4. Optionally define `MCP_SITE_BASE_URL` in `api/includes/key.php` or the environment. It defaults to `https://comicgenerator.greenzeta.com`.
 
 The MCP endpoint is intentionally public, matching the public generation experience. The HTTP transport allows cross-origin MCP hosts; production host validation is expected at the existing web server or reverse proxy.

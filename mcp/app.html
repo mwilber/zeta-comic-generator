@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <base href="{{SITE_BASE_URL}}/">
     <title>Zeta Comic Strip</title>
-    <link rel="stylesheet" href="{{SITE_BASE_URL}}/styles/strip.css?v=3.5.0">
+    <style>{{STRIP_STYLES}}</style>
     <style>
         * { box-sizing: border-box; }
         :root {
@@ -67,6 +67,6 @@
         </div>
     </main>
     <div id="app-status" class="visually-hidden" role="status" aria-live="polite">Preparing comic generation.</div>
-    <script type="module" src="{{SITE_BASE_URL}}/mcp/app.js?v=1.0.0"></script>
+    <script type="module">{{APP_SCRIPT}}</script>
 </body>
 </html>

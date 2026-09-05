@@ -15,8 +15,17 @@ use Throwable;
 
 final class ComicMcp
 {
-    public const APP_URI = 'ui://zeta-comic-generator/comic-strip-v1';
+    public const APP_URI = 'ui://zeta-comic-generator/comic-strip-v2';
     public const WORKFLOWS = ['openai', 'xai', 'google'];
+
+    private const APP_SCRIPT_FILES = [
+        'scripts/modules/ComicRenderer/CharacterAction.js',
+        'scripts/modules/ComicRenderer/DialogBalloon.js',
+        'scripts/modules/ComicRenderer/ComicRenderer.js',
+        'scripts/modules/ComicGeneratorApi.js',
+        'scripts/modules/ComicGenerationWorkflow.js',
+        'mcp/app.js',
+    ];
 
     public function __construct(
         private readonly DraftRepositoryInterface $drafts,
@@ -28,14 +37,22 @@ final class ComicMcp
 
     public function appResource(): TextResourceContents
     {
-        $template = file_get_contents($this->projectRoot.'/mcp/app.html');
-        if (false === $template) {
-            throw new RuntimeException('The comic app resource is unavailable.');
+        $template = $this->readAppFile('mcp/app.html');
+        $styles = $this->readAppFile('styles/strip.css');
+        $script = $this->buildInlineAppScript();
+
+        if (false !== stripos($styles, '</style') || false !== stripos($script, '</script')) {
+            throw new RuntimeException('The comic app contains an unsafe inline closing tag.');
         }
 
         $template = str_replace(
-            ['{{SITE_BASE_URL}}', '{{CHARACTER_ACTIONS}}'],
-            [htmlspecialchars($this->siteBaseUrl, ENT_QUOTES, 'UTF-8'), json_encode($GLOBALS['characterActions'], JSON_THROW_ON_ERROR)],
+            ['{{SITE_BASE_URL}}', '{{CHARACTER_ACTIONS}}', '{{STRIP_STYLES}}', '{{APP_SCRIPT}}'],
+            [
+                htmlspecialchars($this->siteBaseUrl, ENT_QUOTES, 'UTF-8'),
+                json_encode($GLOBALS['characterActions'], JSON_THROW_ON_ERROR),
+                $styles,
+                $script,
+            ],
             $template,
         );
 
@@ -60,6 +77,38 @@ final class ComicMcp
                 prefersBorder: true,
             )],
         );
+    }
+
+    private function buildInlineAppScript(): string
+    {
+        $bundle = [];
+        foreach (self::APP_SCRIPT_FILES as $path) {
+            $source = $this->readAppFile($path);
+            $source = preg_replace('/^\s*import\s+\{[^}]+}\s+from\s+["\'][^"\']+["\'];\s*$/m', '', $source);
+            if (null === $source) {
+                throw new RuntimeException('The comic app module imports could not be bundled from '.$path.'.');
+            }
+            $source = preg_replace('/^export\s+(?=(?:class|const|function)\b)/m', '', $source);
+            if (null === $source) {
+                throw new RuntimeException('The comic app module exports could not be bundled from '.$path.'.');
+            }
+            if (preg_match('/^\s*(?:import|export)\b/m', $source)) {
+                throw new RuntimeException('The comic app contains an unsupported module statement in '.$path.'.');
+            }
+            $bundle[] = trim($source);
+        }
+
+        return implode("\n\n", $bundle);
+    }
+
+    private function readAppFile(string $path): string
+    {
+        $contents = file_get_contents($this->projectRoot.'/'.$path);
+        if (false === $contents) {
+            throw new RuntimeException('The comic app resource is unavailable: '.$path.'.');
+        }
+
+        return $contents;
     }
 
     public function prepareComicGeneration(string $premise, string $workflow = 'openai'): CallToolResult
