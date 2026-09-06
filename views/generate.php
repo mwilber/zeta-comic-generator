@@ -110,7 +110,7 @@
 								<option value="gptimage">GPT Image 2</option>
 								<option value="imagen">Imagen 4</option>
 								<option value="nanobanana">Nano Banana 2</option>
-								<option value="grokimg">Grok Imagine Image 2</option>
+								<option value="grokimg">Grok Imagine 2</option>
 							</select>
 						</div>
 					</label>
