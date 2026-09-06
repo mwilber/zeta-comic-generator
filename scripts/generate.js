@@ -14,8 +14,8 @@ let api, comicRenderer, scriptRenderer;
  */
 const MODEL_GROUPS = {
 	openai: {
-		story: "gpt5",     // GPT 5.5
-		script: "gpt",     // GPT 5.4
+		story: "gpt",      // GPT 6 Astra
+		script: "gpt5",    // GPT 5.6 Terra
 		image: "gptimage"  // GPT Image 2
 	},
 	google: {
@@ -80,8 +80,8 @@ document.addEventListener("DOMContentLoaded", () => {
  * After setting the values, a 'change' event is dispatched on the corresponding elements to trigger any related functionality.
  */
 function SetDefaultSelections() {
-	const defaultConceptSelection = "gpt5";
-	const defaultSelection = "gpt";
+	const defaultConceptSelection = "gpt";
+	const defaultSelection = "gpt5";
 	const defaultImageSelection = "gptimage";
 	// TODO: Simplify this
 	const groupSelectEl = document.getElementById("group-select");

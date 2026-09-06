@@ -1,6 +1,18 @@
 const listing = {};
 
 const priceTable = {
+	"gpt-6-astra": {
+		prompt_tokens: 10 / 1000000,
+		completion_tokens: 50 / 1000000,
+	},
+	"gpt-5.6-terra": {
+		prompt_tokens: 2 / 1000000,
+		completion_tokens: 12 / 1000000,
+	},
+	"gpt-image-2": {
+		// 1024x1024, low quality — matches ModelGptImage defaults.
+		image: 0.006,
+	},
 	"gpt-5": {
 		prompt_tokens: 1.25 / 1000000,
 		completion_tokens: 10 / 1000000,
