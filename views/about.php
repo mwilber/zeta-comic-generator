@@ -34,7 +34,7 @@
 		<h3>Story</h3>
 		<ul>
 			<li><a href="https://platform.openai.com/docs/models/gpt-5.5" target="_blank" rel="noopener noreferrer">GPT 5.5</a></li>
-			<li><a href="https://deepmind.google/models/gemini/" target="_blank" rel="noopener noreferrer">Gemini 3.1 Pro</a></li>
+			<li><a href="https://ai.google.dev/gemini-api/docs/models/gemini-3.1-pro-preview" target="_blank" rel="noopener noreferrer">Gemini 3.1 Pro</a></li>
 			<li><a href="https://docs.x.ai/developers/models/grok-4.3" target="_blank" rel="noopener noreferrer">Grok 4.3</a></li>
 			<li><a href="https://github.com/deepseek-ai/DeepSeek-R1" target="_blank" rel="noopener noreferrer">DeepSeek R1</a></li>
 		</ul>
@@ -43,7 +43,7 @@
 		<h3>Script</h3>
 		<ul>
 			<li><a href="https://platform.openai.com/docs/models/gpt-5.4" target="_blank" rel="noopener noreferrer">GPT 5.4</a></li>
-			<li><a href="https://deepmind.google/models/gemini/" target="_blank" rel="noopener noreferrer">Gemini 3 Flash</a></li>
+			<li><a href="https://ai.google.dev/gemini-api/docs/models/gemini-3.8-flash" target="_blank" rel="noopener noreferrer">Gemini 3.8 Flash</a></li>
 			<li><a href="https://docs.x.ai/developers/models/grok-4.20-non-reasoning" target="_blank" rel="noopener noreferrer">Grok 4.2 (non-reasoning)</a></li>
 			<li><a href="https://github.com/deepseek-ai/DeepSeek-V3" target="_blank" rel="noopener noreferrer">DeepSeek V3</a></li>
 		</ul>
@@ -53,7 +53,7 @@
 		<ul>
 			<li><a href="https://platform.openai.com/docs/models/gpt-image-2" target="_blank" rel="noopener noreferrer">GPT Image 2</a></li>
 			<li><a href="https://deepmind.google/models/imagen/" target="_blank" rel="noopener noreferrer">Imagen 4</a></li>
-			<li><a href="https://deepmind.google/models/gemini/" target="_blank" rel="noopener noreferrer">Nano Banana 2</a></li>
+			<li><a href="https://ai.google.dev/gemini-api/docs/models/gemini-3.1-flash-image" target="_blank" rel="noopener noreferrer">Gemini 3.1 Flash Image (Nano Banana 2)</a></li>
 			<li><a href="https://docs.x.ai/developers/models/grok-imagine-image" target="_blank" rel="noopener noreferrer">Grok Imagine</a></li>
 			<li><a href="https://openai.com/dall-e-3" target="_blank" rel="noopener noreferrer">DALL-E 3</a></li>
 		</ul>

@@ -96,7 +96,7 @@
 						<div class="select">
 							<select name="script-model" id="script-model">
 								<option value="gpt">GPT 5.4</option>
-								<option value="gem">Gemini 3 Flash</option>
+								<option value="gem">Gemini 3.8 Flash</option>
 								<option value="grok">Grok 4.2 (non-reasoning)</option>
 								<option value="deepseek">DeepSeek V3</option>
 							</select>
@@ -109,7 +109,7 @@
 								<option value="oai">DALL-E 3</option>
 								<option value="gptimage">GPT Image 2</option>
 								<option value="imagen">Imagen 4</option>
-								<option value="nanobanana">Nano Banana 2</option>
+								<option value="nanobanana">Gemini 3.1 Flash Image (Nano Banana 2)</option>
 								<option value="grokimg">Grok Imagine</option>
 							</select>
 						</div>

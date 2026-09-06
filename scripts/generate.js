@@ -20,8 +20,8 @@ const MODEL_GROUPS = {
 	},
 	google: {
 		story: "gemthink", // Gemini 3.1 Pro
-		script: "gem",     // Gemini 3 Flash
-		image: "nanobanana" // Nano Banana 2
+		script: "gem",     // Gemini 3.8 Flash
+		image: "nanobanana" // Gemini 3.1 Flash Image (Nano Banana 2)
 	},
 	xai: {
 		story: "grokadv", // Grok 4
