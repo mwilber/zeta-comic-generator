@@ -255,8 +255,19 @@
     
 				foreach ($categoryRecords as $category) {
 					$alias = $category['alias'];
-					$continuityItems = $continuity->$alias;
+					$continuityItems = isset($continuity->$alias) && is_array($continuity->$alias)
+						? $continuity->$alias
+						: [];
 					foreach ($continuityItems as $item) {
+						// Models may return either a description string or an object with a
+						// description property. Store only a non-empty description string.
+						if (is_object($item) && isset($item->description) && is_string($item->description)) {
+							$item = $item->description;
+						}
+						if (!is_string($item) || trim($item) === '') {
+							continue;
+						}
+
 						// prepare query statement
 						$stmt = $db->prepare("INSERT INTO `continuity` (`categoryId`, `description`) VALUES (".$db->quote($category['id']).", ".$db->quote($item).");");
 						// execute query

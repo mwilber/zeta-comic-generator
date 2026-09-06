@@ -13,7 +13,8 @@ class ModelGpt extends BaseModel {
 		// $this->modelName = "gpt-4o-2024-08-06";
 		// $this->modelName = "gpt-4o-mini-2024-07-18";
 		// $this->modelName = "gpt-4.1-2025-04-14";
-		$this->modelName = "gpt-5.4";
+		// Concept generation uses the latest Astra model with low reasoning effort.
+		$this->modelName = "gpt-6-astra";
 
 		$this->apiUrl = "https://api.openai.com/v1/responses";
 		$this->apiKey = OPENAI_KEY;
@@ -23,7 +24,9 @@ class ModelGpt extends BaseModel {
 		$messagesArray = [];
 		foreach ($messages as $message) {
 			$messagesArray[] = [
-				"role" => $message->role === "developer" ? "system" : $message->role,
+				// Responses API accepts developer instructions; preserve that role rather
+				// than downgrading the application's system prompt.
+				"role" => $message->role === "system" ? "developer" : $message->role,
 				"content" => $message->content
 			];
 		}
@@ -32,7 +35,7 @@ class ModelGpt extends BaseModel {
 			'model' => $this->modelName,
 			'stream' => false,
 			'reasoning' => [
-				'effort' => 'medium'
+				'effort' => 'low'
 			],
 			'text' => [
 				'verbosity' => 'medium',
