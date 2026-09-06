@@ -5,7 +5,7 @@ require_once('_base_model.php');
  */
 class ModelGrokImage extends BaseModel {
 	function __construct() {
-		$this->modelName = "grok-imagine-image";
+		$this->modelName = "grok-imagine-image-2.0";
 		$this->apiUrl = "https://api.x.ai/v1/images/generations";
 		$this->apiKey = GROK_KEY;
 		$this->imageSize = "1024x1024";
@@ -17,7 +17,8 @@ class ModelGrokImage extends BaseModel {
 			"prompt" => $prompt,
 			"n" => 1,
 			"response_format" => "url",
-			"aspect_ratio" => "1:1"
+			"aspect_ratio" => "1:1",
+			"quality" => "low"
 		];
 
 		return $body;
