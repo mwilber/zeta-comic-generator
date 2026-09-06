@@ -24,9 +24,9 @@ const MODEL_GROUPS = {
 		image: "nanobanana" // Gemini 3.1 Flash Image (Nano Banana 2)
 	},
 	xai: {
-		story: "grokadv", // Grok 4
-		script: "grok",     // Grok 4.1 Fast
-		image: "grokimg"    // Grok Image 2
+		story: "grokadv", // Grok 4.6 (high reasoning for concepts)
+		script: "grok",    // Grok 4.6 (low reasoning for stories)
+		image: "grokimg"   // Grok Imagine Image 2
 	}
 };
 
