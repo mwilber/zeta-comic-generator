@@ -96,7 +96,7 @@
 						<div class="select">
 							<select name="script-model" id="script-model">
 								<option value="gpt5">GPT 5.6 Terra</option>
-								<option value="gem">Gemini 3 Flash</option>
+								<option value="gem">Gemini 3.8 Flash</option>
 								<option value="grok">Grok 4.2 (non-reasoning)</option>
 								<option value="deepseek">DeepSeek V3</option>
 							</select>

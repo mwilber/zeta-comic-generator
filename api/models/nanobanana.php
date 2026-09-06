@@ -3,7 +3,7 @@ require_once('_base_model.php');
 
 class ModelNanoBanana extends BaseModel {
 	function __construct() {
-		$this->modelName = "gemini-3.1-flash-image-preview";
+		$this->modelName = "gemini-3.1-flash-image";
 		$this->apiKey = GOOGLE_KEY;
 		$this->apiUrl = "https://generativelanguage.googleapis.com/v1beta/models/".$this->modelName.":generateContent";
 	}
@@ -87,8 +87,9 @@ class ModelNanoBanana extends BaseModel {
 		if (isset($json->usageMetadata)) {
 			$result->tokens = [
 				"prompt_token_count" => $json->usageMetadata->promptTokenCount ?? 0,
-				"candidates_token_count" => $json->usageMetadata->candidatesTokenCount ?? 0,
-				"total_token_count" => $json->usageMetadata->totalTokenCount ?? 0,
+				// This workflow always requests one 1K image. Image output has a
+				// separate billing rate from text output, so report it separately.
+				"image" => 1,
 			];
 		} else {
 			$result->tokens = [

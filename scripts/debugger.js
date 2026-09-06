@@ -57,6 +57,19 @@ const priceTable = {
 		prompt_token_count: 0.10 / 1000000,
 		candidates_token_count: 0.40 / 1000000,
 	},
+	"gemini-3.8-flash": {
+		prompt_token_count: 0.75 / 1000000,
+		candidates_token_count: 3.75 / 1000000,
+	},
+	"gemini-3.1-pro-preview": {
+		prompt_token_count: 2 / 1000000,
+		candidates_token_count: 12 / 1000000,
+	},
+	"gemini-3.1-flash-image": {
+		prompt_token_count: 0.50 / 1000000,
+		candidates_token_count: 3 / 1000000,
+		image: 0.067,
+	},
 	"anthropic.claude-3-5-sonnet-20240620-v1:0": {
 		input_tokens: 0.003 / 1000,
 		output_tokens: 0.015 / 1000,
