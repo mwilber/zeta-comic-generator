@@ -2,12 +2,21 @@ import { GenerationProgressDialog } from "../scripts/modules/GenerationProgressD
 
 /** Adapts the shared dialog to workflow events and the embedded frame. */
 export class McpGenerationProgress {
+	/**
+	 * Connects the shared progress dialog to the MCP strip and status elements.
+	 *
+	 */
 	constructor() {
 		this.dialog = new GenerationProgressDialog(document.getElementById("statusdialog"));
 		this.strip = document.getElementById("strip");
 		this.summary = document.getElementById("app-status");
 	}
 
+	/**
+	 * Shows initial progress and makes the strip inactive while generation runs.
+	 *
+	 * @returns {void}
+	 */
 	Start() {
 		document.body.classList.add("is-generating");
 		this.strip.inert = true;
@@ -17,6 +26,12 @@ export class McpGenerationProgress {
 		this.dialog.Show("Preparing comic generation…");
 	}
 
+	/**
+	 * Displays the message for a recognized generation stage.
+	 *
+	 * @param {string} stage Workflow stage identifier; unknown stages are ignored.
+	 * @returns {void}
+	 */
 	Stage(stage) {
 		const messages = {
 			concept: "Writing the concept…",
@@ -30,10 +45,22 @@ export class McpGenerationProgress {
 		if (messages[stage]) this.dialog.SetMessage(messages[stage]);
 	}
 
+	/**
+	 * Passes the current completion percentage to the shared progress control.
+	 *
+	 * @param {number} amount Completion percentage, clamped by the shared control.
+	 * @returns {void}
+	 */
 	Update(amount) {
 		this.dialog.Update(amount);
 	}
 
+	/**
+	 * Dismisses progress, restores strip interaction, and announces the result.
+	 *
+	 * @param {string} message Completion or failure text to display.
+	 * @returns {void}
+	 */
 	Finish(message) {
 		const hadFocus = this.dialog.el.contains(document.activeElement);
 		this.dialog.Hide();

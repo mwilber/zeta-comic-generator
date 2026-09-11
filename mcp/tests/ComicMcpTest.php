@@ -20,6 +20,14 @@ require $root.'/mcp/src/ComicMcp.php';
 require $root.'/mcp/src/McpServerFactory.php';
 require $root.'/api/includes/characteractions.php';
 
+/**
+ * Fails the PHP test script when an assertion is false.
+ *
+ * @param bool $condition Assertion result.
+ * @param string $message Failure explanation.
+ * @return void
+ * @throws RuntimeException If the assertion fails.
+ */
 function expect(bool $condition, string $message): void
 {
     if (!$condition) {
@@ -32,6 +40,13 @@ final class MemoryDrafts implements DraftRepositoryInterface
     /** @var array<string, array<string, mixed>> */
     public array $drafts = [];
 
+    /**
+     * Creates a deterministic in-memory draft fixture.
+     *
+     * @param string $premise Test comic premise.
+     * @param string $workflow Test generation provider.
+     * @return string The fixed test draft identifier.
+     */
     public function createPrepared(string $premise, string $workflow): string
     {
         $id = str_repeat('a', 32);
@@ -47,11 +62,24 @@ final class MemoryDrafts implements DraftRepositoryInterface
         return $id;
     }
 
+    /**
+     * Looks up a draft fixture without simulating expiration.
+     *
+     * @param string $draftId Test draft identifier.
+     * @return array<string, mixed>|null Stored fixture, or null when absent.
+     */
     public function findActive(string $draftId): ?array
     {
         return $this->drafts[$draftId] ?? null;
     }
 
+    /**
+     * Marks a test draft as generating and returns its prior state.
+     *
+     * @param string $draftId Test draft identifier.
+     * @return array<string, mixed> The draft before mutation.
+     * @throws RuntimeException If the fixture is missing.
+     */
     public function beginGeneration(string $draftId): array
     {
         $draft = $this->drafts[$draftId] ?? throw new RuntimeException('Missing draft.');
@@ -59,12 +87,25 @@ final class MemoryDrafts implements DraftRepositoryInterface
         return $draft;
     }
 
+    /**
+     * Stores serialized save fields and marks the test draft ready.
+     *
+     * @param string $draftId Test draft identifier.
+     * @param array<string, string> $savePayload Test save fields.
+     * @return void
+     */
     public function stage(string $draftId, array $savePayload): void
     {
         $this->drafts[$draftId]['save_payload'] = json_encode($savePayload, JSON_THROW_ON_ERROR);
         $this->drafts[$draftId]['status'] = 'ready';
     }
 
+    /**
+     * Simulates a save reservation or an already saved test result.
+     *
+     * @param string $draftId Test draft identifier.
+     * @return array{state: string, draft: array<string, mixed>} Simulated reservation.
+     */
     public function reserveSave(string $draftId): array
     {
         $draft = $this->drafts[$draftId];
@@ -75,6 +116,14 @@ final class MemoryDrafts implements DraftRepositoryInterface
         return ['state' => 'reserved', 'draft' => $draft];
     }
 
+    /**
+     * Records the saved state and comic identifiers in the test fixture.
+     *
+     * @param string $draftId Test draft identifier.
+     * @param string $comicId Saved comic identifier.
+     * @param string $permalink Test comic link token.
+     * @return void
+     */
     public function completeSave(string $draftId, string $comicId, string $permalink): void
     {
         $this->drafts[$draftId]['status'] = 'saved';
@@ -82,6 +131,13 @@ final class MemoryDrafts implements DraftRepositoryInterface
         $this->drafts[$draftId]['permalink'] = $permalink;
     }
 
+    /**
+     * Resets the test draft to ready without retaining the failure message.
+     *
+     * @param string $draftId Test draft identifier.
+     * @param string $message Failure text; intentionally unused by this test double.
+     * @return void
+     */
     public function releaseSave(string $draftId, string $message): void
     {
         $this->drafts[$draftId]['status'] = 'ready';
@@ -94,11 +150,22 @@ final class FakeWebsiteApi implements WebsiteApiClientInterface
     public bool $validMetrics = true;
     public int $saveCalls = 0;
 
+    /**
+     * Returns valid, limited, or malformed metrics according to test flags.
+     *
+     * @return array<string, mixed> Simulated metrics response.
+     */
     public function metrics(): array
     {
         return $this->validMetrics ? ['json' => ['count' => 1, 'limitreached' => $this->limitReached]] : [];
     }
 
+    /**
+     * Counts save requests and returns a deterministic successful comic result.
+     *
+     * @param array<string, string> $payload Save fields; not inspected by this test double.
+     * @return array<string, mixed> Simulated successful save response.
+     */
     public function save(array $payload): array
     {
         ++$this->saveCalls;
@@ -106,13 +173,29 @@ final class FakeWebsiteApi implements WebsiteApiClientInterface
     }
 }
 
+/**
+ * Runs an HTTP request through the test server without transport middleware.
+ *
+ * @param Server $server MCP server under test.
+ * @param ServerRequest $request HTTP request to handle.
+ * @return \Psr\Http\Message\ResponseInterface The transport response.
+ */
 function sendHttpRequest(Server $server, ServerRequest $request): \Psr\Http\Message\ResponseInterface
 {
     $transport = new StreamableHttpTransport($request, middleware: []);
     return $server->run($transport);
 }
 
-/** @return array<string, mixed> */
+/**
+ * Sends a stateless MCP request with app capabilities and checks its response.
+ *
+ * @param Server $server MCP server under test.
+ * @param string $method JSON-RPC method name.
+ * @param array<string, mixed> $params Method parameters before protocol metadata is added.
+ * @param string|null $name Optional value for the Mcp-Name header.
+ * @return array<string, mixed> Decoded JSON-RPC response.
+ * @throws RuntimeException If the response status or shape fails an assertion.
+ */
 function protocolRequest(Server $server, string $method, array $params = [], ?string $name = null): array
 {
     $params['_meta'] = [

@@ -13,26 +13,66 @@ const pending = new Map();
 const progress = new McpGenerationProgress();
 progress.Start();
 
+/**
+ * Posts a JSON-RPC envelope to the embedding host.
+ *
+ * @param {object} message Request, notification, or response envelope.
+ * @returns {void}
+ */
 function post(message) {
 	window.parent.postMessage(message, "*");
 }
 
+/**
+ * Sends a host request and tracks its promise until a matching response arrives.
+ *
+ * @param {string} method Host JSON-RPC method.
+ * @param {object} params Method arguments.
+ * @returns {Promise<*>} The host result; rejects when the host returns a JSON-RPC error.
+ */
 function sendRpc(method, params) {
-	return new Promise((resolve, reject) => {
-		const id = ++requestId;
-		pending.set(id, { resolve, reject });
-		post({ jsonrpc: "2.0", id, method, params });
-	});
+	return new Promise(
+		/**
+		 * Registers response handlers before posting the request to the host.
+		 *
+		 * @param {function(*): void} resolve Completes the request with the host result.
+		 * @param {function(*): void} reject Fails the request with the host error.
+		 * @returns {void}
+		 */
+		(resolve, reject) => {
+			const id = ++requestId;
+			pending.set(id, { resolve, reject });
+			post({ jsonrpc: "2.0", id, method, params });
+		});
 }
 
+/**
+ * Sends a host notification without creating a pending request.
+ *
+ * @param {string} method Notification method.
+ * @param {object} [params={}] Notification payload.
+ * @returns {void}
+ */
 function sendNotification(method, params = {}) {
 	post({ jsonrpc: "2.0", method, params });
 }
 
+/**
+ * Closes generation progress and displays the final status message.
+ *
+ * @param {string} message Completion or failure text.
+ * @returns {void}
+ */
 function setStatus(message) {
 	progress.Finish(message);
 }
 
+/**
+ * Asks the host to display a follow-up message, logging delivery failures.
+ *
+ * @param {string} text Message describing the generation result or save choice.
+ * @returns {Promise<void>}
+ */
 async function tellHost(text) {
 	try {
 		await sendRpc("ui/message", {
@@ -47,21 +87,42 @@ async function tellHost(text) {
 let sizingReady = false;
 let sizeFrame = null;
 let lastHeight = null;
+/**
+ * Schedules one intrinsic-height report after initialization and layout updates.
+ *
+ * @returns {void}
+ */
 function reportSize() {
 	if (!sizingReady || sizeFrame !== null) return;
-	sizeFrame = requestAnimationFrame(() => {
-		sizeFrame = null;
-		// Measure after responsive CSS and the renderer's resize handler settle.
-		// The auto-height body includes padding and can shrink again; the root's
-		// scrollHeight is at least the current iframe height and would prevent that.
-		const height = Math.ceil(document.body.getBoundingClientRect().height);
-		if (height === lastHeight) return;
-		lastHeight = height;
-		// Let the host own the available width. Request only intrinsic height.
-		sendNotification("ui/notifications/size-changed", { height });
-	});
+	sizeFrame = requestAnimationFrame(
+		/**
+		 * Measures the settled body height and notifies the host only when it changes.
+		 *
+		 * @returns {void}
+		 */
+		() => {
+			sizeFrame = null;
+			// Measure after responsive CSS and the renderer's resize handler settle.
+			// The auto-height body includes padding and can shrink again; the root's
+			// scrollHeight is at least the current iframe height and would prevent that.
+			const height = Math.ceil(document.body.getBoundingClientRect().height);
+			if (height === lastHeight) return;
+			lastHeight = height;
+			// Let the host own the available width. Request only intrinsic height.
+			sendNotification("ui/notifications/size-changed", { height });
+		});
 }
 
+/**
+ * Runs generation once, stages the completed payload, and requests a save choice.
+ *
+ * @param {object} input Structured result from the generate_comic tool.
+ * @param {string} input.generation_id Active draft identifier.
+ * @param {string} input.premise User-provided comic premise.
+ * @param {string} input.workflow Selected generation provider.
+ * @param {string} input.site_base_url Website origin used for API calls and assets.
+ * @returns {Promise<void>}
+ */
 async function generateComic(input) {
 	if (started) return;
 	started = true;
@@ -72,6 +133,13 @@ async function generateComic(input) {
 		const api = new ComicGeneratorApi({
 			apiBaseUrl: siteBaseUrl,
 			assetBaseUrl: siteBaseUrl,
+			/**
+			 * Updates progress, renders the latest comic, and schedules a height report.
+			 *
+			 * @param {object} comic Partial or completed comic script.
+			 * @param {number} amount API completion percentage.
+			 * @returns {void}
+			 */
 			onUpdate: (comic, amount) => {
 				progress.Update(amount);
 				renderer.LoadScript(comic);
@@ -80,6 +148,12 @@ async function generateComic(input) {
 		});
 		const generation = new ComicGenerationWorkflow({
 			api,
+			/**
+			 * Maps a workflow stage to the progress dialog message.
+			 *
+			 * @param {string} status Workflow stage identifier.
+			 * @returns {void}
+			 */
 			onStatus: (status) => progress.Stage(status),
 		});
 
@@ -128,46 +202,59 @@ async function generateComic(input) {
 	}
 }
 
-window.addEventListener("message", (event) => {
-	if (event.source !== window.parent) return;
-	let message = event.data;
-	if (typeof message === "string") {
-		try { message = JSON.parse(message); } catch { return; }
-	}
-	if (!message || typeof message !== "object") return;
-
-	if (message.id !== undefined && pending.has(message.id)) {
-		const { resolve, reject } = pending.get(message.id);
-		pending.delete(message.id);
-		message.error ? reject(message.error) : resolve(message.result);
-		return;
-	}
-
-	if (message.method === "ui/notifications/tool-result") {
-		const result = message.params;
-		const input = result?.structuredContent;
-		if (input?.available === true && input?.generation_id) {
-			generateComic(input);
+window.addEventListener("message",
+	/**
+	 * Handles parent-frame responses, generation input, and host context changes.
+	 *
+	 * @param {MessageEvent} event Incoming postMessage event; other sources are ignored.
+	 * @returns {void}
+	 */
+	(event) => {
+		if (event.source !== window.parent) return;
+		let message = event.data;
+		if (typeof message === "string") {
+			try { message = JSON.parse(message); } catch { return; }
 		}
-	}
-	if (message.method === "ui/notifications/host-context-changed") reportSize();
-});
+		if (!message || typeof message !== "object") return;
 
-(async () => {
-	try {
-		await sendRpc("ui/initialize", {
-			protocolVersion: APP_PROTOCOL_VERSION,
-			appInfo: { name: "zeta-comic-strip", version: "1.0.0" },
-			appCapabilities: { availableDisplayModes: ["inline"] },
-		});
-	} catch (error) {
-		console.error("MCP App initialization failed", error);
-		setStatus("The comic app could not connect. Please try again.");
-	}
-	sendNotification("ui/notifications/initialized");
-	sizingReady = true;
-	reportSize();
-})();
+		if (message.id !== undefined && pending.has(message.id)) {
+			const { resolve, reject } = pending.get(message.id);
+			pending.delete(message.id);
+			message.error ? reject(message.error) : resolve(message.result);
+			return;
+		}
+
+		if (message.method === "ui/notifications/tool-result") {
+			const result = message.params;
+			const input = result?.structuredContent;
+			if (input?.available === true && input?.generation_id) {
+				generateComic(input);
+			}
+		}
+		if (message.method === "ui/notifications/host-context-changed") reportSize();
+	});
+
+(
+	/**
+	 * Negotiates the app protocol and enables host size notifications.
+	 *
+	 * @returns {Promise<void>}
+	 */
+	async () => {
+		try {
+			await sendRpc("ui/initialize", {
+				protocolVersion: APP_PROTOCOL_VERSION,
+				appInfo: { name: "zeta-comic-strip", version: "1.0.0" },
+				appCapabilities: { availableDisplayModes: ["inline"] },
+			});
+		} catch (error) {
+			console.error("MCP App initialization failed", error);
+			setStatus("The comic app could not connect. Please try again.");
+		}
+		sendNotification("ui/notifications/initialized");
+		sizingReady = true;
+		reportSize();
+	})();
 
 const sizeObserver = new ResizeObserver(reportSize);
 sizeObserver.observe(document.body, { box: "border-box" });

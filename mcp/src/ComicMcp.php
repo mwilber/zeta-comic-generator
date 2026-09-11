@@ -30,6 +30,14 @@ final class ComicMcp
         'mcp/app.js',
     ];
 
+    /**
+     * Initializes the MCP handlers with persistence, API, and resource dependencies.
+     *
+     * @param DraftRepositoryInterface $drafts Temporary comic draft storage.
+     * @param WebsiteApiClientInterface $websiteApi Client for website metrics and saving.
+     * @param string $siteBaseUrl Public website origin used for API calls and assets.
+     * @param string $projectRoot Absolute project root used to read bundled resources.
+     */
     public function __construct(
         private readonly DraftRepositoryInterface $drafts,
         private readonly WebsiteApiClientInterface $websiteApi,
@@ -38,10 +46,23 @@ final class ComicMcp
     ) {
     }
 
+    /**
+     * Builds the inline MCP App HTML with shared assets and sandbox metadata.
+     *
+     * @return TextResourceContents The bundled app resource and its CSP declarations.
+     * @throws RuntimeException If a resource cannot be read or safely bundled.
+     */
     public function appResource(): TextResourceContents
     {
         $template = $this->readAppFile('mcp/app.html');
-        $styles = implode("\n\n", array_map(fn (string $path): string => $this->readAppFile($path), [
+        $styles = implode("\n\n", array_map(
+            /**
+             * Reads one stylesheet for inclusion in the inline app resource.
+             *
+             * @param string $path Project-relative stylesheet path.
+             * @return string Stylesheet contents.
+             */
+            fn (string $path): string => $this->readAppFile($path), [
             'styles/strip.css',
             'styles/dialog.css',
             'styles/generation-progress.css',
@@ -87,6 +108,12 @@ final class ComicMcp
         );
     }
 
+    /**
+     * Bundles the ordered shared modules and MCP adapters into one inline script.
+     *
+     * @return string JavaScript with supported import and export statements removed.
+     * @throws RuntimeException If a module cannot be read or contains unsupported statements.
+     */
     private function buildInlineAppScript(): string
     {
         $bundle = [];
@@ -109,6 +136,13 @@ final class ComicMcp
         return implode("\n\n", $bundle);
     }
 
+    /**
+     * Reads a resource file relative to the configured project root.
+     *
+     * @param string $path Project-relative resource path.
+     * @return string The file contents.
+     * @throws RuntimeException If the file cannot be read.
+     */
     private function readAppFile(string $path): string
     {
         $contents = file_get_contents($this->projectRoot.'/'.$path);
@@ -119,6 +153,13 @@ final class ComicMcp
         return $contents;
     }
 
+    /**
+     * Validates generation input and checks the allowance without creating a draft.
+     *
+     * @param string $premise Comic premise, limited to 210 characters.
+     * @param string $workflow Generation provider; defaults to openai.
+     * @return CallToolResult Availability details or a user-facing error.
+     */
     public function prepareComicGeneration(string $premise, string $workflow = 'openai'): CallToolResult
     {
         $premise = trim($premise);
@@ -154,6 +195,13 @@ final class ComicMcp
         );
     }
 
+    /**
+     * Rechecks the allowance and creates the draft used by the inline generator.
+     *
+     * @param string $premise Comic premise, limited to 210 characters.
+     * @param string $workflow Generation provider; defaults to openai.
+     * @return CallToolResult App input containing the generation identifier, or an error.
+     */
     public function generateComic(string $premise, string $workflow = 'openai'): CallToolResult
     {
         $premise = trim($premise);
@@ -202,7 +250,13 @@ final class ComicMcp
         );
     }
 
-    /** @param array<string, mixed> $save_payload */
+    /**
+     * Validates and stages the app-generated comic for an optional later save.
+     *
+     * @param string $generation_id Active generation draft identifier.
+     * @param array<string, mixed> $save_payload Untrusted save fields supplied by the app.
+     * @return CallToolResult The staged draft identifier, or a validation/storage error.
+     */
     public function stageComic(string $generation_id, array $save_payload): CallToolResult
     {
         try {
@@ -223,6 +277,12 @@ final class ComicMcp
         );
     }
 
+    /**
+     * Saves a staged draft through the website API and handles reservation retries.
+     *
+     * @param string $draft_id Completed draft identifier; callers must obtain user confirmation.
+     * @return CallToolResult The permanent comic URL, an already saved result, or an error.
+     */
     public function saveComic(string $draft_id): CallToolResult
     {
         $reserved = false;
@@ -261,8 +321,13 @@ final class ComicMcp
         }
     }
 
-    /** @param array<string, mixed> $payload
-     *  @return array<string, string>
+    /**
+     * Checks required fields, premise, size limits, panel count, and asset URLs.
+     *
+     * @param array<string, mixed> $payload Untrusted app-provided save fields.
+     * @param string $expectedPremise Premise stored with the generation draft.
+     * @return array<string, string> Validated fields accepted by the website save API.
+     * @throws RuntimeException If any required field or asset fails validation.
      */
     private function validateSavePayload(array $payload, string $expectedPremise): array
     {
@@ -305,6 +370,12 @@ final class ComicMcp
         return $clean;
     }
 
+    /**
+     * Checks for a local background path or an approved HTTPS background host.
+     *
+     * @param string $url Background asset URL or root-relative path.
+     * @return bool True when the asset location is permitted.
+     */
     private function isAllowedBackgroundUrl(string $url): bool
     {
         if (str_starts_with($url, '/assets/backgrounds')) {
@@ -319,6 +390,14 @@ final class ComicMcp
         return in_array($host, [$siteHost, 'imgen.x.ai'], true);
     }
 
+    /**
+     * Formats the permanent comic link and identifiers as a successful tool result.
+     *
+     * @param string $comicId Saved website comic identifier.
+     * @param string $permalink Permanent comic link token.
+     * @param bool $alreadySaved Whether this result comes from an earlier save.
+     * @return CallToolResult Save status and the public comic URL.
+     */
     private function savedResult(string $comicId, string $permalink, bool $alreadySaved): CallToolResult
     {
         $url = rtrim($this->siteBaseUrl, '/').'/detail/'.$permalink;
@@ -330,11 +409,24 @@ final class ComicMcp
         );
     }
 
+    /**
+     * Formats a user-facing failure as an MCP tool error.
+     *
+     * @param string $message Error text to return to the client.
+     * @return CallToolResult A result with isError set and structured error text.
+     */
     private function error(string $message): CallToolResult
     {
         return new CallToolResult([new TextContent($message)], true, ['error' => $message]);
     }
 
+    /**
+     * Exposes exact RuntimeException messages and hides other exception details.
+     *
+     * @param Throwable $error Failure being reported.
+     * @param string $fallback Safe message for unexpected exception types.
+     * @return string The message suitable for the tool response.
+     */
     private function safeMessage(Throwable $error, string $fallback): string
     {
         return RuntimeException::class === $error::class ? $error->getMessage() : $fallback;

@@ -8,33 +8,62 @@ use RuntimeException;
 
 interface WebsiteApiClientInterface
 {
-    /** @return array<string, mixed> */
+    /**
+     * Reads the website generation allowance and usage response.
+     *
+     * @return array<string, mixed> Decoded metrics API response.
+     */
     public function metrics(): array;
 
-    /** @param array<string, string> $payload
-     *  @return array<string, mixed>
+    /**
+     * Submits a completed comic to the existing website save API.
+     *
+     * @param array<string, string> $payload Website save form fields.
+     * @return array<string, mixed> Decoded save API response.
      */
     public function save(array $payload): array;
 }
 
 final class WebsiteApiClient implements WebsiteApiClientInterface
 {
+    /**
+     * Sets the website origin used by the server-side API client.
+     *
+     * @param string $siteBaseUrl Website base URL.
+     */
     public function __construct(private readonly string $siteBaseUrl)
     {
     }
 
+    /**
+     * Reads the website generation allowance and usage response.
+     *
+     * @return array<string, mixed> Decoded metrics API response.
+     */
     public function metrics(): array
     {
         return $this->request('metrics', []);
     }
 
+    /**
+     * Submits a completed comic to the existing website save API.
+     *
+     * @param array<string, string> $payload Website save form fields.
+     * @return array<string, mixed> Decoded save API response.
+     */
     public function save(array $payload): array
     {
         return $this->request('save', $payload, 180);
     }
 
-    /** @param array<string, string> $payload
-     *  @return array<string, mixed>
+    /**
+     * Posts URL-encoded fields to a website API endpoint and decodes its response.
+     *
+     * @param string $action Endpoint name beneath /api/.
+     * @param array<string, string> $payload Form fields to submit.
+     * @param int $timeout Maximum request duration in seconds; defaults to 20.
+     * @return array<string, mixed> Decoded JSON response.
+     * @throws RuntimeException If transport, HTTP status, or response decoding fails.
      */
     private function request(string $action, array $payload, int $timeout = 20): array
     {

@@ -9,10 +9,22 @@ use RuntimeException;
 
 final class DraftRepository implements DraftRepositoryInterface
 {
+    /**
+     * Initializes MySQL-backed temporary draft storage.
+     *
+     * @param PDO $db Database connection configured to throw exceptions.
+     */
     public function __construct(private readonly PDO $db)
     {
     }
 
+    /**
+     * Creates a temporary draft for the supplied premise and workflow.
+     *
+     * @param string $premise User-provided comic premise.
+     * @param string $workflow Selected generation provider.
+     * @return string The draft identifier.
+     */
     public function createPrepared(string $premise, string $workflow): string
     {
         $this->deleteExpired();
@@ -32,7 +44,12 @@ final class DraftRepository implements DraftRepositoryInterface
         return $draftId;
     }
 
-    /** @return array<string, mixed>|null */
+    /**
+     * Finds a draft that has not expired.
+     *
+     * @param string $draftId Draft identifier.
+     * @return array<string, mixed>|null The draft row, or null when unavailable.
+     */
     public function findActive(string $draftId): ?array
     {
         $statement = $this->db->prepare(
@@ -44,7 +61,13 @@ final class DraftRepository implements DraftRepositoryInterface
         return is_array($draft) ? $draft : null;
     }
 
-    /** @return array<string, mixed> */
+    /**
+     * Starts generation for a prepared draft or accepts an existing generating draft.
+     *
+     * @param string $draftId Draft identifier.
+     * @return array<string, mixed> The draft as read before the status update.
+     * @throws RuntimeException If the draft cannot begin generation.
+     */
     public function beginGeneration(string $draftId): array
     {
         $draft = $this->findActive($draftId);
@@ -63,7 +86,14 @@ final class DraftRepository implements DraftRepositoryInterface
         return $draft;
     }
 
-    /** @param array<string, string> $savePayload */
+    /**
+     * Stores a completed save payload, allowing identical staging retries.
+     *
+     * @param string $draftId Draft identifier.
+     * @param array<string, string> $savePayload Validated website save fields.
+     * @return void
+     * @throws RuntimeException If the draft is unavailable, changed, or cannot be staged.
+     */
     public function stage(string $draftId, array $savePayload): void
     {
         $draft = $this->findActive($draftId);
@@ -90,7 +120,13 @@ final class DraftRepository implements DraftRepositoryInterface
         }
     }
 
-    /** @return array{state: string, draft: array<string, mixed>} */
+    /**
+     * Reserves a ready draft, reclaims a stale save, or returns an existing save.
+     *
+     * @param string $draftId Draft identifier.
+     * @return array{state: string, draft: array<string, mixed>} Reservation state and draft row.
+     * @throws RuntimeException If the draft is unavailable or another save is still active.
+     */
     public function reserveSave(string $draftId): array
     {
         $draft = $this->findActive($draftId);
@@ -131,6 +167,14 @@ final class DraftRepository implements DraftRepositoryInterface
         return ['state' => 'reserved', 'draft' => $draft];
     }
 
+    /**
+     * Records the saved comic identifiers and extends the draft retention period.
+     *
+     * @param string $draftId Reserved draft identifier.
+     * @param string $comicId Identifier returned by the website save API.
+     * @param string $permalink Permanent comic link token.
+     * @return void
+     */
     public function completeSave(string $draftId, string $comicId, string $permalink): void
     {
         $statement = $this->db->prepare(
@@ -147,6 +191,13 @@ final class DraftRepository implements DraftRepositoryInterface
         ]);
     }
 
+    /**
+     * Returns a failed save reservation to the ready state for a later retry.
+     *
+     * @param string $draftId Reserved draft identifier.
+     * @param string $message Failure message to retain for diagnostics.
+     * @return void
+     */
     public function releaseSave(string $draftId, string $message): void
     {
         $statement = $this->db->prepare(
@@ -160,6 +211,11 @@ final class DraftRepository implements DraftRepositoryInterface
         ]);
     }
 
+    /**
+     * Deletes draft records whose expiration time has passed.
+     *
+     * @return void
+     */
     private function deleteExpired(): void
     {
         $this->db->exec('DELETE FROM mcp_drafts WHERE expires_at <= UTC_TIMESTAMP()');

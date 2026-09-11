@@ -14,6 +14,14 @@ use Mcp\Server\Session\SessionStoreInterface;
 
 final class McpServerFactory
 {
+    /**
+     * Registers comic tools, the app resource, and supported MCP protocol versions.
+     *
+     * @param ComicMcp $comicMcp Handler instance for tools and resources.
+     * @param string $siteBaseUrl Public website URL advertised in server metadata.
+     * @param SessionStoreInterface|null $sessionStore Optional session storage for handshake clients.
+     * @return Server The configured MCP server.
+     */
     public static function build(
         ComicMcp $comicMcp,
         string $siteBaseUrl,
