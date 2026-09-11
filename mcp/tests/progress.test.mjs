@@ -14,6 +14,10 @@ const source = (await Promise.all(paths.map(path => readFile(new URL(`../../${pa
 // Exercise the real app/controller/workflow with a small DOM and fake API/host.
 async function run(scenario) {
 	const history = [];
+	let bodyHeight = 320;
+	const frames = [];
+	const flushFrames = () => { for (const callback of frames.splice(0)) callback(); };
+	let onObservedResize;
 	const elements = new Map();
 	const document = {
 		getElementById: id => elements.get(id),
@@ -37,10 +41,16 @@ async function run(scenario) {
 	}
 	for (const id of ["strip", "statusdialog", "status", "progress", "app-status"]) element(id);
 	document.body = element("body");
+	document.body.getBoundingClientRect = () => ({ width: 600, height: bodyHeight });
+	document.documentElement = element("html");
 	let listener;
+	let onWindowResize;
 	const messages = [];
 	const parent = { postMessage(message) { messages.push(message); } };
-	const window = { parent, addEventListener(type, callback) { listener = callback; } };
+	const window = { parent, addEventListener(type, callback) {
+		if (type === "message") listener = callback;
+		if (type === "resize") onWindowResize = callback;
+	} };
 	const respond = (message, result) => listener({ source: parent, data: { id: message.id, result } });
 	class Api {
 		constructor(options) { this.onUpdate = options.onUpdate; }
@@ -57,14 +67,20 @@ async function run(scenario) {
 	const context = vm.createContext({
 		document, window, ComicGeneratorApi: Api,
 		ComicRenderer: class { LoadScript() { if (scenario === "renderer") throw Error("render failed"); } },
-		ResizeObserver: class { observe() {} }, console: { error() {} },
+		ResizeObserver: class { constructor(callback) { onObservedResize = callback; } observe() {} }, console: { error() {} },
+		requestAnimationFrame: callback => { frames.push(callback); return frames.length; },
 	});
 	vm.runInContext(source, context);
 	assert.equal(elements.get("statusdialog").classList.contains("active"), true);
 	assert.equal(elements.get("strip").inert, true);
+	onObservedResize();
+	flushFrames();
+	assert.equal(messages.some(m => m.method === "ui/notifications/size-changed"), false, "Wait for the host handshake before reporting size");
 	respond(messages.find(m => m.method === "ui/initialize"), {});
 	const work = vm.runInContext('generateComic({ generation_id: "test", premise: "test", workflow: "openai", site_base_url: "https://example.test" })', context);
 	await new Promise(resolve => setImmediate(resolve));
+	flushFrames();
+	assert.equal(messages.find(m => m.method === "ui/notifications/size-changed").params.height, 320);
 	const staged = messages.find(m => m.method === "tools/call");
 	if (["success", "staging"].includes(scenario)) {
 		assert.ok(staged);
@@ -86,6 +102,21 @@ async function run(scenario) {
 	await work;
 	await vm.runInContext('generateComic({})', context);
 	assert.equal(messages.filter(m => m.method === "tools/call").length, staged ? 1 : 0, "Ignore duplicate generation notifications");
+	flushFrames();
+	const sizes = () => messages.filter(m => m.method === "ui/notifications/size-changed");
+	for (const height of [560.25, 220]) {
+		onWindowResize();
+		onObservedResize();
+		bodyHeight = height; // The renderer changes layout before the next frame.
+		const before = sizes().length;
+		flushFrames();
+		assert.equal(sizes().length, before + 1, "Coalesce resize events into one notification");
+		assert.equal(sizes().at(-1).params.height, Math.ceil(height), "Report both growth and shrinkage after layout settles");
+		assert.equal(sizes().at(-1).params.width, undefined, "Leave width to the host");
+		onObservedResize();
+		flushFrames();
+		assert.equal(sizes().length, before + 1, "Do not loop when host applies the requested height");
+	}
 }
 
 for (const scenario of ["success", "metrics", "limit", "generation", "renderer", "staging"]) await run(scenario);

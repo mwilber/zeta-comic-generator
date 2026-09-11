@@ -15,6 +15,8 @@ The MCP App resource inlines the shared strip, dialog, and generation progress s
 
 The website and MCP App share `GenerationProgressDialog.js`, `dialog.css`, and `generation-progress.css`. The MCP `progress.js` adapter connects workflow stage messages and API completion percentages to the dialog, while `progress.css` fits it to the embedded frame. The modal stays open through draft staging, closes on success or failure, and leaves a visible result message. Generation errors and rate limits also release the modal before asking the host to respond.
 
+The app reports its intrinsic body height using `ui/notifications/size-changed` after initialization and responsive layout changes. Measurements are coalesced into animation frames so the renderer can update panel dimensions first. Only height is requested; the host controls width. Hosts that honor the requested height can grow for the mobile layout and shrink for the wide layout without a vertical scrollbar, subject to any host height limits.
+
 ## Deployment
 
 1. Run `composer install --no-dev --optimize-autoloader` from the project root. Dependencies are resolved against PHP 8.1 or later.

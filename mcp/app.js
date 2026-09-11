@@ -41,18 +41,22 @@ async function tellHost(text) {
 	}
 }
 
-let lastWidth = 0;
-let lastHeight = 0;
+let sizingReady = false;
+let sizeFrame = null;
+let lastHeight = null;
 function reportSize() {
-	const strip = document.getElementById("strip");
-	const body = document.body.getBoundingClientRect();
-	const stripBounds = strip.getBoundingClientRect();
-	const width = Math.ceil(stripBounds.width + 16);
-	const height = Math.ceil(body.height);
-	if (width === lastWidth && height === lastHeight) return;
-	lastWidth = width;
-	lastHeight = height;
-	sendNotification("ui/notifications/size-changed", { width, height });
+	if (!sizingReady || sizeFrame !== null) return;
+	sizeFrame = requestAnimationFrame(() => {
+		sizeFrame = null;
+		// Measure after responsive CSS and the renderer's resize handler settle.
+		// The auto-height body includes padding and can shrink again; the root's
+		// scrollHeight is at least the current iframe height and would prevent that.
+		const height = Math.ceil(document.body.getBoundingClientRect().height);
+		if (height === lastHeight) return;
+		lastHeight = height;
+		// Let the host own the available width. Request only intrinsic height.
+		sendNotification("ui/notifications/size-changed", { height });
+	});
 }
 
 async function generateComic(input) {
@@ -143,6 +147,7 @@ window.addEventListener("message", (event) => {
 			generateComic(input);
 		}
 	}
+	if (message.method === "ui/notifications/host-context-changed") reportSize();
 });
 
 (async () => {
@@ -157,7 +162,11 @@ window.addEventListener("message", (event) => {
 		setStatus("The comic app could not connect. Please try again.");
 	}
 	sendNotification("ui/notifications/initialized");
+	sizingReady = true;
 	reportSize();
 })();
 
-new ResizeObserver(reportSize).observe(document.body);
+const sizeObserver = new ResizeObserver(reportSize);
+sizeObserver.observe(document.body, { box: "border-box" });
+sizeObserver.observe(document.documentElement);
+window.addEventListener("resize", reportSize);
