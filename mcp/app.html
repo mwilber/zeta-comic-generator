@@ -26,6 +26,30 @@
             max-width: 942px;
             box-shadow: none;
         }
+        /* Keep the shared desktop strip layout down to 501px in the MCP frame. */
+        @media screen and (min-width: 501px) and (max-width: 768px) {
+            #strip .nav-button { display: none; }
+            #strip .panel-container {
+                width: 100%;
+                max-width: none;
+                margin: 0;
+                overflow: visible;
+                flex-wrap: wrap;
+                scroll-snap-type: none;
+                scroll-behavior: auto;
+            }
+            #strip .panel,
+            #strip .panel:first-child,
+            #strip .panel:last-child {
+                flex: 1;
+                min-width: 0;
+                width: 260px;
+                height: auto;
+                margin: 5px;
+                scroll-snap-align: none;
+            }
+            #strip .panel .bubble { font-size: 10px; }
+        }
         #strip .panel.is-loading {
             overflow: hidden;
             background: #d8d8d8;
