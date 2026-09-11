@@ -2,6 +2,9 @@ import { ComicGeneratorApi } from "../scripts/modules/ComicGeneratorApi.js";
 import { ComicGenerationWorkflow } from "../scripts/modules/ComicGenerationWorkflow.js";
 import { ComicRenderer } from "../scripts/modules/ComicRenderer/ComicRenderer.js";
 import { McpGenerationProgress } from "./progress.js";
+import { installCanvasBalloons } from "./canvas-balloons.js";
+
+installCanvasBalloons();
 
 const APP_PROTOCOL_VERSION = "2026-01-26";
 let requestId = 0;

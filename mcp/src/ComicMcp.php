@@ -26,6 +26,7 @@ final class ComicMcp
         'scripts/modules/ComicGenerationWorkflow.js',
         'scripts/modules/GenerationProgressDialog.js',
         'mcp/progress.js',
+        'mcp/canvas-balloons.js',
         'mcp/app.js',
     ];
 

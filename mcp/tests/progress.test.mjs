@@ -69,6 +69,7 @@ async function run(scenario) {
 		ComicRenderer: class { LoadScript() { if (scenario === "renderer") throw Error("render failed"); } },
 		ResizeObserver: class { constructor(callback) { onObservedResize = callback; } observe() {} }, console: { error() {} },
 		requestAnimationFrame: callback => { frames.push(callback); return frames.length; },
+		installCanvasBalloons() {},
 	});
 	vm.runInContext(source, context);
 	assert.equal(elements.get("statusdialog").classList.contains("active"), true);

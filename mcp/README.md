@@ -17,6 +17,8 @@ The website and MCP App share `GenerationProgressDialog.js`, `dialog.css`, and `
 
 The app reports its intrinsic body height using `ui/notifications/size-changed` after initialization and responsive layout changes. Measurements are coalesced into animation frames so the renderer can update panel dimensions first. Only height is requested; the host controls width. Hosts that honor the requested height can grow for the mobile layout and shrink for the wide layout without a vertical scrollbar, subject to any host height limits.
 
+The MCP-only `canvas-balloons.js` adapter replaces the shared renderer's `DialogBalloon.RenderImage` hook inside the iframe. It returns an accessible inline canvas and reuses `DialogBalloon.drawBalloon`, avoiding data URL images under restrictive host CSPs. The main website retains its image-based balloons. The adapter caches the font load and falls back to the browser font if loading fails.
+
 ## Deployment
 
 1. Run `composer install --no-dev --optimize-autoloader` from the project root. Dependencies are resolved against PHP 8.1 or later.
@@ -32,4 +34,5 @@ The MCP endpoint is intentionally public, matching the public generation experie
 php mcp/tests/ComicMcpTest.php
 node mcp/tests/workflow.test.mjs
 node mcp/tests/progress.test.mjs
+node mcp/tests/canvas-balloons.test.mjs
 ```
