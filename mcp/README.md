@@ -11,7 +11,9 @@ The public MCP endpoint is `https://comicgenerator.greenzeta.com/mcp`. It serves
 
 The existing API remains the source of truth for the daily rate limit. Its script-generation step records the generation attempt, whether or not the comic is subsequently saved.
 
-The MCP App resource inlines the shared strip stylesheet and a server-built bundle of the existing JavaScript modules. This is intentional: ChatGPT renders the resource on a sandbox origin, where external module scripts require CORS headers even when the resource domain is allowed by the app CSP.
+The MCP App resource inlines the shared strip, dialog, and generation progress stylesheets and a server-built bundle of the existing JavaScript modules. This is intentional: ChatGPT renders the resource on a sandbox origin, where external module scripts require CORS headers even when the resource domain is allowed by the app CSP.
+
+The website and MCP App share `GenerationProgressDialog.js`, `dialog.css`, and `generation-progress.css`. The MCP `progress.js` adapter connects workflow stage messages and API completion percentages to the dialog, while `progress.css` fits it to the embedded frame. The modal stays open through draft staging, closes on success or failure, and leaves a visible result message. Generation errors and rate limits also release the modal before asking the host to respond.
 
 ## Deployment
 
@@ -27,4 +29,5 @@ The MCP endpoint is intentionally public, matching the public generation experie
 ```sh
 php mcp/tests/ComicMcpTest.php
 node mcp/tests/workflow.test.mjs
+node mcp/tests/progress.test.mjs
 ```

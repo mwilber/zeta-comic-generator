@@ -15,7 +15,7 @@ use Throwable;
 
 final class ComicMcp
 {
-    public const APP_URI = 'ui://zeta-comic-generator/comic-strip-v2';
+    public const APP_URI = 'ui://zeta-comic-generator/comic-strip-v3';
     public const WORKFLOWS = ['openai', 'xai', 'google'];
 
     private const APP_SCRIPT_FILES = [
@@ -24,6 +24,8 @@ final class ComicMcp
         'scripts/modules/ComicRenderer/ComicRenderer.js',
         'scripts/modules/ComicGeneratorApi.js',
         'scripts/modules/ComicGenerationWorkflow.js',
+        'scripts/modules/GenerationProgressDialog.js',
+        'mcp/progress.js',
         'mcp/app.js',
     ];
 
@@ -38,7 +40,12 @@ final class ComicMcp
     public function appResource(): TextResourceContents
     {
         $template = $this->readAppFile('mcp/app.html');
-        $styles = $this->readAppFile('styles/strip.css');
+        $styles = implode("\n\n", array_map(fn (string $path): string => $this->readAppFile($path), [
+            'styles/strip.css',
+            'styles/dialog.css',
+            'styles/generation-progress.css',
+            'mcp/progress.css',
+        ]));
         $script = $this->buildInlineAppScript();
 
         if (false !== stripos($styles, '</style') || false !== stripos($script, '</script')) {
@@ -46,7 +53,7 @@ final class ComicMcp
         }
 
         $template = str_replace(
-            ['{{SITE_BASE_URL}}', '{{CHARACTER_ACTIONS}}', '{{STRIP_STYLES}}', '{{APP_SCRIPT}}'],
+            ['{{SITE_BASE_URL}}', '{{CHARACTER_ACTIONS}}', '{{APP_STYLES}}', '{{APP_SCRIPT}}'],
             [
                 htmlspecialchars($this->siteBaseUrl, ENT_QUOTES, 'UTF-8'),
                 json_encode($GLOBALS['characterActions'], JSON_THROW_ON_ERROR),

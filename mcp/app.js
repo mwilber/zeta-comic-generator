@@ -1,11 +1,14 @@
 import { ComicGeneratorApi } from "../scripts/modules/ComicGeneratorApi.js";
 import { ComicGenerationWorkflow } from "../scripts/modules/ComicGenerationWorkflow.js";
 import { ComicRenderer } from "../scripts/modules/ComicRenderer/ComicRenderer.js";
+import { McpGenerationProgress } from "./progress.js";
 
 const APP_PROTOCOL_VERSION = "2026-01-26";
 let requestId = 0;
 let started = false;
 const pending = new Map();
+const progress = new McpGenerationProgress();
+progress.Start();
 
 function post(message) {
 	window.parent.postMessage(message, "*");
@@ -24,7 +27,7 @@ function sendNotification(method, params = {}) {
 }
 
 function setStatus(message) {
-	document.getElementById("app-status").textContent = message;
+	progress.Finish(message);
 }
 
 async function tellHost(text) {
@@ -56,22 +59,23 @@ async function generateComic(input) {
 	if (started) return;
 	started = true;
 
-	const { generation_id: generationId, premise, workflow, site_base_url: siteBaseUrl } = input;
-	const renderer = new ComicRenderer({ el: document.querySelector(".strip-container") });
-	const api = new ComicGeneratorApi({
-		apiBaseUrl: siteBaseUrl,
-		assetBaseUrl: siteBaseUrl,
-		onUpdate: (comic) => {
-			renderer.LoadScript(comic);
-			reportSize();
-		},
-	});
-	const generation = new ComicGenerationWorkflow({
-		api,
-		onStatus: (status) => setStatus(status === "complete" ? "Comic generation complete." : `Generating comic: ${status}.`),
-	});
-
 	try {
+		const { generation_id: generationId, premise, workflow, site_base_url: siteBaseUrl } = input;
+		const renderer = new ComicRenderer({ el: document.querySelector(".strip-container") });
+		const api = new ComicGeneratorApi({
+			apiBaseUrl: siteBaseUrl,
+			assetBaseUrl: siteBaseUrl,
+			onUpdate: (comic, amount) => {
+				progress.Update(amount);
+				renderer.LoadScript(comic);
+				reportSize();
+			},
+		});
+		const generation = new ComicGenerationWorkflow({
+			api,
+			onStatus: (status) => progress.Stage(status),
+		});
+
 		const metrics = await api.GetMetrics();
 		if (!metrics || typeof metrics.limitreached !== "boolean") {
 			setStatus("Comic generation availability could not be verified.");
@@ -150,6 +154,7 @@ window.addEventListener("message", (event) => {
 		});
 	} catch (error) {
 		console.error("MCP App initialization failed", error);
+		setStatus("The comic app could not connect. Please try again.");
 	}
 	sendNotification("ui/notifications/initialized");
 	reportSize();

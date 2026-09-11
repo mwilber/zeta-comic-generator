@@ -1,0 +1,123 @@
+#statusdialog #status {
+	margin-bottom: 0.5em;
+	display: inline-block;
+}
+
+#statusdialog .lds-grid {
+	display: inline-block;
+	position: relative;
+	width: 1em;
+	height: 1.25em;
+	transform: scale(0.75);
+}
+
+progress[value] {
+	/* Reset the default appearance */
+	-webkit-appearance: none;
+	 appearance: none;
+  
+	width: 100%;
+	height: 0.5em;
+}
+
+progress[value]::-webkit-progress-bar {
+	background-color: #ff9;
+	background-color: rgba(0,0,0,0.5);
+	border-radius: 1em;
+	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25) inset;
+	border: solid 1px #000;
+}
+
+progress[value]::-webkit-progress-value {
+	background-color: #f00;
+	background-color: #fff;
+	border-radius: 1em;
+	/* box-shadow: -2px 2px 5px rgba(255, 255, 255, 0.75) inset; */
+	/* border: solid 1px #000; */
+}
+
+/* Loading Spinner */
+.lds-grid {
+	display: inline-block;
+	position: relative;
+	width: 80px;
+	height: 80px;
+}
+.lds-grid div {
+	position: absolute;
+	width: 16px;
+	height: 16px;
+	border-radius: 50%;
+	background: #fff;
+	animation: lds-grid 1.2s linear infinite;
+}
+.lds-grid div:nth-child(1) {
+	top: 8px;
+	left: 8px;
+	animation-delay: 0s;
+}
+.lds-grid div:nth-child(2) {
+	top: 8px;
+	left: 32px;
+	animation-delay: -0.4s;
+}
+.lds-grid div:nth-child(3) {
+	top: 8px;
+	left: 56px;
+	animation-delay: -0.8s;
+}
+.lds-grid div:nth-child(4) {
+	top: 32px;
+	left: 8px;
+	animation-delay: -0.4s;
+}
+.lds-grid div:nth-child(5) {
+	top: 32px;
+	left: 32px;
+	animation-delay: -0.8s;
+}
+.lds-grid div:nth-child(6) {
+	top: 32px;
+	left: 56px;
+	animation-delay: -1.2s;
+}
+.lds-grid div:nth-child(7) {
+	top: 56px;
+	left: 8px;
+	animation-delay: -0.8s;
+}
+.lds-grid div:nth-child(8) {
+	top: 56px;
+	left: 32px;
+	animation-delay: -1.2s;
+}
+.lds-grid div:nth-child(9) {
+	top: 56px;
+	left: 56px;
+	animation-delay: -1.6s;
+}
+@keyframes lds-grid {
+	0%, 100% {
+	  opacity: 1;
+	}
+	50% {
+	  opacity: 0.5;
+	}
+}
+@media screen and (max-width: 550px) {
+	#statusdialog .dialog {
+		font-size: 3em;
+	}
+}
+
+@media screen and (max-width: 700px) {
+	#statusdialog #status {
+		margin-bottom: 0;
+		width: 100%;
+	}
+
+	#statusdialog .lds-grid {
+		width: 2em;
+		height: 2em;
+	}
+}

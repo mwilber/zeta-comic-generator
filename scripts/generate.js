@@ -2,13 +2,14 @@ import { ComicGeneratorApi } from "./modules/ComicGeneratorApi.js";
 import { COMIC_WORKFLOWS, ComicGenerationWorkflow } from "./modules/ComicGenerationWorkflow.js";
 import { ComicRenderer } from "./modules/ComicRenderer/ComicRenderer.js";
 import { ScriptRenderer } from "./modules/ScriptRenderer.js";
+import { GenerationProgressDialog } from "./modules/GenerationProgressDialog.js";
 
 /**
  * The main entry point for the comic generation application. This script sets up 
  * the necessary components, attaches UI event handlers, and handles the logic for 
  * generating and saving comic strips.
  */
-let api, comicRenderer, scriptRenderer;
+let api, comicRenderer, scriptRenderer, progressDialog;
 const MODEL_GROUPS = COMIC_WORKFLOWS;
 
 /**
@@ -17,6 +18,7 @@ const MODEL_GROUPS = COMIC_WORKFLOWS;
  * and sets the application status to "ready".
  */
 document.addEventListener("DOMContentLoaded", () => {
+	progressDialog = new GenerationProgressDialog(document.getElementById("statusdialog"));
 	comicRenderer = new ComicRenderer({
 		el: document.querySelector(".strip-container"),
 	});
@@ -419,18 +421,14 @@ function SetStatus(status) {
 			);
 	});
 
-	const statusDlg = document.getElementById("statusdialog");
-	
-	statusDlg.classList[status === "generating" ? "add" : "remove"]("active");
-
 	if(status === "generating") {
-		statusDlg.focus();
-	} else if(status === "complete") {
-		document.getElementById("strip").focus();
+		progressDialog.Show(status);
+	} else {
+		progressDialog.Hide();
+		if(status === "complete") document.getElementById("strip").focus();
 	}
 
-	const el = document.getElementById("status");
-	el.innerHTML = status;
+	progressDialog.SetMessage(status);
 }
 
 /**
@@ -439,15 +437,7 @@ function SetStatus(status) {
  * @param {number} amount - The progress amount to display, as a percentage.
  */
 function UpdateProgress(amount) {
-	amount = amount || 0;
-	console.log("Update:", amount);
-	const el = document.getElementById("progress");
-	el.setAttribute("value", amount);
-	el.innerHTML = amount + "%";
-	el.setAttribute("aria-valuetext", `${amount}% complete.`);
-
-	// const elStatus = document.getElementById("status");
-	// elStatus.setAttribute("aria-label", `Generating: ${amount}% complete.`);
+	progressDialog.Update(amount);
 }
 
 /**

@@ -225,6 +225,12 @@ expect('text/html;profile=mcp-app' === ($resourceContent['mimeType'] ?? null), '
 $appHtml = $resourceContent['text'] ?? '';
 expect(str_contains($appHtml, 'class ComicGeneratorApi'), 'App resource does not contain the bundled API client.');
 expect(str_contains($appHtml, 'class ComicRenderer'), 'App resource does not contain the bundled comic renderer.');
+expect(str_contains($appHtml, 'class GenerationProgressDialog'), 'App resource does not reuse the shared progress controller.');
+expect(str_contains($appHtml, 'class McpGenerationProgress'), 'App resource does not include the progress adapter.');
+expect(str_contains($appHtml, 'id="statusdialog"'), 'App resource does not contain the progress dialog.');
+foreach (['styles/dialog.css', 'styles/generation-progress.css', 'mcp/progress.css'] as $stylesheet) {
+    expect(str_contains($appHtml, file_get_contents($root.'/'.$stylesheet)), 'App resource is missing styles from '.$stylesheet.'.');
+}
 expect(str_contains($appHtml, 'async function generateComic'), 'App resource does not contain its UI controller.');
 expect(!preg_match('/<script[^>]+src=/i', $appHtml), 'App resource loads a cross-origin script.');
 expect(!preg_match('/<link[^>]+stylesheet/i', $appHtml), 'App resource loads a cross-origin stylesheet.');
