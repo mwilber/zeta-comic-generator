@@ -23,7 +23,8 @@
 	define("SIMULATE_DELAY", 0);
 	define("SIMULATE_ERRORS", false);
 
-	$request = $_SERVER['REQUEST_URI'];
+	// Route using only the path so query parameters never become part of a comic ID.
+	$request = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH) ?: '/';
 	$path = explode('/', $request);
 	$controller = "";
 	$hash = "";
