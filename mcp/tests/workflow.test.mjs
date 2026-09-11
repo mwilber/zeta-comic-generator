@@ -5,7 +5,7 @@ import {
 	NormalizeComicWorkflow,
 } from "../../scripts/modules/ComicGenerationWorkflow.js";
 
-assert.deepEqual(COMIC_WORKFLOWS.openai, { story: "gpt5", script: "gpt", image: "gptimage" });
+assert.deepEqual(COMIC_WORKFLOWS.openai, { story: "gpt", script: "gpt5", image: "gptimage" });
 assert.deepEqual(COMIC_WORKFLOWS.xai, { story: "grokadv", script: "grok", image: "grokimg" });
 assert.deepEqual(COMIC_WORKFLOWS.google, { story: "gemthink", script: "gem", image: "nanobanana" });
 assert.equal(NormalizeComicWorkflow("xai"), "xai");

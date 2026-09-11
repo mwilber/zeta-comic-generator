@@ -1,6 +1,18 @@
 const listing = {};
 
 const priceTable = {
+	"gpt-6-astra": {
+		prompt_tokens: 10 / 1000000,
+		completion_tokens: 50 / 1000000,
+	},
+	"gpt-5.6-terra": {
+		prompt_tokens: 2 / 1000000,
+		completion_tokens: 12 / 1000000,
+	},
+	"gpt-image-2": {
+		// 1024x1024, low quality — matches ModelGptImage defaults.
+		image: 0.006,
+	},
 	"gpt-5": {
 		prompt_tokens: 1.25 / 1000000,
 		completion_tokens: 10 / 1000000,
@@ -44,6 +56,19 @@ const priceTable = {
 	"gemini-2.5-pro-exp-03-25": {
 		prompt_token_count: 0.10 / 1000000,
 		candidates_token_count: 0.40 / 1000000,
+	},
+	"gemini-3.8-flash": {
+		prompt_token_count: 0.75 / 1000000,
+		candidates_token_count: 3.75 / 1000000,
+	},
+	"gemini-3.1-pro-preview": {
+		prompt_token_count: 2 / 1000000,
+		candidates_token_count: 12 / 1000000,
+	},
+	"gemini-3.1-flash-image": {
+		prompt_token_count: 0.50 / 1000000,
+		candidates_token_count: 3 / 1000000,
+		image: 0.067,
 	},
 	"anthropic.claude-3-5-sonnet-20240620-v1:0": {
 		input_tokens: 0.003 / 1000,

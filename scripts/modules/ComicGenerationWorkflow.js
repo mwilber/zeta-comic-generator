@@ -3,7 +3,7 @@
  * Individual model choices can still be supplied by the site's advanced UI.
  */
 export const COMIC_WORKFLOWS = Object.freeze({
-	openai: Object.freeze({ story: "gpt5", script: "gpt", image: "gptimage" }),
+	openai: Object.freeze({ story: "gpt", script: "gpt5", image: "gptimage" }),
 	google: Object.freeze({ story: "gemthink", script: "gem", image: "nanobanana" }),
 	xai: Object.freeze({ story: "grokadv", script: "grok", image: "grokimg" }),
 });

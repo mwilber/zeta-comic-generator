@@ -2,12 +2,12 @@
 require_once('gpt.php');
 
 /**
- * Provides functionality for interacting with the OpenAI GPT-5 model.
- * Inherits from ModelGpt and uses the gpt-5 model.
+ * Provides functionality for interacting with the OpenAI GPT-5.6 Terra model.
+ * Inherits the Responses API request format and low reasoning effort from ModelGpt.
  */
 class ModelGpt5 extends ModelGpt {
 	function __construct() {
 		parent::__construct();
-		$this->modelName = "gpt-5.5";
+		$this->modelName = "gpt-5.6-terra";
 	}
 }
