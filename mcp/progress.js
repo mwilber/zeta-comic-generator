@@ -23,7 +23,7 @@ export class McpGenerationProgress {
 		this.strip.setAttribute("aria-busy", "true");
 		this.summary.classList.add("visually-hidden");
 		this.dialog.Update(0);
-		this.dialog.Show("Preparing comic generation…");
+		this.dialog.Show();
 	}
 
 	/**
@@ -33,16 +33,7 @@ export class McpGenerationProgress {
 	 * @returns {void}
 	 */
 	Stage(stage) {
-		const messages = {
-			concept: "Writing the concept…",
-			script: "Writing the script…",
-			backgrounds: "Planning backgrounds…",
-			images: "Drawing backgrounds…",
-			character: "Adding Alpha Zeta…",
-			continuity: "Writing continuity…",
-			complete: "Preparing your finished comic…",
-		};
-		if (messages[stage]) this.dialog.SetMessage(messages[stage]);
+		this.dialog.Stage(stage);
 	}
 
 	/**

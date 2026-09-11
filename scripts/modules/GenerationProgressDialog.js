@@ -6,7 +6,7 @@ export class GenerationProgressDialog {
 		this.progress = el.querySelector("progress");
 	}
 
-	Show(message = "generating") {
+	Show(message = "Preparing comic generation…") {
 		this.SetMessage(message);
 		this.el.classList.add("active");
 		this.el.setAttribute("aria-hidden", "false");
@@ -20,6 +20,20 @@ export class GenerationProgressDialog {
 
 	SetMessage(message) {
 		this.status.textContent = message;
+	}
+
+	/** Displays a workflow stage; unknown stages leave the current message intact. */
+	Stage(stage) {
+		const messages = {
+			concept: "Writing the concept…",
+			script: "Writing the script…",
+			backgrounds: "Planning backgrounds…",
+			images: "Drawing backgrounds…",
+			character: "Adding Alpha Zeta…",
+			continuity: "Writing continuity…",
+			complete: "Preparing your finished comic…",
+		};
+		if (Object.hasOwn(messages, stage)) this.SetMessage(messages[stage]);
 	}
 
 	Update(amount) {

@@ -327,7 +327,10 @@ async function GenerateStrip() {
 	const imageStyle = document.getElementById("image-style").value;
 	const seriesId = document.getElementById("series-id").value;
 
-	const workflow = new ComicGenerationWorkflow({ api });
+	const workflow = new ComicGenerationWorkflow({
+		api,
+		onStatus: (stage) => progressDialog.Stage(stage),
+	});
 	const result = await workflow.Generate(safeQuery, {
 		storyModel: conceptModel,
 		scriptModel: textModel,
@@ -422,13 +425,11 @@ function SetStatus(status) {
 	});
 
 	if(status === "generating") {
-		progressDialog.Show(status);
+		progressDialog.Show();
 	} else {
 		progressDialog.Hide();
 		if(status === "complete") document.getElementById("strip").focus();
 	}
-
-	progressDialog.SetMessage(status);
 }
 
 /**
