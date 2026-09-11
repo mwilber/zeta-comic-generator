@@ -19,6 +19,7 @@ body.is-generating { min-height: 280px; }
     overflow: auto;
     padding: 20px 24px;
     font-size: clamp(20px, 4vw, 32px);
+    box-shadow: 5px 10px 15px rgba(0, 0, 0, 0.5);
 }
 #statusdialog #status { width: 100%; }
 #statusdialog .lds-grid { width: 80px; height: 80px; }
