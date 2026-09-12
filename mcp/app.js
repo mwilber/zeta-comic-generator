@@ -160,12 +160,12 @@ async function generateComic(input) {
 		const metrics = await api.GetMetrics();
 		if (!metrics || typeof metrics.limitreached !== "boolean") {
 			setStatus("Comic generation availability could not be verified.");
-			await tellHost("Comic generation availability could not be verified. Please inform me that I should try again later.");
+			await tellHost("Comic generation availability could not be verified. Please try again later.");
 			return;
 		}
 		if (metrics.limitreached === true) {
 			setStatus("The daily comic generation limit has been reached.");
-			await tellHost("The daily comic generation limit has been reached. Please inform me that I should try again later.");
+			await tellHost("The daily comic generation limit has been reached. Please try again later.");
 			return;
 		}
 
@@ -174,8 +174,8 @@ async function generateComic(input) {
 			const rateLimited = result && result.error === "ratelimit";
 			setStatus(rateLimited ? "The daily comic generation limit has been reached." : "Comic generation failed.");
 			await tellHost(rateLimited
-				? "The daily comic generation limit was reached while generating. Please inform me that I should try again later."
-				: "Comic generation failed before a complete strip was produced. Please let me know and suggest trying again.");
+				? "The daily comic generation limit was reached while generating. Please try again later."
+				: "Comic generation failed before a complete strip was produced. Please try again.");
 			return;
 		}
 
@@ -192,11 +192,14 @@ async function generateComic(input) {
 		}
 
 		setStatus("");
-		await tellHost(`The comic is complete and visible in the app. Its draft_id is ${draftId}. Ask me whether I want to save it. Do not call save_comic unless I explicitly say yes.`);
+		await sendRpc("ui/update-model-context", {
+			structuredContent: { status: "ready_to_save", draft_id: draftId },
+		});
+		await tellHost("The comic is complete and ready to save.");
 	} catch (error) {
 		console.error("MCP comic generation error", error);
 		setStatus("Comic generation failed.");
-		await tellHost("The comic app encountered an error before the comic could be saved. Please let me know and suggest trying again.");
+		await tellHost("The comic app encountered an error before the comic could be saved. Please try again.");
 	} finally {
 		reportSize();
 	}

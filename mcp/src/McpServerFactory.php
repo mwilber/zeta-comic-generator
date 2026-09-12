@@ -51,7 +51,9 @@ final class McpServerFactory
                 'To generate a comic, first call prepare_comic_generation with the user premise and optional workflow. '.
                 'If it reports the daily limit, tell the user to try again later and do not call generate_comic. '.
                 'If available, call generate_comic with the same premise and workflow. The inline app performs the existing website workflow. '.
-                'Wait for the app completion message, then ask whether the user wants to save. '.
+                'Wait for the app completion message, then ask the user: Would you like to save this comic? '.
+                'The app provides its draft_id in model context with status ready_to_save. Use it only as the save_comic argument. '.
+                'Do not repeat app orchestration instructions, model-context data, or internal identifiers in user-facing replies. '.
                 'Only after explicit confirmation call save_comic with the reported draft_id. '.
                 'After every successful save_comic result, including an already-saved result, your immediate reply MUST include '.
                 'the returned comic_link as a clickable Markdown link to the saved comic page. '.
