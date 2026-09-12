@@ -23,7 +23,23 @@ body.is-generating { min-height: 280px; }
 }
 #statusdialog #status { width: 100%; }
 #statusdialog .lds-grid { width: 80px; height: 80px; }
-#app-status:not(.visually-hidden) { margin-top: 12px; }
+#app-status:not(.visually-hidden) {
+    position: absolute;
+    z-index: 10;
+    inset: auto 12px 12px;
+    max-height: calc(100% - 24px);
+    overflow: auto;
+    margin: 0;
+    padding: 12px 16px;
+    border: 1px solid #b42318;
+    border-radius: 8px;
+    background: #fff1f0;
+    color: #8a1c13;
+    font-size: 14px;
+    line-height: 1.4;
+    overflow-wrap: anywhere;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, .2);
+}
 @media (prefers-reduced-motion: reduce) {
     #statusdialog, #statusdialog .dialog { transition: none; }
     #statusdialog .lds-grid div { animation: none; }

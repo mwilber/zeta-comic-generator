@@ -290,7 +290,7 @@ final class ComicMcp
             $reservation = $this->drafts->reserveSave($draft_id);
             $draft = $reservation['draft'];
             if ('saved' === $reservation['state']) {
-                return $this->savedResult((string) $draft['comic_id'], (string) $draft['permalink'], true);
+                return $this->savedResult((string) $draft['permalink'], true);
             }
             $reserved = true;
 
@@ -309,7 +309,7 @@ final class ComicMcp
             }
 
             $this->drafts->completeSave($draft_id, $comicId, $permalink);
-            return $this->savedResult($comicId, $permalink, false);
+            return $this->savedResult($permalink, false);
         } catch (Throwable $error) {
             if ($reserved) {
                 try {
@@ -391,21 +391,21 @@ final class ComicMcp
     }
 
     /**
-     * Formats the permanent comic link and identifiers as a successful tool result.
+     * Formats the public comic link as a successful tool result without internal identifiers.
      *
-     * @param string $comicId Saved website comic identifier.
      * @param string $permalink Permanent comic link token.
      * @param bool $alreadySaved Whether this result comes from an earlier save.
      * @return CallToolResult Save status and the public comic URL.
      */
-    private function savedResult(string $comicId, string $permalink, bool $alreadySaved): CallToolResult
+    private function savedResult(string $permalink, bool $alreadySaved): CallToolResult
     {
         $url = rtrim($this->siteBaseUrl, '/').'/detail/'.$permalink;
+        $comicLink = '[View your saved comic]('.$url.')';
         $prefix = $alreadySaved ? 'This comic was already saved.' : 'The comic was saved.';
         return new CallToolResult(
-            [new TextContent($prefix.' Show the user this link: ['.$url.']('.$url.').')],
+            [new TextContent($prefix.' '.$comicLink."\n\nYour immediate reply MUST include the clickable comic link above. Do not reply with only a save confirmation or an internal identifier.")],
             false,
-            ['saved' => true, 'comic_id' => $comicId, 'permalink' => $permalink, 'url' => $url],
+            ['saved' => true, 'url' => $url, 'comic_link' => $comicLink],
         );
     }
 

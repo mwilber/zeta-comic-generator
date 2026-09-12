@@ -275,6 +275,17 @@ expect(!$saved->isError && true === $saved->structuredContent['saved'], 'Staged 
 expect(1 === $api->saveCalls, 'Website save API should be called exactly once.');
 $savedAgain = $comicMcp->saveComic($draftId);
 expect(!$savedAgain->isError && 1 === $api->saveCalls, 'Repeated save must be idempotent.');
+$expectedUrl = 'https://comicgenerator.greenzeta.com/detail/'.md5('42');
+$expectedLink = '[View your saved comic]('.$expectedUrl.')';
+foreach ([$saved, $savedAgain] as $saveResult) {
+    expect($expectedUrl === $saveResult->structuredContent['url'], 'Save must return the permanent page URL.');
+    expect($expectedLink === $saveResult->structuredContent['comic_link'], 'Save must return a ready-to-present Markdown link.');
+    expect(str_contains($saveResult->content[0]->text, $expectedLink), 'Save text must include the clickable page link.');
+    expect(!array_key_exists('comic_id', $saveResult->structuredContent), 'Save must not expose the database ID to the model.');
+    expect(!array_key_exists('permalink', $saveResult->structuredContent), 'Save must not expose a standalone permalink token.');
+}
+expect('42' === $drafts->drafts[$draftId]['comic_id'], 'The database ID must still be retained internally.');
+
 
 $sessionStore = new InMemorySessionStore();
 $server = McpServerFactory::build(

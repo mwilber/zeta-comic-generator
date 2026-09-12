@@ -359,8 +359,8 @@ async function run(scenario) {
 	assert.equal(elements.get("strip").inert, false);
 	assert.equal(elements.get("strip").getAttribute("aria-busy"), "false");
 	assert.equal(document.activeElement, elements.get("strip"));
-	assert.equal(elements.get("app-status").classList.contains("visually-hidden"), false);
-	assert.match(elements.get("app-status").textContent, scenario === "success" ? /complete/ : /failed|limit|verified/);
+	assert.equal(elements.get("app-status").classList.contains("visually-hidden"), scenario === "success");
+	assert.match(elements.get("app-status").textContent, scenario === "success" ? /^$/ : /failed|limit|verified/);
 	respond(messages.find(
 		/**
 		 * Identifies the app follow-up message request.

@@ -47,9 +47,9 @@ export class McpGenerationProgress {
 	}
 
 	/**
-	 * Dismisses progress, restores strip interaction, and announces the result.
+	 * Dismisses progress, restores strip interaction, and displays only errors.
 	 *
-	 * @param {string} message Completion or failure text to display.
+	 * @param {string} message Error text to display, or an empty string on success.
 	 * @returns {void}
 	 */
 	Finish(message) {
@@ -60,7 +60,8 @@ export class McpGenerationProgress {
 		this.strip.setAttribute("aria-busy", "false");
 		this.strip.setAttribute("aria-label", "Comic strip");
 		this.summary.textContent = message;
-		this.summary.classList.remove("visually-hidden");
+		if (message) this.summary.classList.remove("visually-hidden");
+		else this.summary.classList.add("visually-hidden");
 		if (hadFocus) this.strip.focus();
 	}
 }

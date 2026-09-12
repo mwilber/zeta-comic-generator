@@ -52,7 +52,11 @@ final class McpServerFactory
                 'If it reports the daily limit, tell the user to try again later and do not call generate_comic. '.
                 'If available, call generate_comic with the same premise and workflow. The inline app performs the existing website workflow. '.
                 'Wait for the app completion message, then ask whether the user wants to save. '.
-                'Only after explicit confirmation call save_comic with the reported draft_id, and show the returned URL. '.
+                'Only after explicit confirmation call save_comic with the reported draft_id. '.
+                'After every successful save_comic result, including an already-saved result, your immediate reply MUST include '.
+                'the returned comic_link as a clickable Markdown link to the saved comic page. '.
+                'A save confirmation is incomplete without this link. Do not substitute a database ID, permalink token, '.
+                'or draft ID for the link, and do not wait for the user to ask for it. '.
                 'OpenAI is the default workflow; valid alternatives are xAI and Google.'
             )
             ->enableExtension(new McpApps())
@@ -127,7 +131,7 @@ final class McpServerFactory
                 [$comicMcp, 'saveComic'],
                 'save_comic',
                 title: 'Save comic',
-                description: 'Save a completed MCP comic draft through the existing website save API. Call only after the user explicitly says to save.',
+                description: 'Save a completed MCP comic draft through the existing website save API. Call only after the user explicitly says to save. After success (including an already-saved result), your immediate reply MUST include the returned comic_link as a clickable Markdown link. A confirmation without the page link is incomplete. Do not present internal IDs in place of the link.',
                 annotations: new ToolAnnotations(readOnlyHint: false, destructiveHint: false, idempotentHint: true, openWorldHint: true),
                 inputSchema: [
                     'type' => 'object',

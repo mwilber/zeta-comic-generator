@@ -19,8 +19,9 @@
             color: var(--app-text);
             font-family: var(--font-sans, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
         }
-        body { padding: 8px; }
+        body { padding: 0; }
         #strip {
+            position: relative;
             width: 100%;
             max-width: 942px;
             box-shadow: none;
@@ -95,8 +96,8 @@
                 <div class="panel is-loading"></div>
             </div>
         </div>
+        <div id="app-status" class="visually-hidden" role="alert" aria-atomic="true"></div>
     </main>
-    <div id="app-status" class="visually-hidden" role="status" aria-live="polite">Preparing comic generation.</div>
     <script type="module">{{APP_SCRIPT}}</script>
 </body>
 </html>

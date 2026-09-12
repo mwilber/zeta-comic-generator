@@ -58,9 +58,9 @@ function sendNotification(method, params = {}) {
 }
 
 /**
- * Closes generation progress and displays the final status message.
+ * Closes generation progress and shows an overlay only when there is an error.
  *
- * @param {string} message Completion or failure text.
+ * @param {string} message Error text, or an empty string on success.
  * @returns {void}
  */
 function setStatus(message) {
@@ -191,7 +191,7 @@ async function generateComic(input) {
 			throw new Error("The completed comic could not be staged.");
 		}
 
-		setStatus("Comic generation complete. Waiting for save choice.");
+		setStatus("");
 		await tellHost(`The comic is complete and visible in the app. Its draft_id is ${draftId}. Ask me whether I want to save it. Do not call save_comic unless I explicitly say yes.`);
 	} catch (error) {
 		console.error("MCP comic generation error", error);
