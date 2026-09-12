@@ -44,3 +44,11 @@ body.is-generating { min-height: 280px; }
     #statusdialog, #statusdialog .dialog { transition: none; }
     #statusdialog .lds-grid div { animation: none; }
 }
+
+/* Restore failures still need readable space when the comic remains hidden. */
+#strip:has(.strip-container[hidden]) #app-status:not(.visually-hidden) {
+    position: relative;
+    inset: auto;
+    max-height: none;
+    margin: 12px;
+}

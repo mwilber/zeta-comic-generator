@@ -45,7 +45,7 @@ final class DraftRepository implements DraftRepositoryInterface
     }
 
     /**
-     * Finds a draft that has not expired.
+     * Finds an unexpired draft or a permanent saved-comic reference.
      *
      * @param string $draftId Draft identifier.
      * @return array<string, mixed>|null The draft row, or null when unavailable.
@@ -53,7 +53,7 @@ final class DraftRepository implements DraftRepositoryInterface
     public function findActive(string $draftId): ?array
     {
         $statement = $this->db->prepare(
-            'SELECT * FROM mcp_drafts WHERE draft_id = :draft_id AND expires_at > UTC_TIMESTAMP() LIMIT 1'
+            "SELECT * FROM mcp_drafts WHERE draft_id = :draft_id AND (expires_at > UTC_TIMESTAMP() OR status = 'saved') LIMIT 1"
         );
         $statement->execute([':draft_id' => $draftId]);
         $draft = $statement->fetch(PDO::FETCH_ASSOC);
@@ -62,25 +62,26 @@ final class DraftRepository implements DraftRepositoryInterface
     }
 
     /**
-     * Starts generation for a prepared draft or accepts an existing generating draft.
+     * Atomically claims a prepared draft; generation can start only once.
      *
      * @param string $draftId Draft identifier.
-     * @return array<string, mixed> The draft as read before the status update.
-     * @throws RuntimeException If the draft cannot begin generation.
+     * @return array<string, mixed> The draft before the status update.
+     * @throws RuntimeException If this request cannot claim generation.
      */
     public function beginGeneration(string $draftId): array
     {
         $draft = $this->findActive($draftId);
-        if (!$draft || !in_array($draft['status'], ['prepared', 'generating'], true)) {
-            throw new RuntimeException('This generation request is invalid, expired, or already completed.');
+        if (!$draft || 'prepared' !== $draft['status']) {
+            throw new RuntimeException('This generation request is invalid, expired, or already started.');
         }
 
-        if ('prepared' === $draft['status']) {
-            $statement = $this->db->prepare(
-                "UPDATE mcp_drafts SET status = 'generating', updated_at = UTC_TIMESTAMP()
-                 WHERE draft_id = :draft_id AND status = 'prepared'"
-            );
-            $statement->execute([':draft_id' => $draftId]);
+        $statement = $this->db->prepare(
+            "UPDATE mcp_drafts SET status = 'generating', updated_at = UTC_TIMESTAMP()
+             WHERE draft_id = :draft_id AND status = 'prepared' AND expires_at > UTC_TIMESTAMP()"
+        );
+        $statement->execute([':draft_id' => $draftId]);
+        if (1 !== $statement->rowCount()) {
+            throw new RuntimeException('This generation request has already started or expired.');
         }
 
         return $draft;
@@ -168,7 +169,7 @@ final class DraftRepository implements DraftRepositoryInterface
     }
 
     /**
-     * Records the saved comic identifiers and extends the draft retention period.
+     * Keeps a permanent saved-comic reference and discards the temporary payload.
      *
      * @param string $draftId Reserved draft identifier.
      * @param string $comicId Identifier returned by the website save API.
@@ -179,7 +180,7 @@ final class DraftRepository implements DraftRepositoryInterface
     {
         $statement = $this->db->prepare(
             "UPDATE mcp_drafts
-             SET status = 'saved', comic_id = :comic_id, permalink = :permalink,
+             SET status = 'saved', comic_id = :comic_id, permalink = :permalink, save_payload = NULL,
                  saved_at = UTC_TIMESTAMP(), updated_at = UTC_TIMESTAMP(),
                  expires_at = DATE_ADD(UTC_TIMESTAMP(), INTERVAL 7 DAY)
              WHERE draft_id = :draft_id AND status = 'saving'"
@@ -212,12 +213,12 @@ final class DraftRepository implements DraftRepositoryInterface
     }
 
     /**
-     * Deletes draft records whose expiration time has passed.
+     * Deletes expired unsaved drafts, preserving saved permalink references.
      *
      * @return void
      */
     private function deleteExpired(): void
     {
-        $this->db->exec('DELETE FROM mcp_drafts WHERE expires_at <= UTC_TIMESTAMP()');
+        $this->db->exec("DELETE FROM mcp_drafts WHERE expires_at <= UTC_TIMESTAMP() AND status <> 'saved'");
     }
 }

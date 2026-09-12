@@ -292,8 +292,8 @@ async function run(scenario) {
 		installCanvasBalloons() { },
 	});
 	vm.runInContext(source, context);
-	assert.equal(elements.get("statusdialog").classList.contains("active"), true);
-	assert.equal(elements.get("strip").inert, true);
+	assert.equal(elements.get("statusdialog").classList.contains("active"), false);
+	assert.equal(elements.get("strip").inert, false);
 	onObservedResize();
 	flushFrames();
 	assert.equal(messages.some(

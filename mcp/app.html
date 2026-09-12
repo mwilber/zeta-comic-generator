@@ -25,6 +25,7 @@
             max-width: 942px;
             box-shadow: none;
         }
+        .strip-container[hidden] { display: none !important; }
         /* Keep the shared desktop strip layout down to 501px in the MCP frame. */
         @media screen and (min-width: 501px) and (max-width: 768px) {
             #strip .nav-button { display: none; }
@@ -87,8 +88,8 @@
             <progress id="progress" value="0" max="100" aria-label="Comic generation progress">0%</progress>
         </div>
     </div>
-    <main id="strip" aria-label="Comic strip being generated" tabindex="-1">
-        <div class="strip-container">
+    <main id="strip" aria-label="Comic strip" tabindex="-1">
+        <div class="strip-container" hidden>
             <div class="panel-container">
                 <div class="panel is-loading"></div>
                 <div class="panel is-loading"></div>

@@ -16,7 +16,7 @@ interface DraftRepositoryInterface
     public function createPrepared(string $premise, string $workflow): string;
 
     /**
-     * Finds a draft that has not expired.
+     * Finds an unexpired draft or a permanent saved-comic reference.
      *
      * @param string $draftId Draft identifier.
      * @return array<string, mixed>|null The draft row, or null when unavailable.
@@ -24,7 +24,7 @@ interface DraftRepositoryInterface
     public function findActive(string $draftId): ?array;
 
     /**
-     * Starts generation for a prepared draft or accepts an existing generating draft.
+     * Atomically claims a prepared draft; generation can start only once.
      *
      * @param string $draftId Draft identifier.
      * @return array<string, mixed> The draft as read before the status update.
@@ -52,7 +52,7 @@ interface DraftRepositoryInterface
     public function reserveSave(string $draftId): array;
 
     /**
-     * Records the saved comic identifiers and extends the draft retention period.
+     * Keeps a permanent saved-comic reference and discards the temporary payload.
      *
      * @param string $draftId Reserved draft identifier.
      * @param string $comicId Identifier returned by the website save API.

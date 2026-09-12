@@ -83,6 +83,7 @@ final class MemoryDrafts implements DraftRepositoryInterface
     public function beginGeneration(string $draftId): array
     {
         $draft = $this->drafts[$draftId] ?? throw new RuntimeException('Missing draft.');
+        if ('prepared' !== $draft['status']) throw new RuntimeException('Already started.');
         $this->drafts[$draftId]['status'] = 'generating';
         return $draft;
     }
@@ -246,6 +247,14 @@ expect($draftId === $generated->structuredContent['draft_id'], 'Generation must 
 expect(str_contains($generated->content[0]->text, 'draft_id='.$draftId), 'Generation text must retain the save ID for hosts without app context support.');
 expect(!$generated->isError && 'google' === $generated->structuredContent['workflow'], 'Generation did not return app input.');
 
+expect('prepared' === $drafts->drafts[$draftId]['status'], 'Tool result creation must leave the app unclaimed.');
+expect(false === $comicMcp->comicAppState($draftId)->structuredContent['generate'], 'Default state lookup must not start generation.');
+$firstOpen = $comicMcp->comicAppState($draftId, true);
+expect(true === $firstOpen->structuredContent['generate'], 'First app render must claim generation.');
+expect('google' === $firstOpen->structuredContent['workflow'], 'Claim must use the stored workflow.');
+expect(false === $comicMcp->comicAppState($draftId, true)->structuredContent['generate'], 'Reload during generation must stay empty.');
+expect(false === $comicMcp->comicAppState(str_repeat('b', 32), true)->structuredContent['generate'], 'Missing or expired drafts must not regenerate.');
+
 $script = json_encode([
     'title' => 'Test Comic',
     'panels' => [
@@ -272,6 +281,8 @@ $payload = [
 $staged = $comicMcp->stageComic($draftId, $payload);
 expect(!$staged->isError && 'ready' === $staged->structuredContent['status'], 'Completed comic was not staged.');
 
+expect(false === $comicMcp->comicAppState($draftId, true)->structuredContent['generate'], 'Unsaved completed comics must not regenerate.');
+
 $saved = $comicMcp->saveComic($draftId);
 expect(!$saved->isError && true === $saved->structuredContent['saved'], 'Staged comic was not saved.');
 expect(1 === $api->saveCalls, 'Website save API should be called exactly once.');
@@ -286,6 +297,8 @@ foreach ([$saved, $savedAgain] as $saveResult) {
     expect(!array_key_exists('comic_id', $saveResult->structuredContent), 'Save must not expose the database ID to the model.');
     expect(!array_key_exists('permalink', $saveResult->structuredContent), 'Save must not expose a standalone permalink token.');
 }
+$restored = $comicMcp->comicAppState($draftId, true)->structuredContent;
+expect(false === $restored['generate'] && md5('42') === $restored['permalink'], 'Saved app must restore its permanent permalink without generation.');
 expect('42' === $drafts->drafts[$draftId]['comic_id'], 'The database ID must still be retained internally.');
 
 
@@ -304,15 +317,18 @@ expect(in_array('generate_comic', $toolNames, true), 'Generate tool is missing.'
 expect(in_array('save_comic', $toolNames, true), 'Save tool is missing.');
 $generateTool = null;
 $stageTool = null;
+$stateTool = null;
 foreach ($tools['result']['tools'] ?? [] as $tool) {
     if (($tool['name'] ?? null) === 'generate_comic') {
         $generateTool = $tool;
     }
+    if (($tool['name'] ?? null) === 'comic_app_state') $stateTool = $tool;
     if (($tool['name'] ?? null) === 'stage_comic') {
         $stageTool = $tool;
     }
 }
 expect(ComicMcp::APP_URI === ($generateTool['_meta']['ui']['resourceUri'] ?? null), 'Generate tool is not linked to the comic app.');
+expect(['app'] === ($stateTool['_meta']['ui']['visibility'] ?? null), 'App state tool must be app-only.');
 expect(['app'] === ($stageTool['_meta']['ui']['visibility'] ?? null), 'Staging tool is not marked app-only.');
 
 $resource = protocolRequest($server, 'resources/read', ['uri' => ComicMcp::APP_URI], ComicMcp::APP_URI);

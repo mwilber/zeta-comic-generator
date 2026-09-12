@@ -9,9 +9,9 @@ installCanvasBalloons();
 const APP_PROTOCOL_VERSION = "2026-01-26";
 let requestId = 0;
 let started = false;
+let appOpened = false;
 const pending = new Map();
 const progress = new McpGenerationProgress();
-progress.Start();
 
 /**
  * Posts a JSON-RPC envelope to the embedding host.
@@ -114,6 +114,78 @@ function reportSize() {
 }
 
 /**
+ * Loads permanent comic data using the same permalink endpoint as the detail page.
+ * No generation or save endpoints are used while restoring a comic.
+ *
+ * @param {string} permalink Saved comic token, retained by the MCP draft record.
+ * @param {string} siteBaseUrl Website origin for the detail API and character art.
+ * @returns {Promise<void>}
+ */
+async function loadSavedComic(permalink, siteBaseUrl) {
+	if (!/^[a-f0-9]{32}$/.test(permalink)) throw new Error("Invalid saved comic permalink.");
+	const baseUrl = siteBaseUrl.replace(/\/$/, "");
+	const response = await fetch(`${baseUrl}/api/detail/${permalink}/`, { cache: "no-store" });
+	if (!response.ok) throw new Error("Saved comic request failed.");
+	const data = await response.json();
+	if (data.error || !Array.isArray(data.script?.panels) || data.script.panels.length !== 3
+		|| !Array.isArray(data.backgrounds) || data.backgrounds.length !== 3
+		|| data.backgrounds.some((url) => typeof url !== "string" || !url)) {
+		throw new Error("Saved comic data is incomplete.");
+	}
+
+	const script = data.script;
+	script.prompt = data.prompt;
+	script.series = data.series;
+	for (const [index, panel] of script.panels.entries()) {
+		if (!Array.isArray(panel.dialog)) panel.dialog = [{ character: "alpha", text: panel.dialog }];
+		panel.images = [
+			{ url: data.backgrounds[index], type: "background", alt: `Background image: ${panel.background}` },
+			{
+				url: `${baseUrl}/assets/character_art/${encodeURIComponent(panel.action)}.png`,
+				type: "character", character: "alpha", action: panel.action,
+				alt: `Character image: alpha in a ${panel.action} pose`,
+			},
+		];
+	}
+	const container = document.querySelector(".strip-container");
+	container.hidden = false;
+	const renderer = new ComicRenderer({ el: container });
+	renderer.LoadScript(script);
+	setStatus("");
+}
+
+/**
+ * Checks durable app state before showing anything or permitting generation.
+ * The server retains the generation-to-permalink mapping even after draft expiry.
+ *
+ * @param {object} input Original generate_comic result, possibly replayed by the host.
+ * @returns {Promise<void>}
+ */
+async function openComicApp(input) {
+	if (appOpened) return;
+	appOpened = true;
+	try {
+		const result = await sendRpc("tools/call", {
+			name: "comic_app_state",
+			arguments: { generation_id: input.generation_id, start_generation: true },
+		});
+		const state = result?.structuredContent;
+		if (result?.isError || !state) return;
+		if (state.permalink) {
+			await loadSavedComic(state.permalink, state.site_base_url);
+		} else if (state.generate === true) {
+			await generateComic(state);
+		}
+	} catch (error) {
+		console.error("Unable to restore MCP comic app", error);
+		document.querySelector(".strip-container").hidden = true;
+		setStatus("The comic could not be loaded. Please refresh to try again.");
+	} finally {
+		reportSize();
+	}
+}
+
+/**
  * Runs generation once, stages the completed payload, and requests a save choice.
  *
  * @param {object} input Structured result from the generate_comic tool.
@@ -126,6 +198,8 @@ function reportSize() {
 async function generateComic(input) {
 	if (started) return;
 	started = true;
+	document.querySelector(".strip-container").hidden = false;
+	progress.Start();
 
 	try {
 		const { generation_id: generationId, premise, workflow, site_base_url: siteBaseUrl } = input;
@@ -236,7 +310,7 @@ window.addEventListener("message",
 			const result = message.params;
 			const input = result?.structuredContent;
 			if (input?.available === true && input?.generation_id) {
-				generateComic(input);
+				openComicApp(input);
 			}
 		}
 		if (message.method === "ui/notifications/host-context-changed") reportSize();

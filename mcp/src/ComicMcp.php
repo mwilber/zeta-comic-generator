@@ -230,7 +230,6 @@ final class ComicMcp
 
         try {
             $generationId = $this->drafts->createPrepared($premise, $workflow);
-            $draft = $this->drafts->beginGeneration($generationId);
         } catch (Throwable $error) {
             return $this->error('The comic generation draft could not be created. Please try again later.');
         }
@@ -242,11 +241,40 @@ final class ComicMcp
                 'available' => true,
                 'generation_id' => $generationId,
                 'draft_id' => $generationId,
-                'premise' => $draft['premise'],
-                'workflow' => $draft['workflow'],
+                'premise' => $premise,
+                'workflow' => $workflow,
                 'site_base_url' => $this->siteBaseUrl,
             ],
         );
+    }
+
+    /**
+     * Restores a saved comic reference or optionally claims the first app render.
+     * Replayed, expired, or unavailable drafts default to an empty comic view.
+     *
+     * @param string $generation_id Draft identifier from the original tool result.
+     * @param bool $start_generation Whether to claim a still-prepared generation.
+     * @return CallToolResult App state with an explicit one-time generation decision.
+     */
+    public function comicAppState(string $generation_id, bool $start_generation = false): CallToolResult
+    {
+        $state = ['generate' => false, 'permalink' => null, 'site_base_url' => $this->siteBaseUrl];
+        try {
+            $draft = $this->drafts->findActive($generation_id);
+            if ($draft && 'saved' === $draft['status']) {
+                $state['permalink'] = $draft['permalink'];
+            } elseif ($draft && 'prepared' === $draft['status'] && $start_generation) {
+                $claimed = $this->drafts->beginGeneration($generation_id);
+                $state['generate'] = true;
+                $state['premise'] = $claimed['premise'];
+                $state['workflow'] = $claimed['workflow'];
+                $state['generation_id'] = $generation_id;
+            }
+        } catch (Throwable) {
+            // Failure or a competing iframe must never authorize generation.
+        }
+
+        return new CallToolResult([new TextContent('Comic app state.')], false, $state);
     }
 
     /**

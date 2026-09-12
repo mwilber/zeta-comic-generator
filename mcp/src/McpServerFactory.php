@@ -108,6 +108,23 @@ final class McpServerFactory
                 )],
             )
             ->addTool(
+                [$comicMcp, 'comicAppState'],
+                'comic_app_state',
+                title: 'Restore comic app',
+                description: 'Restore the saved permalink or claim the first generation for this app instance. Replays never restart generation. Called only by the inline app.',
+                annotations: new ToolAnnotations(readOnlyHint: false, destructiveHint: false, idempotentHint: false, openWorldHint: false),
+                inputSchema: [
+                    'type' => 'object',
+                    'properties' => [
+                        'generation_id' => ['type' => 'string', 'pattern' => '^[a-f0-9]{32}$'],
+                        'start_generation' => ['type' => 'boolean', 'default' => false],
+                    ],
+                    'required' => ['generation_id'],
+                    'additionalProperties' => false,
+                ],
+                meta: ['ui' => new UiToolMeta(visibility: [ToolVisibility::App])],
+            )
+            ->addTool(
                 [$comicMcp, 'stageComic'],
                 'stage_comic',
                 title: 'Stage completed comic',
