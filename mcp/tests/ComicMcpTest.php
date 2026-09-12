@@ -315,6 +315,7 @@ expect(['app'] === ($stageTool['_meta']['ui']['visibility'] ?? null), 'Staging t
 
 $resource = protocolRequest($server, 'resources/read', ['uri' => ComicMcp::APP_URI], ComicMcp::APP_URI);
 $resourceContent = $resource['result']['contents'][0] ?? [];
+expect(!array_key_exists('domain', $resourceContent['_meta']['ui'] ?? []), 'App must let the host choose its sandbox domain.');
 expect('text/html;profile=mcp-app' === ($resourceContent['mimeType'] ?? null), 'App resource has the wrong MIME type.');
 $appHtml = $resourceContent['text'] ?? '';
 expect(str_contains($appHtml, 'class ComicGeneratorApi'), 'App resource does not contain the bundled API client.');

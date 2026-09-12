@@ -102,7 +102,7 @@ final class ComicMcp
                     resourceDomains: $resourceDomains,
                     baseUriDomains: [$this->siteBaseUrl],
                 ),
-                domain: $this->siteBaseUrl,
+                // Let each host choose its sandbox origin; ui.domain is host-specific.
                 prefersBorder: true,
             )],
         );
