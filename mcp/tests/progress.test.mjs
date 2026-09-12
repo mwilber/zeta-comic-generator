@@ -355,9 +355,7 @@ async function run(scenario) {
 	} else assert.equal(staged, undefined);
 	if (scenario === "success") {
 		const modelContext = messages.find(m => m.method === "ui/update-model-context");
-		assert.deepEqual(JSON.parse(JSON.stringify(modelContext.params.structuredContent)), {
-			status: "ready_to_save", draft_id: "draft",
-		});
+		assert.match(modelContext.params.content[0].text, /draft_id=draft; status=ready_to_save/);
 		assert.equal(messages.some(m => m.method === "ui/message"), false, "Context must arrive before the visible completion message");
 		respond(modelContext, {});
 		await new Promise(resolve => setImmediate(resolve));

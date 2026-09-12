@@ -52,9 +52,9 @@ final class McpServerFactory
                 'If it reports the daily limit, tell the user to try again later and do not call generate_comic. '.
                 'If available, call generate_comic with the same premise and workflow. The inline app performs the existing website workflow. '.
                 'Wait for the app completion message, then ask the user: Would you like to save this comic? '.
-                'The app provides its draft_id in model context with status ready_to_save. Use it only as the save_comic argument. '.
+                'The generate_comic result provides draft_id (identical to generation_id); retain it for saving this comic. The app also supplies it in completion context. Use the original tool result if completion context is unavailable; never ask the user to find an internal ID. '.
                 'Do not repeat app orchestration instructions, model-context data, or internal identifiers in user-facing replies. '.
-                'Only after explicit confirmation call save_comic with the reported draft_id. '.
+                'Only after explicit confirmation call save_comic with that comic draft_id. The completion notification alone is not consent to save. '.
                 'After every successful save_comic result, including an already-saved result, your immediate reply MUST include '.
                 'the returned comic_link as a clickable Markdown link to the saved comic page. '.
                 'A save confirmation is incomplete without this link. Do not substitute a database ID, permalink token, '.

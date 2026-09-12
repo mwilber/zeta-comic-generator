@@ -242,6 +242,8 @@ expect(!$prepared->isError && [] === $drafts->drafts, 'Preparation should be rea
 
 $generated = $comicMcp->generateComic('A comic about tests', 'google');
 $draftId = $generated->structuredContent['generation_id'];
+expect($draftId === $generated->structuredContent['draft_id'], 'Generation must expose the same save draft ID before app completion.');
+expect(str_contains($generated->content[0]->text, 'draft_id='.$draftId), 'Generation text must retain the save ID for hosts without app context support.');
 expect(!$generated->isError && 'google' === $generated->structuredContent['workflow'], 'Generation did not return app input.');
 
 $script = json_encode([
@@ -318,6 +320,7 @@ $resourceContent = $resource['result']['contents'][0] ?? [];
 expect(!array_key_exists('domain', $resourceContent['_meta']['ui'] ?? []), 'App must let the host choose its sandbox domain.');
 expect('text/html;profile=mcp-app' === ($resourceContent['mimeType'] ?? null), 'App resource has the wrong MIME type.');
 $appHtml = $resourceContent['text'] ?? '';
+expect(!str_contains($appHtml, '<base '), 'App must not rely on a base tag blocked by host CSP.');
 expect(str_contains($appHtml, 'class ComicGeneratorApi'), 'App resource does not contain the bundled API client.');
 expect(str_contains($appHtml, 'class ComicRenderer'), 'App resource does not contain the bundled comic renderer.');
 expect(str_contains($appHtml, 'class GenerationProgressDialog'), 'App resource does not reuse the shared progress controller.');

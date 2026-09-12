@@ -75,9 +75,8 @@ final class ComicMcp
         }
 
         $template = str_replace(
-            ['{{SITE_BASE_URL}}', '{{CHARACTER_ACTIONS}}', '{{APP_STYLES}}', '{{APP_SCRIPT}}'],
+            ['{{CHARACTER_ACTIONS}}', '{{APP_STYLES}}', '{{APP_SCRIPT}}'],
             [
-                htmlspecialchars($this->siteBaseUrl, ENT_QUOTES, 'UTF-8'),
                 json_encode($GLOBALS['characterActions'], JSON_THROW_ON_ERROR),
                 $styles,
                 $script,
@@ -100,7 +99,6 @@ final class ComicMcp
                 csp: new UiResourceCsp(
                     connectDomains: [$this->siteBaseUrl],
                     resourceDomains: $resourceDomains,
-                    baseUriDomains: [$this->siteBaseUrl],
                 ),
                 // Let each host choose its sandbox origin; ui.domain is host-specific.
                 prefersBorder: true,
@@ -238,11 +236,12 @@ final class ComicMcp
         }
 
         return new CallToolResult(
-            [new TextContent('The inline app is generating the comic. Wait for the app to report completion, then ask the user whether they want to save it.')],
+            [new TextContent('The inline app is generating the comic. Internal save context: draft_id='.$generationId.'. Retain this ID for save_comic; do not display it to the user. Wait for completion and explicit user confirmation before saving.')],
             false,
             [
                 'available' => true,
                 'generation_id' => $generationId,
+                'draft_id' => $generationId,
                 'premise' => $draft['premise'],
                 'workflow' => $draft['workflow'],
                 'site_base_url' => $this->siteBaseUrl,

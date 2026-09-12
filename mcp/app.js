@@ -192,9 +192,14 @@ async function generateComic(input) {
 		}
 
 		setStatus("");
-		await sendRpc("ui/update-model-context", {
-			structuredContent: { status: "ready_to_save", draft_id: draftId },
-		});
+		try {
+			await sendRpc("ui/update-model-context", {
+				content: [{ type: "text", text: `Comic generation finished. Internal save context: draft_id=${draftId}; status=ready_to_save. Use this ID only for save_comic after explicit user confirmation; do not display it.` }],
+			});
+		} catch (error) {
+			// The original generate_comic result also supplies the save ID.
+			console.warn("Unable to update comic context", error);
+		}
 		await tellHost("The comic is complete and ready to save.");
 	} catch (error) {
 		console.error("MCP comic generation error", error);
