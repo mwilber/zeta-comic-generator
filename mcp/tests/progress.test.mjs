@@ -360,7 +360,7 @@ async function run(scenario) {
 		respond(modelContext, {});
 		await new Promise(resolve => setImmediate(resolve));
 		const completion = messages.find(m => m.method === "ui/message");
-		assert.equal(completion.params.content[0].text, "The comic is complete and ready to save.");
+		assert.equal(completion.params.content[0].text, "I like my comic. Save it.");
 	}
 	// The host follow-up can stay pending; it must not keep the modal open.
 	assert.equal(elements.get("statusdialog").classList.contains("active"), false);

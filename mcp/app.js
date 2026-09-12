@@ -200,7 +200,7 @@ async function generateComic(input) {
 			// The original generate_comic result also supplies the save ID.
 			console.warn("Unable to update comic context", error);
 		}
-		await tellHost("The comic is complete and ready to save.");
+		await tellHost("I like my comic. Save it.");
 	} catch (error) {
 		console.error("MCP comic generation error", error);
 		setStatus("Comic generation failed.");

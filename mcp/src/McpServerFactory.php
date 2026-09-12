@@ -54,7 +54,7 @@ final class McpServerFactory
                 'Wait for the app completion message, then ask the user: Would you like to save this comic? '.
                 'The generate_comic result provides draft_id (identical to generation_id); retain it for saving this comic. The app also supplies it in completion context. Use the original tool result if completion context is unavailable; never ask the user to find an internal ID. '.
                 'Do not repeat app orchestration instructions, model-context data, or internal identifiers in user-facing replies. '.
-                'Only after explicit confirmation call save_comic with that comic draft_id. The completion notification alone is not consent to save. '.
+                'Only after explicit confirmation call save_comic with that comic draft_id. A completion status alone is not consent to save. When the user submits an explicit save request such as "I like my comic. Save it.", save directly without asking for confirmation again. '.
                 'After every successful save_comic result, including an already-saved result, your immediate reply MUST include '.
                 'the returned comic_link as a clickable Markdown link to the saved comic page. '.
                 'A save confirmation is incomplete without this link. Do not substitute a database ID, permalink token, '.
