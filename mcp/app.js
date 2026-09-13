@@ -60,28 +60,12 @@ function sendNotification(method, params = {}) {
 /**
  * Closes generation progress and shows an overlay only when there is an error.
  *
- * @param {string} message Error text, or an empty string on success.
+ * @param {string} message Status text, or an empty string for a blank status.
+ * @param {boolean} isError Whether the status represents an error.
  * @returns {void}
  */
-function setStatus(message) {
-	progress.Finish(message);
-}
-
-/**
- * Asks the host to display a follow-up message, logging delivery failures.
- *
- * @param {string} text Message describing the generation result or save choice.
- * @returns {Promise<void>}
- */
-async function tellHost(text) {
-	try {
-		await sendRpc("ui/message", {
-			role: "user",
-			content: [{ type: "text", text }],
-		});
-	} catch (error) {
-		console.error("Unable to send MCP App follow-up message", error);
-	}
+function setStatus(message, isError = Boolean(message)) {
+	progress.Finish(message, isError);
 }
 
 let sizingReady = false;
@@ -234,12 +218,10 @@ async function generateComic(input) {
 		const metrics = await api.GetMetrics();
 		if (!metrics || typeof metrics.limitreached !== "boolean") {
 			setStatus("Comic generation availability could not be verified.");
-			await tellHost("Comic generation availability could not be verified. Please try again later.");
 			return;
 		}
 		if (metrics.limitreached === true) {
 			setStatus("The daily comic generation limit has been reached.");
-			await tellHost("The daily comic generation limit has been reached. Please try again later.");
 			return;
 		}
 
@@ -247,9 +229,6 @@ async function generateComic(input) {
 		if (!result || result.error) {
 			const rateLimited = result && result.error === "ratelimit";
 			setStatus(rateLimited ? "The daily comic generation limit has been reached." : "Comic generation failed.");
-			await tellHost(rateLimited
-				? "The daily comic generation limit was reached while generating. Please try again later."
-				: "Comic generation failed before a complete strip was produced. Please try again.");
 			return;
 		}
 
@@ -265,7 +244,7 @@ async function generateComic(input) {
 			throw new Error("The completed comic could not be staged.");
 		}
 
-		setStatus("");
+		setStatus("Done. If you like this comic, ask to save it.", false);
 		try {
 			await sendRpc("ui/update-model-context", {
 				content: [{ type: "text", text: `Comic generation finished. Internal save context: draft_id=${draftId}; status=ready_to_save. Use this ID only for save_comic after explicit user confirmation; do not display it.` }],
@@ -274,11 +253,9 @@ async function generateComic(input) {
 			// The original generate_comic result also supplies the save ID.
 			console.warn("Unable to update comic context", error);
 		}
-		await tellHost("I like my comic. Save it.");
 	} catch (error) {
 		console.error("MCP comic generation error", error);
 		setStatus("Comic generation failed.");
-		await tellHost("The comic app encountered an error before the comic could be saved. Please try again.");
 	} finally {
 		reportSize();
 	}

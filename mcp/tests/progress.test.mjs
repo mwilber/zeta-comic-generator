@@ -356,28 +356,19 @@ async function run(scenario) {
 	if (scenario === "success") {
 		const modelContext = messages.find(m => m.method === "ui/update-model-context");
 		assert.match(modelContext.params.content[0].text, /draft_id=draft; status=ready_to_save/);
-		assert.equal(messages.some(m => m.method === "ui/message"), false, "Context must arrive before the visible completion message");
+		assert.equal(messages.some(m => m.method === "ui/message"), false, "Completion must not create an automatic chat turn");
 		respond(modelContext, {});
 		await new Promise(resolve => setImmediate(resolve));
-		const completion = messages.find(m => m.method === "ui/message");
-		assert.equal(completion.params.content[0].text, "I like my comic. Save it.");
+		assert.equal(elements.get("app-status").textContent, "Done. If you like this comic, ask to save it.");
 	}
-	// The host follow-up can stay pending; it must not keep the modal open.
 	assert.equal(elements.get("statusdialog").classList.contains("active"), false);
 	assert.equal(elements.get("statusdialog").getAttribute("aria-hidden"), "true");
 	assert.equal(elements.get("strip").inert, false);
 	assert.equal(elements.get("strip").getAttribute("aria-busy"), "false");
 	assert.equal(document.activeElement, elements.get("strip"));
-	assert.equal(elements.get("app-status").classList.contains("visually-hidden"), scenario === "success");
-	assert.match(elements.get("app-status").textContent, scenario === "success" ? /^$/ : /failed|limit|verified/);
-	respond(messages.find(
-		/**
-		 * Identifies the app follow-up message request.
-		 *
-		 * @param {object} m Recorded message.
-		 * @returns {boolean} Whether this is a message request.
-		 */
-		m => m.method === "ui/message"), {});
+	assert.equal(elements.get("app-status").classList.contains("visually-hidden"), false);
+	assert.equal(elements.get("app-status").classList.contains("is-error"), scenario !== "success");
+	assert.match(elements.get("app-status").textContent, scenario === "success" ? /^Done\./ : /failed|limit|verified/);
 	await work;
 	await vm.runInContext('generateComic({})', context);
 	assert.equal(messages.filter(

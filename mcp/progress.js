@@ -21,7 +21,9 @@ export class McpGenerationProgress {
 		document.body.classList.add("is-generating");
 		this.strip.inert = true;
 		this.strip.setAttribute("aria-busy", "true");
-		this.summary.classList.add("visually-hidden");
+		this.summary.classList.remove("visually-hidden");
+		this.summary.classList.remove("is-error");
+		this.summary.textContent = "\u00a0";
 		this.dialog.Update(0);
 		this.dialog.Show();
 	}
@@ -47,21 +49,22 @@ export class McpGenerationProgress {
 	}
 
 	/**
-	 * Dismisses progress, restores strip interaction, and displays only errors.
+	 * Dismisses progress, restores strip interaction, and updates the persistent status.
 	 *
-	 * @param {string} message Error text to display, or an empty string on success.
+	 * @param {string} message Text to display, or an empty string for a blank status.
+	 * @param {boolean} isError Whether the status represents an error.
 	 * @returns {void}
 	 */
-	Finish(message) {
+	Finish(message, isError = Boolean(message)) {
 		const hadFocus = this.dialog.el.contains(document.activeElement);
 		this.dialog.Hide();
 		document.body.classList.remove("is-generating");
 		this.strip.inert = false;
 		this.strip.setAttribute("aria-busy", "false");
 		this.strip.setAttribute("aria-label", "Comic strip");
-		this.summary.textContent = message;
-		if (message) this.summary.classList.remove("visually-hidden");
-		else this.summary.classList.add("visually-hidden");
+		this.summary.textContent = message || "\u00a0";
+		if (isError) this.summary.classList.add("is-error");
+		else this.summary.classList.remove("is-error");
 		if (hadFocus) this.strip.focus();
 	}
 }

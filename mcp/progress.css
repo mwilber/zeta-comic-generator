@@ -23,32 +23,27 @@ body.is-generating { min-height: 280px; }
 }
 #statusdialog #status { width: 100%; }
 #statusdialog .lds-grid { width: 80px; height: 80px; }
-#app-status:not(.visually-hidden) {
-    position: absolute;
-    z-index: 10;
-    inset: auto 12px 12px;
-    max-height: calc(100% - 24px);
-    overflow: auto;
-    margin: 0;
-    padding: 12px 16px;
-    border: 1px solid #b42318;
+#app-status {
+    display: block;
+    width: 100%;
+    min-height: 40px;
+    margin-top: 5px;
+    padding: 10px 16px;
+    border: 1px solid #000;
     border-radius: 8px;
-    background: #fff1f0;
-    color: #8a1c13;
+    background: #fff;
+    color: #000;
+    overflow: auto;
     font-size: 14px;
     line-height: 1.4;
     overflow-wrap: anywhere;
     box-shadow: 0 2px 8px rgba(0, 0, 0, .2);
 }
+#app-status.is-error {
+    border-color: #b42318;
+    color: #b42318;
+}
 @media (prefers-reduced-motion: reduce) {
     #statusdialog, #statusdialog .dialog { transition: none; }
     #statusdialog .lds-grid div { animation: none; }
-}
-
-/* Restore failures still need readable space when the comic remains hidden. */
-#strip:has(.strip-container[hidden]) #app-status:not(.visually-hidden) {
-    position: relative;
-    inset: auto;
-    max-height: none;
-    margin: 12px;
 }

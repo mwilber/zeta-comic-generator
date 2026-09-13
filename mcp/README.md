@@ -6,7 +6,7 @@ The public MCP endpoint is `https://comicgenerator.greenzeta.com/mcp`. It serves
 
 1. `prepare_comic_generation` checks the existing website `/api/metrics/` endpoint without opening an app or writing a draft. It defaults to the `openai` workflow and also accepts `xai` or `google`.
 2. `generate_comic` rechecks availability, creates a short-lived draft, and opens the inline MCP App. The app atomically claims the prepared draft once, then performs the same concept, script, background, image, character, and continuity sequence as the Generate page through the existing `/api` endpoints.
-3. The app calls the app-only `stage_comic` tool after all three panels are complete. It then asks the host to prompt the user about saving.
+3. The app calls the app-only `stage_comic` tool after all three panels are complete. It then displays a persistent status below the comic telling the user to ask to save it if desired.
 4. After explicit user confirmation, `save_comic` submits the staged payload to the existing `/api/save/` endpoint and returns the permanent comic URL. Saves are idempotent per draft.
 
 On iframe reload, the comic is hidden by default and the app checks `comic_app_state` using the original `generation_id`. Only the first claim of a prepared draft permits generation. Generating, ready, saving, expired, and missing drafts remain empty on replay; a failed state lookup never starts generation. The same protection applies when multiple frames open the same tool result.
