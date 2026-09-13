@@ -36,7 +36,7 @@ body.is-generating { min-height: 280px; }
     font-size: 14px;
     line-height: 1.4;
     overflow-wrap: anywhere;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, .2);
+    box-shadow: none;
 }
 #app-status.is-error {
     border-color: #b42318;
