@@ -1,0 +1,48 @@
+/* Frame sizing only; the dialog, bar, and spinner use the website styles. */
+body.is-generating { min-height: 280px; }
+#statusdialog {
+    --bounce-function: cubic-bezier(0.680, -0.550, 0.265, 1.550);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    background: transparent;
+    pointer-events: none;
+}
+#statusdialog.active { pointer-events: auto; }
+#statusdialog .dialog {
+    position: relative;
+    top: auto;
+    left: auto;
+    width: min(100%, 640px);
+    max-height: calc(100vh - 32px);
+    overflow: auto;
+    padding: 20px 24px;
+    font-size: clamp(20px, 4vw, 32px);
+    box-shadow: 5px 10px 15px rgba(0, 0, 0, 0.5);
+}
+#statusdialog #status { width: 100%; }
+#statusdialog .lds-grid { width: 80px; height: 80px; }
+#app-status {
+    display: block;
+    width: 100%;
+    margin-top: 5px;
+    padding: 5px 15px;
+    border: 1px solid rgba(0,0,0,0.25);
+    border-radius: 15px;
+    background: #f9f5ec;
+    color: #000;
+    overflow: auto;
+    font-size: 14px;
+    line-height: 1.4;
+    overflow-wrap: anywhere;
+    box-shadow: none;
+}
+#app-status.is-error {
+    border-color: #b42318;
+    color: #b42318;
+}
+@media (prefers-reduced-motion: reduce) {
+    #statusdialog, #statusdialog .dialog { transition: none; }
+    #statusdialog .lds-grid div { animation: none; }
+}

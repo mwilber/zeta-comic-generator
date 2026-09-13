@@ -7,8 +7,8 @@
 	require __DIR__ . '/api/includes/key.php';
 	require __DIR__ . '/api/includes/db.php';
 
-	$request = $_SERVER['REQUEST_URI'];
-	//echo $request;
+	// Route using only the path so query parameters never become part of a comic ID.
+	$request = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH) ?: '/';
 
 	$version = "3.5.0";
 	$meta = new stdClass();
