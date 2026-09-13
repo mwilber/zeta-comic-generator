@@ -135,7 +135,7 @@ async function loadSavedComic(permalink, siteBaseUrl) {
 	container.hidden = false;
 	const renderer = new ComicRenderer({ el: container });
 	renderer.LoadScript(script);
-	setStatus("Saved comic loaded.", false);
+	setStatus("Loaded saved comic.", false);
 }
 
 /**
@@ -246,7 +246,7 @@ async function generateComic(input) {
 			throw new Error("The completed comic could not be staged.");
 		}
 
-		setStatus("Done. If you like this comic, ask to save it.", false);
+		setStatus("Ready. If you like this comic, ask to save it.", false);
 		try {
 			await sendRpc("ui/update-model-context", {
 				content: [{ type: "text", text: `Comic generation finished. Internal save context: draft_id=${draftId}; status=ready_to_save. Use this ID only for save_comic after explicit user confirmation; do not display it.` }],
