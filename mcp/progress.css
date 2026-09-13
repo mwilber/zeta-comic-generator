@@ -26,12 +26,11 @@ body.is-generating { min-height: 280px; }
 #app-status {
     display: block;
     width: 100%;
-    min-height: 40px;
     margin-top: 5px;
-    padding: 10px 16px;
+    padding: 5px 15px;
     border: 1px solid #000;
-    border-radius: 8px;
-    background: #fff;
+    border-radius: 15px;
+    background: #fefffe;
     color: #000;
     overflow: auto;
     font-size: 14px;

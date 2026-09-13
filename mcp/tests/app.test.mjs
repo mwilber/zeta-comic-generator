@@ -15,6 +15,7 @@ async function mount({ state = { generate: false }, detail, rpcError = false, ht
 	const calls = [];
 	const renders = [];
 	const requests = [];
+	const statuses = [];
 	const container = { hidden: true };
 	const counts = { progress: 0, metrics: 0, generation: 0 };
 	const parent = {
@@ -41,7 +42,7 @@ async function mount({ state = { generate: false }, detail, rpcError = false, ht
 		installCanvasBalloons() {},
 		McpGenerationProgress: class {
 			Start() { counts.progress++; }
-			Finish() {}
+			Finish(message) { statuses.push(message); }
 			Update() {}
 			Stage() {}
 		},
@@ -65,7 +66,7 @@ async function mount({ state = { generate: false }, detail, rpcError = false, ht
 	notify();
 	notify(); // Hosts can deliver the same result more than once, even before a response.
 	for (let n = 0; n < 5; n++) await new Promise(setImmediate);
-	return { calls, renders, requests, container, counts };
+	return { calls, renders, requests, statuses, container, counts };
 }
 
 for (const state of [{ generate: false }, {}, { generate: false, permalink: null }]) {
@@ -76,6 +77,7 @@ for (const state of [{ generate: false }, {}, { generate: false, permalink: null
 	assert.equal(app.counts.progress, 0);
 	assert.equal(app.renders.length, 0);
 	assert.equal(app.requests.length, 0);
+	assert.deepEqual(app.statuses, ["This comic was not saved."]);
 	assert.equal(app.calls.filter((call) => call.params?.name === "comic_app_state").length, 1);
 	assert.equal(app.calls.filter((call) => call.method === "ui/message").length, 0);
 }
@@ -104,6 +106,7 @@ for (let refresh = 0; refresh < 2; refresh++) {
 	assert.equal(app.renders[0].panels[0].dialog[0].text, "Hello");
 	assert.equal(app.renders[0].panels[0].images[0].url, detail.backgrounds[0]);
 	assert.equal(app.renders[0].panels[0].images[1].url, `${baseUrl}/assets/character_art/standing.png`);
+	assert.deepEqual(app.statuses, ["Saved comic loaded."]);
 	assert.equal(app.calls.filter((call) => call.method === "ui/message" || call.params?.name === "stage_comic").length, 0);
 }
 for (const options of [

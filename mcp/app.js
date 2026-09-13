@@ -135,7 +135,7 @@ async function loadSavedComic(permalink, siteBaseUrl) {
 	container.hidden = false;
 	const renderer = new ComicRenderer({ el: container });
 	renderer.LoadScript(script);
-	setStatus("");
+	setStatus("Saved comic loaded.", false);
 }
 
 /**
@@ -159,6 +159,8 @@ async function openComicApp(input) {
 			await loadSavedComic(state.permalink, state.site_base_url);
 		} else if (state.generate === true) {
 			await generateComic(state);
+		} else {
+			setStatus("This comic was not saved.", false);
 		}
 	} catch (error) {
 		console.error("Unable to restore MCP comic app", error);
