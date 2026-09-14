@@ -1,5 +1,191 @@
 /* Home | About styles */
 
+/* Keep the wider homepage independent of the shared About layout. */
+main.content:has(.homepage) {
+    width: calc(100% - 6rem);
+    max-width: 1500px;
+    padding: 0 0 2em;
+    margin-top: 5rem;
+}
+
+.home-intro {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+    align-items: start;
+    gap: clamp(2rem, 5vw, 6rem);
+}
+
+.home-hero {
+    display: grid;
+}
+
+.homepage .home-hero header {
+    grid-area: 1 / 1;
+    align-self: start;
+    position: relative;
+    z-index: 1;
+    display: block;
+    width: 70%;
+    margin: 0 0 1rem auto;
+    font-family: 'Patrick Hand', Arial, Helvetica, sans-serif;
+    font-size: clamp(1.25rem, 2.25vw, 2.25rem);
+    line-height: 1.2;
+    color: #fdff00;
+    text-shadow: 3px 3px black;
+}
+
+.homepage .home-hero header strong {
+    font-size: 1.25em;
+    line-height: 1.1;
+}
+
+.homepage .home-hero header a {
+    color: inherit;
+    font-weight: inherit;
+}
+
+.home-hero-image {
+    grid-area: 1 / 1;
+    display: block;
+    width: 100%;
+    height: auto;
+    margin-top: -2rem;
+}
+
+.home-feed {
+    display: grid;
+    gap: 3rem;
+    min-width: 0;
+}
+
+.homepage .home-feed h2 {
+    display: block;
+    margin: 0 0 0.5rem;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: white;
+    font-family: 'Bangers', Arial, Helvetica, sans-serif;
+    font-size: clamp(1.75rem, 2.5vw, 2.5rem);
+    font-weight: normal;
+    letter-spacing: 0.025em;
+    text-shadow: 3px 3px black;
+}
+
+.home-feed h2 a {
+    color: inherit;
+    font-weight: inherit;
+    text-decoration: none;
+}
+
+.home-panels,
+.homepage #gallery {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.625rem;
+}
+
+.home-update,
+.homepage #gallery .strip {
+    box-sizing: border-box;
+    display: block;
+    position: relative;
+    aspect-ratio: 1;
+    margin: 0;
+    border: 2px solid black;
+    overflow: hidden;
+}
+
+.home-update-placeholder {
+    background: #888;
+}
+
+.homepage #gallery .frame {
+    min-width: 0;
+}
+
+.homepage #gallery .strip img {
+    height: 100%;
+    object-fit: cover;
+}
+
+.homepage #gallery .strip h3 {
+    max-width: calc(100% - 1.5rem);
+    box-sizing: border-box;
+    margin: 0.375rem;
+    padding: 0.125rem 0.375rem;
+    background: #feff70;
+    color: #000;
+    font-family: 'Patrick Hand', Arial, Helvetica, sans-serif;
+    font-size: clamp(1rem, 1.4vw, 1.25rem);
+    line-height: 1.1;
+    text-shadow: none;
+    overflow-wrap: anywhere;
+}
+
+.homepage #gallery .strip:hover h3 {
+    opacity: 1;
+}
+
+.home-feed a:focus-visible {
+    outline: 3px solid #fdff00;
+    outline-offset: 3px;
+}
+
+.home-how-it-works {
+    max-width: 960px;
+    width: 65%;
+    margin: 3rem auto 0;
+}
+
+@media screen and (max-width: 1100px) {
+    .home-intro {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 3rem;
+    }
+
+    .homepage .home-hero header {
+        font-size: clamp(1.5rem, 3vw, 2.25rem);
+    }
+
+    .home-hero {
+        display: block;
+    }
+
+    .home-hero-image {
+        margin-top: 0;
+    }
+
+    .home-how-it-works {
+        width: 100%;
+    }
+}
+
+@media screen and (max-width: 550px) {
+    main.content:has(.homepage) {
+        width: calc(100% - 2rem);
+        margin-top: 2.5rem;
+    }
+
+    .homepage .home-hero header {
+        width: 100%;
+        font-size: 1.5rem;
+    }
+
+    .home-panels,
+    .homepage #gallery {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .homepage #gallery .strip h3 {
+        font-size: 1.25rem;
+    }
+
+    .homepage .action-buttons {
+        font-size: 2rem;
+    }
+}
+
 main header {
     display: inline-block;
     position: initial;
