@@ -306,7 +306,7 @@ header .brand {
 	z-index: 1;
 }
 
-header h1 {
+header .site-title {
 	position: absolute;
 	bottom: -3px;
 	left: 0;
@@ -457,14 +457,52 @@ header nav.collapsed button .icon span {
 	overflow-x: hidden;
 }
 
-.content h2 {
+/* Shared heading hierarchy. Page styles only control heading placement. */
+h1 {
+	margin: 0;
+	font-family: 'Bangers', Arial, Helvetica, sans-serif;
+	font-size: clamp(1.875rem, 2.8125vw, 2.8125rem);
+	font-weight: bold;
+	line-height: 1.1;
+	letter-spacing: 0.05em;
+	color: #fdff00;
+	text-shadow: 5px 5px black;
+}
+
+h2 {
+	display: block;
+	margin: 0 0 0.5rem;
+	padding: 0;
+	border: 0;
+	background: none;
+	font-family: 'Bangers', Arial, Helvetica, sans-serif;
+	font-size: clamp(1.75rem, 2.5vw, 2.5rem);
+	font-weight: normal;
+	letter-spacing: 0.025em;
+	text-transform: uppercase;
+	color: white;
+	text-shadow: 3px 3px black;
+}
+
+h2 a {
+	color: inherit;
+	font-weight: inherit;
+	text-decoration: none;
+}
+
+h3 {
 	display: inline-block;
 	width: auto;
 	padding: 0.05em 0.5em;
-	margin: 2em 0 0.5em 0;
+	margin: 2em 0 0.5em;
 	background: #feff70;
 	border: solid 2px #000;
+	font-family: 'Patrick Hand', Arial, Helvetica, sans-serif;
+	font-size: 1.5em;
+	font-weight: bold;
 	text-transform: uppercase;
+	color: #333e4d;
+	text-shadow: none;
 }
 
 
@@ -477,7 +515,7 @@ header nav.collapsed button .icon span {
 	header nav a {
 		height: 50px;
 	}
-	header h1 {
+	header .site-title {
 		padding-left: 20%;
 		width: 80%;
 	}
@@ -505,7 +543,7 @@ header nav.collapsed button .icon span {
 		height: 50px;
 		font-size: 2.5em !important;
 	}
-	header h1{
+	header .site-title{
 		font-size: 1.5em;
 		padding-left: 0;
 		width: 100%;

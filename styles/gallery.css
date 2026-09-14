@@ -41,12 +41,10 @@
 .strip h3 {
 	position: absolute;
 	bottom: 0;
-	color: white;
-	font-family: sans-serif;
-	font-size: 20px;
-	font-weight: bold;
+	box-sizing: border-box;
+	max-width: calc(100% - 10px);
+	overflow-wrap: anywhere;
 	margin: 5px;
-	text-shadow: 0px 0px 1px black, 0px 0px 2px black, 0px 0px 2px black, 0px 0px 5px black;
 	opacity: 1;
 	transition: all 500ms var(--bounce-function);
 }

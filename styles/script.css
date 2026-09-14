@@ -14,10 +14,6 @@
 }
 
 #script h2, #continuity h2 {
-	font-size: 1.5em;
-	background: transparent;
-	border: none;
-	padding: 0;
 	width: 100%;
 	text-align: center;
 	margin-bottom: 1em;
@@ -37,10 +33,6 @@
 #script .credits li span:first-child{
 	text-align: right;
 	margin-right: 2%;
-}
-
-#script h3 {
-	font-size: 1em;
 }
 
 #script ul {
@@ -83,7 +75,6 @@
 
 #continuity h2 {
 	margin: 0;
-	font-size: 1.25em;
 }
 
 #continuity a {
@@ -91,7 +82,6 @@
 }
 
 #script h2.story-title {
-	font-size: 1.25em;
 	margin-bottom: 0;
 }
 

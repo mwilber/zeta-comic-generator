@@ -29,8 +29,7 @@
 	<div class="home-intro">
 		<section class="home-hero" aria-label="Create comics with Alpha Zeta">
 			<header>
-				<strong>AI powered stories featuring a little green alien named Alpha.</strong>
-				<br/>
+				<h1>AI powered stories featuring a little green alien named Alpha.</h1>
 				<a href="/generate">Create</a> comics from your ideas.
 			</header>
 			<img class="home-hero-image" src="/assets/images/homepage_hero.png" width="1024" height="1024" alt="Alpha Zeta holds a paintbrush above a city full of his fellow little green aliens." fetchpriority="high">

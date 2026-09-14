@@ -34,11 +34,6 @@ main.content:has(.homepage) {
     text-shadow: 3px 3px black;
 }
 
-.homepage .home-hero header strong {
-    font-size: 1.25em;
-    line-height: 1.1;
-}
-
 .homepage .home-hero header a {
     color: inherit;
     font-weight: inherit;
@@ -56,26 +51,6 @@ main.content:has(.homepage) {
     display: grid;
     gap: 3rem;
     min-width: 0;
-}
-
-.homepage .home-feed h2 {
-    display: block;
-    margin: 0 0 0.5rem;
-    padding: 0;
-    border: 0;
-    background: none;
-    color: white;
-    font-family: 'Bangers', Arial, Helvetica, sans-serif;
-    font-size: clamp(1.75rem, 2.5vw, 2.5rem);
-    font-weight: normal;
-    letter-spacing: 0.025em;
-    text-shadow: 3px 3px black;
-}
-
-.home-feed h2 a {
-    color: inherit;
-    font-weight: inherit;
-    text-decoration: none;
 }
 
 .home-panels,
@@ -113,13 +88,7 @@ main.content:has(.homepage) {
     max-width: calc(100% - 1.5rem);
     box-sizing: border-box;
     margin: 0.375rem;
-    padding: 0.125rem 0.375rem;
-    background: #feff70;
-    color: #000;
-    font-family: 'Patrick Hand', Arial, Helvetica, sans-serif;
-    font-size: clamp(1rem, 1.4vw, 1.25rem);
     line-height: 1.1;
-    text-shadow: none;
     overflow-wrap: anywhere;
 }
 
@@ -177,10 +146,6 @@ main.content:has(.homepage) {
         grid-template-columns: minmax(0, 1fr);
     }
 
-    .homepage #gallery .strip h3 {
-        font-size: 1.25rem;
-    }
-
     .homepage .action-buttons {
         font-size: 2rem;
     }
@@ -200,15 +165,6 @@ main header {
 main header a {
     text-decoration-thickness: 2px;
     text-decoration-color: #94989e;
-}
-
-main header strong {
-    font-size: 1.75em;
-    line-height: 1.25em;
-    color: #fdff00;
-    text-shadow: 5px 5px black;
-    font-family: 'Bangers', Arial, Helvetica, sans-serif;
-    letter-spacing: 0.05em;
 }
 
 main p {
@@ -265,15 +221,9 @@ p.description {
 
 .character-art h3 {
 	position: absolute;
-	display: inline-block;
-	width: auto;
-	padding: 0.05em 0.5em;
 	margin: 0;
 	top: 0.5em;
 	left: 0.5em;
-	background: #d6dcf5;
-	border: solid 2px #000;
-	text-transform: capitalize;
 }
 
 .character-art img {
