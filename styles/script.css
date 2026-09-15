@@ -19,6 +19,34 @@
 	margin-bottom: 1em;
 }
 
+/* Preserve the original manuscript headings inside the detail-page script. */
+.detail #script h2,
+.detail #script h3 {
+	font-family: inherit;
+	font-weight: bold;
+	letter-spacing: normal;
+	color: inherit;
+	text-shadow: none;
+	background: transparent;
+	border: none;
+	padding: 0;
+}
+
+.detail #script h2 {
+	display: inline-block;
+	font-size: 1.5em;
+}
+
+.detail #script h2.story-title {
+	font-size: 1.25em;
+}
+
+.detail #script h3 {
+	display: block;
+	font-size: 1em;
+	text-transform: none;
+}
+
 #script .credits {
 	text-align: left;
 	margin-bottom: 4em;
