@@ -75,6 +75,10 @@ main.content:has(.homepage) {
     background: #888;
 }
 
+.homepage #latest-comics-title a{
+	color: white;
+}
+
 .homepage #gallery .frame {
     min-width: 0;
 }
@@ -85,7 +89,7 @@ main.content:has(.homepage) {
 }
 
 .homepage #gallery .strip h3 {
-    max-width: calc(100% - 1.5rem);
+    max-width: calc(100% - 0.8rem);
     box-sizing: border-box;
     margin: 0.375rem;
     line-height: 1.1;

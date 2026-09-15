@@ -29,7 +29,6 @@
 .strip img {
 	position: absolute;
 	width: 100%;
-	opacity: 0.6;
 	transition: all 500ms var(--bounce-function);
 }
 
@@ -40,17 +39,14 @@
 
 .strip h3 {
 	position: absolute;
-	bottom: 0;
+	top: 0;
 	box-sizing: border-box;
 	max-width: calc(100% - 10px);
 	overflow-wrap: anywhere;
 	margin: 5px;
 	opacity: 1;
+	font-size: 1em;
 	transition: all 500ms var(--bounce-function);
-}
-
-.strip:hover h3 {
-	opacity: 0;
 }
 
 #gallery .action-buttons {
