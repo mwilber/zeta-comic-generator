@@ -1,5 +1,16 @@
 /* Detail */
 
+.detail #strip-title {
+	display: block;
+	padding: 0;
+	border: none;
+	background: transparent;
+	font-family: Arial, Helvetica, sans-serif;
+	font-weight: bold;
+	text-transform: none;
+	text-shadow: none;
+}
+
 /* #query {
 	width: auto;
 	background: #242442;

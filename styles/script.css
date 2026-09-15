@@ -9,11 +9,11 @@
 	font-family: 'Courier New', Courier, monospace;
 }
 
-#script h2, #continuity h2, #script h3, #continuity h3 {
+#script h2, #script h3 {
 	margin: 0 0 2em 0;
 }
 
-#script h2, #continuity h2 {
+#script h2 {
 	width: 100%;
 	text-align: center;
 	margin-bottom: 1em;
@@ -89,20 +89,10 @@
 
 /* continuity */
 #continuity {
-	background: #fcfcfc; /* Changed to a shade of green */
-	margin-top: 25px;
+	background: #fcfcfc;
 	padding: 25px 50px 40px 50px;
-	border-color: #828282; /* Changed to a shade of green */
-	/* font-family: 'Patrick Hand', Arial, sans-serif;   */
-	font-family: Arial, sans-serif; 
-}
-
-#continuity h2, #continuity h3 {
-	margin: 1em 0 0.2em 0;
-}
-
-#continuity h2 {
-	margin: 0;
+	border-color: #828282;
+	font-family: 'Patrick Hand', Arial, Helvetica, sans-serif;
 }
 
 #continuity a {
