@@ -90,9 +90,14 @@
 /* continuity */
 #continuity {
 	background: #fcfcfc;
-	padding: 25px 50px 40px 50px;
-	border-color: #828282;
-	font-family: 'Patrick Hand', Arial, Helvetica, sans-serif;
+    padding: 25px 50px 25px 40px;
+    border-color: #828282;
+    font-family: 'Patrick Hand', Arial, Helvetica, sans-serif;
+    font-size: 1.25em;
+}
+
+#continuity strong {
+	font-size: 1.25rem;
 }
 
 #continuity a {
