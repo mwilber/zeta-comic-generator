@@ -37,7 +37,7 @@
 	opacity: 1;
 }
 
-.strip h3 {
+#gallery .strip h3 {
 	position: absolute;
 	top: 0;
 	box-sizing: border-box;
@@ -45,7 +45,17 @@
 	overflow-wrap: anywhere;
 	margin: 5px;
 	opacity: 1;
-	font-size: 1em;
+	padding: 0;
+	border: none;
+	background: transparent;
+	font-family: 'Bangers', Arial, Helvetica, sans-serif;
+	font-size: 1.5em;
+	font-weight: bold;
+	line-height: 1.1;
+	letter-spacing: 0.05em;
+	text-transform: none;
+	color: #fdff00;
+	text-shadow: 5px 5px black;
 	transition: all 500ms var(--bounce-function);
 }
 
