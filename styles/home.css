@@ -60,7 +60,7 @@ main.content:has(.homepage) {
     gap: 0.625rem;
 }
 
-.home-update,
+.home-update-image,
 .homepage #gallery .strip {
     box-sizing: border-box;
     display: block;
@@ -71,13 +71,39 @@ main.content:has(.homepage) {
     overflow: hidden;
 }
 
-.home-update-placeholder {
-    background: #888;
+.home-update {
+    min-width: 0;
+}
+
+.home-update a {
+    display: block;
+}
+
+.home-update-image {
     border-radius: 50%;
 }
 
-.home-update-placeholder img {
+.home-update-placeholder {
+    background: #888;
+}
+
+.home-update-image img {
+    display: block;
+    width: 100%;
     height: 100%;
+    object-fit: cover;
+}
+
+.home-update-copy {
+    display: block;
+    margin-top: 0.75rem;
+    line-height: 1.4;
+    text-align: center;
+    font-weight: normal;
+}
+
+.home-update-copy strong {
+    display: block;
 }
 
 .homepage #latest-comics-title a{
