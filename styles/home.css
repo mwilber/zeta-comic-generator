@@ -49,7 +49,7 @@ main.content:has(.homepage) {
 
 .home-feed {
     display: grid;
-    gap: 3rem;
+    gap: 1rem;
     min-width: 0;
 }
 
@@ -104,6 +104,11 @@ main.content:has(.homepage) {
 
 .home-update-copy strong {
     display: block;
+    color: white;
+    text-decoration: none !important;
+    font-family: 'Patrick Hand', Arial, Helvetica, sans-serif;
+    font-size: 1.5em;
+    text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000, 2px 2px 0 #000, 3px 3px 0 #000;
 }
 
 .homepage #latest-comics-title a{
