@@ -39,7 +39,15 @@
 			<section class="home-updates" aria-labelledby="updates-title">
 				<h2 id="updates-title">Updates</h2>
 				<div class="home-panels">
-					<div class="home-update home-update-placeholder" role="img" aria-label="Update placeholder"></div>
+					<div class="home-update home-update-placeholder" role="img" aria-label="Update placeholder">
+						<a href="https://www.youtube.com/watch?v=eP0bWg1HjKk" target="_blank" rel="noopener noreferrer">
+							<img src="https://i.ytimg.com/vi/eP0bWg1HjKk/hqdefault.jpg" alt="Poster frame for Selfie, Alpha Zeta's first animated short">
+							<span>
+								<strong id="animated-short-title">Watch Alpha in his first animated short.</strong>
+								Created with AI video generators: <em>Selfie</em>
+							</span>
+						</a>
+					</div>
 					<div class="home-update home-update-placeholder" role="img" aria-label="Update placeholder"></div>
 				</div>
 			</section>

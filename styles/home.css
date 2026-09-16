@@ -73,6 +73,11 @@ main.content:has(.homepage) {
 
 .home-update-placeholder {
     background: #888;
+    border-radius: 50%;
+}
+
+.home-update-placeholder img {
+    height: 100%;
 }
 
 .homepage #latest-comics-title a{

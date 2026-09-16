@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Patrick+Hand&family=Bangers&family=Luckiest+Guy&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Patrick+Hand&family=Bangers&family=Luckiest+Guy&family=Roboto+Condensed:ital,wght@0,100..900;1,100..900&display=swap');
 
 body {
 	position: relative;
@@ -476,7 +476,7 @@ h2 {
 	border: 0;
 	background: none;
 	font-family: 'Bangers', Arial, Helvetica, sans-serif;
-	font-size: clamp(1.75rem, 2.5vw, 2.5rem);
+	font-size: clamp(1.75rem, 3vw, 2.5rem);
 	font-weight: normal;
 	letter-spacing: 0.025em;
 	text-transform: uppercase;
