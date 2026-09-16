@@ -41,21 +41,23 @@
 				<div class="home-panels">
 					<div class="home-update">
 						<a href="https://www.youtube.com/watch?v=eP0bWg1HjKk" target="_blank" rel="noopener noreferrer">
-							<span class="home-update-image">
-								<img src="https://i.ytimg.com/vi/eP0bWg1HjKk/hqdefault.jpg" alt="Poster frame for Selfie, Alpha Zeta's first animated short">
-							</span>
+							
 							<span class="home-update-copy">
 								Watch Alpha in his first animated short!
+							</span>
+							<span class="home-update-image">
+								<img src="https://i.ytimg.com/vi/eP0bWg1HjKk/hqdefault.jpg" alt="Poster frame for Selfie, Alpha Zeta's first animated short">
 							</span>
 						</a>
 					</div>
 					<div class="home-update">
 						<a href="/about#mcp" target="_blank" rel="noopener noreferrer">
-							<span class="home-update-image">
-								<img src="https://img.icons8.com/fluent-systems-regular/1200/model-context-protocol.jpg" alt="Poster frame for Selfie, Alpha Zeta's first animated short">
-							</span>
+							
 							<span class="home-update-copy">
 								Zeta Comic Generator is now an MCP Server!
+							</span>
+							<span class="home-update-image">
+								<img src="https://img.icons8.com/fluent-systems-regular/1200/model-context-protocol.jpg" alt="Poster frame for Selfie, Alpha Zeta's first animated short">
 							</span>
 						</a>
 					</div>

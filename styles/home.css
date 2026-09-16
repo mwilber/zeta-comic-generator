@@ -5,7 +5,7 @@ main.content:has(.homepage) {
     width: calc(100% - 6rem);
     max-width: 1500px;
     padding: 0 0 2em;
-    margin-top: 5rem;
+    margin-top: 4rem;
 }
 
 .home-intro {
@@ -57,7 +57,7 @@ main.content:has(.homepage) {
 .homepage #gallery {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 0.625rem;
+    gap: 1.5rem;
 }
 
 .home-update-image,
@@ -97,19 +97,22 @@ main.content:has(.homepage) {
 
 .home-update-copy {
     display: block;
-    margin-top: 0.75rem;
+    margin-top: 0;
+    margin-bottom: 0.5rem;
     line-height: 1.4;
     text-align: center;
     font-weight: normal;
 }
 
 .home-update-copy {
-    color: white;
+    color: #fdff00;
     font-family: 'Bangers', Arial, Helvetica, sans-serif;
     font-size: 1.5em;
+    letter-spacing: 0.05em;
     text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000, 2px 2px 0 #000, 3px 3px 0 #000;
 }
 
+/* 
 .home-update-copy {
 	background: #3050cc;
     border: solid 2px black;
@@ -118,6 +121,7 @@ main.content:has(.homepage) {
     padding: 5px 9px;
     font-size: 1.5em;
 }
+ */
 
 .homepage #latest-comics-title a{
 	color: white;
