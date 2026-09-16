@@ -103,12 +103,20 @@ main.content:has(.homepage) {
     font-weight: normal;
 }
 
-.home-update-copy strong {
-    display: block;
+.home-update-copy {
     color: white;
-    font-family: 'Patrick Hand', Arial, Helvetica, sans-serif;
+    font-family: 'Bangers', Arial, Helvetica, sans-serif;
     font-size: 1.5em;
     text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000, 2px 2px 0 #000, 3px 3px 0 #000;
+}
+
+.home-update-copy {
+	background: #3050cc;
+    border: solid 2px black;
+    color: white;
+    text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+    padding: 5px 9px;
+    font-size: 1.5em;
 }
 
 .homepage #latest-comics-title a{
