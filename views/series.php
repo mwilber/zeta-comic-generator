@@ -100,7 +100,9 @@ else:
 		?>
 			<li class="story-item">
 				<a href="/series/<?= htmlspecialchars($series['permalink']) ?>">
-					<img src="<?php echo BUCKET_URL; ?>/thumbnails/thumb_<?= htmlspecialchars($series['comicPermalink']) ?>.png" alt="<?= htmlspecialchars($series['title']) ?>" width="100" />
+					<span class="series-thumbnail">
+						<img src="<?php echo BUCKET_URL; ?>/thumbnails/thumb_<?= htmlspecialchars($series['comicPermalink']) ?>.png" alt="<?= htmlspecialchars($series['title']) ?>" width="100" height="100" />
+					</span>
 					<span class="comic-title">
 						<?= htmlspecialchars($series['title']) ?>
 						<br/>

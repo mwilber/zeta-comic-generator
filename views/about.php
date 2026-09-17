@@ -1,4 +1,5 @@
 <h2>How It Works</h2>
+<div class="how-it-works-box">
 <p class="diagram">
 	<img src="/assets/images/layer_diagram_900c.png" alt="Diagram of comic strip layer composite. An AI generated background image, a hand drawn character image and a dialog baloon image from an AI generated script layered on top of each other.">
 </p>
@@ -17,6 +18,7 @@
 		<img class="burst" src="/assets/images/speech_bubble.svg" alt="Cartoon speech bubble icon">
 		<span class="cartoon-font">Create Your Own</span>
 	</a>
+</div>
 </div>
 <h2 id="character-art">Character Art...</h2>
 <ul class="character-art">
