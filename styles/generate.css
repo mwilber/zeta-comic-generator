@@ -51,6 +51,11 @@ progress[value]::-webkit-progress-value {
 
 #input {
 	width:100%;
+	box-sizing: border-box;
+	padding: 75px 100px 100px;
+	background: rgba(250, 250, 250, 0.8);
+	border: 1px solid rgba(173, 173, 173, 0.8);
+	border-radius: 20px;
 	display: flex;
 	flex-wrap: wrap;
 	flex-direction: column;
@@ -318,6 +323,10 @@ progress[value]::-webkit-progress-value {
 }
 
 @media screen and (max-width: 550px) {
+	#input {
+		padding: 50px 10px;
+	}
+
 	#statusdialog .dialog {
 		font-size: 3em;
 	}
