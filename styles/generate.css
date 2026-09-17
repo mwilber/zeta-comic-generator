@@ -52,14 +52,14 @@ progress[value]::-webkit-progress-value {
 #input {
 	width:100%;
 	box-sizing: border-box;
-	padding: 75px 100px 100px;
+	padding: 1em;
 	background: rgba(250, 250, 250, 0.8);
 	border: 1px solid rgba(173, 173, 173, 0.8);
 	border-radius: 20px;
 	display: flex;
 	flex-wrap: wrap;
 	flex-direction: column;
-	font-size: 18px;
+	font-size: 16px;
 }
 
 #input .row {
