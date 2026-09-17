@@ -173,15 +173,15 @@ main.content:has(.homepage) {
 .homepage .home-how-it-works .how-it-works-box {
     /* Replace the grey fallback rather than stacking two translucent layers. */
     background: linear-gradient(45deg,
-        rgba(244, 244, 248, 0.8) 0%,
-        rgba(243, 235, 255, 0.8) 12%,
-        rgba(230, 246, 255, 0.8) 25%,
-        rgba(234, 255, 245, 0.8) 38%,
-        rgba(255, 255, 249, 0.8) 50%,
-        rgba(255, 249, 230, 0.8) 63%,
-        rgba(255, 235, 243, 0.8) 76%,
-        rgba(242, 235, 255, 0.8) 89%,
-        rgba(246, 248, 250, 0.8) 100%
+        rgba(243, 243, 247, 0.8) 0%,
+        rgba(242, 233, 255, 0.8) 12%,
+        rgba(228, 245, 255, 0.8) 25%,
+        rgba(232, 255, 244, 0.8) 38%,
+        rgba(255, 255, 248, 0.8) 50%,
+        rgba(255, 248, 228, 0.8) 63%,
+        rgba(255, 233, 242, 0.8) 76%,
+        rgba(241, 233, 255, 0.8) 89%,
+        rgba(245, 247, 250, 0.8) 100%
     );
 }
 
