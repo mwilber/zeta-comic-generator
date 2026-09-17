@@ -66,6 +66,13 @@ progress[value]::-webkit-progress-value {
 	display: flex;
 }
 
+/* Match the premise input instead of enlarging controls with rem/em rules. */
+#input .select,
+#input select,
+#input .toggle-button {
+	font-size: inherit;
+}
+
 #input .row label {
 	display: block;
 	float: left;
