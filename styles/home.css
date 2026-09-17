@@ -72,11 +72,13 @@ main.content:has(.homepage) {
 }
 
 .home-update {
+    display: grid;
     min-width: 0;
 }
 
 .home-update a {
-    display: block;
+    display: grid;
+    grid-template-rows: 1fr auto;
     text-decoration: none;
 }
 
@@ -97,6 +99,7 @@ main.content:has(.homepage) {
 
 .home-update-copy {
     display: block;
+    align-self: end;
     margin-top: 0;
     margin-bottom: 0.5rem;
     line-height: 1.4;
