@@ -1,5 +1,19 @@
 @import url('https://fonts.googleapis.com/css2?family=Patrick+Hand&family=Bangers&family=Luckiest+Guy&family=Roboto+Condensed:ital,wght@0,100..900;1,100..900&display=swap');
 
+:root {
+    --holographic-background: linear-gradient(45deg,
+        rgba(243, 243, 247, 0.8) 0%,
+        rgba(242, 233, 255, 0.8) 12%,
+        rgba(228, 245, 255, 0.8) 25%,
+        rgba(232, 255, 244, 0.8) 38%,
+        rgba(255, 255, 248, 0.8) 50%,
+        rgba(255, 248, 228, 0.8) 63%,
+        rgba(255, 233, 242, 0.8) 76%,
+        rgba(241, 233, 255, 0.8) 89%,
+        rgba(245, 247, 250, 0.8) 100%
+    );
+}
+
 body {
 	position: relative;
 	margin: 0;
