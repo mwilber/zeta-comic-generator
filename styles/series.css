@@ -31,7 +31,7 @@
 	aspect-ratio: 1;
 	margin-right: 10px;
 	border: 2px solid black;
-	border-radius: 50%;
+	border-radius: none;
 	overflow: hidden;
 }
 
