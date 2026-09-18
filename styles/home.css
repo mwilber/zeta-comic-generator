@@ -13,6 +13,7 @@ main.content:has(.homepage) {
     grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
     align-items: start;
     gap: clamp(2rem, 5vw, 6rem);
+    width: 95%;
 }
 
 .home-hero {
@@ -157,14 +158,14 @@ main.content:has(.homepage) {
 }
 
 .home-how-it-works {
-    max-width: 960px;
-    width: 65%;
+	max-width: 1200px;
+    width: 90%;
     margin: 3rem auto 0;
 }
 
 .how-it-works-box {
     box-sizing: border-box;
-    padding: 1em;
+    padding: 1em 5em;
     background: rgba(250, 250, 250, 0.8);
     border: 1px solid rgba(173, 173, 173, 0.8);
     border-radius: 20px;
@@ -275,6 +276,10 @@ p.diagram img {
 p.description {
     line-height: 1.5em;
     padding: 1em 0 2em 0;
+}
+
+#character-art, #ai-models, #ai-prompts {
+	margin-top: 2em;
 }
 
 .character-art {

@@ -66,6 +66,10 @@ progress[value]::-webkit-progress-value {
 	display: flex;
 }
 
+#input .row.selections {
+	margin-bottom: 1em;
+}
+
 /* Match the premise input instead of enlarging controls with rem/em rules. */
 #input .select,
 #input select,
@@ -326,6 +330,11 @@ progress[value]::-webkit-progress-value {
     #model-selection {
         flex-direction: column;
         gap: 0.5em;
+    }
+    
+    .select {
+    	max-width: 100%;
+    	width: 100%;
     }
 }
 
