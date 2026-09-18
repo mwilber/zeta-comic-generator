@@ -45,7 +45,9 @@ if ($series):
 				<?php foreach($comics as $index => $comic): ?>
 					<li class="comic-item">
 						<a href="/detail/<?= htmlspecialchars($comic['permalink']) ?>">
-							<img src="<?php echo BUCKET_URL; ?>/thumbnails/thumb_<?= htmlspecialchars($comic['permalink']) ?>.png" alt="<?= htmlspecialchars($comic['title']) ?>" width="100" />
+							<span class="series-thumbnail">
+								<img src="<?php echo BUCKET_URL; ?>/thumbnails/thumb_<?= htmlspecialchars($comic['permalink']) ?>.png" alt="<?= htmlspecialchars($comic['title']) ?>" width="100" height="100" />
+							</span>
 							<span class="comic-title">
 								Part <?= $totalComics - $index ?>
 								<br/>
