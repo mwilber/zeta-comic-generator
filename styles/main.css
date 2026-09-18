@@ -1,4 +1,18 @@
-@import url('https://fonts.googleapis.com/css2?family=Patrick+Hand&family=Bangers&family=Luckiest+Guy&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Patrick+Hand&family=Bangers&family=Luckiest+Guy&family=Roboto+Condensed:ital,wght@0,100..900;1,100..900&display=swap');
+
+:root {
+    --holographic-background: linear-gradient(45deg,
+        rgba(243, 243, 247, 0.8) 0%,
+        rgba(242, 233, 255, 0.8) 12%,
+        rgba(228, 245, 255, 0.8) 25%,
+        rgba(232, 255, 244, 0.8) 38%,
+        rgba(255, 255, 248, 0.8) 50%,
+        rgba(255, 248, 228, 0.8) 63%,
+        rgba(255, 233, 242, 0.8) 76%,
+        rgba(241, 233, 255, 0.8) 89%,
+        rgba(245, 247, 250, 0.8) 100%
+    );
+}
 
 body {
 	position: relative;
@@ -7,7 +21,7 @@ body {
 	font-family:Arial, Helvetica, sans-serif;
 	font-size: 14px;
 	color:#333e4d;
-	background: #f9f5ec;
+	background: linear-gradient(180deg, #891b2a, #fb9b15);
 
 	--bounce-function: cubic-bezier(0.680, -0.550, 0.265, 1.550);
 
@@ -117,31 +131,31 @@ select:focus + .focus {
 }
 
 .halftone {
-	--dotSize: 0.25rem;
+	/* --dotSize: 0.25rem;
 	--bgSize: 1.5rem;
 	--bgPosition: calc(var(--bgSize) / 2);
 	--mask: linear-gradient(rgb(0 0 0), rgb(0 0 0 / 0.5));
 	--stop1: 0.06rem;
 	--stop2: 0.65rem;
 	--color1: rgb(0, 0, 0);
-	--color2: rgb(0, 0, 0);
+	--color2: rgb(0, 0, 0); */
 	
 	position: absolute;
 	width: 100%;
 	height: 200px;
-	background: white;
+	background: url(../assets/images/halftone.png);
+    background-repeat: repeat-x;
+    background-size: contain;
   	filter: contrast(50);
-	opacity: 0.08;
+	opacity: 0.15;
 	z-index: -1;
 }
 
-.halftone::after {
-	/* Cover our element */
+/* .halftone::after {
 	content: '';
 	position: absolute;
 	inset: 0;
 
-	/* Dotted background */
 	background-image: 
 		radial-gradient(
 			circle at center, 
@@ -158,7 +172,7 @@ select:focus + .focus {
 	background-position: 0 0, var(--bgPosition) var(--bgPosition);
 	mask-image: var(--mask);
 	-webkit-mask-image: var(--mask);
-}
+} */
 
 .cartoon-button {
 	position: relative;
@@ -306,7 +320,7 @@ header .brand {
 	z-index: 1;
 }
 
-header h1 {
+header .site-title {
 	position: absolute;
 	bottom: -3px;
 	left: 0;
@@ -457,14 +471,52 @@ header nav.collapsed button .icon span {
 	overflow-x: hidden;
 }
 
-.content h2 {
+/* Shared heading hierarchy. Page styles only control heading placement. */
+h1 {
+	margin: 0;
+	font-family: 'Bangers', Arial, Helvetica, sans-serif;
+	font-size: clamp(1.875rem, 2.8125vw, 2.8125rem);
+	font-weight: bold;
+	line-height: 1.1;
+	letter-spacing: 0.05em;
+	color: #fdff00;
+	text-shadow: 5px 5px black;
+}
+
+h2 {
+	display: block;
+	margin: 0.5em 0em 0.5em 0em;
+	padding: 0;
+	border: 0;
+	background: none;
+	font-family: 'Bangers', Arial, Helvetica, sans-serif;
+	font-size: clamp(1.75rem, 3vw, 2.5rem);
+	font-weight: normal;
+	letter-spacing: 0.025em;
+	text-transform: uppercase;
+	color: white;
+	text-shadow: 3px 3px black;
+}
+
+h2 a {
+	color: inherit;
+	font-weight: inherit;
+	text-decoration: none;
+}
+
+h3 {
 	display: inline-block;
 	width: auto;
 	padding: 0.05em 0.5em;
-	margin: 2em 0 0.5em 0;
+	margin: 1em 0em 0.5em 0em;
 	background: #feff70;
 	border: solid 2px #000;
+	font-family: 'Patrick Hand', Arial, Helvetica, sans-serif;
+	font-size: 1.25em;
+	font-weight: bold;
 	text-transform: uppercase;
+	color: #333e4d;
+	text-shadow: none;
 }
 
 
@@ -477,7 +529,7 @@ header nav.collapsed button .icon span {
 	header nav a {
 		height: 50px;
 	}
-	header h1 {
+	header .site-title {
 		padding-left: 20%;
 		width: 80%;
 	}
@@ -505,7 +557,7 @@ header nav.collapsed button .icon span {
 		height: 50px;
 		font-size: 2.5em !important;
 	}
-	header h1{
+	header .site-title{
 		font-size: 1.5em;
 		padding-left: 0;
 		width: 100%;

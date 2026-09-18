@@ -9,6 +9,40 @@
 	margin-bottom: 25px;
 }
 
+#series .story-item,
+#series .comic-item {
+	box-sizing: border-box;
+	padding: 1em;
+	background: var(--holographic-background, rgba(250, 250, 250, 0.8));
+	border: 1px solid rgba(173, 173, 173, 0.8);
+	border-radius: 20px;
+	transition: transform 500ms var(--bounce-function);
+}
+
+#series .story-item:hover,
+#series .comic-item:hover {
+	transform: scale(1.03) rotate(1deg);
+}
+
+#series .series-thumbnail {
+	box-sizing: border-box;
+	display: block;
+	flex: 0 0 100px;
+	aspect-ratio: 1;
+	margin-right: 10px;
+	border: 2px solid black;
+	border-radius: none;
+	overflow: hidden;
+}
+
+#series .series-thumbnail img {
+	display: block;
+	width: 100%;
+	height: 100%;
+	margin: 0;
+	object-fit: cover;
+}
+
 #series ul li a{
 	display: flex;
 	flex-direction: row;
@@ -28,5 +62,34 @@
 
 #series ul li a span.comic-summary {
 	font-size: 0.8em;
-	color: #666;
+	color: black;
+}
+
+#series .story-item .comic-title,
+#series .comic-item .comic-title,
+.story-controls #story-title {
+	min-width: 0;
+	font-family: 'Bangers', Arial, Helvetica, sans-serif;
+	font-size: 1.5em;
+	font-weight: bold;
+	line-height: 1.1;
+	letter-spacing: 0.1em;
+	text-transform: none;
+	color: #fdff00;
+	text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000, 2px 2px 0 #000, 3px 3px 0 #000;
+	overflow-wrap: anywhere;
+}
+
+#series .comic-part {
+	color: black;
+	text-shadow: none;
+}
+
+#series .story-item .comic-summary,
+#series .comic-item .comic-summary {
+	font-family: 'Patrick Hand', Arial, Helvetica, sans-serif;
+	font-weight: normal;
+	line-height: 1.4;
+	letter-spacing: normal;
+	text-shadow: none;
 }

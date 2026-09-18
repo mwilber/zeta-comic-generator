@@ -29,7 +29,6 @@
 .strip img {
 	position: absolute;
 	width: 100%;
-	opacity: 0.6;
 	transition: all 500ms var(--bounce-function);
 }
 
@@ -38,22 +37,91 @@
 	opacity: 1;
 }
 
-.strip h3 {
+#gallery .strip h3 {
 	position: absolute;
-	bottom: 0;
-	color: white;
-	font-family: sans-serif;
-	font-size: 20px;
-	font-weight: bold;
+	top: 0;
+	box-sizing: border-box;
+	max-width: calc(100% - 10px);
+	overflow-wrap: anywhere;
 	margin: 5px;
-	text-shadow: 0px 0px 1px black, 0px 0px 2px black, 0px 0px 2px black, 0px 0px 5px black;
 	opacity: 1;
+	padding: 0;
+	border: none;
+	background: transparent;
+	font-family: 'Bangers', Arial, Helvetica, sans-serif;
+	font-size: 1.5em;
+	font-weight: bold;
+	line-height: 1.1;
+	letter-spacing: 0.05em;
+	text-transform: none;
+	color: #fdff00;
+	text-shadow: 5px 5px black;
 	transition: all 500ms var(--bounce-function);
 }
-
-.strip:hover h3 {
-	opacity: 0;
+/*
+#gallery .frame:nth-child(2) .strip h3 {
+	text-shadow: 2px 2px #ff0000;
 }
+
+
+#gallery .frame:nth-child(3) .strip h3 {
+	background: #fdff00;
+    border: solid 2px black;
+    font-family: 'Patrick Hand', Arial, Helvetica, sans-serif;
+    color: black;
+    text-shadow: none;
+    padding: 2px 9px;
+    font-size: 1em;
+}
+
+#gallery .frame:nth-child(4) .strip h3 {
+	background: #3050cc;
+    border: solid 2px black;
+    color: white;
+    text-shadow: none;
+    padding: 5px 9px;
+    font-size: 1.25em;
+}
+
+#gallery .frame:nth-child(5) .strip h3 {
+	background: #3050cc;
+    border: solid 2px black;
+    font-family: 'Roboto Condensed', Arial, Helvetica, sans-serif;
+    color: white;
+    text-shadow: none;
+    padding: 5px 9px;
+    font-size: 1.25em;
+}
+
+
+#gallery .frame:nth-child(6) .strip h3 {
+	background: #3050cc;
+    border: solid 2px black;
+    color: white;
+    text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+    padding: 5px 9px;
+    font-size: 1em;
+}
+
+#gallery .frame:nth-child(7) .strip h3 {
+    border: none;
+    color: #fdff00;
+    text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+    padding: 0;
+    font-size: 1.25em;
+}
+ */
+
+#gallery .frame .strip h3 {
+    border: none;
+    color: #fdff00;
+    text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000, 2px 2px 0 #000, 3px 3px 0 #000;
+    padding: 0;
+    font-size: 1.25em;
+}
+
+
+
 
 #gallery .action-buttons {
 	grid-column: 1/-1;

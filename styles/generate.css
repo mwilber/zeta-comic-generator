@@ -51,14 +51,30 @@ progress[value]::-webkit-progress-value {
 
 #input {
 	width:100%;
+	box-sizing: border-box;
+	padding: 1em;
+	background: var(--holographic-background, rgba(250, 250, 250, 0.8));
+	border: 1px solid rgba(173, 173, 173, 0.8);
+	border-radius: 20px;
 	display: flex;
 	flex-wrap: wrap;
 	flex-direction: column;
-	font-size: 18px;
+	font-size: 16px;
 }
 
 #input .row {
 	display: flex;
+}
+
+#input .row.selections {
+	margin-bottom: 1em;
+}
+
+/* Match the premise input instead of enlarging controls with rem/em rules. */
+#input .select,
+#input select,
+#input .toggle-button {
+	font-size: inherit;
 }
 
 #input .row label {
@@ -315,9 +331,18 @@ progress[value]::-webkit-progress-value {
         flex-direction: column;
         gap: 0.5em;
     }
+    
+    .select {
+    	max-width: 100%;
+    	width: 100%;
+    }
 }
 
 @media screen and (max-width: 550px) {
+	#input {
+		padding: 50px 10px;
+	}
+
 	#statusdialog .dialog {
 		font-size: 3em;
 	}
