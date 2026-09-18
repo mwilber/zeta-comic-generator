@@ -1,0 +1,71 @@
+* { box-sizing: border-box; }
+:root {
+    color-scheme: light dark;
+    --app-text: var(--color-text-primary, #202020);
+}
+html, body {
+    margin: 0;
+    width: 100%;
+    background: transparent;
+    color: var(--app-text);
+    font-family: var(--font-sans, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
+}
+body { padding: 0; }
+#strip {
+    position: relative;
+    width: 100%;
+    max-width: 942px;
+    box-shadow: none;
+}
+.strip-container[hidden] { display: none !important; }
+/* Keep the shared desktop strip layout down to 501px in the MCP frame. */
+@media screen and (min-width: 501px) and (max-width: 768px) {
+    #strip .nav-button { display: none; }
+    #strip .panel-container {
+        width: 100%;
+        max-width: none;
+        margin: 0;
+        overflow: visible;
+        flex-wrap: wrap;
+        scroll-snap-type: none;
+        scroll-behavior: auto;
+    }
+    #strip .panel,
+    #strip .panel:first-child,
+    #strip .panel:last-child {
+        flex: 1;
+        min-width: 0;
+        width: 260px;
+        height: auto;
+        margin: 5px;
+        scroll-snap-align: none;
+    }
+    #strip .panel .bubble { font-size: 10px; }
+}
+#strip .panel.is-loading {
+    overflow: hidden;
+    background: #d8d8d8;
+}
+#strip .panel.is-loading::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    transform: translateX(-100%);
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .45), transparent);
+    animation: comic-loading 1.4s infinite;
+}
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+@keyframes comic-loading { to { transform: translateX(100%); } }
+@media (prefers-reduced-motion: reduce) {
+    #strip .panel.is-loading::after { animation: none; }
+}

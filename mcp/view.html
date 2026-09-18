@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Saved Zeta Comic</title>
+    <style>{{APP_STYLES}}</style>
+    <style>
+        #app-status { margin: 0; padding: 10px 15px; font-size: 14px; }
+        #app-status:empty { display: none; }
+    </style>
+    <script>const characterActions = {{CHARACTER_ACTIONS}};</script>
+</head>
+<body>
+    <main id="strip" aria-label="Saved comic strip">
+        <div class="strip-container" hidden></div>
+        <p id="app-status" role="status" aria-live="polite" aria-atomic="true">Loading saved comic…</p>
+    </main>
+    <script type="module">{{APP_SCRIPT}}</script>
+</body>
+</html>

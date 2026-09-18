@@ -6,6 +6,7 @@ const paths = [
 	"scripts/modules/GenerationProgressDialog.js",
 	"scripts/modules/ComicGenerationWorkflow.js",
 	"mcp/progress.js",
+	"mcp/saved-comic.js",
 	"mcp/app.js",
 ];
 const source = (await Promise.all(paths.map(
@@ -359,7 +360,7 @@ async function run(scenario) {
 		assert.equal(messages.some(m => m.method === "ui/message"), false, "Completion must not create an automatic chat turn");
 		respond(modelContext, {});
 		await new Promise(resolve => setImmediate(resolve));
-		assert.equal(elements.get("app-status").textContent, "Done. If you like this comic, ask to save it.");
+		assert.equal(elements.get("app-status").textContent, "Ready. If you like this comic, ask to save it.");
 	}
 	assert.equal(elements.get("statusdialog").classList.contains("active"), false);
 	assert.equal(elements.get("statusdialog").getAttribute("aria-hidden"), "true");
@@ -368,7 +369,7 @@ async function run(scenario) {
 	assert.equal(document.activeElement, elements.get("strip"));
 	assert.equal(elements.get("app-status").classList.contains("visually-hidden"), false);
 	assert.equal(elements.get("app-status").classList.contains("is-error"), scenario !== "success");
-	assert.match(elements.get("app-status").textContent, scenario === "success" ? /^Done\./ : /failed|limit|verified/);
+	assert.match(elements.get("app-status").textContent, scenario === "success" ? /^Ready\./ : /failed|limit|verified/);
 	await work;
 	await vm.runInContext('generateComic({})', context);
 	assert.equal(messages.filter(

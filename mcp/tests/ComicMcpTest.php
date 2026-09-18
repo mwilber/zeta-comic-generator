@@ -227,6 +227,16 @@ $drafts = new MemoryDrafts();
 $api = new FakeWebsiteApi();
 $comicMcp = new ComicMcp($drafts, $api, 'https://comicgenerator.greenzeta.com', $root);
 
+// Viewing does not depend on generation availability or create a draft.
+$api->validMetrics = false;
+$viewed = $comicMcp->viewComic(md5('42'));
+expect(!$viewed->isError && md5('42') === $viewed->structuredContent['permalink'], 'Viewer must accept a permalink identifier.');
+expect([] === $drafts->drafts && 0 === $api->saveCalls, 'Viewing must not create or save a draft.');
+foreach (['', '42', 'invalid', 'https://comicgenerator.greenzeta.com/detail/'.md5('42'), md5('42')."\n"] as $invalidPermalink) {
+    expect($comicMcp->viewComic($invalidPermalink)->isError, 'Viewer must reject invalid identifiers and full URLs.');
+}
+$api->validMetrics = true;
+
 $api->limitReached = true;
 $limited = $comicMcp->prepareComicGeneration('A comic about tests');
 expect($limited->isError, 'Rate-limited preparation must fail.');
@@ -316,9 +326,11 @@ expect(in_array('prepare_comic_generation', $toolNames, true), 'Prepare tool is 
 expect(in_array('generate_comic', $toolNames, true), 'Generate tool is missing.');
 expect(in_array('save_comic', $toolNames, true), 'Save tool is missing.');
 $generateTool = null;
+$viewTool = null;
 $stageTool = null;
 $stateTool = null;
 foreach ($tools['result']['tools'] ?? [] as $tool) {
+    if (($tool['name'] ?? null) === 'view_comic') $viewTool = $tool;
     if (($tool['name'] ?? null) === 'generate_comic') {
         $generateTool = $tool;
     }
@@ -328,6 +340,9 @@ foreach ($tools['result']['tools'] ?? [] as $tool) {
     }
 }
 expect(ComicMcp::APP_URI === ($generateTool['_meta']['ui']['resourceUri'] ?? null), 'Generate tool is not linked to the comic app.');
+expect(ComicMcp::VIEW_APP_URI === ($viewTool['_meta']['ui']['resourceUri'] ?? null), 'Viewer must have a separate app resource.');
+expect(true === ($viewTool['annotations']['readOnlyHint'] ?? false), 'Viewing must be marked read-only.');
+expect(['permalink'] === ($viewTool['inputSchema']['required'] ?? []), 'Viewer must require a permalink.');
 expect(['app'] === ($stateTool['_meta']['ui']['visibility'] ?? null), 'App state tool must be app-only.');
 expect(['app'] === ($stageTool['_meta']['ui']['visibility'] ?? null), 'Staging tool is not marked app-only.');
 
@@ -351,6 +366,21 @@ expect(!preg_match('/<link[^>]+stylesheet/i', $appHtml), 'App resource loads a c
 expect(!preg_match('/^\s*(?:import|export)\b/m', $appHtml), 'App resource contains an unresolved module statement.');
 expect(!str_contains($appHtml, '{{'), 'App resource contains an unresolved template placeholder.');
 expect(!str_contains($appHtml, '<nav'), 'App resource unexpectedly contains website navigation.');
+
+$viewResource = protocolRequest($server, 'resources/read', ['uri' => ComicMcp::VIEW_APP_URI], ComicMcp::VIEW_APP_URI);
+$viewContent = $viewResource['result']['contents'][0] ?? [];
+$viewHtml = $viewContent['text'] ?? '';
+expect('text/html;profile=mcp-app' === ($viewContent['mimeType'] ?? null), 'Viewer must be an MCP app.');
+expect(isset($viewContent['_meta']['ui']['csp']['connectDomains']), 'Viewer requires API CSP permissions.');
+expect(str_contains($viewHtml, 'class ComicRenderer') && str_contains($viewHtml, 'async function loadSavedComic'), 'Viewer must bundle shared rendering and loading.');
+foreach (['ComicGeneratorApi', 'ComicGenerationWorkflow', 'comic_app_state', 'stage_comic', 'statusdialog', '{{'] as $excluded) {
+    expect(!str_contains($viewHtml, $excluded), 'Viewer unexpectedly includes '.$excluded.'.');
+}
+expect(!preg_match('/^\s*(?:import|export)\b/m', $viewHtml), 'Viewer must have no unresolved module statements.');
+$protocolView = protocolRequest($server, 'tools/call', [
+    'name' => 'view_comic', 'arguments' => ['permalink' => md5('42')],
+], 'view_comic');
+expect(md5('42') === ($protocolView['result']['structuredContent']['permalink'] ?? null), 'View tool failed through the protocol.');
 
 $protocolPrepare = protocolRequest(
     $server,

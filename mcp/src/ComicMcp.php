@@ -16,6 +16,7 @@ use Throwable;
 final class ComicMcp
 {
     public const APP_URI = 'ui://zeta-comic-generator/comic-strip-v3';
+    public const VIEW_APP_URI = 'ui://zeta-comic-generator/saved-comic-v1';
     public const WORKFLOWS = ['openai', 'xai', 'google'];
 
     private const APP_SCRIPT_FILES = [
@@ -27,6 +28,7 @@ final class ComicMcp
         'scripts/modules/GenerationProgressDialog.js',
         'mcp/progress.js',
         'mcp/canvas-balloons.js',
+        'mcp/saved-comic.js',
         'mcp/app.js',
     ];
 
@@ -54,7 +56,37 @@ final class ComicMcp
      */
     public function appResource(): TextResourceContents
     {
-        $template = $this->readAppFile('mcp/app.html');
+        return $this->buildAppResource(self::APP_URI, 'mcp/app.html', self::APP_SCRIPT_FILES, [
+            'styles/strip.css',
+            'styles/dialog.css',
+            'styles/generation-progress.css',
+            'mcp/progress.css',
+            'mcp/app.css',
+        ]);
+    }
+
+    /** Builds the display-only app without generation or draft workflow code. */
+    public function viewAppResource(): TextResourceContents
+    {
+        return $this->buildAppResource(self::VIEW_APP_URI, 'mcp/view.html', [
+            'scripts/modules/ComicRenderer/CharacterAction.js',
+            'scripts/modules/ComicRenderer/DialogBalloon.js',
+            'scripts/modules/ComicRenderer/ComicRenderer.js',
+            'mcp/canvas-balloons.js',
+            'mcp/saved-comic.js',
+            'mcp/view.js',
+        ], ['styles/strip.css', 'mcp/app.css']);
+    }
+
+    /**
+     * Bundles an app's template, ordered modules, and styles with sandbox metadata.
+     *
+     * @param list<string> $scriptFiles Project-relative modules in dependency order.
+     * @param list<string> $styleFiles Project-relative stylesheets in cascade order.
+     */
+    private function buildAppResource(string $uri, string $templatePath, array $scriptFiles, array $styleFiles): TextResourceContents
+    {
+        $template = $this->readAppFile($templatePath);
         $styles = implode("\n\n", array_map(
             /**
              * Reads one stylesheet for inclusion in the inline app resource.
@@ -62,13 +94,9 @@ final class ComicMcp
              * @param string $path Project-relative stylesheet path.
              * @return string Stylesheet contents.
              */
-            fn (string $path): string => $this->readAppFile($path), [
-            'styles/strip.css',
-            'styles/dialog.css',
-            'styles/generation-progress.css',
-            'mcp/progress.css',
-        ]));
-        $script = $this->buildInlineAppScript();
+            fn (string $path): string => $this->readAppFile($path), $styleFiles,
+        ));
+        $script = $this->buildInlineAppScript($scriptFiles);
 
         if (false !== stripos($styles, '</style') || false !== stripos($script, '</script')) {
             throw new RuntimeException('The comic app contains an unsafe inline closing tag.');
@@ -92,7 +120,7 @@ final class ComicMcp
         ];
 
         return new TextResourceContents(
-            uri: self::APP_URI,
+            uri: $uri,
             mimeType: McpApps::MIME_TYPE,
             text: $template,
             meta: ['ui' => new UiResourceContentMeta(
@@ -109,19 +137,20 @@ final class ComicMcp
     /**
      * Bundles the ordered shared modules and MCP adapters into one inline script.
      *
+     * @param list<string> $scriptFiles Project-relative modules in dependency order.
      * @return string JavaScript with supported import and export statements removed.
      * @throws RuntimeException If a module cannot be read or contains unsupported statements.
      */
-    private function buildInlineAppScript(): string
+    private function buildInlineAppScript(array $scriptFiles): string
     {
         $bundle = [];
-        foreach (self::APP_SCRIPT_FILES as $path) {
+        foreach ($scriptFiles as $path) {
             $source = $this->readAppFile($path);
             $source = preg_replace('/^\s*import\s+\{[^}]+}\s+from\s+["\'][^"\']+["\'];\s*$/m', '', $source);
             if (null === $source) {
                 throw new RuntimeException('The comic app module imports could not be bundled from '.$path.'.');
             }
-            $source = preg_replace('/^export\s+(?=(?:class|const|function)\b)/m', '', $source);
+            $source = preg_replace('/^export\s+(?=(?:class|const|function|async\s+function)\b)/m', '', $source);
             if (null === $source) {
                 throw new RuntimeException('The comic app module exports could not be bundled from '.$path.'.');
             }
@@ -149,6 +178,20 @@ final class ComicMcp
         }
 
         return $contents;
+    }
+
+    /** Opens the saved-comic viewer using a permalink identifier, never a URL. */
+    public function viewComic(string $permalink): CallToolResult
+    {
+        if (!preg_match('/^[a-f0-9]{32}$/D', $permalink)) {
+            return $this->error('Provide the 32-character saved comic permalink identifier, not a URL.');
+        }
+
+        return new CallToolResult(
+            [new TextContent('The inline app will load and display the saved comic.')],
+            false,
+            ['permalink' => $permalink, 'site_base_url' => $this->siteBaseUrl],
+        );
     }
 
     /**

@@ -4,6 +4,8 @@ The public MCP endpoint is `https://comicgenerator.greenzeta.com/mcp`. It serves
 
 ## Workflow
 
+Use `view_comic` to display an existing saved comic without generating or saving anything. Pass `permalink` as the 32-character lowercase hexadecimal comic identifier, for example `{"permalink":"a1d0c6e83f027327d8461063f4ac58a6"}`. Despite its name, this parameter is not a URL or a numeric database ID. The separate read-only viewer app fetches `/api/detail/{permalink}/` and reconstructs the background and character images using the same loader as the generator's saved-comic restoration. It requires no MCP draft or generation allowance, reloads on iframe refresh, and shows an error for unavailable comics.
+
 1. `prepare_comic_generation` checks the existing website `/api/metrics/` endpoint without opening an app or writing a draft. It defaults to the `openai` workflow and also accepts `xai` or `google`.
 2. `generate_comic` rechecks availability, creates a short-lived draft, and opens the inline MCP App. The app atomically claims the prepared draft once, then performs the same concept, script, background, image, character, and continuity sequence as the Generate page through the existing `/api` endpoints.
 3. The app calls the app-only `stage_comic` tool after all three panels are complete. It then displays a persistent status below the comic telling the user to ask to save it if desired.
@@ -38,6 +40,7 @@ The MCP endpoint is intentionally public, matching the public generation experie
 php mcp/tests/ComicMcpTest.php
 php mcp/tests/DraftRepositoryTest.php
 node mcp/tests/app.test.mjs
+node mcp/tests/view.test.mjs
 node mcp/tests/workflow.test.mjs
 node mcp/tests/progress.test.mjs
 node mcp/tests/canvas-balloons.test.mjs

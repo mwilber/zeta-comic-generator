@@ -43,11 +43,12 @@ final class McpServerFactory
             ->setServerInfo(
                 'zeta-comic-generator',
                 '1.0.0',
-                'Generate and optionally save three-panel Alpha Zeta comics.',
+                'Generate, save, and view three-panel Alpha Zeta comics.',
                 websiteUrl: $siteBaseUrl,
                 title: 'Zeta Comic Generator',
             )
             ->setInstructions(
+                'To display a saved comic, call view_comic with its permalink identifier (the 32-character token, not a complete URL). No generation preparation or save is needed. '.
                 'To generate a comic, first call prepare_comic_generation with the user premise and optional workflow. '.
                 'If it reports the daily limit, tell the user to try again later and do not call generate_comic. '.
                 'If available, call generate_comic with the same premise and workflow. The inline app performs the existing website workflow. '.
@@ -62,6 +63,37 @@ final class McpServerFactory
                 'OpenAI is the default workflow; valid alternatives are xAI and Google.'
             )
             ->enableExtension(new McpApps())
+            ->addResource(
+                [$comicMcp, 'viewAppResource'],
+                ComicMcp::VIEW_APP_URI,
+                'zeta-saved-comic-app',
+                title: 'Saved Zeta Comic',
+                description: 'Display-only view of a saved three-panel comic.',
+                mimeType: McpApps::MIME_TYPE,
+                meta: ['ui' => McpApps::resourceMarker()],
+            )
+            ->addTool(
+                [$comicMcp, 'viewComic'],
+                'view_comic',
+                title: 'View saved comic',
+                description: 'Display an existing saved comic in an inline app. Accepts the comic permalink identifier, not a complete URL. Does not generate or save a comic.',
+                annotations: new ToolAnnotations(readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: true),
+                inputSchema: [
+                    'type' => 'object',
+                    'properties' => [
+                        'permalink' => [
+                            'type' => 'string', 'pattern' => '^[a-f0-9]{32}$', 'minLength' => 32, 'maxLength' => 32,
+                            'description' => 'Saved comic identifier from /detail/{permalink}; only the 32-character lowercase hexadecimal token, not a URL or numeric comic ID.',
+                        ],
+                    ],
+                    'required' => ['permalink'],
+                    'additionalProperties' => false,
+                ],
+                meta: ['ui' => new UiToolMeta(
+                    resourceUri: ComicMcp::VIEW_APP_URI,
+                    visibility: [ToolVisibility::Model],
+                )],
+            )
             ->addResource(
                 [$comicMcp, 'appResource'],
                 ComicMcp::APP_URI,

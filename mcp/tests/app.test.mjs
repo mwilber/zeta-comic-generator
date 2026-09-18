@@ -2,8 +2,10 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import vm from "node:vm";
 
-const source = readFileSync(new URL("../app.js", import.meta.url), "utf8")
-	.replace(/^import .*;\n/gm, "");
+const source = ["../saved-comic.js", "../app.js"]
+	.map((path) => readFileSync(new URL(path, import.meta.url), "utf8")
+		.replace(/^import .*;\n/gm, "").replace(/^export /gm, ""))
+	.join("\n");
 const generationId = "a".repeat(32);
 const permalink = "b".repeat(32);
 const baseUrl = "https://comicgenerator.greenzeta.com";
@@ -106,7 +108,7 @@ for (let refresh = 0; refresh < 2; refresh++) {
 	assert.equal(app.renders[0].panels[0].dialog[0].text, "Hello");
 	assert.equal(app.renders[0].panels[0].images[0].url, detail.backgrounds[0]);
 	assert.equal(app.renders[0].panels[0].images[1].url, `${baseUrl}/assets/character_art/standing.png`);
-	assert.deepEqual(app.statuses, ["Saved comic loaded."]);
+	assert.deepEqual(app.statuses, ["Loaded saved comic."]);
 	assert.equal(app.calls.filter((call) => call.method === "ui/message" || call.params?.name === "stage_comic").length, 0);
 }
 for (const options of [
