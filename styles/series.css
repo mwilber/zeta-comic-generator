@@ -80,6 +80,11 @@
 	overflow-wrap: anywhere;
 }
 
+#series .comic-part {
+	color: black;
+	text-shadow: none;
+}
+
 #series .story-item .comic-summary,
 #series .comic-item .comic-summary {
 	font-family: 'Patrick Hand', Arial, Helvetica, sans-serif;
