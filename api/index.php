@@ -38,7 +38,8 @@
 		if($controller == 'detail' || $controller == 'gallery' || $controller == 'stories') {
 			if(isset($path[3]) && $path[3]) {
 				$hash = $path[3];
-			} else {
+			} elseif ($controller != 'gallery') {
+				// Gallery accepts an optional continuity ID; detail and stories require one.
 				$controller = "";
 			}
 		} 

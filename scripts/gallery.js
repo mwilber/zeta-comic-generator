@@ -10,7 +10,7 @@ function PopGallery(pageNum) {
 	fetch(
 		apiEndpoint +
 		pageNum +
-		"c=" +
+		"&c=" +
 		Math.floor(Math.random() * 1000000)
 	)
 		.then((response) => response.json())
