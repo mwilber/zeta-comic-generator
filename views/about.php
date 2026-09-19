@@ -28,6 +28,26 @@
 	</li>
 	<?php endforeach; ?>
 </ul>
+<h2 id="mcp-server">MCP Server</h2>
+<p>
+	Create and browse Zeta comics from an AI assistant by adding a remote MCP (Model Context Protocol) server with the URL <a href="https://comicgenerator.greenzeta.com/mcp">https://comicgenerator.greenzeta.com/mcp</a>. Use a client that supports Streamable HTTP and MCP Apps to generate and view comic strips inline. The endpoint is public and requires no authentication.
+</p>
+<p>
+	Once connected, ask things like “Generate a comic about Alpha Zeta learning to cook,” “Show me the latest comic,” or “List the series, then show me part 1 of one.” After generating a comic, ask the assistant to save it to receive a permanent link. Generation uses the website's daily allowance; browsing and viewing existing comics do not.
+</p>
+<ul>
+	<li><p><strong><code>generate_comic</code></strong>: Creates and displays a three-panel comic from a short <code>premise</code> (up to 210 characters). Supports an optional <code>workflow</code>: <code>openai</code> (default), <code>xai</code>, or <code>google</code>. The assistant checks availability first with <code>prepare_comic_generation</code>.</p></li>
+	<li><p><strong><code>view_comic</code></strong>: Displays a saved comic using its <code>permalink</code>, the 32-character identifier from its detail-page URL.</p></li>
+	<li><p><strong><code>get_latest_comic</code></strong>: Finds the newest public gallery comic and returns its title, summary when available, permalink, and link. Takes no arguments.</p></li>
+	<li><p><strong><code>get_random_comic</code></strong>: Finds a random public gallery comic and returns the same details as <code>get_latest_comic</code>. Takes no arguments; repeated calls may return the same comic.</p></li>
+	<li><p><strong><code>get_series</code></strong>: Lists available series with descriptions, published comic counts, permalinks, and links. Takes no arguments.</p></li>
+	<li><p><strong><code>get_series_comic</code></strong>: Finds a comic within a series using its <code>series</code> permalink and a zero-based <code>index</code> (part 1 is <code>0</code>), ordered oldest first.</p></li>
+	<li><p><strong><code>prepare_comic_generation</code></strong>: Checks the daily generation allowance for a <code>premise</code> and optional <code>workflow</code> before generation starts.</p></li>
+	<li><p><strong><code>save_comic</code></strong>: Saves a completed generated comic when you explicitly ask to save it, returning a permanent link. The assistant supplies the draft identifier automatically.</p></li>
+</ul>
+<p>
+	To display a comic found by the latest, random, or series lookup tools, the assistant passes the returned comic permalink to <code>view_comic</code>. See the <a href="https://github.com/mwilber/zeta-comic-generator/blob/master/mcp/README.md">MCP server documentation</a> for implementation and deployment details.
+</p>
 <h2 id="ai-models">AI Models</h2>
 <ul class="models">
 	<li>
