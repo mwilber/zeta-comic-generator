@@ -29,7 +29,13 @@ async function openSavedComic(input) {
 	opened = true;
 	try {
 		await loadSavedComic(input.permalink, input.site_base_url);
-		status.textContent = "";
+		const link = document.createElement("a");
+		link.textContent = "Zeta Comic Generator website";
+		link.href = `${input.site_base_url.replace(/\/$/, "")}/detail/${input.permalink}`;
+		link.target = "_blank";
+		link.rel = "noopener noreferrer";
+		status.textContent = "View details about this comic and more on the ";
+		status.append(link, ".");
 	} catch (error) {
 		console.error("Unable to load saved comic", error);
 		document.querySelector(".strip-container").hidden = true;

@@ -25,7 +25,13 @@ async function mount({ data = detail, toolInput = input, httpOk = true, networkE
 	const requests = [];
 	const renders = [];
 	const container = { hidden: true };
-	const status = { textContent: "Loading saved comic…" };
+	const status = {
+		textContent: "Loading saved comic…",
+		append(...nodes) {
+			this.children = nodes;
+			this.textContent += nodes.map((node) => typeof node === "string" ? node : node.textContent).join("");
+		},
+	};
 	let height = 300;
 	const parent = {
 		postMessage(message) {
@@ -38,6 +44,7 @@ async function mount({ data = detail, toolInput = input, httpOk = true, networkE
 	vm.runInNewContext(source, {
 		window: { parent, addEventListener: (name, listener) => { listeners[name] = listener; } },
 		document: {
+			createElement: (tagName) => ({ tagName }),
 			querySelector: (selector) => selector === "#app-status" ? status : container,
 			body: { getBoundingClientRect: () => ({ height }) }, documentElement: {},
 		},
@@ -74,7 +81,10 @@ async function mount({ data = detail, toolInput = input, httpOk = true, networkE
 for (let refresh = 0; refresh < 2; refresh++) {
 	const app = await mount();
 	assert.equal(app.container.hidden, false);
-	assert.equal(app.status.textContent, "");
+	assert.equal(app.status.textContent, "View details about this comic and more on the Zeta Comic Generator website.");
+	assert.equal(app.status.children[0].tagName, "a");
+	assert.equal(app.status.children[0].textContent, "Zeta Comic Generator website");
+	assert.equal(app.status.children[0].href, `${baseUrl}/detail/${permalink}`);
 	assert.equal(app.requests.length, 1, "Duplicate results must load only once");
 	assert.equal(app.requests[0].url, `${baseUrl}/api/detail/${permalink}/`);
 	assert.equal(app.requests[0].options.cache, "no-store");
