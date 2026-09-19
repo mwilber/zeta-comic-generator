@@ -85,6 +85,10 @@ body { padding: 0; }
     overflow-wrap: anywhere;
     box-shadow: none;
 }
+#app-status a {
+    color: #000;
+    text-decoration: underline;
+}
 #app-status.is-error {
     border-color: #b42318;
     color: #b42318;
