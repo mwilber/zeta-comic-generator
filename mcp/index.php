@@ -7,6 +7,7 @@ use Mcp\Server\Transport\Http\Middleware\CorsMiddleware;
 use Mcp\Server\Session\FileSessionStore;
 use Mcp\Server\Transport\StreamableHttpTransport;
 use ZetaComicGenerator\Mcp\ComicMcp;
+use ZetaComicGenerator\Mcp\ComicRepository;
 use ZetaComicGenerator\Mcp\DraftRepository;
 use ZetaComicGenerator\Mcp\McpServerFactory;
 use ZetaComicGenerator\Mcp\WebsiteApiClient;
@@ -23,6 +24,7 @@ try {
     require __DIR__.'/src/WebsiteApiClient.php';
     require __DIR__.'/src/DraftRepositoryInterface.php';
     require __DIR__.'/src/DraftRepository.php';
+    require __DIR__.'/src/ComicRepository.php';
     require __DIR__.'/src/ComicMcp.php';
     require __DIR__.'/src/McpServerFactory.php';
 
@@ -47,6 +49,7 @@ try {
         new WebsiteApiClient($siteBaseUrl),
         $siteBaseUrl,
         $projectRoot,
+        new ComicRepository($db),
     );
 
     $server = McpServerFactory::build(

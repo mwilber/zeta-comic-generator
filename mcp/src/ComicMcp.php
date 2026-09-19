@@ -39,12 +39,14 @@ final class ComicMcp
      * @param WebsiteApiClientInterface $websiteApi Client for website metrics and saving.
      * @param string $siteBaseUrl Public website origin used for API calls and assets.
      * @param string $projectRoot Absolute project root used to read bundled resources.
+     * @param ComicRepositoryInterface $comics Read-only public comic discovery.
      */
     public function __construct(
         private readonly DraftRepositoryInterface $drafts,
         private readonly WebsiteApiClientInterface $websiteApi,
         private readonly string $siteBaseUrl,
         private readonly string $projectRoot,
+        private readonly ComicRepositoryInterface $comics,
     ) {
     }
 
@@ -178,6 +180,56 @@ final class ComicMcp
         }
 
         return $contents;
+    }
+
+    /** Finds the most recent comic available in the public gallery. */
+    public function getLatestComic(): CallToolResult
+    {
+        return $this->discoverComic(false);
+    }
+
+    /** Picks a random comic from the public gallery on each call. */
+    public function getRandomComic(): CallToolResult
+    {
+        return $this->discoverComic(true);
+    }
+
+    /** Returns a viewer-ready identifier without opening an app or creating a draft. */
+    private function discoverComic(bool $random): CallToolResult
+    {
+        try {
+            $comic = $random ? $this->comics->random() : $this->comics->latest();
+        } catch (Throwable $error) {
+            return $this->error('Comic discovery is temporarily unavailable. Please try again later.');
+        }
+
+        if (null === $comic) {
+            return new CallToolResult(
+                [new TextContent('No public gallery comics are available. Do not call view_comic without a permalink.')],
+                false,
+                ['found' => false],
+            );
+        }
+
+        $permalink = $comic['permalink'] ?? null;
+        if (!is_string($permalink) || !preg_match('/^[a-f0-9]{32}$/D', $permalink)) {
+            return $this->error('The selected comic has an invalid permalink identifier.');
+        }
+
+        $result = [
+            'found' => true,
+            'permalink' => $permalink,
+            'title' => (string) ($comic['title'] ?? ''),
+            'summary' => $comic['summary'] ?? null,
+            'url' => rtrim($this->siteBaseUrl, '/').'/detail/'.$permalink,
+        ];
+
+        return new CallToolResult(
+            [new TextContent('Comic found. To display it, call view_comic with the permalink identifier below, not the URL.'."\n".
+                json_encode($result, JSON_THROW_ON_ERROR | JSON_INVALID_UTF8_SUBSTITUTE))],
+            false,
+            $result,
+        );
     }
 
     /** Opens the saved-comic viewer using a permalink identifier, never a URL. */

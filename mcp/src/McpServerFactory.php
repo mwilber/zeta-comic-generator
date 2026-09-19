@@ -48,6 +48,9 @@ final class McpServerFactory
                 title: 'Zeta Comic Generator',
             )
             ->setInstructions(
+                'To find an existing comic, call get_latest_comic for the most recent public gallery comic or get_random_comic for a random one. '.
+                'When found is true, use the returned permalink directly with view_comic to display it. If found is false or discovery fails, do not invent a permalink. '.
+                'Discovery results include the stored comic summary when available. You may use a nonempty summary to describe the comic; do not invent a summary when it is null or empty. '.
                 'To display a saved comic, call view_comic with its permalink identifier (the 32-character token, not a complete URL). No generation preparation or save is needed. '.
                 'To generate a comic, first call prepare_comic_generation with the user premise and optional workflow. '.
                 'If it reports the daily limit, tell the user to try again later and do not call generate_comic. '.
@@ -63,6 +66,22 @@ final class McpServerFactory
                 'OpenAI is the default workflow; valid alternatives are xAI and Google.'
             )
             ->enableExtension(new McpApps())
+            ->addTool(
+                [$comicMcp, 'getLatestComic'],
+                'get_latest_comic',
+                title: 'Get latest comic',
+                description: 'Retrieve the most recent comic from the public gallery. Returns its title, stored summary when available, and permalink identifier for view_comic. Does not open an app or generate a comic.',
+                annotations: new ToolAnnotations(readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false),
+                inputSchema: ['type' => 'object', 'properties' => new \stdClass(), 'additionalProperties' => false],
+            )
+            ->addTool(
+                [$comicMcp, 'getRandomComic'],
+                'get_random_comic',
+                title: 'Get random comic',
+                description: 'Retrieve a randomly selected comic from the public gallery. Returns its title, stored summary when available, and permalink identifier for view_comic. Each call makes a fresh selection, which may repeat a previous comic. Does not open an app or generate a comic.',
+                annotations: new ToolAnnotations(readOnlyHint: true, destructiveHint: false, idempotentHint: false, openWorldHint: false),
+                inputSchema: ['type' => 'object', 'properties' => new \stdClass(), 'additionalProperties' => false],
+            )
             ->addResource(
                 [$comicMcp, 'viewAppResource'],
                 ComicMcp::VIEW_APP_URI,

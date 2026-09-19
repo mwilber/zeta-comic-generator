@@ -8,6 +8,7 @@ use Mcp\Server\Session\InMemorySessionStore;
 use Mcp\Schema\Wire\McpHeader;
 use Mcp\Server\Transport\StreamableHttpTransport;
 use ZetaComicGenerator\Mcp\ComicMcp;
+use ZetaComicGenerator\Mcp\ComicRepositoryInterface;
 use ZetaComicGenerator\Mcp\DraftRepositoryInterface;
 use ZetaComicGenerator\Mcp\McpServerFactory;
 use ZetaComicGenerator\Mcp\WebsiteApiClientInterface;
@@ -16,6 +17,7 @@ $root = dirname(__DIR__, 2);
 require $root.'/vendor/autoload.php';
 require $root.'/mcp/src/WebsiteApiClient.php';
 require $root.'/mcp/src/DraftRepositoryInterface.php';
+require $root.'/mcp/src/ComicRepository.php';
 require $root.'/mcp/src/ComicMcp.php';
 require $root.'/mcp/src/McpServerFactory.php';
 require $root.'/api/includes/characteractions.php';
@@ -145,11 +147,34 @@ final class MemoryDrafts implements DraftRepositoryInterface
     }
 }
 
+final class FakeComics implements ComicRepositoryInterface
+{
+    public ?array $latestComic = ['permalink' => '11111111111111111111111111111111', 'title' => 'Latest comic', 'summary' => 'Alpha explores a planet.'];
+    public ?array $randomComic = ['permalink' => '22222222222222222222222222222222', 'title' => 'Random comic', 'summary' => 'Alpha learns to cook.'];
+    public array $calls = [];
+    public bool $fail = false;
+
+    public function latest(): ?array
+    {
+        $this->calls[] = 'latest';
+        if ($this->fail) throw new RuntimeException('Private database connection details');
+        return $this->latestComic;
+    }
+
+    public function random(): ?array
+    {
+        $this->calls[] = 'random';
+        if ($this->fail) throw new RuntimeException('Private database connection details');
+        return $this->randomComic;
+    }
+}
+
 final class FakeWebsiteApi implements WebsiteApiClientInterface
 {
     public bool $limitReached = false;
     public bool $validMetrics = true;
     public int $saveCalls = 0;
+    public int $metricsCalls = 0;
 
     /**
      * Returns valid, limited, or malformed metrics according to test flags.
@@ -158,6 +183,7 @@ final class FakeWebsiteApi implements WebsiteApiClientInterface
      */
     public function metrics(): array
     {
+        ++$this->metricsCalls;
         return $this->validMetrics ? ['json' => ['count' => 1, 'limitreached' => $this->limitReached]] : [];
     }
 
@@ -225,7 +251,43 @@ function protocolRequest(Server $server, string $method, array $params = [], ?st
 
 $drafts = new MemoryDrafts();
 $api = new FakeWebsiteApi();
-$comicMcp = new ComicMcp($drafts, $api, 'https://comicgenerator.greenzeta.com', $root);
+$comics = new FakeComics();
+$comicMcp = new ComicMcp($drafts, $api, 'https://comicgenerator.greenzeta.com', $root, $comics);
+
+foreach (['getLatestComic' => 'latestComic', 'getRandomComic' => 'randomComic'] as $method => $field) {
+    $discovered = $comicMcp->$method();
+    expect(!$discovered->isError && $discovered->structuredContent['found'], 'Discovery must find a public comic.');
+    expect($comics->$field['permalink'] === $discovered->structuredContent['permalink'], 'Discovery returned the wrong identifier.');
+    expect($comics->$field['title'] === $discovered->structuredContent['title'], 'Discovery must return the title.');
+    expect($comics->$field['summary'] === $discovered->structuredContent['summary'], 'Discovery must preserve the stored summary.');
+    expect($comics->$field['summary'] === json_decode(explode("\n", $discovered->content[0]->text, 2)[1], true)['summary'], 'Text-only hosts must also receive the summary.');
+    expect(str_contains($discovered->content[0]->text, $discovered->structuredContent['permalink']), 'Text-only hosts need the permalink too.');
+    expect(!$comicMcp->viewComic($discovered->structuredContent['permalink'])->isError, 'Discovered identifier must be accepted by the viewer.');
+    $original = $comics->$field;
+    $comics->$field = null;
+    $empty = $comicMcp->$method();
+    expect(!$empty->isError && false === $empty->structuredContent['found'], 'Empty galleries must report found=false.');
+    expect(!isset($empty->structuredContent['permalink']), 'Empty galleries cannot supply a fabricated identifier.');
+    $comics->$field = ['permalink' => 'https://example.test/detail/invalid', 'title' => 'Invalid'];
+    expect($comicMcp->$method()->isError, 'Invalid stored permalinks must not be forwarded.');
+    $comics->fail = true;
+    $failure = $comicMcp->$method();
+    expect($failure->isError && !str_contains($failure->content[0]->text, 'Private'), 'Database failures must produce a safe error.');
+    $comics->fail = false;
+    $comics->$field = $original;
+}
+expect(['latest', 'latest', 'latest', 'latest', 'random', 'random', 'random', 'random'] === $comics->calls, 'Each tool must use its own selection method on every call.');
+expect([] === $drafts->drafts && 0 === $api->metricsCalls && 0 === $api->saveCalls, 'Discovery must not generate, check limits, or save.');
+
+foreach (['getLatestComic' => 'latestComic', 'getRandomComic' => 'randomComic'] as $method => $field) {
+    $original = $comics->$field;
+    foreach ([null, ''] as $summary) {
+        $comics->$field['summary'] = $summary;
+        $result = $comicMcp->$method();
+        expect(!$result->isError && $result->structuredContent['summary'] === $summary, 'Missing or empty summaries must not be invented or prevent discovery.');
+    }
+    $comics->$field = $original;
+}
 
 // Viewing does not depend on generation availability or create a draft.
 $api->validMetrics = false;
@@ -325,6 +387,18 @@ $toolNames = array_column($tools['result']['tools'] ?? [], 'name');
 expect(in_array('prepare_comic_generation', $toolNames, true), 'Prepare tool is missing.');
 expect(in_array('generate_comic', $toolNames, true), 'Generate tool is missing.');
 expect(in_array('save_comic', $toolNames, true), 'Save tool is missing.');
+foreach (['get_latest_comic', 'get_random_comic'] as $name) {
+    $tool = array_values(array_filter($tools['result']['tools'], fn ($tool) => $tool['name'] === $name))[0] ?? [];
+    expect(true === ($tool['annotations']['readOnlyHint'] ?? false), $name.' must be registered as read-only.');
+    expect(!isset($tool['_meta']['ui']['resourceUri']), 'Discovery tools must not open an app.');
+    expect(false === $tool['inputSchema']['additionalProperties'], 'Discovery must not accept arbitrary input.');
+    $result = protocolRequest($server, 'tools/call', ['name' => $name, 'arguments' => new stdClass()], $name);
+    expect(true === ($result['result']['structuredContent']['found'] ?? false), $name.' failed through the protocol.');
+    $view = protocolRequest($server, 'tools/call', [
+        'name' => 'view_comic', 'arguments' => ['permalink' => $result['result']['structuredContent']['permalink']],
+    ], 'view_comic');
+    expect(false === ($view['result']['isError'] ?? false) && isset($view['result']['structuredContent']['permalink']), 'Discovery must feed the viewer through the protocol.');
+}
 $generateTool = null;
 $viewTool = null;
 $stageTool = null;
