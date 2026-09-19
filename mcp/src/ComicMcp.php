@@ -194,6 +194,61 @@ final class ComicMcp
         return $this->discoverComic(true);
     }
 
+    /** Lists every public series with its website description and published comic count. */
+    public function getSeries(): CallToolResult
+    {
+        try {
+            $response = $this->websiteApi->series();
+            $series = $response['json']['series'] ?? null;
+            if (!empty($response['error']) || !is_array($series) || !array_is_list($series)) {
+                throw new RuntimeException('Invalid series response.');
+            }
+            foreach ($series as &$row) {
+                if (!is_array($row) || !is_string($row['permalink'] ?? null) || $row['permalink'] === '' ||
+                    !is_string($row['title'] ?? null) || !array_key_exists('description', $row) ||
+                    ($row['description'] !== null && !is_string($row['description'])) ||
+                    !is_int($row['comic_count'] ?? null) || $row['comic_count'] < 1) {
+                    throw new RuntimeException('Invalid series entry.');
+                }
+                $row['url'] = rtrim($this->siteBaseUrl, '/').'/series/'.rawurlencode($row['permalink']);
+            }
+        } catch (Throwable $error) {
+            return $this->error('Series discovery is temporarily unavailable. Please try again later.');
+        }
+        $result = ['series' => $series];
+        return new CallToolResult(
+            [new TextContent('Public series. Pass a series permalink and a zero-based index to get_series_comic; index 0 is the oldest comic.'."\n".
+                json_encode($result, JSON_THROW_ON_ERROR | JSON_INVALID_UTF8_SUBSTITUTE))],
+            false,
+            $result,
+        );
+    }
+
+    /** Finds a series comic for the existing saved-comic viewer. */
+    public function getSeriesComic(string $series, int $index): CallToolResult
+    {
+        if (trim($series) === '' || strlen($series) > 255 || $index < 0) {
+            return $this->error('Provide a series permalink from get_series and a nonnegative integer index.');
+        }
+        try {
+            $response = $this->websiteApi->seriesComic($series, $index);
+            $comic = $response['json'] ?? null;
+            if (!empty($response['error']) || !is_array($comic) || !is_bool($comic['found'] ?? null)) {
+                throw new RuntimeException('Invalid series comic response.');
+            }
+        } catch (Throwable $error) {
+            return $this->error('Series comic discovery is temporarily unavailable. Please try again later.');
+        }
+        if (!$comic['found']) {
+            return new CallToolResult(
+                [new TextContent('No public comic exists at this series index. Check get_series for available series and comic counts. Do not call view_comic without a permalink.')],
+                false,
+                ['found' => false, 'series' => $series, 'index' => $index],
+            );
+        }
+        return $this->comicDiscoveryResult($comic, ['series' => $series, 'index' => $index]);
+    }
+
     /** Returns a viewer-ready identifier without opening an app or creating a draft. */
     private function discoverComic(bool $random): CallToolResult
     {
@@ -211,6 +266,12 @@ final class ComicMcp
             );
         }
 
+        return $this->comicDiscoveryResult($comic);
+    }
+
+    /** Formats all discovered comics consistently for view_comic. */
+    private function comicDiscoveryResult(array $comic, array $context = []): CallToolResult
+    {
         $permalink = $comic['permalink'] ?? null;
         if (!is_string($permalink) || !preg_match('/^[a-f0-9]{32}$/D', $permalink)) {
             return $this->error('The selected comic has an invalid permalink identifier.');
@@ -222,7 +283,7 @@ final class ComicMcp
             'title' => (string) ($comic['title'] ?? ''),
             'summary' => $comic['summary'] ?? null,
             'url' => rtrim($this->siteBaseUrl, '/').'/detail/'.$permalink,
-        ];
+        ] + $context;
 
         return new CallToolResult(
             [new TextContent('Comic found. To display it, call view_comic with the permalink identifier below, not the URL.'."\n".

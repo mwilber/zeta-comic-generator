@@ -4,6 +4,12 @@ The public MCP endpoint is `https://comicgenerator.greenzeta.com/mcp`. It serves
 
 ## Workflow
 
+Browse series with `get_series` (no arguments). It returns `series`, a list of entries with `title`, `description` (the site's `series.premise` text), `comic_count`, `permalink`, and the series-page `url`. Visibility matches the production series page: active series with at least one published (`gallery = 1`) comic. Counts include only published comics. Series are listed newest first; an empty catalog returns `series: []`.
+
+Call `get_series_comic` with `{"series":"<series permalink from get_series>","index":0}` to retrieve the oldest published comic in that series. Indices are zero-based, ordered by comic timestamp ascending with ID ascending as a tie-breaker; Part N corresponds to index N minus 1. The result includes `found`, `title`, `summary`, comic `permalink`, detail-page `url`, `series`, and `index`. Pass the comic permalink to `view_comic` to display it. Missing/inactive series and out-of-range indices return `found: false`; invalid inputs and API failures return tool errors. Both tools are read-only and require no generation allowance.
+
+The unused `api/controllers/series.php` has been repurposed and routed as `GET /api/series/`. With no query parameters it returns `json.series`; `GET /api/series/?series={series_permalink}&index=0` returns `json.found` and the selected comic metadata. Both use the standard `error`, `model`, and `json` envelope. The MCP API client uses these endpoints; the main site's series page continues its existing direct database queries. No database migration is required.
+
 Discover comics with `get_latest_comic` or `get_random_comic` (both take no arguments). Each returns `found`, `title`, `summary`, `permalink`, and the detail-page `url`; pass the returned `permalink` directly to `view_comic`. These tools only read the database, do not open an app, and do not consume generation allowance. They use the same eligibility rules as the home page and public gallery: `gallery = 1` and `seriesId` equal to `0` or `5`. Latest sorts by timestamp descending, with ID as a tie-breaker. Random selects across the entire eligible gallery on every call and may repeat a comic. An empty gallery returns `found: false`; database failures return a tool error without exposing database details. The `summary` comes directly from `comics.summary` and is also exposed by `/api/detail/{permalink}/` and each `/api/gallery/` entry. The LLM may use a nonempty summary to describe the comic; null or empty summaries remain unchanged and are not generated. No new database migration is required.
 
 Use `view_comic` to display an existing saved comic without generating or saving anything. Pass `permalink` as the 32-character lowercase hexadecimal comic identifier, for example `{"permalink":"a1d0c6e83f027327d8461063f4ac58a6"}`. Despite its name, this parameter is not a URL or a numeric database ID. The separate read-only viewer app fetches `/api/detail/{permalink}/` and reconstructs the background and character images using the same loader as the generator's saved-comic restoration. It requires no MCP draft or generation allowance, reloads on iframe refresh, and shows an error for unavailable comics.
@@ -42,6 +48,7 @@ The MCP endpoint is intentionally public, matching the public generation experie
 php mcp/tests/ComicMcpTest.php
 php mcp/tests/DraftRepositoryTest.php
 php mcp/tests/ComicRepositoryTest.php
+php mcp/tests/SeriesApiTest.php
 node mcp/tests/app.test.mjs
 node mcp/tests/view.test.mjs
 node mcp/tests/workflow.test.mjs

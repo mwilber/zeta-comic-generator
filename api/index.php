@@ -82,6 +82,7 @@
 		case 'comic':
 		case 'detail':
 		case 'gallery':
+		case 'series':
 		case 'stories':
 		case 'save':
 		case 'imgproxy':

@@ -175,6 +175,28 @@ final class FakeWebsiteApi implements WebsiteApiClientInterface
     public bool $validMetrics = true;
     public int $saveCalls = 0;
     public int $metricsCalls = 0;
+    public array $seriesResponse = ['error' => '', 'json' => ['series' => [
+        ['permalink' => 'space-adventures', 'title' => 'Space Adventures', 'description' => 'Alpha explores space.', 'comic_count' => 3],
+    ]]];
+    public array $seriesComicResponse = ['error' => '', 'json' => [
+        'found' => true, 'permalink' => '33333333333333333333333333333333', 'title' => 'Series comic', 'summary' => null,
+    ]];
+    public array $seriesCalls = [];
+    public bool $failSeries = false;
+
+    public function series(): array
+    {
+        $this->seriesCalls[] = 'list';
+        if ($this->failSeries) throw new RuntimeException('Private API details');
+        return $this->seriesResponse;
+    }
+
+    public function seriesComic(string $series, int $index): array
+    {
+        $this->seriesCalls[] = [$series, $index];
+        if ($this->failSeries) throw new RuntimeException('Private API details');
+        return $this->seriesComicResponse;
+    }
 
     /**
      * Returns valid, limited, or malformed metrics according to test flags.
@@ -223,7 +245,7 @@ function sendHttpRequest(Server $server, ServerRequest $request): \Psr\Http\Mess
  * @return array<string, mixed> Decoded JSON-RPC response.
  * @throws RuntimeException If the response status or shape fails an assertion.
  */
-function protocolRequest(Server $server, string $method, array $params = [], ?string $name = null): array
+function protocolRequest(Server $server, string $method, array $params = [], ?string $name = null, int $expectedStatus = 200): array
 {
     $params['_meta'] = [
         'io.modelcontextprotocol/protocolVersion' => '2026-07-28',
@@ -243,7 +265,7 @@ function protocolRequest(Server $server, string $method, array $params = [], ?st
         $headers['Mcp-Name'] = McpHeader::encode($name);
     }
     $response = sendHttpRequest($server, new ServerRequest('POST', 'https://example.test/mcp', $headers, $body));
-    expect(200 === $response->getStatusCode(), 'Expected a successful protocol response, got '.$response->getStatusCode().'.');
+    expect($expectedStatus === $response->getStatusCode(), 'Expected HTTP '.$expectedStatus.', got '.$response->getStatusCode().'.');
     $decoded = json_decode((string) $response->getBody(), true, 512, JSON_THROW_ON_ERROR);
     expect(is_array($decoded), 'Protocol response was not an object.');
     return $decoded;
@@ -290,6 +312,43 @@ foreach (['getLatestComic' => 'latestComic', 'getRandomComic' => 'randomComic'] 
 }
 
 // Viewing does not depend on generation availability or create a draft.
+// Series discovery also bypasses generation allowance and returns viewer-ready results.
+$seriesResponse = $api->seriesResponse;
+$seriesComicResponse = $api->seriesComicResponse;
+$metricsCalls = $api->metricsCalls;
+$listed = $comicMcp->getSeries();
+expect(!$listed->isError && 3 === $listed->structuredContent['series'][0]['comic_count'], 'Series listing must retain published counts.');
+expect('Alpha explores space.' === $listed->structuredContent['series'][0]['description'], 'Series descriptions must come from the API.');
+expect('https://comicgenerator.greenzeta.com/series/space-adventures' === $listed->structuredContent['series'][0]['url'], 'Series must include a website link.');
+$seriesComic = $comicMcp->getSeriesComic('space-adventures', 0);
+expect(!$seriesComic->isError && $seriesComic->structuredContent['found'], 'Series lookup must find the oldest comic.');
+expect(['space-adventures', 0] === end($api->seriesCalls), 'Series lookup must preserve index zero.');
+expect(null === $seriesComic->structuredContent['summary'], 'Series lookup must preserve a null summary.');
+expect(!$comicMcp->viewComic($seriesComic->structuredContent['permalink'])->isError, 'Series comic must feed the existing viewer.');
+$callCount = count($api->seriesCalls);
+foreach ([['', 0], [' ', 0], [str_repeat('x', 256), 0], ['space-adventures', -1]] as [$series, $index]) {
+    expect($comicMcp->getSeriesComic($series, $index)->isError, 'Invalid series inputs must fail.');
+}
+expect($callCount === count($api->seriesCalls), 'Invalid inputs must not call the API.');
+$api->seriesResponse = ['error' => '', 'json' => ['series' => []]];
+expect([] === $comicMcp->getSeries()->structuredContent['series'], 'An empty series list must be successful.');
+$api->seriesComicResponse = ['error' => '', 'json' => ['found' => false]];
+expect(false === $comicMcp->getSeriesComic('missing', 99)->structuredContent['found'], 'Unavailable series comics must return found=false.');
+foreach ([[], ['error' => 'Private database details'], ['json' => ['series' => [['permalink' => 'broken']]]]] as $badResponse) {
+    $api->seriesResponse = $badResponse;
+    $api->seriesComicResponse = $badResponse;
+    expect($comicMcp->getSeries()->isError, 'Malformed or failed listing API response must be a tool error.');
+    expect($comicMcp->getSeriesComic('space-adventures', 0)->isError, 'Malformed or failed comic API response must be a tool error.');
+}
+$api->failSeries = true;
+foreach ([$comicMcp->getSeries(), $comicMcp->getSeriesComic('space-adventures', 0)] as $failed) {
+    expect($failed->isError && !str_contains($failed->content[0]->text, 'Private'), 'Transport failures must not expose API details.');
+}
+$api->failSeries = false;
+$api->seriesResponse = $seriesResponse;
+$api->seriesComicResponse = $seriesComicResponse;
+expect($metricsCalls === $api->metricsCalls && [] === $drafts->drafts && 0 === $api->saveCalls, 'Series discovery must not check generation allowance or create/save a draft.');
+
 $api->validMetrics = false;
 $viewed = $comicMcp->viewComic(md5('42'));
 expect(!$viewed->isError && md5('42') === $viewed->structuredContent['permalink'], 'Viewer must accept a permalink identifier.');
@@ -400,6 +459,23 @@ foreach (['get_latest_comic', 'get_random_comic'] as $name) {
     expect(false === ($view['result']['isError'] ?? false) && isset($view['result']['structuredContent']['permalink']), 'Discovery must feed the viewer through the protocol.');
 }
 $generateTool = null;
+$seriesTools = array_column($tools['result']['tools'], null, 'name');
+foreach (['get_series', 'get_series_comic'] as $name) {
+    expect(isset($seriesTools[$name]), $name.' must be registered.');
+    expect(true === $seriesTools[$name]['annotations']['readOnlyHint'], 'Series tools must be read-only.');
+    expect(!isset($seriesTools[$name]['_meta']['ui']['resourceUri']), 'Series discovery must not open an app.');
+    expect(false === $seriesTools[$name]['inputSchema']['additionalProperties'], 'Series tools must reject arbitrary input.');
+}
+$seriesList = protocolRequest($server, 'tools/call', ['name' => 'get_series', 'arguments' => new stdClass()], 'get_series');
+$seriesPermalink = $seriesList['result']['structuredContent']['series'][0]['permalink'];
+$seriesResult = protocolRequest($server, 'tools/call', ['name' => 'get_series_comic', 'arguments' => ['series' => $seriesPermalink, 'index' => 0]], 'get_series_comic');
+expect(true === ($seriesResult['result']['structuredContent']['found'] ?? false), 'Series lookup must work through the protocol.');
+$seriesView = protocolRequest($server, 'tools/call', ['name' => 'view_comic', 'arguments' => ['permalink' => $seriesResult['result']['structuredContent']['permalink']]], 'view_comic');
+expect(isset($seriesView['result']['structuredContent']['permalink']), 'Series protocol result must feed view_comic.');
+foreach ([['series' => $seriesPermalink], ['series' => $seriesPermalink, 'index' => -1], ['series' => $seriesPermalink, 'index' => 0.5], ['series' => $seriesPermalink, 'index' => '0'], ['series' => $seriesPermalink, 'index' => 0, 'extra' => true]] as $arguments) {
+    $invalid = protocolRequest($server, 'tools/call', ['name' => 'get_series_comic', 'arguments' => $arguments], 'get_series_comic', 400);
+    expect(isset($invalid['error']) || ($invalid['result']['isError'] ?? false), 'Protocol must reject missing, negative, fractional, string, or extra inputs.');
+}
 $viewTool = null;
 $stageTool = null;
 $stateTool = null;

@@ -49,6 +49,7 @@ final class McpServerFactory
             )
             ->setInstructions(
                 'To find an existing comic, call get_latest_comic for the most recent public gallery comic or get_random_comic for a random one. '.
+                'To browse series, call get_series for public series descriptions and comic counts, then get_series_comic with the selected series permalink and a zero-based chronological index (0 is the oldest; a requested Part N is index N minus 1). '.
                 'When found is true, use the returned permalink directly with view_comic to display it. If found is false or discovery fails, do not invent a permalink. '.
                 'Discovery results include the stored comic summary when available. You may use a nonempty summary to describe the comic; do not invent a summary when it is null or empty. '.
                 'To display a saved comic, call view_comic with its permalink identifier (the 32-character token, not a complete URL). No generation preparation or save is needed. '.
@@ -81,6 +82,30 @@ final class McpServerFactory
                 description: 'Retrieve a randomly selected comic from the public gallery. Returns its title, stored summary when available, and permalink identifier for view_comic. Each call makes a fresh selection, which may repeat a previous comic. Does not open an app or generate a comic.',
                 annotations: new ToolAnnotations(readOnlyHint: true, destructiveHint: false, idempotentHint: false, openWorldHint: false),
                 inputSchema: ['type' => 'object', 'properties' => new \stdClass(), 'additionalProperties' => false],
+            )
+            ->addTool(
+                [$comicMcp, 'getSeries'],
+                'get_series',
+                title: 'Get comic series',
+                description: 'List all series visible on the public website, including each title, permalink, description, published comic_count, and URL. Use the series permalink with get_series_comic. Does not generate a comic or open an app.',
+                annotations: new ToolAnnotations(readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: true),
+                inputSchema: ['type' => 'object', 'properties' => new \stdClass(), 'additionalProperties' => false],
+            )
+            ->addTool(
+                [$comicMcp, 'getSeriesComic'],
+                'get_series_comic',
+                title: 'Get series comic',
+                description: 'Retrieve a published comic from an active series using its permalink from get_series and a zero-based index ordered by timestamp, oldest first (ID breaks ties). Index 0 is Part 1. Returns found, title, stored summary, permalink, and URL; pass the comic permalink to view_comic to display it. An unavailable series or index returns found=false. Does not generate a comic or open an app.',
+                annotations: new ToolAnnotations(readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: true),
+                inputSchema: [
+                    'type' => 'object',
+                    'properties' => [
+                        'series' => ['type' => 'string', 'minLength' => 1, 'maxLength' => 255, 'description' => 'Series permalink returned by get_series, not a title, numeric ID, or URL.'],
+                        'index' => ['type' => 'integer', 'minimum' => 0, 'description' => 'Zero-based chronological position; 0 selects the oldest published comic.'],
+                    ],
+                    'required' => ['series', 'index'],
+                    'additionalProperties' => false,
+                ],
             )
             ->addResource(
                 [$comicMcp, 'viewAppResource'],
