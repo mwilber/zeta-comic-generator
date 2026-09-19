@@ -23,7 +23,8 @@
 	define("SIMULATE_DELAY", 0);
 	define("SIMULATE_ERRORS", false);
 
-	$request = $_SERVER['REQUEST_URI'];
+	// Route using only the path so query parameters never become part of a comic ID.
+	$request = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH) ?: '/';
 	$path = explode('/', $request);
 	$controller = "";
 	$hash = "";
@@ -37,7 +38,8 @@
 		if($controller == 'detail' || $controller == 'gallery' || $controller == 'stories') {
 			if(isset($path[3]) && $path[3]) {
 				$hash = $path[3];
-			} else {
+			} elseif ($controller != 'gallery') {
+				// Gallery accepts an optional continuity ID; detail and stories require one.
 				$controller = "";
 			}
 		} 
@@ -80,6 +82,7 @@
 		case 'comic':
 		case 'detail':
 		case 'gallery':
+		case 'series':
 		case 'stories':
 		case 'save':
 		case 'imgproxy':

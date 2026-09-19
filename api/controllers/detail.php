@@ -64,7 +64,8 @@
 			"6648d7d361767.png"
 		],
 		"id": 000,
-		"prompt": ""
+		"prompt": "",
+		"summary": "Alpha Zeta turns a space adventure into an unexpected punch line."
 	}
 */
 
@@ -85,6 +86,7 @@ try {
 	if ($result && isset($result->json)) {
 		$output->id = $result->id;
 		$output->prompt = stripslashes($result->prompt);
+		$output->summary = $result->summary ?? null;
 		$output->script = json_decode($result->json);
 		$output->seriesId = $result->seriesId;
 	} else {

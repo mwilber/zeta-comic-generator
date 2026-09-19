@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Saved Zeta Comic</title>
+    <style>{{APP_STYLES}}</style>
+    <script>const characterActions = {{CHARACTER_ACTIONS}};</script>
+</head>
+<body>
+    <main id="strip" aria-label="Saved comic strip">
+        <div class="strip-container" hidden></div>
+        <div id="app-status" role="status" aria-live="polite" aria-atomic="true">Loading saved comic…</div>
+    </main>
+    <script type="module">{{APP_SCRIPT}}</script>
+</body>
+</html>
