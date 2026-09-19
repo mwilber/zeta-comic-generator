@@ -217,7 +217,10 @@ final class ComicMcp
         }
         $result = ['series' => $series];
         return new CallToolResult(
-            [new TextContent('Public series. Pass a series permalink and a zero-based index to get_series_comic; index 0 is the oldest comic.'."\n".
+            [new TextContent('Series catalog data; there is no series picker or selection UI. Match the requested series title to an entry below and retain its permalink for follow-ups. '.
+                'For a request such as "part 1" of that series, call get_series_comic with {"series": selectedEntry.permalink, "index": 0}. Part N uses index N minus 1. '.
+                'When found=true, immediately call view_comic with the returned comic permalink to display it in the same turn. '.
+                'Do not ask the user to open a picker or supply an identifier, or stop at offering a series-page link when they requested a comic.'."\n".
                 json_encode($result, JSON_THROW_ON_ERROR | JSON_INVALID_UTF8_SUBSTITUTE))],
             false,
             $result,

@@ -49,7 +49,13 @@ final class McpServerFactory
             )
             ->setInstructions(
                 'To find an existing comic, call get_latest_comic for the most recent public gallery comic or get_random_comic for a random one. '.
-                'To browse series, call get_series for public series descriptions and comic counts, then get_series_comic with the selected series permalink and a zero-based chronological index (0 is the oldest; a requested Part N is index N minus 1). '.
+                'Series browsing uses tool calls only. There is no series picker, selection app, or browser interaction to open. '.
+                'Call get_series to obtain the catalog, match the requested series title to an entry, and retain that entry\'s permalink and comic_count for follow-up requests. '.
+                'A follow-up such as "part 1" refers to the series already selected in the conversation. Call get_series_comic with {"series": selectedEntry.permalink, "index": 0}; Part N uses index N minus 1. '.
+                'If the series permalink is missing from context, call get_series again and resolve it yourself. Ask for clarification only if the intended series is ambiguous; never ask the user to supply a permalink or open a picker. '.
+                'After get_series_comic returns found=true, immediately call view_comic with {"permalink": comicResult.permalink} to fulfill the display request in the same turn. The series permalink is input to get_series_comic; the returned comic permalink is input to view_comic. '.
+                'Do not stop at explaining the part number, offering to show it, or linking to the series page when the user requested a comic. Do not claim series retrieval is unavailable without an actual tool failure. '.
+                'For a random comic within a selected series, choose an integer index from 0 through comic_count minus 1 and call get_series_comic, then view_comic; get_random_comic selects from the general gallery. '.
                 'When found is true, use the returned permalink directly with view_comic to display it. If found is false or discovery fails, do not invent a permalink. '.
                 'Discovery results include the stored comic summary when available. You may use a nonempty summary to describe the comic; do not invent a summary when it is null or empty. '.
                 'To display a saved comic, call view_comic with its permalink identifier (the 32-character token, not a complete URL). No generation preparation or save is needed. '.
@@ -87,7 +93,7 @@ final class McpServerFactory
                 [$comicMcp, 'getSeries'],
                 'get_series',
                 title: 'Get comic series',
-                description: 'List all series visible on the public website, including each title, permalink, description, published comic_count, and URL. Use the series permalink with get_series_comic. Does not generate a comic or open an app.',
+                description: 'Retrieve the series catalog as data: title, series permalink, description, published comic_count, and URL. No series picker or selection UI exists. Match the requested title to an entry and retain its permalink for follow-ups. To show Part N, call get_series_comic with series set to that entry\'s permalink and index set to N minus 1, then call view_comic with the returned comic permalink. If the permalink is missing from conversation context, call this tool again to resolve it yourself. Does not generate a comic or open an app.',
                 annotations: new ToolAnnotations(readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: true),
                 inputSchema: ['type' => 'object', 'properties' => new \stdClass(), 'additionalProperties' => false],
             )
@@ -95,12 +101,12 @@ final class McpServerFactory
                 [$comicMcp, 'getSeriesComic'],
                 'get_series_comic',
                 title: 'Get series comic',
-                description: 'Retrieve a published comic from an active series using its permalink from get_series and a zero-based index ordered by timestamp, oldest first (ID breaks ties). Index 0 is Part 1. Returns found, title, stored summary, permalink, and URL; pass the comic permalink to view_comic to display it. An unavailable series or index returns found=false. Does not generate a comic or open an app.',
+                description: 'Use this tool when the user requests a part of a series, including a follow-up such as "part 1" for the series already discussed. Set series to the matching entry\'s permalink from get_series and index to the requested part number minus 1 (Part 1 = 0). Resolve a missing series permalink by calling get_series; no picker or browser interaction is required. Comics are ordered by timestamp oldest first, with ID breaking ties. Returns found, title, stored summary, comic permalink, and URL. When found=true, immediately call view_comic with this result\'s comic permalink to display the requested comic. An unavailable series or index returns found=false. Does not generate a comic or open an app.',
                 annotations: new ToolAnnotations(readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: true),
                 inputSchema: [
                     'type' => 'object',
                     'properties' => [
-                        'series' => ['type' => 'string', 'minLength' => 1, 'maxLength' => 255, 'description' => 'Series permalink returned by get_series, not a title, numeric ID, or URL.'],
+                        'series' => ['type' => 'string', 'minLength' => 1, 'maxLength' => 255, 'description' => 'Copy the permalink field from the get_series entry whose title matches the requested or previously selected series. Resolve it with get_series if needed; do not pass the series title, URL, or a comic permalink.'],
                         'index' => ['type' => 'integer', 'minimum' => 0, 'description' => 'Zero-based chronological position; 0 selects the oldest published comic.'],
                     ],
                     'required' => ['series', 'index'],
