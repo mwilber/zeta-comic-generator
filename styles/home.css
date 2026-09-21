@@ -103,11 +103,19 @@ p.description {
 }
 
 .about .mcp-presenting {
-    float: left;
+    float: right;
     width: 50%;
-    max-width: 300px;
+    max-width: 400px;
     height: auto;
-    margin: 0 1em 1em 0;
+    margin: 0 1em 0 1em;
+}
+
+.about .mcp-intro p {
+	margin-top: 1em;
+}
+
+.about p {
+	line-height: 1.5em;
 }
 
 .character-art {
