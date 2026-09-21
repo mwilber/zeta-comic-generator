@@ -30,11 +30,12 @@
 </ul>
 <h2 id="mcp-server">MCP Server</h2>
 <p>
-	Create and browse Zeta comics from an AI assistant by adding a remote MCP (Model Context Protocol) server with the URL <a href="https://comicgenerator.greenzeta.com/mcp">https://comicgenerator.greenzeta.com/mcp</a>. Use a client that supports Streamable HTTP and MCP Apps to generate and view comic strips inline. The endpoint is public and requires no authentication.
+	Create and browse Zeta comics from your AI assistant. Simply add a remote MCP (Model Context Protocol) server with the URL <a href="https://comicgenerator.greenzeta.com/mcp">https://comicgenerator.greenzeta.com/mcp</a>. Requires a client that supports &ldquo;MCP Apps&rdquo;.
 </p>
 <p>
-	Once connected, ask things like “Generate a comic about Alpha Zeta learning to cook,” “Show me the latest comic,” or “List the series, then show me part 1 of one.” After generating a comic, ask the assistant to save it to receive a permanent link. Generation uses the website's daily allowance; browsing and viewing existing comics do not.
+	Once connected, ask things like “Show me the latest comic,” “List the series, then show me part 1,” or “Generate a comic about Alpha Zeta learning to cook.” After generating a comic, ask the assistant to save it to receive a permanent link!
 </p>
+<h3>MCP Tools</h3>
 <ul>
 	<li><p><strong><code>generate_comic</code></strong>: Creates and displays a three-panel comic from a short <code>premise</code> (up to 210 characters). Supports an optional <code>workflow</code>: <code>openai</code> (default), <code>xai</code>, or <code>google</code>. The assistant checks availability first with <code>prepare_comic_generation</code>.</p></li>
 	<li><p><strong><code>view_comic</code></strong>: Displays a saved comic using its <code>permalink</code>, the 32-character identifier from its detail-page URL.</p></li>
