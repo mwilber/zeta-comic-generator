@@ -43,9 +43,9 @@ export class CharacterAction {
 	 * @param {string} action - The name of the character action.
 	 * @returns {string} The URL for the image of the character action.
 	 */
-	static GetImageUrl(action) {
+	static GetImageUrl(action, assetBaseUrl = "") {
 		if (!action) return "";
 		action = characterActions[action] ? action : "standing";
-		return "/assets/character_art/" + action + ".png";
+		return assetBaseUrl.replace(/\/$/, "") + "/assets/character_art/" + action + ".png";
 	}
 }

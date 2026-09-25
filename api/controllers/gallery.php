@@ -15,11 +15,13 @@
 		"gallery": [
 			{
 				"id": "e6b4b2a746ed40e1af829d1fa82daa10",
-				"title": "May the Fourth Be With Zeta"
+				"title": "May the Fourth Be With Zeta",
+				"summary": "Alpha celebrates May the Fourth."
 			},
 			{
 				"id": "db85e2590b6109813dafa101ceb2faeb",
-				"title": "The Floral Deity Dilemma"
+				"title": "The Floral Deity Dilemma",
+				"summary": null
 			},
 			...
 		],
@@ -81,6 +83,7 @@ try {
 		$strip = new stdClass;
 		$strip->id = $row["permalink"];
 		$strip->title = $row["title"];
+		$strip->summary = $row["summary"] ?? null;
 		$strip->thumbnail = BUCKET_URL."/thumbnails/thumb_".$row["permalink"].".png";
 
 		array_push($output->gallery, $strip);

@@ -1,0 +1,13 @@
+DirectoryIndex index.php
+
+<IfModule mod_dir.c>
+DirectorySlash Off
+</IfModule>
+
+<IfModule mod_rewrite.c>
+RewriteEngine On
+RewriteOptions AllowNoSlash
+RewriteRule ^$ index.php [END]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^ index.php [END]
+</IfModule>

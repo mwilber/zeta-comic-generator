@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zeta Comic Strip</title>
+    <style>{{APP_STYLES}}</style>
+    <script>const characterActions = {{CHARACTER_ACTIONS}};</script>
+</head>
+<body>
+    <div id="statusdialog" class="dialog-wrapper" role="dialog" aria-modal="true" aria-labelledby="status" aria-hidden="true" tabindex="-1">
+        <div class="dialog">
+            <div id="status" role="status" aria-live="polite" aria-atomic="true">Preparing comic generation…</div>
+            <div class="lds-grid" aria-hidden="true"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+            <progress id="progress" value="0" max="100" aria-label="Comic generation progress">0%</progress>
+        </div>
+    </div>
+    <main id="strip" aria-label="Comic strip" tabindex="-1">
+        <div class="strip-container" hidden>
+            <div class="panel-container">
+                <div class="panel is-loading"></div>
+                <div class="panel is-loading"></div>
+                <div class="panel is-loading"></div>
+            </div>
+            <h3 id="strip-title" aria-hidden="true">&nbsp;</h3>
+        </div>
+        <div id="app-status" role="status" aria-live="polite" aria-atomic="true">&nbsp;</div>
+    </main>
+    <script type="module">{{APP_SCRIPT}}</script>
+</body>
+</html>

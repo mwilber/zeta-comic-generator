@@ -12,6 +12,25 @@ Write a sentence or two describing a premise for the comic strip. GPT, and varia
 
 For a more detailed description, check out [Zeta Comics: Blending AI & Art in Digital Stories](https://greenzeta.com/zeta-comics-blending-ai-art-in-digital-stories/).
 
+## MCP Server
+
+Create and browse Zeta comics from an AI assistant by adding a remote MCP (Model Context Protocol) server with the URL [https://comicgenerator.greenzeta.com/mcp](https://comicgenerator.greenzeta.com/mcp). Use a client that supports Streamable HTTP and MCP Apps to generate and view comic strips inline. The endpoint is public and requires no authentication.
+
+Once connected, ask things like “Generate a comic about Alpha Zeta learning to cook,” “Show me the latest comic,” or “List the series, then show me part 1 of one.” After generating a comic, ask the assistant to save it to receive a permanent link. Generation uses the website's daily allowance; browsing and viewing existing comics do not.
+
+| Tool | What it does |
+| --- | --- |
+| `generate_comic` | Creates and displays a three-panel comic from a short `premise` (up to 210 characters). Supports an optional `workflow`: `openai` (default), `xai`, or `google`. The assistant checks availability first with `prepare_comic_generation`. |
+| `view_comic` | Displays a saved comic using its `permalink`, the 32-character identifier from its detail-page URL. |
+| `get_latest_comic` | Finds the newest public gallery comic and returns its title, summary when available, permalink, and link. Takes no arguments. |
+| `get_random_comic` | Finds a random public gallery comic and returns the same details as `get_latest_comic`. Takes no arguments; repeated calls may return the same comic. |
+| `get_series` | Lists available series with descriptions, published comic counts, permalinks, and links. Takes no arguments. |
+| `get_series_comic` | Finds a comic within a series using its `series` permalink and a zero-based `index` (part 1 is `0`), ordered oldest first. |
+| `prepare_comic_generation` | Checks the daily generation allowance for a `premise` and optional `workflow` before generation starts. |
+| `save_comic` | Saves a completed generated comic when you explicitly ask to save it, returning a permanent link. The assistant supplies the draft identifier automatically. |
+
+To display a comic found by the latest, random, or series lookup tools, the assistant passes the returned comic permalink to `view_comic`. See the [MCP server documentation](mcp/README.md) for implementation and deployment details.
+
 ## This Project
 
 The code in this rep is meant to be an example of interacting with various public AI APIs, as well as rendering a comic strip with JavaScript. It is provided for review purposes only and does not include instructions for setting up the required PHP/MySQL server.

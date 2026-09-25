@@ -16,9 +16,11 @@
 import { CharacterAction } from "./ComicRenderer/CharacterAction.js";
 
 export class ComicGeneratorApi {
-	constructor(params) {
+	constructor(params = {}) {
 		this.defaultTextModel = params.defaultTextModel || "oai";
 		this.defaultImageModel = params.defaultImageModel || "oai";
+		this.apiBaseUrl = (params.apiBaseUrl || "").replace(/\/$/, "");
+		this.assetBaseUrl = (params.assetBaseUrl || this.apiBaseUrl).replace(/\/$/, "");
 		this.onUpdate = params.onUpdate || null;
 		this.ClearComicData();
 	}
@@ -222,7 +224,7 @@ export class ComicGeneratorApi {
 			// Add the background image to the panel images array
 			this.comic.panels[idx].images.push({
 				type: "background",
-				url: result.json.url,
+				url: this.ResolveAssetUrl(result.json.url),
 				alt: "Background image: " + panel.background,
 			});
 			this.credits.image = result.model;
@@ -297,7 +299,7 @@ export class ComicGeneratorApi {
 		for (const [idx, panel] of this.comic.panels.entries()) {
 			if (!panel.action) continue;
 			let action = CharacterAction.GetValidAction(panel.action);
-			let actionImage = CharacterAction.GetImageUrl(panel.action);
+			let actionImage = CharacterAction.GetImageUrl(panel.action, this.assetBaseUrl);
 			if (actionImage) {
 				panel.images.push({
 					type: "character",
@@ -356,35 +358,58 @@ export class ComicGeneratorApi {
 	 * @returns {Promise<Object>} The result of the save operation.
 	 */
 	async SaveStrip() {
+		const fetchParams = this.GetSavePayload();
+
+		console.log("Saving comic", fetchParams);
+
+		return await this.fetchApi("save", fetchParams);
+	}
+
+	/**
+	 * Builds the existing /api/save payload without sending it. MCP Apps use this
+	 * to stage a completed strip so that only the model-facing save tool persists it.
+	 * @returns {Object} The form fields accepted by /api/save.
+	 */
+	GetSavePayload() {
 		let scriptExport = JSON.parse(JSON.stringify(this.comic));
-		console.log("🚀 ~ ComicGeneratorApi ~ SaveStrip ~ scriptExport:", scriptExport)
 		// Clear out images, they'll be saved seperately.
 		for (let panel of scriptExport.panels) {
 			panel.images = [];
+			delete panel.panelEl;
 		}
 		
-		const fetchParams = {
+		return {
 			prompt: this.premise,
 			title: this.comic.title,
 			script: JSON.stringify(scriptExport),
-			summary: this.summary,
-			seriesId: this.seriesId,
-			continuity: JSON.stringify(scriptExport.continuity),
-			memory: JSON.stringify(scriptExport.memory),
-			bkg1: this.GetPanelImageUrl(0, "background"),
-			bkg2: this.GetPanelImageUrl(1, "background"),
-			bkg3: this.GetPanelImageUrl(2, "background"),
+			summary: this.summary || "",
+			seriesId: this.seriesId || "",
+			continuity: JSON.stringify(scriptExport.continuity || {}),
+			memory: JSON.stringify(scriptExport.memory || []),
+			bkg1: this.GetSaveAssetUrl(this.GetPanelImageUrl(0, "background")),
+			bkg2: this.GetSaveAssetUrl(this.GetPanelImageUrl(1, "background")),
+			bkg3: this.GetSaveAssetUrl(this.GetPanelImageUrl(2, "background")),
 			//TODO: remove the split/pop and handle the complete path on the server side
 			fg1: this.GetPanelImageUrl(0, "character").split("/").pop(),
 			fg2: this.GetPanelImageUrl(1, "character").split("/").pop(),
 			fg3: this.GetPanelImageUrl(2, "character").split("/").pop(),
 		};
+	}
 
-		console.log("Saving comic", fetchParams);
+	/**
+	 * Makes a root-relative asset URL absolute when this client runs in a
+	 * sandboxed MCP App. The normal website keeps the existing relative URLs.
+	 */
+	ResolveAssetUrl(url) {
+		if (!url || !this.assetBaseUrl || !url.startsWith("/")) return url;
+		return this.assetBaseUrl + url;
+	}
 
-		const result = await this.fetchApi("save", fetchParams);
-
-		return result;
+	GetSaveAssetUrl(url) {
+		if (!url || !this.assetBaseUrl) return url;
+		return url.startsWith(this.assetBaseUrl + "/assets/")
+			? url.slice(this.assetBaseUrl.length)
+			: url;
 	}
 
 	/**
@@ -423,7 +448,7 @@ export class ComicGeneratorApi {
 	 * @returns {Promise<Object>} - The response data from the API, or an error object if the request fails.
 	 */
 	async fetchApi(action, data) {
-		let uri = "/api/" + action + "/?c=" + Math.floor(Math.random() * 100);
+		let uri = this.apiBaseUrl + "/api/" + action + "/?c=" + Math.floor(Math.random() * 100);
 
 		const formData = new FormData();
 		Object.keys(data).forEach((key) => {

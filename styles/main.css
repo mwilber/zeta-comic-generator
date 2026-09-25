@@ -1,3 +1,4 @@
+@import url('./dialog.css');
 @import url('https://fonts.googleapis.com/css2?family=Patrick+Hand&family=Bangers&family=Luckiest+Guy&display=swap');
 
 body {
@@ -223,73 +224,6 @@ select:focus + .focus {
 .cartoon-font svg {
 -webkit-filter: drop-shadow( 4px 4px 0 #000);
   filter: drop-shadow( 4px 4px 0 #000);
-}
-
-.dialog-wrapper {
-	position: fixed;
-	top: 0;
-	left: 0;
-	width: 100%;
-	height: 100%;
-	background:rgba(0, 0, 0, 0.5);
-	z-index: -1;
-	opacity: 0;
-	transition: all 500ms linear;
-}
-
-.dialog {
-	position: fixed;
-	top: calc(40vh - 4em);
-	left: 10%;
-	width: calc(80% - 4em);
-	padding: 1em 2em 1.5em 2em;
-	transform: scale(0);
-	background: #3050cc;
-	color: #fff;
-	text-transform: uppercase;
-	text-align: center;
-	font-weight: bold;
-	font-size: 3em;
-	border: solid 3px #000;
-	border-radius: 15px;
-	box-shadow: 10px 15px 40px rgba(0,0,0,0.75);
-	z-index: -1;
-	opacity: 0;
-	transition: all 500ms var(--bounce-function);
-}
-
-.active .dialog,
-.active.dialog-wrapper {
-	transform: scale(1);
-	opacity: 1;
-	z-index: 501;
-}
-
-.active .dialog {
-	z-index: 502;
-}
-
-.dialog .close {
-	border: none;
-	background: transparent;
-	box-shadow: none;
-	position: absolute;
-	top: 0;
-	right: 0;
-	cursor: pointer;
-}
-
-.dialog .close:before {
-	content: '+';
-	display: inline-block;
-	height: 48px;
-	width: 48px;
-	transform: rotate(45deg);
-	font-size: 48px;
-	font-weight: bold;
-	color: #fff;
-	text-align: center;
-	vertical-align: middle;
 }
 
 header {
