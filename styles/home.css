@@ -289,6 +289,10 @@ p.description {
 	margin-top: 1em;
 }
 
+.about .mcp-intro a {
+	overflow-wrap: anywhere;
+}
+
 .about p {
 	line-height: 1.5em;
 }
