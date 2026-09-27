@@ -30,7 +30,7 @@
 			<span class="cartoon-font">About</span>
 		</a>
 	</nav>
-	<a href="/"><h1>Zeta Comic Generator</h1></a>
+	<a href="/"><div class="site-title">Zeta Comic Generator</div></a>
 </header>
 <script>
 	const expandBtn = document.querySelector(".expand-button");
