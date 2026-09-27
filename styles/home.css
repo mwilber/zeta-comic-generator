@@ -168,7 +168,8 @@ main.content:has(.homepage) {
     margin: 3rem auto 0;
 }
 
-.how-it-works-box {
+.how-it-works-box,
+.mcp-server-box {
     box-sizing: border-box;
     padding: 1em 5em;
     background: var(--holographic-background, rgba(250, 250, 250, 0.8));

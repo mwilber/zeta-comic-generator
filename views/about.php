@@ -31,6 +31,7 @@
 	<?php endforeach; ?>
 </ul>
 <h2 id="mcp-server">MCP Server</h2>
+<div class="mcp-server-box">
 <div class="mcp-intro">
 	<p>
 		<img class="mcp-presenting" src="/assets/images/zeta_presenting.png" alt="Alpha Zeta presenting" />
@@ -54,6 +55,7 @@
 <p>
 	To display a comic found by the latest, random, or series lookup tools, the assistant passes the returned comic permalink to <code>view_comic</code>. See the <a href="https://github.com/mwilber/zeta-comic-generator/blob/master/mcp/README.md">MCP server documentation</a> for implementation and deployment details.
 </p>
+</div>
 <h2 id="ai-models">AI Models</h2>
 <ul class="models">
 	<li>
