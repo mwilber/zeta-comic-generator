@@ -30,6 +30,30 @@
 	</li>
 	<?php endforeach; ?>
 </ul>
+<h2 id="mcp-server">MCP Server</h2>
+<div class="mcp-intro">
+	<p>
+		<img class="mcp-presenting" src="/assets/images/zeta_presenting.png" alt="Alpha Zeta presenting" />
+		Create and browse Zeta comics from your AI assistant. Simply add a remote MCP (Model Context Protocol) server with the URL <a href="https://comicgenerator.greenzeta.com/mcp">https://comicgenerator.greenzeta.com/mcp</a>. Requires a client that supports &ldquo;MCP Apps&rdquo;.
+	</p>
+	<p>
+		Once connected, ask things like “Show me the latest comic,” “List the series, then show me part 1,” or “Generate a comic about Alpha Zeta learning to cook.” After generating a comic, ask the assistant to save it to receive a permanent link!
+	</p>
+</div>
+<h3>MCP Tools</h3>
+<ul>
+	<li><p><strong><code>generate_comic</code></strong>: Creates and displays a three-panel comic from a short <code>premise</code> (up to 210 characters). Supports an optional <code>workflow</code>: <code>openai</code> (default), <code>xai</code>, or <code>google</code>. The assistant checks availability first with <code>prepare_comic_generation</code>.</p></li>
+	<li><p><strong><code>view_comic</code></strong>: Displays a saved comic using its <code>permalink</code>, the 32-character identifier from its detail-page URL.</p></li>
+	<li><p><strong><code>get_latest_comic</code></strong>: Finds the newest public gallery comic and returns its title, summary when available, permalink, and link. Takes no arguments.</p></li>
+	<li><p><strong><code>get_random_comic</code></strong>: Finds a random public gallery comic and returns the same details as <code>get_latest_comic</code>. Takes no arguments; repeated calls may return the same comic.</p></li>
+	<li><p><strong><code>get_series</code></strong>: Lists available series with descriptions, published comic counts, permalinks, and links. Takes no arguments.</p></li>
+	<li><p><strong><code>get_series_comic</code></strong>: Finds a comic within a series using its <code>series</code> permalink and a zero-based <code>index</code> (part 1 is <code>0</code>), ordered oldest first.</p></li>
+	<li><p><strong><code>prepare_comic_generation</code></strong>: Checks the daily generation allowance for a <code>premise</code> and optional <code>workflow</code> before generation starts.</p></li>
+	<li><p><strong><code>save_comic</code></strong>: Saves a completed generated comic when you explicitly ask to save it, returning a permanent link. The assistant supplies the draft identifier automatically.</p></li>
+</ul>
+<p>
+	To display a comic found by the latest, random, or series lookup tools, the assistant passes the returned comic permalink to <code>view_comic</code>. See the <a href="https://github.com/mwilber/zeta-comic-generator/blob/master/mcp/README.md">MCP server documentation</a> for implementation and deployment details.
+</p>
 <h2 id="ai-models">AI Models</h2>
 <ul class="models">
 	<li>
@@ -37,7 +61,7 @@
 		<ul>
 			<li><a href="https://developers.openai.com/api/docs/models/gpt-6-astra" target="_blank" rel="noopener noreferrer">GPT 6 Astra</a></li>
 			<li><a href="https://ai.google.dev/gemini-api/docs/models/gemini-3.1-pro-preview" target="_blank" rel="noopener noreferrer">Gemini 3.1 Pro</a></li>
-			<li><a href="https://docs.x.ai/developers/models/grok-4.3" target="_blank" rel="noopener noreferrer">Grok 4.3</a></li>
+			<li><a href="https://docs.x.ai/developers/models/grok-4.6" target="_blank" rel="noopener noreferrer">Grok 4.6</a></li>
 			<li><a href="https://github.com/deepseek-ai/DeepSeek-R1" target="_blank" rel="noopener noreferrer">DeepSeek R1</a></li>
 		</ul>
 	</li>
@@ -46,7 +70,7 @@
 		<ul>
 			<li><a href="https://developers.openai.com/api/docs/models/gpt-5.6-terra" target="_blank" rel="noopener noreferrer">GPT 5.6 Terra</a></li>
 			<li><a href="https://ai.google.dev/gemini-api/docs/models/gemini-3.8-flash" target="_blank" rel="noopener noreferrer">Gemini 3.8 Flash</a></li>
-			<li><a href="https://docs.x.ai/developers/models/grok-4.20-non-reasoning" target="_blank" rel="noopener noreferrer">Grok 4.2 (non-reasoning)</a></li>
+			<li><a href="https://docs.x.ai/developers/models/grok-4.6" target="_blank" rel="noopener noreferrer">Grok 4.6</a></li>
 			<li><a href="https://github.com/deepseek-ai/DeepSeek-V3" target="_blank" rel="noopener noreferrer">DeepSeek V3</a></li>
 		</ul>
 	</li>
@@ -56,7 +80,7 @@
 			<li><a href="https://platform.openai.com/docs/models/gpt-image-2" target="_blank" rel="noopener noreferrer">GPT Image 2</a></li>
 			<li><a href="https://deepmind.google/models/imagen/" target="_blank" rel="noopener noreferrer">Imagen 4</a></li>
 			<li><a href="https://ai.google.dev/gemini-api/docs/models/gemini-3.1-flash-image" target="_blank" rel="noopener noreferrer">Gemini 3.1 Flash Image (Nano Banana 2)</a></li>
-			<li><a href="https://docs.x.ai/developers/models/grok-imagine-image" target="_blank" rel="noopener noreferrer">Grok Imagine</a></li>
+			<li><a href="https://docs.x.ai/developers/models/grok-imagine-image-2.0" target="_blank" rel="noopener noreferrer">Grok Imagine Image 2</a></li>
 			<li><a href="https://openai.com/dall-e-3" target="_blank" rel="noopener noreferrer">DALL-E 3</a></li>
 		</ul>
 	</li>

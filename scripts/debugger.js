@@ -86,16 +86,13 @@ const priceTable = {
 		prompt_tokens: 0.55 / 1000000,
 		completion_tokens: 2.19 / 1000000,
 	},
-	"grok-3": {
-		prompt_tokens: 3 / 1000000,
-		completion_tokens: 15 / 1000000,
+	"grok-4.6": {
+		prompt_tokens: 2 / 1000000,
+		completion_tokens: 6 / 1000000,
 	},
-	"grok-4": {
-		prompt_tokens: 3 / 1000000,
-		completion_tokens: 15 / 1000000,
-	},
-	"grok-imagine-image": {
-		image: 0.02,
+	"grok-imagine-image-2.0": {
+		// 1K, low quality — matches ModelGrokImage defaults.
+		image: 0.04,
 	},
 	"dall-e-3": {
 		image: 0.04,

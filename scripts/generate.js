@@ -1,34 +1,16 @@
 import { ComicGeneratorApi } from "./modules/ComicGeneratorApi.js";
+import { COMIC_WORKFLOWS, ComicGenerationWorkflow } from "./modules/ComicGenerationWorkflow.js";
 import { ComicRenderer } from "./modules/ComicRenderer/ComicRenderer.js";
 import { ScriptRenderer } from "./modules/ScriptRenderer.js";
+import { GenerationProgressDialog } from "./modules/GenerationProgressDialog.js";
 
 /**
  * The main entry point for the comic generation application. This script sets up 
  * the necessary components, attaches UI event handlers, and handles the logic for 
  * generating and saving comic strips.
  */
-let api, comicRenderer, scriptRenderer;
-
-/**
- * Model group configurations for easy selection
- */
-const MODEL_GROUPS = {
-	openai: {
-		story: "gpt",      // GPT 6 Astra
-		script: "gpt5",    // GPT 5.6 Terra
-		image: "gptimage"  // GPT Image 2
-	},
-	google: {
-		story: "gemthink", // Gemini 3.1 Pro
-		script: "gem",     // Gemini 3.8 Flash
-		image: "nanobanana" // Gemini 3.1 Flash Image (Nano Banana 2)
-	},
-	xai: {
-		story: "grokadv", // Grok 4
-		script: "grok",     // Grok 4.1 Fast
-		image: "grokimg"    // Grok Image 2
-	}
-};
+let api, comicRenderer, scriptRenderer, progressDialog;
+const MODEL_GROUPS = COMIC_WORKFLOWS;
 
 /**
  * Initializes the comic generation application when the DOM content has finished loading.
@@ -36,6 +18,7 @@ const MODEL_GROUPS = {
  * and sets the application status to "ready".
  */
 document.addEventListener("DOMContentLoaded", () => {
+	progressDialog = new GenerationProgressDialog(document.getElementById("statusdialog"));
 	comicRenderer = new ComicRenderer({
 		el: document.querySelector(".strip-container"),
 	});
@@ -331,7 +314,6 @@ async function GenerateStrip() {
 	if (!query || !query.value || query.value.length > 210) return;
 
 	comicRenderer.clear();
-	api.ClearComicData();
 	ClearElements();
 	UpdateProgress(0);
 	SetStatus("generating");
@@ -345,40 +327,21 @@ async function GenerateStrip() {
 	const imageStyle = document.getElementById("image-style").value;
 	const seriesId = document.getElementById("series-id").value;
 
-	// Step 1: Generate the story concept
-	let concept = await api.WriteConcept(safeQuery, { model: conceptModel, seriesId });
-	if (!concept || concept.error) {
-		SetStatus(concept.error == "ratelimit" ? concept.error : "error");
+	const workflow = new ComicGenerationWorkflow({
+		api,
+		onStatus: (stage) => progressDialog.Stage(stage),
+	});
+	const result = await workflow.Generate(safeQuery, {
+		storyModel: conceptModel,
+		scriptModel: textModel,
+		imageModel,
+		imageStyle,
+		seriesId,
+	});
+	if (!result || result.error) {
+		SetStatus(result && result.error === "ratelimit" ? "ratelimit" : "error");
 		return;
 	}
-
-	// Step 2: Generate the script
-	let script = await api.WriteScript(safeQuery, { model: textModel });
-	if (!script || script.error) {
-		SetStatus(script.error == "ratelimit" ? script.error : "error");
-		return;
-	}
-
-	// Step 3: Generate the background descriptions
-	let background = await api.WriteBackground({ model: textModel });
-	if (!background || background.error) {
-		SetStatus("error");
-		return;
-	}
-
-	// Step 4: Render the background images
-	let image = await api.DrawBackgrounds({ model: imageModel, style: imageStyle });
-	if (!image || image.error) {
-		SetStatus("error");
-		return;
-	}
-
-	// Step 5: Add the character images
-	await api.DrawAction();
-	// Note: drawAction does not call onUpdate, need to call manually if this is the last step. No longer needed because it is covered in continuity step now.
-
-	// Step 6: Generate new story continuity
-	await api.WriteContinuity({ model: textModel });
 
 	//TODO: Check the renderer progress. Handle error if <100 at this point.
 
@@ -461,18 +424,12 @@ function SetStatus(status) {
 			);
 	});
 
-	const statusDlg = document.getElementById("statusdialog");
-	
-	statusDlg.classList[status === "generating" ? "add" : "remove"]("active");
-
 	if(status === "generating") {
-		statusDlg.focus();
-	} else if(status === "complete") {
-		document.getElementById("strip").focus();
+		progressDialog.Show();
+	} else {
+		progressDialog.Hide();
+		if(status === "complete") document.getElementById("strip").focus();
 	}
-
-	const el = document.getElementById("status");
-	el.innerHTML = status;
 }
 
 /**
@@ -481,15 +438,7 @@ function SetStatus(status) {
  * @param {number} amount - The progress amount to display, as a percentage.
  */
 function UpdateProgress(amount) {
-	amount = amount || 0;
-	console.log("Update:", amount);
-	const el = document.getElementById("progress");
-	el.setAttribute("value", amount);
-	el.innerHTML = amount + "%";
-	el.setAttribute("aria-valuetext", `${amount}% complete.`);
-
-	// const elStatus = document.getElementById("status");
-	// elStatus.setAttribute("aria-label", `Generating: ${amount}% complete.`);
+	progressDialog.Update(amount);
 }
 
 /**

@@ -1,31 +1,15 @@
 <?php
 /**
- * Provides functionality for interacting with the Grok REST API to generate text completions.
- * 
- * curl https://api.x.ai/v1/chat/completions -H "Content-Type: application/json" -H "Authorization: Bearer GROK_KEY" -d '{
-  "messages": [
-    {
-      "role": "system",
-      "content": "You are a test assistant."
-    },
-    {
-      "role": "user",
-      "content": "Testing. Just say hi and hello world and nothing else."
-    }
-  ],
-  "model": "grok-3",
-  "stream": false,
-  "temperature": 0
-}'
+ * Provides functionality for interacting with the xAI Responses API using Grok 4.6.
  */
 class ModelGrok extends BaseModel {
+	protected $reasoningEffort = "low";
+
 	function __construct() {
-		$this->modelName = "grok-4.20-non-reasoning";
-		// $this->modelName = "grok-4-1-fast-non-reasoning";
-		// $this->modelName = "grok-3";
-		// $this->modelName = "grok-2-latest";
-		$this->apiUrl = "https://api.x.ai/v1/chat/completions";
+		$this->modelName = "grok-4.6";
+		$this->apiUrl = "https://api.x.ai/v1/responses";
 		$this->apiKey = GROK_KEY;
+		$this->requestTimeout = 3600;
 	}
 
 	protected function buildRequestBody($messages) {
@@ -38,9 +22,9 @@ class ModelGrok extends BaseModel {
 		}
 		$body = [
 			'model' => $this->modelName,
-			'response_format' => ['type' => $this->responseFormat],
-			'stream' => false,
-			'messages' => $messagesArray
+			'reasoning' => ['effort' => $this->reasoningEffort],
+			'input' => $messagesArray,
+			'text' => ['format' => ['type' => $this->responseFormat]]
 		];
 
 		return $body;
