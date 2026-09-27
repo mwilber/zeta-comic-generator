@@ -114,6 +114,12 @@ $GLOBALS['characterActions'] = [
 			'y' => 110,
 		],
 	],
+	'shocked' => [
+		'pointer' => [
+			'x' => 270,
+			'y' => 145,
+		],
+	],
 	'sitting' => [
 		'pointer' => [
 			'x' => 190,

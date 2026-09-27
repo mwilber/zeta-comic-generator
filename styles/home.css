@@ -98,6 +98,26 @@ p.description {
     padding: 1em 0 2em 0;
 }
 
+.about .mcp-intro {
+    display: flow-root;
+}
+
+.about .mcp-presenting {
+    float: right;
+    width: 50%;
+    max-width: 400px;
+    height: auto;
+    margin: 0 1em 0 1em;
+}
+
+.about .mcp-intro p {
+	margin-top: 1em;
+}
+
+.about p {
+	line-height: 1.5em;
+}
+
 .character-art {
 	margin: 0;
 	padding: 0;
