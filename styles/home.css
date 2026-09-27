@@ -282,7 +282,7 @@ p.description {
     width: 50%;
     max-width: 400px;
     height: auto;
-    margin: 0 1em 0 1em;
+    margin: 0;
 }
 
 .about .mcp-intro p {
