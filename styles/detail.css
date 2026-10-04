@@ -1,6 +1,7 @@
 /* Detail */
 
-.detail #strip-title {
+.detail #strip-title,
+.generate #strip-title {
 	display: block;
 	padding: 0;
 	border: none;
