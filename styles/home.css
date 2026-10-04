@@ -365,8 +365,7 @@ p.description {
 	grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
-.models > li,
-.prompts > li {
+.models > li {
 	box-sizing: border-box;
 	position: relative;
 	min-width: 0;
