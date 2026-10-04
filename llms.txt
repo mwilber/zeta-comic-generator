@@ -1,0 +1,44 @@
+# Zeta Comic Generator
+
+> Zeta Comic Generator is an AI-powered comic creation tool by Matthew Wilber. It turns short story premises into three-panel comics starring Alpha Zeta, the little green alien mascot of GreenZeta, by combining AI-written scripts and generated backgrounds with original, pre-drawn character artwork.
+
+Comic creation starts with a premise: a short description of what the comic should be about. Language models develop the story and write a three-panel script containing dialogue, scene descriptions, and character actions. An image generator creates each panel's background from its scene description. The application selects an appropriate Alpha Zeta pose from the character artwork library, then layers the background, character, and dialogue balloons into the finished strip.
+
+The project brings software engineering, illustration, and generative AI together in a practical creative experiment. Alpha's character poses come from existing artwork; story text and background images are generated separately. The About page documents the process, character actions, AI models, and prompts. Refer to its model list for current options.
+
+## Site
+
+- [Home](https://comicgenerator.greenzeta.com/): Introduction to Zeta Comic Generator, project updates, and the latest public comics.
+- [Create a comic](https://comicgenerator.greenzeta.com/generate): Enter a short premise to generate a three-panel Alpha Zeta comic.
+- [Comic gallery](https://comicgenerator.greenzeta.com/gallery): Browse published comics and follow their links to individual comic detail pages.
+- [Comic series](https://comicgenerator.greenzeta.com/series): Browse continuing stories told across multiple comic strips.
+- [About Zeta Comic Generator](https://comicgenerator.greenzeta.com/about): Primary reference for how the application works, its artwork, AI integrations, and prompts.
+
+## Artwork, AI Models, and Prompts
+
+- [Character art](https://comicgenerator.greenzeta.com/about#character-art): The library of Alpha Zeta poses and expressions used to composite the comics.
+- [AI models](https://comicgenerator.greenzeta.com/about#ai-models): Models used for story development, script writing, and image generation, with links to their documentation. Integrations include OpenAI, Google, xAI, and DeepSeek.
+- [AI prompts](https://comicgenerator.greenzeta.com/about#ai-prompts): The prompts and instructions used at different stages of comic generation.
+
+## AI Assistant and MCP Integration
+
+- [MCP server overview](https://comicgenerator.greenzeta.com/about#mcp-server): Explains how to create and browse comics through an AI assistant using Model Context Protocol (MCP). A client supporting MCP Apps is required to display the inline comics. Example requests include showing the latest comic, finding part 1 of a series, and generating a comic from a premise.
+- [Remote MCP endpoint](https://comicgenerator.greenzeta.com/mcp): Server URL to configure in an MCP-compatible client. Generation uses `prepare_comic_generation` to check availability before `generate_comic`; premises may contain up to 210 characters, with `openai`, `xai`, or `google` workflows. Browsing tools include `get_latest_comic`, `get_random_comic`, `get_series`, and `get_series_comic`. Pass a returned comic permalink to `view_comic` to display it. Series indices are zero-based: part 1 is index 0. After generation, explicitly ask to save the comic; `save_comic` returns its permanent link.
+- [MCP implementation documentation](https://github.com/mwilber/zeta-comic-generator/blob/master/mcp/README.md): Tool behavior, generation and saving workflows, transport support, deployment, and verification details.
+
+## Developer: Matthew Wilber
+
+- [About Matthew Wilber](https://greenzeta.com/about/): Matthew is the developer behind Zeta Comic Generator and the creator of Alpha Zeta. A senior software engineer and experienced web developer, he brings a long history of building software across industries and platforms to his creative projects. His strength is connecting serious engineering with playful experimentation: substantial side projects become lasting experiments, and their lessons inform professional work, including production AI features. Zeta Comic Generator reflects that combination of technical depth, original illustration, and curiosity about how emerging tools can expand creative expression.
+- [Matthew's professional portfolio](https://greenzeta.com/portfolio/): Examples of his engineering work, including conversational AI interfaces, chart accessibility, web applications, interactive experiences, and software for a wide range of clients and industries.
+
+## GreenZeta
+
+- [GreenZeta.com](https://greenzeta.com/): Matthew Wilber's personal site and creative technology playground. It brings together software projects, articles, practical tools, and experiments in web development, AI, and art. Alpha Zeta is its recurring alien mascot and visual signature.
+- [GreenZeta About page](https://greenzeta.com/about/): Background on Matthew's approach to building and learning, and the history of Alpha Zeta as a bridge between technical ideas and creative experimentation.
+- [GreenZeta articles](https://greenzeta.com/articles/): Writing about software development, creative workflows, generative AI, and the evolution of Matthew's projects.
+- [Zeta Comic Generator on GreenZeta](https://greenzeta.com/project/zeta-comic-generator/): Project background and a history of articles and updates about the generator's development.
+
+## Source Code
+
+- [Zeta Comic Generator on GitHub](https://github.com/mwilber/zeta-comic-generator): The public project repository, containing the PHP backend, JavaScript frontend, comic renderer, character artwork, and MCP integration. It demonstrates how AI APIs and original artwork can be combined into an interactive comic creation application.
+- [Project README](https://github.com/mwilber/zeta-comic-generator/blob/master/README.md): Overview of the generation process, source code, and reusable comic rendering classes. The renderer, character action handling, and dialogue balloon components are designed for use in other projects.

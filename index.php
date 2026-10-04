@@ -97,6 +97,7 @@
 	<link rel="apple-touch-icon" sizes="167x167" href="/assets/favicons/apple-touch-icon-167x167.png">
 	<link rel="apple-touch-icon" sizes="180x180" href="/assets/favicons/apple-touch-icon-180x180.png">
 	<link rel="manifest" href="/assets/favicons/site.webmanifest">
+	<link rel="describedby" type="text/plain" href="/llms.txt">
 
 	<meta property="og:url" content="<?php echo $meta->url; ?>">
 	<meta property="og:type" content="website">
