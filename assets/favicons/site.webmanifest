@@ -1,0 +1,52 @@
+{
+  "id": "/",
+  "name": "Zeta Comic Generator",
+  "short_name": "Zeta Comics",
+  "description": "AI powered stories featuring a little green alien named Alpha. Create comics from your ideas.",
+  "lang": "en-US",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "theme_color": "#891b2a",
+  "background_color": "#891b2a",
+  "categories": ["entertainment", "graphics"],
+  "icons": [
+    {
+      "src": "android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "maskable-icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "maskable-icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Create a Comic",
+      "short_name": "Create",
+      "description": "Turn your premise into a three-panel Alpha Zeta comic.",
+      "url": "/generate"
+    },
+    {
+      "name": "Browse Comics",
+      "short_name": "Gallery",
+      "url": "/gallery"
+    }
+  ]
+}

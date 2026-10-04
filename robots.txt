@@ -1,6 +1,7 @@
 User-agent: *
 Disallow: /api/
 Disallow: /assets/
+Allow: /assets/favicons/
 
 
 Sitemap: https://zcgdev.greenzeta.com/sitemap.xml
