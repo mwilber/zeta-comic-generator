@@ -53,7 +53,7 @@
 	<li><p><strong><code>save_comic</code></strong>: Saves a completed generated comic when you explicitly ask to save it, returning a permanent link. The assistant supplies the draft identifier automatically.</p></li>
 </ul>
 <p>
-	To display a comic found by the latest, random, or series lookup tools, the assistant passes the returned comic permalink to <code>view_comic</code>. See the <a href="https://github.com/mwilber/zeta-comic-generator/blob/master/mcp/README.md">MCP server documentation</a> for implementation and deployment details.
+	To display a comic found by the latest, random, or series lookup tools, the assistant passes the returned comic permalink to <code>view_comic</code>. See the <a href="https://github.com/mwilber/zeta-comic-generator/blob/master/mcp/README.md" target="_blank" rel="noopener noreferrer">MCP server documentation</a> for implementation and deployment details.
 </p>
 </div>
 <h2 id="ai-models">AI Models</h2>
