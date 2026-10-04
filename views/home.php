@@ -51,7 +51,7 @@
 						</a>
 					</div>
 					<div class="home-update">
-						<a href="/about#mcp" target="_blank" rel="noopener noreferrer">
+						<a href="/about#mcp-server" target="_blank" rel="noopener noreferrer">
 							
 							<span class="home-update-copy">
 								A Comic MCP Server?!
