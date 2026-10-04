@@ -18,6 +18,8 @@ main.content:has(.homepage) {
 
 .home-hero {
     display: grid;
+    min-width: 0;
+    container-type: inline-size;
 }
 
 .homepage .home-hero header {
@@ -26,13 +28,19 @@ main.content:has(.homepage) {
     position: relative;
     z-index: 1;
     display: block;
-    width: 70%;
-    margin: 0 0 1rem auto;
+    width: 85%;
+    margin: 0 0 0 auto;
     font-family: 'Patrick Hand', Arial, Helvetica, sans-serif;
-    font-size: clamp(1.25rem, 2.25vw, 2.25rem);
+    /* Scale with the artwork, including when the hero becomes a full row. */
+    font-size: 6cqw;
     line-height: 1.2;
     color: #fdff00;
-    text-shadow: 3px 3px black;
+    text-shadow: 0.4cqw 0.4cqw black;
+}
+
+.homepage .home-hero h1 {
+    font-size: 7.6cqw;
+    text-shadow: 0.65cqw 0.65cqw black;
 }
 
 .homepage .home-hero header a {
@@ -45,7 +53,8 @@ main.content:has(.homepage) {
     display: block;
     width: 100%;
     height: auto;
-    margin-top: -2rem;
+    /* Leave room for the larger heading while keeping its overlap consistent. */
+    margin-top: 24cqw;
 }
 
 .home-feed {
@@ -183,18 +192,6 @@ main.content:has(.homepage) {
         gap: 3rem;
     }
 
-    .homepage .home-hero header {
-        font-size: clamp(1.5rem, 3vw, 2.25rem);
-    }
-
-    .home-hero {
-        display: block;
-    }
-
-    .home-hero-image {
-        margin-top: 0;
-    }
-
     .home-how-it-works {
         width: 100%;
     }
@@ -204,11 +201,6 @@ main.content:has(.homepage) {
     main.content:has(.homepage) {
         width: calc(100% - 2rem);
         margin-top: 2.5rem;
-    }
-
-    .homepage .home-hero header {
-        width: 100%;
-        font-size: 1.5rem;
     }
 
     .home-panels,
