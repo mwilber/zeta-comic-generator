@@ -46,7 +46,7 @@
 								Alpha in an animated short?
 							</span>
 							<span class="home-update-image">
-								<img src="https://i.ytimg.com/vi/eP0bWg1HjKk/hqdefault.jpg" alt="Poster frame for Selfie, Alpha Zeta's first animated short">
+								<img src="/assets/images/updates/zeta_selfie_full_512x512.png" alt="Alpha Zeta taking a selfie">
 							</span>
 						</a>
 					</div>
@@ -57,7 +57,7 @@
 								A Comic MCP Server?!
 							</span>
 							<span class="home-update-image">
-								<img src="https://img.icons8.com/fluent-systems-regular/1200/model-context-protocol.jpg" alt="Poster frame for Selfie, Alpha Zeta's first animated short">
+								<img src="/assets/images/updates/zeta_presenting_background_512.jpg" alt="Alpha Zeta presenting the Comic MCP Server">
 							</span>
 						</a>
 					</div>
