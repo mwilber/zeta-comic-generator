@@ -32,20 +32,21 @@ main.content:has(.homepage) {
     margin: 0 0 0 auto;
     font-family: 'Patrick Hand', Arial, Helvetica, sans-serif;
     /* Scale with the artwork, including when the hero becomes a full row. */
-    font-size: 6cqw;
+    font-size: 5.5cqw;
     line-height: 1.2;
     color: #fdff00;
     text-shadow: 0.4cqw 0.4cqw black;
 }
 
 .homepage .home-hero h1 {
-    font-size: 7.6cqw;
+    font-size: 6.5cqw;
     text-shadow: 0.65cqw 0.65cqw black;
 }
 
 .homepage .home-hero header a {
     color: inherit;
     font-weight: inherit;
+    text-decoration-color: currentColor;
 }
 
 .home-hero-image {
@@ -53,8 +54,8 @@ main.content:has(.homepage) {
     display: block;
     width: 100%;
     height: auto;
-    /* Leave room for the larger heading while keeping its overlap consistent. */
-    margin-top: 24cqw;
+    /* Let the tallest building peek behind the text at every hero width. */
+    margin-top: 2cqw;
 }
 
 .home-feed {
