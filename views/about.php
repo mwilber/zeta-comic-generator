@@ -1,4 +1,5 @@
 <h2>How It Works</h2>
+<div class="how-it-works-box">
 <p class="diagram">
 	<img src="/assets/images/layer_diagram_900c.png" alt="Diagram of comic strip layer composite. An AI generated background image, a hand drawn character image and a dialog baloon image from an AI generated script layered on top of each other.">
 </p>
@@ -18,6 +19,7 @@
 		<span class="cartoon-font">Create Your Own</span>
 	</a>
 </div>
+</div>
 <h2 id="character-art">Character Art...</h2>
 <ul class="character-art">
 	<?php foreach(array_keys($GLOBALS['characterActions']) as $action): ?>
@@ -29,6 +31,7 @@
 	<?php endforeach; ?>
 </ul>
 <h2 id="mcp-server">MCP Server</h2>
+<div class="mcp-server-box">
 <div class="mcp-intro">
 	<p>
 		<img class="mcp-presenting" src="/assets/images/zeta_presenting.png" alt="Alpha Zeta presenting" />
@@ -50,8 +53,9 @@
 	<li><p><strong><code>save_comic</code></strong>: Saves a completed generated comic when you explicitly ask to save it, returning a permanent link. The assistant supplies the draft identifier automatically.</p></li>
 </ul>
 <p>
-	To display a comic found by the latest, random, or series lookup tools, the assistant passes the returned comic permalink to <code>view_comic</code>. See the <a href="https://github.com/mwilber/zeta-comic-generator/blob/master/mcp/README.md">MCP server documentation</a> for implementation and deployment details.
+	To display a comic found by the latest, random, or series lookup tools, the assistant passes the returned comic permalink to <code>view_comic</code>. See the <a href="https://github.com/mwilber/zeta-comic-generator/blob/master/mcp/README.md" target="_blank" rel="noopener noreferrer">MCP server documentation</a> for implementation and deployment details.
 </p>
+</div>
 <h2 id="ai-models">AI Models</h2>
 <ul class="models">
 	<li>

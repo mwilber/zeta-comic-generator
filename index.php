@@ -79,6 +79,25 @@
 	<meta http-equiv="X-UA-Compatible" content="ie=edge">
 	<title><?php echo $meta->title; ?></title>
 	<meta name="description" content="<?php echo $meta->description; ?>">
+	<meta name="application-name" content="Zeta Comic Generator">
+	<meta name="theme-color" content="#891b2a">
+	<meta name="apple-mobile-web-app-title" content="Zeta Comics">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="default">
+	<meta name="msapplication-TileColor" content="#891b2a">
+	<meta name="msapplication-config" content="/assets/favicons/browserconfig.xml">
+
+	<link rel="icon" type="image/vnd.microsoft.icon" sizes="16x16 32x32 48x48" href="/assets/favicons/favicon.ico">
+	<link rel="icon" type="image/svg+xml" sizes="any" href="/assets/favicons/favicon.svg">
+	<link rel="icon" type="image/png" sizes="96x96" href="/assets/favicons/favicon-96x96.png">
+	<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicons/favicon-32x32.png">
+	<link rel="icon" type="image/png" sizes="16x16" href="/assets/favicons/favicon-16x16.png">
+	<link rel="apple-touch-icon" sizes="120x120" href="/assets/favicons/apple-touch-icon-120x120.png">
+	<link rel="apple-touch-icon" sizes="152x152" href="/assets/favicons/apple-touch-icon-152x152.png">
+	<link rel="apple-touch-icon" sizes="167x167" href="/assets/favicons/apple-touch-icon-167x167.png">
+	<link rel="apple-touch-icon" sizes="180x180" href="/assets/favicons/apple-touch-icon-180x180.png">
+	<link rel="manifest" href="/assets/favicons/site.webmanifest">
+	<link rel="describedby" type="text/plain" href="/llms.txt">
 
 	<meta property="og:url" content="<?php echo $meta->url; ?>">
 	<meta property="og:type" content="website">

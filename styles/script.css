@@ -9,18 +9,42 @@
 	font-family: 'Courier New', Courier, monospace;
 }
 
-#script h2, #continuity h2, #script h3, #continuity h3 {
+#script h2, #script h3 {
 	margin: 0 0 2em 0;
 }
 
-#script h2, #continuity h2 {
-	font-size: 1.5em;
-	background: transparent;
-	border: none;
-	padding: 0;
+#script h2 {
 	width: 100%;
 	text-align: center;
 	margin-bottom: 1em;
+}
+
+/* Preserve the original manuscript headings inside the detail-page script. */
+.detail #script h2,
+.detail #script h3 {
+	font-family: inherit;
+	font-weight: bold;
+	letter-spacing: normal;
+	color: inherit;
+	text-shadow: none;
+	background: transparent;
+	border: none;
+	padding: 0;
+}
+
+.detail #script h2 {
+	display: inline-block;
+	font-size: 1.5em;
+}
+
+.detail #script h2.story-title {
+	font-size: 1.25em;
+}
+
+.detail #script h3 {
+	display: block;
+	font-size: 1em;
+	text-transform: none;
 }
 
 #script .credits {
@@ -37,10 +61,6 @@
 #script .credits li span:first-child{
 	text-align: right;
 	margin-right: 2%;
-}
-
-#script h3 {
-	font-size: 1em;
 }
 
 #script ul {
@@ -69,21 +89,15 @@
 
 /* continuity */
 #continuity {
-	background: #fcfcfc; /* Changed to a shade of green */
-	margin-top: 25px;
-	padding: 25px 50px 40px 50px;
-	border-color: #828282; /* Changed to a shade of green */
-	/* font-family: 'Patrick Hand', Arial, sans-serif;   */
-	font-family: Arial, sans-serif; 
+	background: #fcfcfc;
+    padding: 25px 50px 25px 40px;
+    border-color: #828282;
+    font-family: 'Patrick Hand', Arial, Helvetica, sans-serif;
+    font-size: 1.25em;
 }
 
-#continuity h2, #continuity h3 {
-	margin: 1em 0 0.2em 0;
-}
-
-#continuity h2 {
-	margin: 0;
-	font-size: 1.25em;
+#continuity strong {
+	font-size: 1.25rem;
 }
 
 #continuity a {
@@ -91,7 +105,6 @@
 }
 
 #script h2.story-title {
-	font-size: 1.25em;
 	margin-bottom: 0;
 }
 

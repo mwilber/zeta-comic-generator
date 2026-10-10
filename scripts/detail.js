@@ -108,20 +108,20 @@ document.addEventListener("DOMContentLoaded", () => {
 					if (continuitySorted.alpha) {
 						let alphaEl = document.createElement("div");
 						alphaEl.classList.add("character");
-						alphaEl.innerHTML = `<h3>${continuitySorted.alpha.heading}:</h3> ${continuitySorted.alpha.items.map(item => item.description).join(", ")}`;
+						alphaEl.innerHTML = `<strong>${continuitySorted.alpha.heading}:</strong> ${continuitySorted.alpha.items.map(item => item.description).join(", ")}`;
 						continuityEl.appendChild(alphaEl);
 					}
 					// Hiding events until phase 2
 					// if (continuitySorted.event) {
 					// 	let eventEl = document.createElement("div");
 					// 	eventEl.classList.add("event");
-					// 	eventEl.innerHTML = `<h3>${continuitySorted.event.heading}:</h3> ${continuitySorted.event.items.map(item => {
+					// 	eventEl.innerHTML = `<strong>${continuitySorted.event.heading}:</strong> ${continuitySorted.event.items.map(item => {
 					// 		return `<a href="/gallery/${item.permalink}">${item.description}</a>`
 					// 	}).join(", ")}`;
 					// 	continuityEl.appendChild(eventEl);
 					// }
 
-					continuityEl.insertAdjacentHTML("afterbegin", `<h2 class="continuity-title">Notes</h2>`);
+					continuityEl.insertAdjacentHTML("beforebegin", `<h2 class="continuity-title">Notes</h2>`);
 				} else {
 					continuityEl.style.display = "none";
 				}

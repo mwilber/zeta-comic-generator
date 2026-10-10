@@ -1,6 +1,7 @@
 <IfModule mod_rewrite.c>
 RewriteEngine On
 #RewriteBase /
+RewriteRule ^favicon\.ico$ /assets/favicons/favicon.ico [L]
 RewriteRule ^mcp/?$ mcp/index.php [END]
 RewriteRule ^mcp/.*$ - [END]
 RewriteCond %{REQUEST_FILENAME} !-f
