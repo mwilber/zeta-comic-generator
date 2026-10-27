@@ -1,11 +1,20 @@
-name: Upload complete repo (e.g. website) to a SFTP destination
+name: Deploy production and development sites
 
-on: [push]
+on:
+  push:
+    branches:
+      - '**'
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: Branch to deploy to development from origin
+        required: true
+        type: string
 
 jobs:
   Upload-to-SFTP:
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/master'
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master' && !github.event.deleted
     steps:
       - name: 🚚 Get latest code                     # Checkout the latest code
         uses: actions/checkout@v7
@@ -37,3 +46,90 @@ jobs:
             ./ /home/greenzeta/comicgenerator.greenzeta.com/
           bye
           EOF
+
+  Deploy-to-development:
+    if: github.event_name != 'push' || !github.event.deleted
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions: {}
+    concurrency:
+      group: zeta-comic-generator-development-deploy
+      cancel-in-progress: false
+    steps:
+      - name: Update the development checkout over SSH
+        shell: bash
+        env:
+          DEPLOY_BRANCH: ${{ github.event_name == 'push' && github.ref_name || inputs.branch }}
+          DEPLOY_DOMAIN: ${{ secrets.DEPLOY_DOMAIN }}
+          DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
+          DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
+          DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          DEPLOY_KNOWN_HOSTS: ${{ secrets.DEPLOY_KNOWN_HOSTS }}
+        run: |
+          set -euo pipefail
+
+          # Validate before passing the branch through the remote shell.
+          if [[ ! "$DEPLOY_BRANCH" =~ ^[a-zA-Z0-9][a-zA-Z0-9._/-]*$ ]]; then
+            echo 'Use a branch name containing letters, numbers, dots, underscores, slashes, or hyphens.' >&2
+            exit 1
+          fi
+          git check-ref-format --branch "$DEPLOY_BRANCH" >/dev/null
+          : "${DEPLOY_DOMAIN:?Add the DEPLOY_DOMAIN repository secret}"
+          : "${DEPLOY_PATH:?Add the DEPLOY_PATH repository secret}"
+          : "${DEPLOY_USER:?Add the DEPLOY_USER repository secret}"
+          : "${DEPLOY_SSH_KEY:?Add the DEPLOY_SSH_KEY repository secret}"
+          : "${DEPLOY_KNOWN_HOSTS:?Add the DEPLOY_KNOWN_HOSTS repository secret}"
+
+          umask 077
+          ssh_dir=$(mktemp -d "$RUNNER_TEMP/zeta-development-deploy.XXXXXX")
+          trap 'rm -rf "$ssh_dir"' EXIT
+          printf '%s\n' "$DEPLOY_SSH_KEY" > "$ssh_dir/key"
+          printf '%s\n' "$DEPLOY_KNOWN_HOSTS" > "$ssh_dir/known_hosts"
+
+          # Escape single quotes so the path stays one literal remote argument.
+          deploy_path_arg=${DEPLOY_PATH//\'/\'\\\'\'}
+          ssh -T -p 22 \
+            -i "$ssh_dir/key" \
+            -o IdentitiesOnly=yes \
+            -o BatchMode=yes \
+            -o StrictHostKeyChecking=yes \
+            -o "UserKnownHostsFile=$ssh_dir/known_hosts" \
+            -o ConnectTimeout=15 \
+            -o ServerAliveInterval=15 \
+            -o ServerAliveCountMax=3 \
+            -l "$DEPLOY_USER" \
+            -- "$DEPLOY_DOMAIN" "bash -s -- '$DEPLOY_BRANCH' '$deploy_path_arg'" <<'REMOTE'
+          set -euo pipefail
+          export GIT_TERMINAL_PROMPT=0
+          export GIT_SSH_COMMAND='ssh -o BatchMode=yes -o StrictHostKeyChecking=yes'
+          branch=$1
+          deploy_path=$2
+          # Resolve home-relative paths without evaluating the secret as shell code.
+          case "$deploy_path" in
+            '~/'*) deploy_path="$HOME/${deploy_path#\~/}" ;;
+            '$HOME/'*) deploy_path="$HOME/${deploy_path#\$HOME/}" ;;
+          esac
+          cd -- "$deploy_path"
+
+          if [[ -n "$(git status --porcelain --untracked-files=no)" ]]; then
+            echo 'Deployment stopped: the server checkout has tracked-file changes.' >&2
+            exit 1
+          fi
+
+          git fetch origin "+refs/heads/$branch:refs/remotes/origin/$branch"
+          if git show-ref --verify --quiet "refs/heads/$branch"; then
+            if ! git merge-base --is-ancestor "refs/heads/$branch" "refs/remotes/origin/$branch"; then
+              echo 'Deployment stopped: the server branch has commits absent from origin.' >&2
+              exit 1
+            fi
+            git switch "$branch"
+          else
+            # Explicit tracking also supports checkouts cloned with --single-branch.
+            git switch --create "$branch" --no-track "refs/remotes/origin/$branch"
+            git config "branch.$branch.remote" origin
+            git config "branch.$branch.merge" "refs/heads/$branch"
+          fi
+          git merge --ff-only "refs/remotes/origin/$branch"
+          printf 'Deployed branch: %s\n' "$branch"
+          git log -1 --format='%h %s'
+          REMOTE
