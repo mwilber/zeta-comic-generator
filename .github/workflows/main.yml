@@ -28,13 +28,18 @@ jobs:
         env:
           SFTP_HOST: ${{ secrets.HOST }}
           SFTP_USER: ${{ secrets.USER }}
-          SFTP_PASSWORD: ${{ secrets.PASSWORD }}
+          LFTP_PASSWORD: ${{ secrets.PASSWORD }}
         run: |
-          lftp "sftp://${SFTP_HOST}" <<EOF
+          set -euo pipefail
+          : "${SFTP_HOST:?Add the HOST repository secret}"
+          : "${SFTP_USER:?Add the USER repository secret}"
+          : "${LFTP_PASSWORD:?Add the PASSWORD repository secret}"
+
+          lftp --env-password --user "$SFTP_USER" "sftp://${SFTP_HOST}" <<'EOF'
+          set cmd:fail-exit yes
           set sftp:auto-confirm yes
           set net:max-retries 3
           set net:timeout 30
-          user "${SFTP_USER}" "${SFTP_PASSWORD}"
           mkdir -p /home/greenzeta/comicgenerator.greenzeta.com/
           mirror --reverse --verbose --ignore-time \
             --exclude-glob .git* \
