@@ -26,45 +26,18 @@ jobs:
 
       - name: 📂 SFTP uploader                       # Upload to SFTP
         env:
-          SFTP_HOST: ${{ secrets.DEPLOY_DOMAIN }}
-          SFTP_USER: ${{ secrets.DEPLOY_USER }}
-          DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
-          DEPLOY_KNOWN_HOSTS: ${{ secrets.DEPLOY_KNOWN_HOSTS }}
+          SFTP_HOST: ${{ secrets.HOST }}
+          SFTP_USER: ${{ secrets.USER }}
+          LFTP_PASSWORD: ${{ secrets.PASSWORD }}
         run: |
           set -euo pipefail
-          : "${SFTP_HOST:?Add the DEPLOY_DOMAIN repository secret}"
-          : "${SFTP_USER:?Add the DEPLOY_USER repository secret}"
-          : "${DEPLOY_SSH_KEY:?Add the DEPLOY_SSH_KEY repository secret}"
-          : "${DEPLOY_KNOWN_HOSTS:?Add the DEPLOY_KNOWN_HOSTS repository secret}"
+          : "${SFTP_HOST:?Add the HOST repository secret}"
+          : "${SFTP_USER:?Add the USER repository secret}"
+          : "${LFTP_PASSWORD:?Add the PASSWORD repository secret}"
 
-          umask 077
-          ssh_dir=$(mktemp -d "$RUNNER_TEMP/zeta-production-deploy.XXXXXX")
-          trap 'rm -rf "$ssh_dir"' EXIT
-          printf '%s\n' "$DEPLOY_SSH_KEY" > "$ssh_dir/key"
-          printf '%s\n' "$DEPLOY_KNOWN_HOSTS" > "$ssh_dir/known_hosts"
-
-          # Keep key paths out of lftp's command parser.
-          export SFTP_SSH_DIR="$ssh_dir"
-          cat > "$ssh_dir/sftp-ssh" <<'SSH'
-          #!/usr/bin/env bash
-          exec ssh -a -x \
-            -i "$SFTP_SSH_DIR/key" \
-            -o IdentitiesOnly=yes \
-            -o BatchMode=yes \
-            -o StrictHostKeyChecking=yes \
-            -o "UserKnownHostsFile=$SFTP_SSH_DIR/known_hosts" \
-            -o ConnectTimeout=15 \
-            -o ServerAliveInterval=15 \
-            -o ServerAliveCountMax=3 \
-            "$@"
-          SSH
-          chmod 700 "$ssh_dir/sftp-ssh"
-          export PATH="$ssh_dir:$PATH"
-
-          # Suppress lftp's password prompt; SSH authenticates with the key.
-          LFTP_PASSWORD='' lftp --env-password --user "$SFTP_USER" "sftp://${SFTP_HOST}" <<'EOF'
+          lftp --env-password --user "$SFTP_USER" "sftp://${SFTP_HOST}" <<'EOF'
           set cmd:fail-exit yes
-          set sftp:connect-program sftp-ssh
+          set sftp:auto-confirm yes
           set net:max-retries 3
           set net:timeout 30
           mkdir -p /home/greenzeta/comicgenerator.greenzeta.com/
