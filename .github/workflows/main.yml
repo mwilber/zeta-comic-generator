@@ -40,7 +40,8 @@ jobs:
           set sftp:auto-confirm yes
           set net:max-retries 3
           set net:timeout 30
-          mkdir -p /home/greenzeta/comicgenerator.greenzeta.com/
+          # Require the existing site directory and update only its contents.
+          cd /home/greenzeta/comicgenerator.greenzeta.com/
           mirror --reverse --verbose --ignore-time \
             --exclude-glob .git* \
             --exclude-glob .git*/** \
@@ -48,7 +49,7 @@ jobs:
             --exclude-glob **/.DS_Store \
             --exclude-glob .github/** \
             --exclude-glob .vscode/** \
-            ./ /home/greenzeta/comicgenerator.greenzeta.com/
+            ./ ./
           bye
           EOF
 
