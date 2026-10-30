@@ -333,7 +333,6 @@ function uploadMediaToS3FromPath($localPath, $fileName, $deleteLocalAfterUpload)
 			'Bucket' => BUCKET_NAME,
 			'Key' => BUFFER_MEDIA_S3_FOLDER . $fileName,
 			'SourceFile' => $localPath,
-			'ACL' => 'public-read',
 			'ContentType' => $mime,
 		]);
 		$uploadOk = true;
