@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 function renderThumbnail($id, $background, $foreground) {
     // Load the two source images
@@ -32,10 +32,10 @@ function renderThumbnail($id, $background, $foreground) {
     imagecopy($newImage, $image2, 0, 0, 0, 0, $width1, $height1);
 
     // Save the new image to the file system
-    imagepng($newImage, '../assets/thumbnails/thumb_'.$id.'.png');
+    imagepng($newImage, dirname(__DIR__, 2) . '/assets/thumbnails/thumb_'.$id.'.png');
 
 	// Upload to S3
-	uploadS3('../assets/thumbnails/thumb_'.$id.'.png', 'thumb_'.$id.'.png', 'thumbnails/');
+	uploadS3(dirname(__DIR__, 2) . '/assets/thumbnails/thumb_'.$id.'.png', 'thumb_'.$id.'.png', 'thumbnails/');
 
     // Free up memory
     imagedestroy($image1);
@@ -44,15 +44,23 @@ function renderThumbnail($id, $background, $foreground) {
 }
 
 $output->response = new stdClass;
-
-// if(!isset($_POST["id"] || !isset($_POST["background"] || !isset($_POST["foreground"])) {
-//     $output->error = "POST value missing";
-//     $output->response->values = $_POST;
-// } else {
-    //renderThumbnail($_POST["id"], $_POST["background"], $_POST["foreground"]);
-    renderThumbnail($_POST["id"], "../assets/backgrounds/".$_POST["background"], "../assets/character_art/".$_POST["foreground"].".png");
-    $output->error = "";
-    $output->response->values = $_POST;
-// }
-
-?>
+require_once __DIR__ . '/../includes/editor_auth.php';
+require_once __DIR__ . '/../includes/write_security.php';
+require_once __DIR__ . '/../includes/image_security.php';
+if (!comicRequireEditor()) { $output->error = 'Editor authentication required'; return; }
+try {
+    comicEditorWriteRequest();
+    if (!is_string($_POST['id'] ?? null) || !preg_match('/\A[a-f0-9]{32}\z/', $_POST['id'])) throw new InvalidArgumentException('Invalid permalink');
+    $background = comicAssetFile('backgrounds', $_POST['background'] ?? null);
+    $foreground = comicAssetFile('character_art', ($_POST['foreground'] ?? '') . '.png');
+    comicImageInfo(file_get_contents($background));
+    comicImageInfo(file_get_contents($foreground));
+    $db = (new Database())->getConnection();
+    $stmt = $db->prepare('SELECT id FROM comics WHERE permalink = ?');
+    $stmt->execute([$_POST['id']]);
+    if (!$stmt->fetchColumn()) throw new InvalidArgumentException('Comic not found');
+    renderThumbnail($_POST['id'], $background, $foreground);
+} catch (Throwable $e) {
+    if (http_response_code() < 400) http_response_code(400);
+    $output->error = $e instanceof InvalidArgumentException ? $e->getMessage() : 'Thumbnail creation failed';
+}
