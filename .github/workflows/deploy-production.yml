@@ -1,0 +1,57 @@
+name: Deploy production
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: zeta-comic-generator-production-deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy-production:
+    if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Check out master
+        uses: actions/checkout@v7
+        with:
+          ref: refs/heads/master
+          persist-credentials: false
+
+      - name: Install SFTP uploader
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes --no-install-recommends lftp
+
+      - name: Upload to production over SFTP
+        env:
+          SFTP_HOST: ${{ secrets.HOST }}
+          SFTP_USER: ${{ secrets.USER }}
+          LFTP_PASSWORD: ${{ secrets.PASSWORD }}
+        run: |
+          set -euo pipefail
+          : "${SFTP_HOST:?Add the HOST repository secret}"
+          : "${SFTP_USER:?Add the USER repository secret}"
+          : "${LFTP_PASSWORD:?Add the PASSWORD repository secret}"
+
+          lftp --env-password --user "$SFTP_USER" "sftp://${SFTP_HOST}" <<'EOF'
+          set cmd:fail-exit yes
+          set sftp:auto-confirm yes
+          set net:max-retries 3
+          set net:timeout 30
+          # Require the existing site directory and update only its contents.
+          cd /home/greenzeta/comicgenerator.greenzeta.com/
+          mirror --reverse --verbose --ignore-time \
+            --exclude-glob .git* \
+            --exclude-glob .git*/** \
+            --exclude-glob .DS_Store \
+            --exclude-glob **/.DS_Store \
+            --exclude-glob .github/** \
+            --exclude-glob .vscode/** \
+            ./ ./
+          bye
+          EOF
