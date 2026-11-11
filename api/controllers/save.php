@@ -3,140 +3,31 @@
 		return dirname(__DIR__, 2) . '/assets' . $path;
 	}
 
-	function downloadImage($url, $saveDir = 'backgrounds') {
-		$savePath = assetPath('/' . $saveDir . '/');
-		$backupPath = assetPath('/' . $saveDir . '-full/');
-		// Create the directory if it doesn't exist
-		if (!file_exists($savePath)) {
-			mkdir($savePath, 0777, true);
-		}
-		if (!file_exists($backupPath)) {
-			mkdir($backupPath, 0777, true);
-		}
+	require_once __DIR__ . '/../includes/image_security.php';
+	require_once __DIR__ . '/../includes/write_security.php';
 
-		// Initialize cURL session
-		$ch = curl_init($url);
-
-		// Set cURL options
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
-		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
-		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
-
-		// Get the image content
-		$imageData = curl_exec($ch);
-
-		// Check for errors
-		if (curl_errno($ch)) {
-			throw new Exception(curl_error($ch));
-		}
-
-		// Close the cURL session
-		curl_close($ch);
-
-		// Generate a unique file name
-		$fileName = uniqid() . '.png';
-		$resizedFilePath = $savePath . $fileName;
-		$backupFilePath = $backupPath . $fileName;
-
-		// Save the image to the local filesystem
-		file_put_contents($backupFilePath, $imageData);
-		uploadS3($backupFilePath, $fileName, $saveDir . '-full/');
-
-		// Load the image
-		$image = imagecreatefromstring($imageData);
-		if ($image === false) {
-			die('Failed to create image from downloaded data');
-		}
-
-		// Calculate resize dimensions (assuming square resize)
-		$width = imagesx($image);
-		$height = imagesy($image);
-		$minSize = min($width, $height);
-		$resizeTo = 512; // New size for resized image
-
-		// Create a new true color image
-		$resizedImage = imagecreatetruecolor($resizeTo, $resizeTo);
-
-		// Resize and crop image
-		imagecopyresampled($resizedImage, $image, 0, 0, ($width-$minSize)/2, ($height-$minSize)/2, $resizeTo, $resizeTo, $minSize, $minSize);
-
-		// Save the resized image
-		if (!imagepng($resizedImage, $resizedFilePath)) {
-			die('Failed to save resized image');
-		}
-
-		uploadS3($resizedFilePath, $fileName, $saveDir . '/');
-
-		//echo "Original and resized images saved successfully.";
-
-		// Clean up
-		imagedestroy($image);
-		imagedestroy($resizedImage);
-
-		return $fileName;
-	}
-
-	function saveLocalImage($local_path, $saveDir = 'backgrounds') {
-		$savePath = assetPath('/' . $saveDir . '/');
-		$backupPath = assetPath('/' . $saveDir . '-full/');
-		// Create the directory if it doesn't exist
-		if (!file_exists($savePath)) {
-			mkdir($savePath, 0777, true);
-		}
-		if (!file_exists($backupPath)) {
-			mkdir($backupPath, 0777, true);
-		}
-
-		//$image_data = base64_decode($base64_image_data);
-
-		// Generate a unique file name
-		$fileName = uniqid() . '.png';
-		$resizedFilePath = $savePath . $fileName;
-		$backupFilePath = $backupPath . $fileName;
-
-		// $image_path = "$output_dir/$modelId" . '_' . "$i.png";
-
-		// Save the local image backup to s3
-		uploadS3($local_path, $fileName, $saveDir . '-full/');
-
-		// Load the image from raw bytes so local files can be PNG, JPEG, etc.
-		$imageData = file_get_contents($local_path);
-		if ($imageData === false) {
-			die('Failed to read local image data');
-		}
-		$image = imagecreatefromstring($imageData);
-		if ($image === false) {
-			die('Failed to create image from downloaded data');
-		}
-
-		// Calculate resize dimensions (assuming square resize)
-		$width = imagesx($image);
-		$height = imagesy($image);
-		$minSize = min($width, $height);
-		$resizeTo = 512; // New size for resized image
-
-		// Create a new true color image
-		$resizedImage = imagecreatetruecolor($resizeTo, $resizeTo);
-
-		// Resize and crop image
-		imagecopyresampled($resizedImage, $image, 0, 0, ($width-$minSize)/2, ($height-$minSize)/2, $resizeTo, $resizeTo, $minSize, $minSize);
-
-		// Save the resized image
-		if (!imagepng($resizedImage, $resizedFilePath)) {
-			die('Failed to save resized image');
-		}
-
-		uploadS3($resizedFilePath, $fileName, $saveDir . '/');
-
-		//echo "Original and resized images saved successfully.";
-
-		// Clean up
-		imagedestroy($image);
-		imagedestroy($resizedImage);
-
-		return $fileName;
-	}
+    function saveImageBytes($imageData, $saveDir = 'backgrounds') {
+        comicImageInfo($imageData);
+        $savePath = assetPath('/' . $saveDir . '/');
+        $backupPath = assetPath('/' . $saveDir . '-full/');
+        foreach ([$savePath, $backupPath] as $dir) {
+            if (!is_dir($dir) && !mkdir($dir, 0755, true)) throw new RuntimeException('Cannot create image directory');
+        }
+        $fileName = bin2hex(random_bytes(16)) . '.png';
+        $image = @imagecreatefromstring($imageData);
+        if (!$image) throw new RuntimeException('Cannot decode image');
+        // Re-encode before any upload: no original untrusted bytes are published.
+        if (!imagepng($image, $backupPath . $fileName)) throw new RuntimeException('Cannot save image');
+        $size = min(imagesx($image), imagesy($image));
+        $resized = imagecreatetruecolor(512, 512);
+        imagecopyresampled($resized, $image, 0, 0, (imagesx($image)-$size)/2, (imagesy($image)-$size)/2, 512, 512, $size, $size);
+        if (!imagepng($resized, $savePath . $fileName)) throw new RuntimeException('Cannot save image');
+        imagedestroy($image);
+        imagedestroy($resized);
+        uploadS3($backupPath . $fileName, $fileName, $saveDir . '-full/');
+        uploadS3($savePath . $fileName, $fileName, $saveDir . '/');
+        return $fileName;
+    }
 
 	function renderThumbnail($id, $background, $foreground) {
 		// Load the two source images
@@ -185,8 +76,29 @@
 	//$output = json_decode('{"response": {}, "error": null}');
 	$output->response = new stdClass;
 
+    try {
+        comicWriteRequest();
+        comicValidateScript($_POST);
+        foreach (['summary' => 20000, 'continuity' => 65536, 'memory' => 65536, 'seriesId' => 20] as $key => $limit) {
+            if (!isset($_POST[$key])) $_POST[$key] = '';
+            if (!is_string($_POST[$key]) || strlen($_POST[$key]) > $limit) throw new InvalidArgumentException('Invalid ' . $key);
+        }
+        if ($_POST['seriesId'] !== '' && !ctype_digit($_POST['seriesId'])) throw new InvalidArgumentException('Invalid series');
+        $foreground = comicAssetFile('character_art', $_POST['fg2'] ?? '');
+        comicImageInfo(file_get_contents($foreground));
+        comicSaveRateLimit();
+        $backgroundBytes = [];
+        for ($i = 1; $i <= 3; $i++) $backgroundBytes[] = comicReadImage($_POST['bkg' . $i] ?? null);
+    } catch (Throwable $e) {
+        if (http_response_code() < 400) http_response_code(400);
+        $output->error = $e instanceof InvalidArgumentException ? $e->getMessage() : 'Unable to prepare comic';
+        return;
+    }
+
 	$database = new Database();
 	$db = $database->getConnection();
+    try {
+    $db->beginTransaction();
 
 	if(!isset($_POST["script"])) {
 		$output->error = "Value `script` not found in POST";
@@ -194,10 +106,8 @@
 	} else {
 		$jsonData = $_POST["script"];
 	
-		// prepare query statement
-		$stmt = $db->prepare("INSERT INTO `comics` (`title`,`prompt`,`json`,`summary`,`seriesId`) VALUES (".$db->quote($_POST["title"]).",".$db->quote($_POST["prompt"]).",".$db->quote($jsonData).",".$db->quote($_POST["summary"]).",".$db->quote($_POST["seriesId"]).");");
-		// execute query
-		$stmt->execute();
+        $stmt = $db->prepare('INSERT INTO comics (title, prompt, json, summary, seriesId) VALUES (?, ?, ?, ?, ?)');
+        $stmt->execute([$_POST['title'], $_POST['prompt'], $jsonData, $_POST['summary'], $_POST['seriesId']]);
 		$output->response->comicId = $db->lastInsertId();
 		$output->response->permalink = md5($output->response->comicId);
 		// Insert a hash of the id for the permalink
@@ -213,19 +123,8 @@
 				$bkgUrl = $_POST["bkg".($idx + 1)];
 				$panel = ($idx + 1);
 
-				try {
-					//$fileName = downloadImage($bkgUrl);
-					if (isset($bkgUrl[0]) && $bkgUrl[0] === '/') {
-						$fileName = saveLocalImage(dirname(__DIR__, 2).$bkgUrl);
-					} else {
-						// Pass $bkgUrl to downloadImage function
-						$fileName = downloadImage($bkgUrl);
-					}
-					//echo "Image saved as: " . $fileName;
-				} catch (Exception $e) {
-					$output->error = "Error getting background image: " . $e->getMessage();
-				}
-			
+                $fileName = saveImageBytes($backgroundBytes[$idx]);
+
 				if(isset($fileName)){
 					// prepare query statement
 					$stmt = $db->prepare("INSERT INTO `backgrounds` (`comic_id`, `panel`, `filename`) VALUES ('".$output->response->comicId."', '".$panel."', '".$fileName."');");
@@ -235,7 +134,7 @@
 
 				if($idx == 1){
 					//Save the images to composite into a thumbnail
-					renderThumbnail($output->response->permalink, assetPath("/backgrounds/".$fileName), assetPath("/character_art/".$_POST["fg".($idx + 1)]));
+					renderThumbnail($output->response->permalink, assetPath("/backgrounds/".$fileName), $foreground);
 				}
 			}
 		}
@@ -301,10 +200,11 @@
 						continue;
 					}
 					// Check for existing record
-					$stmt = $db->prepare("SELECT `id` FROM `continuity` WHERE `id` = ".$memory->id.";");
-					$stmt->execute();
+					$stmt = $db->prepare("SELECT `id` FROM `continuity` WHERE `id` = ?");
+					$stmt->execute([$memory->id]);
 					$existingRecord = $stmt->fetch(PDO::FETCH_ASSOC);
 
+					if (!$existingRecord) continue;
 					if ($existingRecord) {
 						$memoryId = $existingRecord['id'];
 					}
@@ -319,4 +219,12 @@
 		}
 	}
 
+    $db->commit();
+    } catch (Throwable $e) {
+        if ($db->inTransaction()) $db->rollBack();
+        http_response_code(500);
+        $output->response = new stdClass;
+        $output->error = 'Unable to save comic';
+        error_log('Comic save failed: ' . get_class($e));
+    }
 ?>
