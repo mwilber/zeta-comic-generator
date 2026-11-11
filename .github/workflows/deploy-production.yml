@@ -30,21 +30,23 @@ jobs:
       - name: Upload to production over SFTP
         env:
           SFTP_HOST: ${{ secrets.HOST }}
+          SFTP_PATH: ${{ secrets.PRODUCTION_DEPLOY_PATH }}
           SFTP_USER: ${{ secrets.USER }}
           LFTP_PASSWORD: ${{ secrets.PASSWORD }}
         run: |
           set -euo pipefail
           : "${SFTP_HOST:?Add the HOST repository secret}"
+          : "${SFTP_PATH:?Add the PRODUCTION_DEPLOY_PATH repository secret}"
           : "${SFTP_USER:?Add the USER repository secret}"
           : "${LFTP_PASSWORD:?Add the PASSWORD repository secret}"
 
-          lftp --env-password --user "$SFTP_USER" "sftp://${SFTP_HOST}" <<'EOF'
+          lftp --env-password --user "$SFTP_USER" "sftp://${SFTP_HOST}" <<EOF
           set cmd:fail-exit yes
           set sftp:auto-confirm yes
           set net:max-retries 3
           set net:timeout 30
           # Require the existing site directory and update only its contents.
-          cd /home/greenzeta/comicgenerator.greenzeta.com/
+          cd "$SFTP_PATH"
           mirror --reverse --verbose --ignore-time \
             --exclude-glob .git* \
             --exclude-glob .git*/** \
