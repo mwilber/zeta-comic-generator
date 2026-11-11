@@ -1,3 +1,5 @@
+import { escapeHtml } from "./modules/escapeHtml.js";
+
 const listing = {};
 
 const priceTable = {
@@ -146,7 +148,7 @@ function PopDebugger(pageNum) {
 				const workflowEl = document.createElement("ul");
 				workflowEl.className = "workflow";
 				workflowEl.innerHTML = `
-					<li><button>${firstLog.workflowId.substring(0,8)}</button> - ${firstLog.title}</li>
+					<li><button>${escapeHtml(firstLog.workflowId.substring(0,8))}</button> - ${escapeHtml(firstLog.title)}</li>
 				`;
 				document.getElementById("debugger-listing").appendChild(workflowEl);
 				workflowEl.addEventListener("click", (e) => {
@@ -160,7 +162,7 @@ function PopDebugger(pageNum) {
 
 function PopToc(workflowId) {
 	const containerEl = document.getElementById("debugger-toc");
-	containerEl.innerHTML = "<h3>Workflow: <span class='workflow-id'>" + workflowId.substring(0,8) + "</span></h3>";
+	containerEl.innerHTML = "<h3>Workflow: <span class='workflow-id'>" + escapeHtml(workflowId.substring(0,8)) + "</span></h3>";
 	const tocEl = document.createElement("ul");
 	tocEl.className = "toc";
 	const workflow = listing[workflowId];
@@ -169,9 +171,9 @@ function PopToc(workflowId) {
 		logEl.className = "log";
 		logEl.innerHTML = `
 			<button>
-				${log.action}
+				${escapeHtml(log.action)}
 				<br/>
-				<span class="model">${log.model.substring(0, 30)}</span>
+				<span class="model">${escapeHtml(log.model.substring(0, 30))}</span>
 			</button>
 		`;
 		tocEl.appendChild(logEl);
@@ -243,9 +245,9 @@ function PopDetail(log) {
 	console.log(log);
 	const containerEl = document.getElementById("debugger-detail");
 	containerEl.innerHTML = `
-		<h3>Details: ${log.action} <span class='timestamp'>${log.timestamp}</span></h3>
+		<h3>Details: ${escapeHtml(log.action)} <span class='timestamp'>${escapeHtml(log.timestamp)}</span></h3>
 		<hr/>
-		<h5>Model: ${log.model}</h5>
+		<h5>Model: ${escapeHtml(log.model)}</h5>
 	`;
 
 	const detailEl = document.createElement("div");
@@ -255,7 +257,7 @@ function PopDetail(log) {
 	if (log.result.json?.url) {
 		keyEl = document.createElement("div");
 		keyEl.className = "key";
-		keyEl.innerHTML = `<h4>Preview</h4><img src="${log.result.json.url}" alt="Preview" width="200" />`;
+		keyEl.innerHTML = `<h4>Preview</h4><img src="${escapeHtml(log.result.json.url)}" alt="Preview" width="200" />`;
 		detailEl.appendChild(keyEl);
 	}
 
@@ -280,7 +282,7 @@ function PopDetail(log) {
 				keyEl.appendChild(keyTitle);
 				keyEl.appendChild(buildTreeView(log[key]));
 			} else {
-				keyEl.innerHTML = `<h4>${key}</h4> ${log[key]}`;
+				keyEl.innerHTML = `<h4>${escapeHtml(key)}</h4> ${escapeHtml(log[key])}`;
 			}
 		}
 		

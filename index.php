@@ -77,8 +77,8 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta http-equiv="X-UA-Compatible" content="ie=edge">
-	<title><?php echo $meta->title; ?></title>
-	<meta name="description" content="<?php echo $meta->description; ?>">
+	<title><?php echo htmlspecialchars($meta->title, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); ?></title>
+	<meta name="description" content="<?php echo htmlspecialchars($meta->description, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); ?>">
 	<meta name="application-name" content="Zeta Comic Generator">
 	<meta name="theme-color" content="#891b2a">
 	<meta name="apple-mobile-web-app-title" content="Zeta Comics">
@@ -99,23 +99,23 @@
 	<link rel="manifest" href="/assets/favicons/site.webmanifest">
 	<link rel="describedby" type="text/plain" href="/llms.txt">
 
-	<meta property="og:url" content="<?php echo $meta->url; ?>">
+	<meta property="og:url" content="<?php echo htmlspecialchars($meta->url, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); ?>">
 	<meta property="og:type" content="website">
-	<meta property="og:title" content="<?php echo $meta->title; ?>">
-	<meta property="og:image" content="<?php echo $meta->image; ?>">
-	<meta property="og:image:alt" content="<?php echo $meta->imageDescription; ?>">
-	<meta property="og:description" content="<?php echo $meta->description; ?>">
-	<meta property="og:site_name" content="<?php echo $meta->siteTitle; ?>">
+	<meta property="og:title" content="<?php echo htmlspecialchars($meta->title, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); ?>">
+	<meta property="og:image" content="<?php echo htmlspecialchars($meta->image, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); ?>">
+	<meta property="og:image:alt" content="<?php echo htmlspecialchars($meta->imageDescription, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); ?>">
+	<meta property="og:description" content="<?php echo htmlspecialchars($meta->description, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); ?>">
+	<meta property="og:site_name" content="<?php echo htmlspecialchars($meta->siteTitle, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); ?>">
 	<meta property="og:locale" content="en_US">
 
 	<meta name="twitter:card" content="summary">
 	<meta name="twitter:site" content="@greenzeta">
 	<meta name="twitter:creator" content="@greenzeta">
-	<meta name="twitter:url" content="<?php echo $meta->url; ?>">
-	<meta name="twitter:title" content="<?php echo $meta->title; ?>">
-	<meta name="twitter:description" content="<?php echo $meta->description; ?>">
-	<meta name="twitter:image" content="<?php echo $meta->image; ?>">
-	<meta name="twitter:image:alt" content="<?php echo $meta->imageDescription; ?>">
+	<meta name="twitter:url" content="<?php echo htmlspecialchars($meta->url, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); ?>">
+	<meta name="twitter:title" content="<?php echo htmlspecialchars($meta->title, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); ?>">
+	<meta name="twitter:description" content="<?php echo htmlspecialchars($meta->description, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); ?>">
+	<meta name="twitter:image" content="<?php echo htmlspecialchars($meta->image, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); ?>">
+	<meta name="twitter:image:alt" content="<?php echo htmlspecialchars($meta->imageDescription, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); ?>">
 
 	<link rel="stylesheet" href="/styles/main.css?v=<?php echo $version ?>">
 	<link rel="stylesheet" href="/styles/detail.css?v=<?php echo $version ?>">

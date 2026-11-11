@@ -25,4 +25,4 @@
 	</div>
 </div>
 
-<script type="text/javascript" src="/scripts/debugger.js?v=<?php echo $version ?>"></script>
+<script type="module" src="/scripts/debugger.js?v=<?php echo $version ?>"></script>

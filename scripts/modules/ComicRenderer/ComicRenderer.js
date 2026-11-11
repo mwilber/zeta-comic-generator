@@ -181,9 +181,12 @@ export class ComicRenderer {
 			console.error("Comic Renderer: Panel element unavailable.", panel);
 			return;
 		}
-		panel.panelEl.innerHTML += `
-			<img class="${type}" src="${url}" ${alt ? ` alt="${alt}"` : ""} />
-		`;
+		// DOM properties keep quotes and markup in script metadata inert.
+		const image = document.createElement("img");
+		image.className = type || "";
+		image.src = url;
+		if (alt) image.alt = alt;
+		panel.panelEl.appendChild(image);
 	}
 
 	/**

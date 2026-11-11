@@ -1,3 +1,5 @@
+import { escapeHtml } from "./modules/escapeHtml.js";
+
 /**
  * Fetches and displays a page of comic strip thumbnails in a gallery.
  *
@@ -24,9 +26,9 @@ function PopGallery(pageNum) {
 				let frameEl = document.createElement("div");
 				frameEl.className = "frame";
 				frameEl.innerHTML += `
-					<a class="strip" href="/detail/${strip.id}" aria-label="Comic Title: ${strip.title}">
-						<img src="${strip.thumbnail}" alt="comic thumbnail"/>
-						<h3>${strip.title}</h3>
+					<a class="strip" href="/detail/${encodeURIComponent(strip.id)}" aria-label="Comic Title: ${escapeHtml(strip.title)}">
+						<img src="${escapeHtml(strip.thumbnail)}" alt="comic thumbnail"/>
+						<h3>${escapeHtml(strip.title)}</h3>
 					</a>
 				`;
 				galleryEl.appendChild(frameEl);
