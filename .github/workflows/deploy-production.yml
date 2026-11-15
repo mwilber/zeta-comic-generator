@@ -21,8 +21,8 @@ jobs:
     environment: production
     steps:
       - name: Check out production branch
-        # Pin the action to the audited v4.2.2 release.
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        # Pin checkout v7.0.1 (Node.js 24) to an immutable release commit.
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
           # Use the latest protected branch state so a queued older merge cannot
           # roll production back after a newer deployment.
