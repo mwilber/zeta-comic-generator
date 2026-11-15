@@ -1,6 +1,11 @@
 <?php
-// Configure outside version control (key.php or environment). No default password.
+// Password protection is temporarily disabled. Re-enable in key.php with
+// define('COMIC_EDITOR_AUTH_ENABLED', true) after server authentication is fixed.
+// Other write validation and same-origin checks remain active.
 function comicRequireEditor() {
+    if (!defined('COMIC_EDITOR_AUTH_ENABLED') || !COMIC_EDITOR_AUTH_ENABLED) {
+        return true;
+    }
     $hash = defined('COMIC_EDITOR_PASSWORD_HASH') ? COMIC_EDITOR_PASSWORD_HASH : getenv('COMIC_EDITOR_PASSWORD_HASH');
     $username = $_SERVER['PHP_AUTH_USER'] ?? '';
     $password = $_SERVER['PHP_AUTH_PW'] ?? '';
