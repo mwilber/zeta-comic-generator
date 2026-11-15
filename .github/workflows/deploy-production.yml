@@ -1,7 +1,9 @@
 name: Deploy production
 
 on:
-  workflow_dispatch:
+  pull_request:
+    types: [closed]
+    branches: [master]
 
 permissions:
   contents: read
@@ -12,48 +14,32 @@ concurrency:
 
 jobs:
   deploy-production:
-    if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/master'
-    runs-on: ubuntu-latest
+    if: github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'master'
+    runs-on: ubuntu-24.04
     timeout-minutes: 20
+    environment: production
     steps:
-      - name: Check out master
-        uses: actions/checkout@v7
+      - name: Check out production branch
+        # Pin the action to the audited v4.2.2 release.
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
+          # Use the latest protected branch state so a queued older merge cannot
+          # roll production back after a newer deployment.
           ref: refs/heads/master
           persist-credentials: false
 
-      - name: Install SFTP uploader
+      - name: Install SFTP client
         run: |
-          sudo apt-get update
+          sudo apt-get update -qq
           sudo apt-get install --yes --no-install-recommends lftp
 
-      - name: Upload to production over SFTP
+      - name: Upload production files
         env:
-          SFTP_HOST: ${{ secrets.HOST }}
-          SFTP_PATH: ${{ secrets.PRODUCTION_DEPLOY_PATH }}
-          SFTP_USER: ${{ secrets.USER }}
-          LFTP_PASSWORD: ${{ secrets.PASSWORD }}
-        run: |
-          set -euo pipefail
-          : "${SFTP_HOST:?Add the HOST repository secret}"
-          : "${SFTP_PATH:?Add the PRODUCTION_DEPLOY_PATH repository secret}"
-          : "${SFTP_USER:?Add the USER repository secret}"
-          : "${LFTP_PASSWORD:?Add the PASSWORD repository secret}"
-
-          lftp --env-password --user "$SFTP_USER" "sftp://${SFTP_HOST}" <<EOF
-          set cmd:fail-exit yes
-          set sftp:auto-confirm yes
-          set net:max-retries 3
-          set net:timeout 30
-          # Require the existing site directory and update only its contents.
-          cd "$SFTP_PATH"
-          mirror --reverse --verbose --ignore-time \
-            --exclude-glob .git* \
-            --exclude-glob .git*/** \
-            --exclude-glob .DS_Store \
-            --exclude-glob **/.DS_Store \
-            --exclude-glob .github/** \
-            --exclude-glob .vscode/** \
-            ./ ./
-          bye
-          EOF
+          ZCG_LIVE_SFTP_USERNAME: ${{ secrets.ZCG_LIVE_SFTP_USERNAME }}
+          ZCG_LIVE_SFTP_PASSWORD: ${{ secrets.ZCG_LIVE_SFTP_PASSWORD }}
+          ZCG_LIVE_SFTP_HOST: ${{ secrets.ZCG_LIVE_SFTP_HOST }}
+          ZCG_LIVE_SOURCE_PATH: ${{ secrets.ZCG_LIVE_SOURCE_PATH }}
+          ZCG_LIVE_REMOTE_PATH: ${{ secrets.ZCG_LIVE_REMOTE_PATH }}
+          ZCG_LIVE_SFTP_PORT: ${{ secrets.ZCG_LIVE_SFTP_PORT }}
+          ZCG_LIVE_HOST_FINGERPRINT: ${{ secrets.ZCG_LIVE_HOST_FINGERPRINT }}
+        run: python3 .github/deploy/sftp.py
