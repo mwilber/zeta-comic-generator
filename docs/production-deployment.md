@@ -1,6 +1,6 @@
 # Production SFTP deployment
 
-The workflow runs when a pull request targeting `master` is closed, and the deploy
+The workflow uses `pull_request_target` when a pull request targeting `master` is closed, and the deploy
 job runs only if it was merged. Direct pushes, unmerged PR closures and manual
 workflow dispatches do not deploy. The actual branch name is lowercase `master`.
 It uploads the current protected branch tip; serialized jobs cannot overwrite
@@ -65,3 +65,16 @@ persisted, and the password is passed in the process environment rather than
 command-line arguments. Deployment jobs run one at a time without cancelling an
 active upload. GitHub may replace pending jobs during a burst of merges; each
 job checks out the latest `master` so the latest accepted site is deployed.
+
+## Environment branch rejection
+
+Keep the production environment restricted to `master`. GitHub evaluates ordinary
+`pull_request` runs against `refs/pull/<number>/merge`, which that rule rejects.
+The `pull_request_target` trigger uses the trusted default-branch context instead;
+this repository's default branch must remain `master`. The merged-only job guard
+and explicit `refs/heads/master` checkout are required. Never change that checkout
+to the PR head or execute code from an unmerged PR in this deployment workflow.
+
+Re-running an old failed run retains its old event and workflow definition. After
+this trigger fix reaches the default branch, a subsequent PR merge will use the
+new trigger. The merge introducing the fix may still use the previous definition.

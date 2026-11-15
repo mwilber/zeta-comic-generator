@@ -1,7 +1,8 @@
 name: Deploy production
 
 on:
-  pull_request:
+  # Run in the trusted default-branch context for production environment rules.
+  pull_request_target:
     types: [closed]
     branches: [master]
 
