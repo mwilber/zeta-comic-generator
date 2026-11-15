@@ -6,6 +6,11 @@
 	require __DIR__ . '/api/includes/characteractions.php';
 	require __DIR__ . '/api/includes/key.php';
 	require __DIR__ . '/api/includes/db.php';
+    if (preg_match('~^/edit(?:/|$)~', parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH) ?: '')) {
+        require_once __DIR__ . '/api/includes/editor_auth.php';
+        if (!comicRequireEditor()) { echo 'Editor authentication required'; exit; }
+    }
+
 
 	// Route using only the path so query parameters never become part of a comic ID.
 	$request = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH) ?: '/';
