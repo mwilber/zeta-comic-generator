@@ -1,3 +1,4 @@
+import { escapeHtml } from "./modules/escapeHtml.js";
 import { ScriptRenderer } from "./modules/ScriptRenderer.js";
 import { ComicRenderer } from "./modules/ComicRenderer/ComicRenderer.js";
 import { ComicExporter } from "./modules/ComicExporter.js";
@@ -42,25 +43,25 @@ document.addEventListener("DOMContentLoaded", () => {
 
 				script.prompt = prompt;
 				script.series = data.series;
-				document.getElementById("query").innerHTML = `${prompt}`;
+				document.getElementById("query").textContent = prompt ?? "";
 
 				if (data.series) {
 					document.getElementById("story-title")
 						.innerHTML = `
-							<a href="/series/${data.series.permalink}">
-								${data.series.title}
-							</a> - Part ${data.series.currentIdx + 1}
+							<a href="/series/${encodeURIComponent(data.series.permalink)}">
+								${escapeHtml(data.series.title)}
+							</a> - Part ${escapeHtml(data.series.currentIdx + 1)}
 						`;
 					const seriesNav = document.getElementById("story-nav");
 					if (data.series.comics.length > 1) {
 						if (data.series.currentIdx > 0) {
-							seriesNav.innerHTML += `<a href="/detail/${data.series.comics[data.series.currentIdx - 1].permalink}">Previous</a>`;
+							seriesNav.innerHTML += `<a href="/detail/${encodeURIComponent(data.series.comics[data.series.currentIdx - 1].permalink)}">Previous</a>`;
 						} else {
 							seriesNav.innerHTML += `Previous`;
 						}
 						seriesNav.innerHTML += ` | `;
 						if (data.series.currentIdx < data.series.comics.length - 1) {
-							seriesNav.innerHTML += `<a href="/detail/${data.series.comics[data.series.currentIdx + 1].permalink}">Next</a>`;
+							seriesNav.innerHTML += `<a href="/detail/${encodeURIComponent(data.series.comics[data.series.currentIdx + 1].permalink)}">Next</a>`;
 						} else {
 							seriesNav.innerHTML += `Next`;
 						}
@@ -108,7 +109,7 @@ document.addEventListener("DOMContentLoaded", () => {
 					if (continuitySorted.alpha) {
 						let alphaEl = document.createElement("div");
 						alphaEl.classList.add("character");
-						alphaEl.innerHTML = `<strong>${continuitySorted.alpha.heading}:</strong> ${continuitySorted.alpha.items.map(item => item.description).join(", ")}`;
+						alphaEl.innerHTML = `<strong>${escapeHtml(continuitySorted.alpha.heading)}:</strong> ${escapeHtml(continuitySorted.alpha.items.map(item => item.description).join(", "))}`;
 						continuityEl.appendChild(alphaEl);
 					}
 					// Hiding events until phase 2

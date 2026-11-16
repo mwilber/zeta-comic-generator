@@ -22,7 +22,6 @@
 				'Bucket' => BUCKET_NAME,
 				'Key'    => $folderName . $keyName,
 				'SourceFile' => $localPath,
-				'ACL'    => 'public-read', // or use 'private'
 			]);
 	
 			//echo "Image uploaded successfully. Image URL: " . $result['ObjectURL'] . PHP_EOL;

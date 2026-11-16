@@ -46,11 +46,11 @@
 	Gallery
 	<?php 
 		if (isset($record['prefix']) && isset($record['description'])) {
-			echo " - " . $record['prefix'] . ": ";
-			echo $record['description'];
+			echo " - " . htmlspecialchars($record['prefix'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . ": ";
+			echo htmlspecialchars($record['description'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 		}
 	?>
 </h2>
 <div id="gallery" role="region" aria-label="Gallery of comics in reverse chronlogical order."></div>
 
-<script type="text/javascript" src="/scripts/gallery.js?v=<?php echo $version ?>"></script>
+<script type="module" src="/scripts/gallery.js?v=<?php echo $version ?>"></script>

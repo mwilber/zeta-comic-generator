@@ -1,3 +1,4 @@
+import { escapeHtml } from "./modules/escapeHtml.js";
 import { ComicRenderer } from "./modules/ComicRenderer/ComicRenderer.js";
 
 function ClearElements() {
@@ -80,7 +81,7 @@ function InitEditor() {
 					<li>
 					</li>
 					<li>
-					<input name="script-title" value="${script.title}" style="width: calc(100% - 148px); margin-right: 10px;" />
+					<input name="script-title" value="${escapeHtml(script.title)}" style="width: calc(100% - 148px); margin-right: 10px;" />
 					<img class="thumbnail" height="128" style="vertical-align: middle;" src="https://zeta-comic-generator.s3.us-east-2.amazonaws.com/thumbnails/thumb_${comicId}.png"/>
 					</li>
 				`;
@@ -90,9 +91,9 @@ function InitEditor() {
 				document.getElementById("script").innerHTML += `<li>
 					<button id="quik-fill">Quick Fill</button>
 					<ul class="credits">
-						<li><span>Concept: </span><span><input name="script-credit-concept" value="${script.credits.concept}"/></span></li>
-						<li><span>Script: </span><span><input name="script-credit-script" value="${script.credits.script}"/></span></li>
-						<li><span>Images: </span><span><input name="script-credit-image" value="${script.credits.image}"/></span></li>
+						<li><span>Concept: </span><span><input name="script-credit-concept" value="${escapeHtml(script.credits.concept)}"/></span></li>
+						<li><span>Script: </span><span><input name="script-credit-script" value="${escapeHtml(script.credits.script)}"/></span></li>
+						<li><span>Images: </span><span><input name="script-credit-image" value="${escapeHtml(script.credits.image)}"/></span></li>
 					</ul>
 				</li>`;
 
@@ -104,10 +105,6 @@ function InitEditor() {
 						bkgId = (bkgId && bkgId[1]) ? "~/process_image.sh " + bkgId[1] : "null";
 
 						let dialog = panel.dialog[0].text;
-						// Escape quotes in dialog
-						if (dialog) {
-							dialog = dialog.replace(/"/g, '&quot;');
-						}
 
 						document.getElementById("script").innerHTML += `
 						<li>
@@ -115,17 +112,17 @@ function InitEditor() {
 							<ul>
 								<li>
 									<table>
-										<tr><td>Description</td> <td><textarea name="script-panel-${idx}-scene">${panel.scene}</textarea></td></tr>
-										<tr><td>Action</td> <td><input name="script-panel-${idx}-action" value="${panel.action}"/></td></tr>
-										<tr><td>Alt Action</td> <td><input name="script-panel-${idx}-altAction" value="${panel.altAction}"/></td></tr>
-										<tr><td>Dialog</td> <td><input name="script-panel-${idx}-dialog" value="${dialog}"/></td></tr>
-										<tr><td>Background</td> <td><textarea name="script-panel-${idx}-background">${panel.background}</textarea></td></tr>
+										<tr><td>Description</td> <td><textarea name="script-panel-${idx}-scene">${escapeHtml(panel.scene)}</textarea></td></tr>
+										<tr><td>Action</td> <td><input name="script-panel-${idx}-action" value="${escapeHtml(panel.action)}"/></td></tr>
+										<tr><td>Alt Action</td> <td><input name="script-panel-${idx}-altAction" value="${escapeHtml(panel.altAction)}"/></td></tr>
+										<tr><td>Dialog</td> <td><input name="script-panel-${idx}-dialog" value="${escapeHtml(dialog)}"/></td></tr>
+										<tr><td>Background</td> <td><textarea name="script-panel-${idx}-background">${escapeHtml(panel.background)}</textarea></td></tr>
 										<tr><td></td><td>
-											<img id="script-panel-${idx}-new-background-image" src="${data.backgrounds[idx]}" style="width: 100%;"/>
+											<img id="script-panel-${idx}-new-background-image" src="${escapeHtml(data.backgrounds[idx])}" style="width: 100%;"/>
 											<button onclick="regenerateBackground(${idx})">Regenerate Background</button>
 										</td></tr>
-										<tr><td>Background Url</td> <td><input name="script-panel-${idx}-background_url" value="${panel.background_url}"/></td></tr>
-										<tr><td>Stored File</td> <td><a href="${data.backgrounds[idx]}" target="_blank">${data.backgrounds[idx]}</a></td></tr>
+										<tr><td>Background Url</td> <td><input name="script-panel-${idx}-background_url" value="${escapeHtml(panel.background_url)}"/></td></tr>
+										<tr><td>Stored File</td> <td><a href="${escapeHtml(data.backgrounds[idx])}" target="_blank">${escapeHtml(data.backgrounds[idx])}</a></td></tr>
 										<tr><td>Edit Command</td> <td>${bkgId} <button onclick="navigator.clipboard.writeText('${bkgId}')">copy</button></td></tr>
 									</table>
 								</li>

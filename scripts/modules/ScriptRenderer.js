@@ -1,3 +1,5 @@
+import { escapeHtml } from "./escapeHtml.js";
+
 /**
  * @file ScriptRenderer.js
  * @author Matthew Wilber
@@ -35,22 +37,22 @@ export class ScriptRenderer {
 		this.el.innerHTML = "";
 
 		if (story) {
-			this.el.innerHTML += `<li aria-label="Story Title"><h2 class="story-title">${story.title} - Part ${story.currentIdx + 1}</h2></li>`;
+			this.el.innerHTML += `<li aria-label="Story Title"><h2 class="story-title">${escapeHtml(story.title)} - Part ${escapeHtml(story.currentIdx + 1)}</h2></li>`;
 		}
 
-		this.el.innerHTML += `<li aria-label="Title"><h2>${title}</h2></li>`;
+		this.el.innerHTML += `<li aria-label="Title"><h2>${escapeHtml(title)}</h2></li>`;
 
 		if (credits && credits.script) {
 			let conseptCredit = credits.concept ?
-				`<li><span>Concept: </span><span>${credits.concept}</span></li>` : "";
+				`<li><span>Concept: </span><span>${escapeHtml(credits.concept)}</span></li>` : "";
 			// Add the credits
 			this.el.innerHTML += `<li aria-label="Credits">
 				<ul class="credits">
 					${conseptCredit}
-					<li><span>Script: </span><span>${credits.script}</span></li>
-					<li><span>Images: </span><span>${credits.image}</span></li>
-					<!--<li><span>Backgrounds: </span><span>${credits.background}</span></li>
-					<li><span>Actions: </span><span>${credits.action}</span></li>-->
+					<li><span>Script: </span><span>${escapeHtml(credits.script)}</span></li>
+					<li><span>Images: </span><span>${escapeHtml(credits.image)}</span></li>
+					<!--<li><span>Backgrounds: </span><span>${escapeHtml(credits.background)}</span></li>
+					<li><span>Actions: </span><span>${escapeHtml(credits.action)}</span></li>-->
 				</ul>
 			</li>`;
 		}
@@ -59,23 +61,23 @@ export class ScriptRenderer {
 			this.el.innerHTML += `
 				<li aria-label="Concept">
 					<h3>Story Concept</h3>
-					<ul><li>${concept}</li></ul>
+					<ul><li>${escapeHtml(concept)}</li></ul>
 				</li>`;
 
 		for (const [idx, panel] of panels.entries()) {
 			let dialogHtml = "";
 			for (const [idx, dialog] of panel.dialog.entries()) {
-				dialogHtml += `<strong>${dialog.character}</strong>: ${dialog.text}`;
+				dialogHtml += `<strong>${escapeHtml(dialog.character)}</strong>: ${escapeHtml(dialog.text)}`;
 			}
 
 			let scene = panel.scene
-				? `<tr><td>Description</td> <td>${panel.scene}</td></tr>`
+				? `<tr><td>Description</td> <td>${escapeHtml(panel.scene)}</td></tr>`
 				: "";
 			let action = panel.action
-				? `<tr><td>Action</td> <td>${panel.action}</td></tr>`
+				? `<tr><td>Action</td> <td>${escapeHtml(panel.action)}</td></tr>`
 				: "";
 			let background = panel.background
-				? `<tr><td>Background</td> <td>${panel.background}</td></tr>`
+				? `<tr><td>Background</td> <td>${escapeHtml(panel.background)}</td></tr>`
 				: "";
 			let dialog = dialogHtml
 				? `<tr><td>Dialog</td> <td>${dialogHtml}</td></tr>`

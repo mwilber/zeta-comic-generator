@@ -126,7 +126,8 @@
 		$output->error = "Simulated error.";
 	}
 
-	echo json_encode($output);
+	require_once __DIR__ . '/includes/json_response.php';
+	echo encodeApiResponse($output);
 
 	function POSTval($name, $default = "") {
 		if (isset($_POST[$name])) return $_POST[$name];
