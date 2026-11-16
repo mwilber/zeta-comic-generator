@@ -1,4 +1,7 @@
 <?php
+require_once __DIR__ . "/../api/comicpromoter/auth.php";
+comicPromoterAuth(false);
+header('Content-Type: text/html; charset=UTF-8');
 require_once __DIR__ . '/../api/includes/characteractions.php';
 $version = "1.0.0";
 $permalink = isset($_GET['permalink']) ? trim((string)$_GET['permalink']) : '';

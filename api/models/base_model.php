@@ -33,7 +33,7 @@ class BaseModel {
 			$result = $this->processResponse($response);
 		} catch (Exception $e) {
 			$result = new stdClass();
-			$result->error = $e->getMessage();
+			$result->error = 'Generation failed';
 		} finally {
 			ApiLogger::logRequest(
 				$id ?? 'unknown',

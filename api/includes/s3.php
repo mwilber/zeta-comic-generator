@@ -30,11 +30,7 @@
 			// Suppressing error messages for now.
 			//echo $e->getMessage() . PHP_EOL;
 			return false;
-		} finally {
-			// Clean up: delete temporary file
-			// Keeping the file on the server as a backup for now.
-			//unlink($tempFilePath);
-			return true;
 		}
+		return true;
 	}
 ?>

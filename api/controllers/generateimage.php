@@ -70,6 +70,8 @@ if ($hitCount >= RATE_LIMIT) {
 		// Record the model that was used
 		$output->model = $model->modelName;
 	
+		$stmt = $db->prepare('INSERT INTO metrics (premise) VALUES (?)');
+		$stmt->execute([$query]);
 		$response = $model->sendPayload($output->prompt, $workflowId, $actionId, $output->prompt);
 		$output->error = $response->error;
 	

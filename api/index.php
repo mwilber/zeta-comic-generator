@@ -15,13 +15,16 @@
 	 * `true` and simulating errors if the `SIMULATE_ERRORS` constant is set to `true`.
 	 */
 
-	ini_set('display_errors', 1);
+	ini_set('display_errors', 0);
 	//ini_set('display_startup_errors', 1);
 	error_reporting(E_ERROR);
 
 	define("SIMULATION_MODE", "none"); // all, text, image, none
 	define("SIMULATE_DELAY", 0);
 	define("SIMULATE_ERRORS", false);
+
+	require_once __DIR__ . '/includes/request_security.php';
+	comicApiBootstrap();
 
 	// Route using only the path so query parameters never become part of a comic ID.
 	$request = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH) ?: '/';
@@ -46,7 +49,7 @@
 	}
 
 	// Required headers
-	header("Access-Control-Allow-Origin: *");
+
 	header("Content-Type: application/json; charset=UTF-8");
 
 	// Global requires
@@ -56,6 +59,10 @@
 	require __DIR__ . '/includes/s3.php';
 	require __DIR__ . '/../vendor/autoload.php';
 	require __DIR__ . '/includes/api_logger.php';
+
+	if (in_array($controller, ['concept','script','background','continuity','action','image'], true)) {
+		comicGenerationRequest();
+	}
 
 	// AI Prompts
 	require __DIR__ . '/includes/prompts.php';
@@ -79,21 +86,18 @@
 
 	switch ($controller) {
 		// App API endpoints
-		case 'comic':
 		case 'detail':
 		case 'gallery':
 		case 'series':
 		case 'stories':
 		case 'save':
 		case 'imgproxy':
-		case 'bedrock':
 		case 'metrics':
 		case 'update':
 		case 'thumbnail':
 			require __DIR__ . '/controllers/'.$controller.'.php';
 			break;
 		// Comic Generation API endpoints
-		case 'test':
 		case 'concept':
 		case 'script':
 		case 'background':
@@ -105,7 +109,6 @@
 				require __DIR__ . '/controllers/generatetext.php';
 			}
 			break;
-		case 'testimage':
 		case 'image':				
 			if (SIMULATION_MODE == "all" || SIMULATION_MODE == "image") {
 				require __DIR__ . '/controllers/simulateimage.php';
@@ -113,9 +116,7 @@
 				require __DIR__ . '/controllers/generateimage.php';
 			}
 			break;
-		case 'log':
-			require __DIR__ . '/controllers/log.php';
-			break;
+
 		default:
 			$output->error = "Action not avaialble.";
 			break;

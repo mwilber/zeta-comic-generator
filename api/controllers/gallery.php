@@ -5,7 +5,7 @@
  * This function first retrieves the total count of comics with the `gallery` flag set to 1.
  * It then fetches a page of comics based on the provided `$page` and `$limit` parameters,
  * and populates the `$output->gallery` array with the retrieved comic data.
- * 
+ *
  * Uses the GET parameter `page` to determine the page of comics to fetch.
  *
  * @example
@@ -42,14 +42,14 @@ $output->gallery = array();
 try {
 
 	if (isset($hash) && $hash != '' && strpos($hash, '?') === false) {
-  		$stmt = $db->prepare("SELECT COUNT(*) FROM `comics` c 
-  			JOIN `comic_continuity` cc ON c.id = cc.comicId 
-  			JOIN `continuity` con ON con.id = cc.continuityId 
-  			WHERE con.permalink = :hash");
+		$stmt = $db->prepare("SELECT COUNT(*) FROM `comics` c
+			JOIN `comic_continuity` cc ON c.id = cc.comicId AND c.gallery = 1
+			JOIN `continuity` con ON con.id = cc.continuityId
+			WHERE con.permalink = :hash");
 
 		// TODO: Add a WHERE clause to filter by `gallery` = 1
 
-  		$stmt->bindParam(':hash', $hash, PDO::PARAM_STR);
+		$stmt->bindParam(':hash', $hash, PDO::PARAM_STR);
 	} else {
 		$stmt = $db->prepare("SELECT COUNT(*) FROM `comics` WHERE `gallery` = 1");
 	}
@@ -60,10 +60,10 @@ try {
 
 	// Fetch a page of comics
 	if (isset($hash) && $hash != '' && strpos($hash, '?') === false) {
-		$stmt = $db->prepare("SELECT c.* FROM `comics` c 
-			JOIN `comic_continuity` cc ON c.id = cc.comicId 
-			JOIN `continuity` con ON con.id = cc.continuityId 
-			WHERE con.permalink = :hash 
+		$stmt = $db->prepare("SELECT c.* FROM `comics` c
+			JOIN `comic_continuity` cc ON c.id = cc.comicId AND c.gallery = 1
+			JOIN `continuity` con ON con.id = cc.continuityId
+			WHERE con.permalink = :hash
 			ORDER BY c.timestamp DESC LIMIT :limit OFFSET :offset");
 
 	  // TODO: Add a WHERE clause to filter by `gallery` = 1
@@ -90,6 +90,6 @@ try {
 	}
 
 } catch(PDOException $e) {
-	$output->error = "ERROR: Could not execute the query. " . $e->getMessage();
+	$output->error = 'Unable to load comics';
 }
 ?>
