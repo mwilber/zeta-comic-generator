@@ -52,7 +52,7 @@ $detailHref = '/detail/' . rawurlencode($permalink);
 				<textarea id="additional-text" rows="3">Zeta Comic Generator turns a one-line prompt into a finished three-panel strip in seconds. A JavaScript front end drives PHP endpoints that pipe story ideas to an LLM, dialogue to a lighter model, and backgrounds to an image generator before compositing hand-drawn art of Alpha Zeta.</textarea>
 
 				<label for="hashtags">Hashtags</label>
-				<input id="hashtags" type="text" value="#AI #AIart #characterart #GenerativeArt #sciencefiction #scifi #humor #Aliens #AIComics #UFOTwitter">
+				<input id="hashtags" type="text" value="#AIComics #AIart #scifi #humor #Aliens">
 
 				<label for="post-date">Post Date</label>
 				<input id="post-date" type="date" required>

@@ -160,7 +160,7 @@ $results->linkedin = createBufferScheduledPost($bufferApiKey, [
 // Instagram: one post with all three panel images attached.
 $results->instagram = createBufferScheduledPost($bufferApiKey, [
 	'channelId' => $channelIds['instagram'],
-	'text' => $finalPostText,
+	'text' => limitInstagramHashtags($finalPostText),
 	'dueAt' => $scheduledAtIso,
 	'service' => 'instagram',
 	'imageUrls' => $panelMediaUrls,
@@ -183,6 +183,28 @@ foreach (['twitter', 'linkedin', 'instagram'] as $network) {
 $output->result = $results;
 
 echo json_encode($output);
+
+function limitInstagramHashtags($text) {
+	$disposableHashtags = ['#aicomics', '#aiart', '#scifi', '#humor', '#aliens'];
+	preg_match_all('/(?<![\p{L}\p{N}_\/])#[\p{L}\p{M}\p{N}_]+/u', $text, $matches, PREG_OFFSET_CAPTURE);
+	$excess = count($matches[0]) - 5;
+	if ($excess <= 0) {
+		return $text;
+	}
+
+	// Work backwards so appended defaults go first and earlier offsets stay valid.
+	foreach (array_reverse($matches[0]) as $match) {
+		if (in_array(strtolower($match[0]), $disposableHashtags, true)) {
+			$text = substr_replace($text, '', $match[1], strlen($match[0]));
+			$excess--;
+			if ($excess === 0) {
+				break;
+			}
+		}
+	}
+
+	return rtrim($text);
+}
 
 function getBufferApiKey() {
 	if (defined('BUFFER_API_KEY') && BUFFER_API_KEY) {
