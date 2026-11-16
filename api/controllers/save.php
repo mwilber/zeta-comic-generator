@@ -168,7 +168,7 @@
 						}
 
 						// prepare query statement
-						$stmt = $db->prepare("INSERT INTO `continuity` (`categoryId`, `description`) VALUES (".$db->quote($category['id']).", ".$db->quote($item).");");
+						$stmt = $db->prepare("INSERT INTO `continuity` (`active`, `categoryId`, `description`) VALUES (0, ".$db->quote($category['id']).", ".$db->quote($item).");");
 						// execute query
 						$stmt->execute();
       

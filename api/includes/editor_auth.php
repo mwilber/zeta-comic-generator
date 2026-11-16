@@ -1,14 +1,17 @@
 <?php
-// Password protection is temporarily disabled. Re-enable in key.php with
-// define('COMIC_EDITOR_AUTH_ENABLED', true) after server authentication is fixed.
-// Other write validation and same-origin checks remain active.
+// Authentication is mandatory; missing configuration fails closed.
 function comicRequireEditor() {
-    if (!defined('COMIC_EDITOR_AUTH_ENABLED') || !COMIC_EDITOR_AUTH_ENABLED) {
-        return true;
-    }
     $hash = defined('COMIC_EDITOR_PASSWORD_HASH') ? COMIC_EDITOR_PASSWORD_HASH : getenv('COMIC_EDITOR_PASSWORD_HASH');
     $username = $_SERVER['PHP_AUTH_USER'] ?? '';
     $password = $_SERVER['PHP_AUTH_PW'] ?? '';
+    // CGI/FastCGI servers may forward Basic auth only through this header.
+    $authorization = $_SERVER['HTTP_AUTHORIZATION'] ?? $_SERVER['REDIRECT_HTTP_AUTHORIZATION'] ?? '';
+    if (!$username && preg_match('/^Basic\s+(.+)$/i', $authorization, $match)) {
+        $decoded = base64_decode($match[1], true);
+        if ($decoded !== false && strpos($decoded, ':') !== false) {
+            [$username, $password] = explode(':', $decoded, 2);
+        }
+    }
     if (!$hash || $username !== 'editor' || !password_verify($password, $hash)) {
         http_response_code(401);
         header('WWW-Authenticate: Basic realm="Comic editor", charset="UTF-8"');

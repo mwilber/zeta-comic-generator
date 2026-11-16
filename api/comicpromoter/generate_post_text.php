@@ -1,9 +1,11 @@
 <?php
-ini_set('display_errors', 1);
+require_once __DIR__ . "/auth.php";
+comicPromoterAuth(true);
+ini_set('display_errors', 0);
 error_reporting(E_ERROR);
 
 header('Content-Type: application/json; charset=UTF-8');
-header('Access-Control-Allow-Origin: *');
+
 
 require_once __DIR__ . '/../includes/key.php';
 
@@ -25,6 +27,7 @@ if (!defined('OPENAI_KEY') || !OPENAI_KEY) {
 	exit;
 }
 
+comicPaidRateLimit();
 $input = json_decode(file_get_contents('php://input'));
 $comic = isset($input->comic) ? $input->comic : null;
 $customPrompt = isset($input->prompt) && is_string($input->prompt) ? trim($input->prompt) : '';

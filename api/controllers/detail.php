@@ -93,7 +93,7 @@ try {
 		$output->error = "No record found with ID: $id";
 	}
 } catch(PDOException $e) {
-	$output->error = "ERROR: Could not execute the query. " . $e->getMessage();
+	$output->error = 'Unable to load comics';
 }
 
 if($output->seriesId) {
@@ -138,7 +138,7 @@ try {
 		$output->error = "No background image record found with Comic ID: $output->id";
 	}
 } catch(PDOException $e) {
-	$output->error = "ERROR: Could not execute the query. " . $e->getMessage();
+	$output->error = 'Unable to load comics';
 }
 
 if($output->script) $output->continuity = [];
@@ -159,7 +159,7 @@ try {
 		}
 	}
 } catch(PDOException $e) {
-	$output->error = "ERROR: Could not execute the query. " . $e->getMessage();
+	$output->error = 'Unable to load comics';
 }
 
 ?>

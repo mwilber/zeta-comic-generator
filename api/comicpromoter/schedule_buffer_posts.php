@@ -1,9 +1,11 @@
 <?php
-ini_set('display_errors', 1);
+require_once __DIR__ . "/auth.php";
+comicPromoterAuth(true);
+ini_set('display_errors', 0);
 error_reporting(E_ERROR);
 
 header('Content-Type: application/json; charset=UTF-8');
-header('Access-Control-Allow-Origin: *');
+
 
 require_once __DIR__ . '/../includes/key.php';
 if (!class_exists('Aws\\S3\\S3Client')) {
@@ -12,6 +14,8 @@ if (!class_exists('Aws\\S3\\S3Client')) {
 		require_once $vendorAutoload;
 	}
 }
+
+require_once __DIR__ . '/../includes/image_security.php';
 
 const BUFFER_MEDIA_S3_FOLDER = 'buffer/';
 const BUFFER_MEDIA_S3_PUBLIC_ROOT = 'https://zeta-comic-generator.s3.us-east-2.amazonaws.com/';
@@ -245,14 +249,11 @@ function storeUploadedMediaFile($file, $prefix) {
 		return null;
 	}
 
-	$mime = '';
-	if (function_exists('mime_content_type')) {
-		$mime = (string)mime_content_type($tmpName);
-	}
-
-	$ext = '.png';
-	if ($mime === 'image/jpeg') $ext = '.jpg';
-	if ($mime === 'image/webp') $ext = '.webp';
+	try {
+        if (filesize($tmpName) > COMIC_IMAGE_MAX_BYTES) return null;
+        $info = comicImageInfo(file_get_contents($tmpName));
+    } catch (InvalidArgumentException $e) { return null; }
+    $ext = image_type_to_extension($info[2]);
 
 	$id = $prefix . '_' . bin2hex(random_bytes(12));
 	return uploadMediaToS3FromPath($tmpName, $id . $ext, false);
@@ -277,7 +278,7 @@ function normalizeUploadedFilesArray($filesField) {
 }
 
 function storeImageDataUrl($dataUrl, $prefix) {
-	if (!is_string($dataUrl) || strpos($dataUrl, 'data:image/') !== 0) {
+	if (!is_string($dataUrl) || strlen($dataUrl) > 17000000 || strpos($dataUrl, 'data:image/') !== 0) {
 		return null;
 	}
 
@@ -333,13 +334,14 @@ function uploadMediaToS3FromPath($localPath, $fileName, $deleteLocalAfterUpload)
 		return null;
 	}
 
-	$mime = 'image/png';
-	if (function_exists('mime_content_type')) {
-		$detected = (string)mime_content_type($localPath);
-		if ($detected) {
-			$mime = $detected;
-		}
-	}
+    try {
+        if (filesize($localPath) > COMIC_IMAGE_MAX_BYTES) throw new InvalidArgumentException('Image too large');
+        $info = comicImageInfo(file_get_contents($localPath));
+        $mime = $info['mime'];
+    } catch (InvalidArgumentException $e) {
+        if ($deleteLocalAfterUpload) @unlink($localPath);
+        return null;
+    }
 
 	$uploadOk = false;
 	try {

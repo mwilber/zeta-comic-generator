@@ -1,11 +1,11 @@
-<?php 
+<?php
 /**
  * Defines various configuration constants used throughout the application.
- * 
+ *
  * This includes credentials for external services like OpenAI and Google, as well as
  * database connection details and S3 bucket information.
- * 
- * To use, rename this file to key.php and set these constants to appropriate values 
+ *
+ * To use, rename this file to key.php and set these constants to appropriate values
  * before running the application.
  */
 
@@ -26,4 +26,9 @@ define("DB_PASS", "");
 
 // S3 Bucket details
 define("BUCKET_NAME","");
+// Mandatory editor and Comic Promoter login: username editor.
+// Generate the hash locally with password_hash($password, PASSWORD_DEFAULT).
+define('COMIC_EDITOR_PASSWORD_HASH', '');
+// Global daily paid-call ceiling; per-peer ceiling is 60 calls/hour.
+define('RATE_LIMIT', 100);
 ?>

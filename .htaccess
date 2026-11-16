@@ -1,5 +1,14 @@
 <IfModule mod_rewrite.c>
 RewriteEngine On
+# Forward Basic authorization on CGI/FastCGI hosts.
+RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+# Block repository, dependency, migration and test artifacts before routing.
+RewriteRule (^|/)\.(git|env|svn)(/|$) - [F,L,NC]
+RewriteRule ^(tests|vendor|api/includes|api/models|api/controllers)(/|$) - [F,L,NC]
+RewriteRule ^mcp/(README\.md|migrations)(/|$) - [F,L,NC]
+RewriteRule (^|/)(AGENTS\.md|CLAUDE\.md|CODEX\.md|composer\.(phar|json|lock)|llms\.txt)$ - [F,L,NC]
+RewriteRule ^api/(test|bedrock)\.php$ - [F,L,NC]
+RewriteRule ^api/comicpromoter/(tmp/|README\.md|auth\.php) - [F,L,NC]
 #RewriteBase /
 RewriteRule ^favicon\.ico$ /assets/favicons/favicon.ico [L]
 RewriteRule ^mcp/?$ mcp/index.php [END]

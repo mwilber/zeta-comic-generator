@@ -466,7 +466,7 @@ export class ComicGeneratorApi {
 				);
 		}
 
-		formData.append("messages", JSON.stringify(this.messages));
+		// Conversation history is held by the server.
 		formData.append("workflowId", this.workflowId);
 
 		let retry = 3;

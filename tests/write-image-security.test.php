@@ -25,13 +25,15 @@ $_SERVER = ['REQUEST_METHOD'=>'POST']; comicWriteRequest(); // MCP has no browse
 rejects(fn() => comicEditorWriteRequest());
 $_SERVER['HTTP_SEC_FETCH_SITE']='same-origin'; comicEditorWriteRequest();
 $_SERVER['HTTP_SEC_FETCH_SITE']='cross-site'; rejects(fn() => comicEditorWriteRequest());
-$_SERVER = []; check(comicRequireEditor(), 'Temporary editor password bypass failed');
-check(!in_array('WWW-Authenticate: Basic realm="Comic editor", charset="UTF-8"', headers_list(), true), 'Disabled authentication sent a password challenge');
-define('COMIC_EDITOR_AUTH_ENABLED', true);
+$_SERVER = []; check(!comicRequireEditor(), 'Authentication must fail closed without configuration');
+
+define('COMIC_EDITOR_AUTH_ENABLED', false); // Legacy bypass setting must be ignored.
 $_SERVER = []; check(!comicRequireEditor(), 'Anonymous editor allowed when protection enabled');
 putenv('COMIC_EDITOR_PASSWORD_HASH=' . password_hash('test-only', PASSWORD_DEFAULT));
 $_SERVER = ['PHP_AUTH_USER'=>'editor','PHP_AUTH_PW'=>'wrong']; check(!comicRequireEditor(), 'Wrong password allowed');
 $_SERVER['PHP_AUTH_PW']='test-only'; check(comicRequireEditor(), 'Editor denied');
+$_SERVER = ['HTTP_AUTHORIZATION'=>'Basic ' . base64_encode('editor:test-only')]; check(comicRequireEditor(), 'Forwarded Basic credentials denied');
+$_SERVER = ['REDIRECT_HTTP_AUTHORIZATION'=>'Basic ' . base64_encode('editor:test-only')]; check(comicRequireEditor(), 'Redirected Basic credentials denied');
 putenv('COMIC_EDITOR_PASSWORD_HASH');
 foreach (['update','thumbnail'] as $controller) {
     $_SERVER = []; $output = new stdClass;
