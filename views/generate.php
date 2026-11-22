@@ -43,7 +43,7 @@
 		</a>
 	</div>
 </div>
-<div id="interface">
+<div id="interface" data-url-prefill="<?= defined("DEV_SITE") && DEV_SITE === true ? 'true' : 'false' ?>">
 	<div class="query-wrapper">
 		<h2>Setup</h2>
 		<div id="input">

@@ -36,6 +36,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	AttachUiEvents();
 	SetInitialMode();
 	SetDefaultSelections();
+	ApplyUrlPrefill();
 
 	api.GetMetrics().then((metrics)=>{
 		if(metrics && metrics.limitreached === true){
@@ -56,6 +57,36 @@ document.addEventListener("DOMContentLoaded", () => {
 	SetStatus("ready");
 });
 
+
+/** Apply development-only URL defaults after saved preferences have loaded. */
+function ApplyUrlPrefill() {
+	if (document.getElementById("interface").dataset.urlPrefill !== "true") return;
+
+	const params = new URLSearchParams(window.location.search);
+	const series = document.getElementById("series-id");
+	if (series && params.has("series") &&
+		Array.from(series.options || []).some(option => option.value === params.get("series"))) {
+		series.value = params.get("series");
+		series.dispatchEvent(new Event("change"));
+	}
+
+	const workflow = params.get("workflow");
+	if (Object.hasOwn(MODEL_GROUPS, workflow)) {
+		// Make the provider visible even when a previous visit used advanced mode.
+		document.getElementById("group-selection").style.display = "flex";
+		document.getElementById("model-selection").style.display = "none";
+		document.getElementById("advanced-toggle").textContent = "Advanced";
+		localStorage.setItem("selection-mode", "simple");
+		const group = document.getElementById("group-select");
+		group.value = workflow;
+		group.dispatchEvent(new Event("change"));
+	}
+
+	if (params.has("premise")) {
+		document.getElementById("query").value = params.get("premise");
+		SetCharCount();
+	}
+}
 
 /**
  * Sets the default selections for the script and image models.

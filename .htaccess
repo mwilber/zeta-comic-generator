@@ -1,3 +1,10 @@
+<If "%{DOCUMENT_ROOT} == '/home/greenzeta/staging.greenzeta.com/zeta-comic-generator'">
+    AuthType Basic
+    AuthName "Comic Generator Dev"
+    AuthUserFile "/home/greenzeta/.htpasswd-dev"
+    Require valid-user
+</If>
+
 <IfModule mod_rewrite.c>
 RewriteEngine On
 # Forward Basic authorization on CGI/FastCGI hosts.
