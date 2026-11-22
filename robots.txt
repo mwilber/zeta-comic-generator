@@ -4,4 +4,4 @@ Disallow: /assets/
 Allow: /assets/favicons/
 
 
-Sitemap: https://zcgdev.greenzeta.com/sitemap.xml
+Sitemap: https://comicgenerator.greenzeta.com/sitemap.xml
