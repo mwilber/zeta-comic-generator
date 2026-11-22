@@ -138,3 +138,17 @@ comicRenderer.LoadScript(script);
 ```
 
 [GreenZeta.com](https://greenzeta.com)
+
+
+### Development generate links
+
+On sites configured with `DEV_SITE === true`, use
+`https://zcgdev.greenzeta.com/generate/?series=123&workflow=google&premise=Alpha%20learns%20to%20cook`
+to prefill the Series, Model Select, and premise fields. `series` is an existing
+series ID; `workflow` accepts `openai`, `google`, or `xai`. URL-encode the premise.
+Parameters are optional; unknown series IDs and workflows retain normal defaults.
+The usual 210-character premise limit still applies. Generation starts only when
+Start is clicked. Production ignores these parameters.
+
+The existing Apache catch-all rewrite to `/index.php` preserves the query string;
+no additional `.htaccess` rule is needed for this URL.
